@@ -89,7 +89,8 @@ H1 {
 }
 
 .cardBorderPanel {
-  background-color: white;
+	cursor: pointer;
+	background-color: white;
 }
 
 .cardImage {
