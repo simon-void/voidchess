@@ -1,16 +1,13 @@
 package com.stenudd.tarot.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.stenudd.tarot.client.event.CardSelectedEvent;
 import com.stenudd.tarot.client.event.CardSelectionListener;
 
@@ -18,7 +15,7 @@ public class CelticCrossSpread
 extends Composite
 implements CardSelectionListener
 {
-  private final Map<TarotCard, Position> cardPositions = new HashMap<TarotCard, CelticCrossSpread.Position>(4);
+  private final Position[] cardPositions = new Position[2];
   private final AbsolutePanel absolutePanel;
   private final Grid descriptionGrid;
   private final TarotCardDeck deck;
@@ -36,7 +33,6 @@ implements CardSelectionListener
     initDescriptionGrid();
     
     dealCardsButton = new Button("Deal Cards");
-    dealCardsButton.setFocus(true);
     dealCardsButton.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event)
       {
@@ -45,6 +41,10 @@ implements CardSelectionListener
     });
     
     reset();
+    //after the app has been loaded
+    //the user should be able to get new cards dealt
+    //(although there are already 10 covered cards)
+    enableDealCard(true);
 
     initWidget(absolutePanel);
   }
@@ -52,21 +52,10 @@ implements CardSelectionListener
   private void initDescriptionGrid()
   {
     descriptionGrid.setStyleName("resultsTable");
-    descriptionGrid.setText(0, 0, "Your condition at present:");
-    descriptionGrid.setText(1, 0, "Your obstacle and trouble at present:");
-    descriptionGrid.setText(2, 0, "The best possible outcome for you:");
-    descriptionGrid.setText(3, 0, "The cause to your present situation:");
-    descriptionGrid.setText(4, 0, "Your immediate past:");
-    descriptionGrid.setText(5, 0, "Your immediate future:");
-    descriptionGrid.setText(6, 0, "You at present:");
-    descriptionGrid.setText(7, 0, "Your surroundings at present:");
-    descriptionGrid.setText(8, 0, "Your hopes and fears:");
-    descriptionGrid.setText(9, 0, "The outcome:");
+    descriptionGrid.getColumnFormatter().addStyleName(0, "tdText");
     
     for(int i=0; i<10; i++) {
-      SimplePanel panel = new SimplePanel();
-      panel.setWidth("140px");
-      descriptionGrid.setWidget(i, 1, panel);
+      descriptionGrid.setText(i, 0, TarotCardIndexMeanings.meaning(i)+':');
     }
   }
   
@@ -78,14 +67,14 @@ implements CardSelectionListener
     
     //clear the grid links
     for(int i=0; i<10; i++) {
-      Panel panel = (Panel)descriptionGrid.getWidget(i, 1);
-      panel.clear();
+      descriptionGrid.setText(i, 1, "");
+      descriptionGrid.getCellFormatter().setStyleName(i, 1, "tdEmptyLink");
     }
     
     //clear the cards
     absolutePanel.clear();
     
-    TarotCard[] cards = deck.pickRandomCards(10);
+    final TarotCard[] cards = deck.pickRandomCards(10);
     final int width = cards[0].getPixelWidth();
     final int heigth = cards[0].getPixelHeight();
     final int space = 10;
@@ -112,18 +101,18 @@ implements CardSelectionListener
         4*heigth+3*space+5
     };
     
-    //place cards
-    addCard(cards[0], left[2], top[2], true,  0);
     cards[1].rotate();
-    addCard(cards[1], left[1], top[3], true,  1);
-    addCard(cards[2], left[2], top[0], false, 2);
-    addCard(cards[3], left[2], top[5], false, 3);
-    addCard(cards[4], left[3], top[2], false, 4);
-    addCard(cards[5], left[0], top[2], false, 5);
-    addCard(cards[6], left[4], top[7], false, 6);
-    addCard(cards[7], left[4], top[5], false, 7);
-    addCard(cards[8], left[4], top[2], false, 8);
-    addCard(cards[9], left[4], top[0], false, 9);
+    //place cards
+    addCard(cards[0], left[2], top[2]);
+    addCard(cards[1], left[1], top[3]);
+    addCard(cards[2], left[2], top[0]);
+    addCard(cards[3], left[2], top[5]);
+    addCard(cards[4], left[3], top[2]);
+    addCard(cards[5], left[0], top[2]);
+    addCard(cards[6], left[4], top[7]);
+    addCard(cards[7], left[4], top[5]);
+    addCard(cards[8], left[4], top[2]);
+    addCard(cards[9], left[4], top[0]);
     
     //place button
     absolutePanel.add(dealCardsButton, left[0], top[0]);
@@ -133,6 +122,17 @@ implements CardSelectionListener
     absolutePanel.add(descriptionGrid, gridBorder+20, top[7]+gridBorder);
     
     setSize(left[5], top[8]+80+gridBorder);
+    
+    // add open-new-tab-support for descriptionGrid
+    descriptionGrid.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event)
+      {
+        Cell cellClicked = descriptionGrid.getCellForEvent(event);
+        TarotCard cardSelected = cards[cellClicked.getRowIndex()];
+        Window.open(cardSelected.getExplanationUrl(), "explanation", "");
+      }
+    });
   }
   
   public void setSize(int pixelWidth, int pixelHeight)
@@ -141,24 +141,21 @@ implements CardSelectionListener
     absolutePanel.setWidth( pixelWidth +"px");
   }
   
-  private void addCard(TarotCard card, int left, int top, boolean popToTop, int gridIndex)
+  private void addCard(TarotCard card, int left, int top)
   {
-    if(popToTop) {
-      cardPositions.put(card, new Position(left, top));
+    final int cardIndex = card.getCardIndex();
+    if(cardIndex==0 || cardIndex==1) {
+      cardPositions[cardIndex] = new Position(left, top);
     }
     card.addCardSelectionListener(this);
-    
-    SimplePanel msgPanel = (SimplePanel)descriptionGrid.getWidget(gridIndex, 1);
-    String title = descriptionGrid.getText(gridIndex, 0).replace(':', '.'); 
-    
-    card.setMessage((SimplePanel)msgPanel, title);
     absolutePanel.add(card, left, top);
   }
   
   private void topCard(TarotCard card)
   {
-    Position position = cardPositions.get(card);
-    if(position!=null) {
+    final int cardIndex = card.getCardIndex();
+    if(cardIndex==0 || cardIndex==1) {
+      Position position = cardPositions[cardIndex];
       absolutePanel.add(card, position.left, position.top);
     }
   }
@@ -169,10 +166,12 @@ implements CardSelectionListener
     topCard(selectedCard);
     
     if(event.isUncovered()) {
-      cardsUncovered++;
-      if(cardsUncovered==10) {
-        enableDealCard(true);
-      }
+      descriptionGrid.setText(selectedCard.getCardIndex(), 1, selectedCard.getCardName());
+      descriptionGrid.getCellFormatter().setStyleName(selectedCard.getCardIndex(), 1, "tdLink");
+      
+      //enable the deal-cards button if all 10 cards have been uncovered
+      //disable it otherwise
+      enableDealCard(++cardsUncovered==10);
     }
   }
   
@@ -191,6 +190,7 @@ implements CardSelectionListener
     if(enable) {
       dealCardsButton.setEnabled(true);
       dealCardsButton.setTitle("Click here to get new cards.");
+      dealCardsButton.setFocus(true);
     } else {
       dealCardsButton.setEnabled(false);
       dealCardsButton.setTitle("First uncover all cards.");

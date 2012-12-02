@@ -103,15 +103,16 @@ public class TarotCardDeck
     for(int i=0; i<howMany; i++) {
       int randomIndex = Random.nextInt(cardInfos.size());
       TarotCardInfo cardInfo = cardInfos.remove(randomIndex);
-      cards.add(getCardFromInfo(cardInfo));
+      cards.add(getCardFromInfo(i, cardInfo));
     }
     
     return cards.toArray(new TarotCard[howMany]);
   }
   
-  private TarotCard getCardFromInfo(TarotCardInfo info)
+  private TarotCard getCardFromInfo(int cardIndex, TarotCardInfo info)
   {
     TarotCard card = new TarotCard(
+        cardIndex,
         info.name,
         info.explanationUrl,
         info.imageUrl,

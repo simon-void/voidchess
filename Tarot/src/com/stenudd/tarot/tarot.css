@@ -59,12 +59,32 @@ H1 {
 
 
 /** Add here css rules for the tarot application. */
+.tdLink	{
+	text-align: center;
+	min-width: 140px;
+	background: #FFFFFF;
+	color: #A52316;
+}
+
+.tdLink:hover {
+	cursor: pointer;
+	background: #A52316;
+	color: #FFFFFF;
+}
+
+.tdEmptyLink {
+	min-width: 140px;
+}
+
+.tdText {
+	min-width: 225px;
+}
 
 .resultsTable {
 	border-collapse:collapse;
 }
 
-.resultsTable td{
+.resultsTable td {
 	border: 1px solid black;
 }
 

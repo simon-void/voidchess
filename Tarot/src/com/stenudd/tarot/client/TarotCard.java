@@ -7,9 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratorPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.stenudd.tarot.client.event.CardSelectedEvent;
 import com.stenudd.tarot.client.event.CardSelectionListener;
 
@@ -18,9 +16,10 @@ extends Composite
 {
   final private Image image;
   final private List<CardSelectionListener> selectionListeners = new LinkedList<CardSelectionListener>();
-  private SimplePanel messagePanel;
-  final private String explanationLink;
-  
+  final private String explanationUrl;
+  final private String cardName;
+  final private int cardIndex;
+
   final private int pixelWidth;
   final private int pixelHeight;
   //pixelborder of the decorator panel
@@ -44,26 +43,23 @@ extends Composite
     selectionListeners.add(listener);
   }
   
-  public void setMessage(SimplePanel messagePanel, String cardTitle)
+  public TarotCard(final int cardIndex, final String cardName, final String explanationUrl, final String imgUrl, String imgRotateUrl, final int pixelWidth)
   {
-    this.messagePanel = messagePanel;
-    image.setTitle(cardTitle);
-  }
-  
-  public TarotCard(final String cardName, final String explanationUrl, final String imgUrl, String imgRotateUrl, final int pixelWidth)
-  {
+    this.cardIndex = cardIndex;
+    this.cardName  = cardName;
+    this.explanationUrl = explanationUrl;
     this.pixelWidth = pixelWidth;
     pixelHeight = (int)Math.ceil(pixelWidth*1.6475);
     this.imgUrl = imgUrl;
     this.imgRotateUrl = imgRotateUrl;
     
-    StringBuilder htmlB = new StringBuilder(128);
-    htmlB.append("<div class=\"links\"><a target=\"explaination\" href=\"");
-    htmlB.append(explanationUrl);
-    htmlB.append("\" title=\"Click to learn more about the meaning of this card\">");
-    htmlB.append(cardName);
-    htmlB.append("</a></div>");
-    explanationLink = htmlB.toString();
+//    StringBuilder htmlB = new StringBuilder(128);
+//    htmlB.append("<div class=\"links\"><a target=\"explaination\" href=\"");
+//    htmlB.append(explanationUrl);
+//    htmlB.append("\" title=\"Click to learn more about the meaning of this card\">");
+//    htmlB.append(cardName);
+//    htmlB.append("</a></div>");
+//    explanationLink = htmlB.toString();
     
     //initialize the image
     image = new Image(BACKSIDE_IMG_PATH);
@@ -114,13 +110,27 @@ extends Composite
       image.setUrl(imgUrl);
       covered = false;
       
-      //add caption    
-      messagePanel.setWidget(new HTML(explanationLink));
+      image.setTitle(TarotCardIndexMeanings.meaning(cardIndex));
     }
     
     final CardSelectedEvent event = new CardSelectedEvent(this, uncovered);
     for(CardSelectionListener listener: selectionListeners) {
       listener.cardSelected(event);
     }
+  }
+  
+  public String getExplanationUrl()
+  {
+    return explanationUrl;
+  }
+
+  public String getCardName()
+  {
+    return cardName;
+  }
+
+  public int getCardIndex()
+  {
+    return cardIndex;
   }
 }
