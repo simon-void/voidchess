@@ -1,0 +1,24 @@
+Soccer | Scotland | Scottish Cup | Beith Juniors FC - Airdrie Utd : 2 - 4
+Ice Hockey | Russia | KHL | Severstal Cherepovec - OHK Dynamo Moscow : 2 - 2
+Soccer | International Clubs | Club Friendly Games | Altay Izmir - Paris St Germain : 2 - 0
+Tennis | ATP | Brisbane, Australia | Soderling, Robin - Harrison, Ryan : 2 - 0
+Tennis | ATP | Chennai, India | Berdych, Tomas - Gil, Frederico : 2 - 0
+Tennis | ATP | Chennai, India | Bhambri, Yuki - Kudryavtsev, Alexandre : 0 - 2
+Tennis | ATP | Chennai, India | Malisse, Xavier - Ilhan, Marsel : 2 - 0
+Tennis | ATP | Chennai, India | Roger-Vasselin, Edouard - Gasquet, Richard : 0 - 2
+Tennis | ATP | Chennai, India, Doubles | Cilic M / Dodig I - Friedl L / Kerr J : 2 - 0
+Tennis | ATP | Chennai, India, Doubles | Sharan D / Vardhan V - Bolelli S / Tipsarevic J : 0 - 2
+Tennis | ATP | Doha, Qatar | EL Amrani, Reda - Chiudinelli, Marco : 1 - 1
+Tennis | ATP | Doha, Qatar | Hanescu, Victor - Gulbis, Ernests : 0 - 2
+Tennis | ATP | Doha, Qatar | Veic, Antonio - Sabry, Sherif : 1 - 1
+Tennis | Hopman Cup | Hopman Cup, Men | Djokovic, Novak - Hewitt, Lleyton : 2 - 0
+Tennis | Hopman Cup | Hopman Cup, Women | Ivanovic, Ana - Molik, Alicia : 2 - 0
+Tennis | WTA | Brisbane, Australia | Stosur, Samantha - Groth, Jarmila : 0 - 2
+Ice Hockey | Russia | KHL | Lokomotiv Yaroslavl - CSKA Moscow : 0 - 1
+Ice Hockey | Russia | KHL | Torpedo Nizhny Novgorod - HC Dinamo Riga : 1 - 0
+Soccer | International Clubs | Club Friendly Games | Arminia Bielefeld - MSV Duisburg : 0 - 1
+Tennis | ATP | Chennai, India | Dancevic, Frank - Haase, Robin : 1 - 0
+Tennis | ATP | Doha, Qatar | Schuettler, Rainer - Gabashvili, Teimuraz : 0 - 1
+Ice Hockey | Russia | KHL | HC Spartak Moscow - SKA St. Petersburg : 0 - 0
+Tennis | ATP | Chennai, India | Falla, Alejandro - Machado, Rui : 0 - 0
+Tennis | ATP | Chennai, India | Wawrinka, Stanislas - Bopanna, Rohan : 0 - 0
