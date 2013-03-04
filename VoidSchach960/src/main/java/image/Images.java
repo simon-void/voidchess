@@ -1,42 +1,32 @@
 package image;
 
-import java.util.*;
 import java.awt.*;
+import java.io.IOException;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
+
+import junit.framework.Assert;
+
 public class Images{
-  private final static HashMap images=new HashMap();
-  private final static String[][] strings={{"S_BAUER"   ,"Schwarz_Bauer.gif"},
-                                           {"S_PFERD"   ,"Schwarz_Pferd.gif"},
-                                           {"S_LÄUFER"  ,"Schwarz_Laeufer.gif"},
-                                           {"S_TURM"    ,"Schwarz_Turm.gif"},
-                                           {"S_DAME"    ,"Schwarz_Dame.gif"},
-                                           {"S_KÖNIG"   ,"Schwarz_Koenig.gif"},
-                                           {"W_BAUER"   ,"Weiss_Bauer.gif"},
-                                           {"W_PFERD"   ,"Weiss_Pferd.gif"},
-                                           {"W_LÄUFER"  ,"Weiss_Laeufer.gif"},
-                                           {"W_TURM"    ,"Weiss_Turm.gif"},
-                                           {"W_DAME"    ,"Weiss_Dame.gif"},
-                                           {"W_KÖNIG"   ,"Weiss_Koenig.gif"},
-                                           {"W_S_KÖNIG" ,"Weiss_Schwarz_Koenig.gif"},
-                                           {"ICON"      ,"Icon.gif"}};
+  private final static Image[] images = new Image[ImageType.values().length];
 
-
-  public static void init( Component component ){
-    Toolkit toolkit=component.getToolkit();
-    MediaTracker mt=new MediaTracker( component );
-    for( int i=0;i<strings.length;i++ ) {
-      URL url=Images.class.getResource( strings[i][1] );
-      Image img=toolkit.createImage( url );
-      images.put( strings[i][0],img );
-      mt.addImage( img,i );
+  public static void loadImageResources()
+  throws IOException
+  {
+    for( ImageType imageType: ImageType.values() ) {
+      final URL url = Images.class.getResource( imageType.getFileName() );
+      final Image img = ImageIO.read(url);
+      images[imageType.ordinal()] = img;
     }
-    try{
-      mt.waitForAll();
-    }catch( InterruptedException e ) {}
   }
 
-  public static Image get( String imageName ) {
-    return (Image)images.get( imageName );
+  public static Image get( ImageType imageType )
+  {
+    Assert.assertNotNull("iamgeType", imageType);
+    final Image image = images[imageType.ordinal()];
+    Assert.assertNotNull(imageType.toString(), imageType);
+    
+    return image; 
   }
 }

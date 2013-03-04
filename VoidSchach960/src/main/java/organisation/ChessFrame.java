@@ -1,8 +1,5 @@
 package organisation;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 import javax.swing.*;
 import image.*;
 /**
@@ -14,7 +11,7 @@ public class ChessFrame extends JFrame
 	{
 		try {
 			helper.RuntimeFacade.assertJavaVersion();
-			Images.init(new JPanel());
+			Images.loadImageResources();
 			new ChessFrame();
 		}catch( Exception e ) {
 			StringBuilder sb = new StringBuilder( 64 );
@@ -32,13 +29,12 @@ public class ChessFrame extends JFrame
 	public ChessFrame()
 	{
 		super( "  VoidSchach960  " );
-		setIconImage( Images.get( "ICON" ) );
+		setIconImage( Images.get( ImageType.ICON ) );
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE);
 		setContentPane( new ChessPanel() );
 		pack();
 		setResizable( false );
 		setVisible( true );
-		//repaint();
 	}
 	
 

@@ -18,42 +18,46 @@ public class FileFigureImageFactory implements FigureImageFactory
 	
 	public FigureImage getKing( boolean isWhite)
 	{
-		return getFigureByName(isWhite, "_KÖNIG");
+		return getFigureByName(isWhite, "KING");
 	}
 
 	public FigureImage getQueen( boolean isWhite)
 	{
-		return getFigureByName(isWhite, "_DAME");
+		return getFigureByName(isWhite, "QUEEN");
 	}
 
 	public FigureImage getBishop( boolean isWhite)
 	{
-		return getFigureByName(isWhite, "_LÄUFER");
+		return getFigureByName(isWhite, "BISHOP");
 	}
 
 	public FigureImage getKnight( boolean isWhite)
 	{
-		return getFigureByName(isWhite, "_PFERD");
+		return getFigureByName(isWhite, "KNIGHT");
 	}
 
 	public FigureImage getRock( boolean isWhite)
 	{
-		return getFigureByName(isWhite, "_TURM");
+		return getFigureByName(isWhite, "ROCK");
 	}
 
 	public FigureImage getPawn( boolean isWhite)
 	{
-		return getFigureByName(isWhite, "_BAUER");
+		return getFigureByName(isWhite, "PAWN");
 	}
 	
 	private FigureImage getFigureByName(boolean isWhite, String figureName)
 	{
+	  final StringBuilder imgTypB = new StringBuilder(figureName.length()+2);
 		if(isWhite) {
-			figureName="W"+figureName;
+		  imgTypB.append('W');
 		}else{
-			figureName="S"+figureName;
+		  imgTypB.append('B');
 		}
-		return new FigureFileImage( imageObserver,figureName );
+		imgTypB.append('_').append(figureName);
+		final ImageType imageType = ImageType.valueOf(imgTypB.toString());
+		
+		return new FigureFileImage( imageObserver,imageType );
 	}
 	
 	final class FigureFileImage implements FigureImage
@@ -61,10 +65,10 @@ public class FileFigureImageFactory implements FigureImageFactory
 		private final ImageObserver observer;
 		private final Image image;
 	
-		private FigureFileImage( ImageObserver observer,String imageName)
+		private FigureFileImage( ImageObserver observer,ImageType imageType)
 		{
 			this.observer = observer;
-			image         = Images.get( imageName );
+			image         = Images.get( imageType );
 		}
 
 		public void paint(Graphics g, int x_pos, int y_pos, int areaSize)

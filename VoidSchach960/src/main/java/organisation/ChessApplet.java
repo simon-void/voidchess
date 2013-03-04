@@ -5,8 +5,10 @@
 package organisation;
 
 import java.awt.Color;
+import java.io.IOException;
 
 import javax.swing.*;
+
 import image.*;
 
 public class ChessApplet
@@ -17,19 +19,23 @@ extends JApplet
 	
 	public void init()
 	{
-		Images.init(this);
-		chessPanel = new ChessPanel();
-		chessPanel.setBackground( Color.white );
-		chessPanel.setBorder( 
-			BorderFactory.createTitledBorder( 
-				BorderFactory.createLineBorder(
-					Color.black
-				),
-				"VoidSchach960 Applet"
-			)
-		);
-		setContentPane( chessPanel );
-    setSize(getPreferredSize());
+	  try{
+	    Images.loadImageResources();
+	    chessPanel = new ChessPanel();
+	    chessPanel.setBackground( Color.white );
+	    chessPanel.setBorder( 
+	        BorderFactory.createTitledBorder( 
+	            BorderFactory.createLineBorder(
+	                Color.black
+	                ),
+	                "VoidSchach960 Applet"
+	            )
+	        );
+	    setContentPane( chessPanel );
+	    setSize(getPreferredSize());
+	  }catch(IOException e) {
+	    displayException(e);
+	  }
 	}
 	
 	public void start()
@@ -38,19 +44,24 @@ extends JApplet
 			helper.RuntimeFacade.assertJavaVersion();
 			setVisible( true );
 		}catch( RuntimeException e ) {
-			StringBuilder sb = new StringBuilder( 64 );
-			sb.append( "Das Spiel wurde aufgrund eines Fehlers abgebrochen." );
-			sb.append( "\n" );
-			sb.append( "Die Fehlermeldung lautet:" );
-			sb.append( "\n" );
-			sb.append( e.toString() );
-			JOptionPane.showMessageDialog( null,sb.toString() );
+			displayException(e);
 		}
 	}
 	
 	public void stop()
-	{
-		chessPanel.stop( APPLET_STOPPED );
-		setVisible( false );
-	}
+  {
+    chessPanel.stop( APPLET_STOPPED );
+    setVisible( false );
+  }
+
+  private void displayException(Exception e)
+  {
+    StringBuilder sb = new StringBuilder( 64 );
+    sb.append( "Das Spiel wurde aufgrund eines Fehlers abgebrochen." );
+    sb.append( "\n" );
+    sb.append( "Die Fehlermeldung lautet:" );
+    sb.append( "\n" );
+    sb.append( e.toString() );
+    JOptionPane.showMessageDialog( null,sb.toString() );
+  }
 }
