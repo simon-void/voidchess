@@ -1,5 +1,7 @@
 package figures;
 
+import java.util.List;
+
 import image.FigureImage;
 import helper.*;
 import board.*;
@@ -137,7 +139,7 @@ public class Rock extends RochadeFigure
 		}
 	}
 	
-	public void getReachableMoves( BasicChessGameInterface game,BasicMoveIterator result )
+	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
 		posIter.clear(); 
 		getNorthIterator( game,posIter );
@@ -146,7 +148,7 @@ public class Rock extends RochadeFigure
 		getWestIterator(  game,posIter );
 		
 		while( posIter.hasNext() ) {
-			result.addMove( Move.get( position,posIter.next() ) );
+			result.add( Move.get( position,posIter.next() ) );
 		}
 	}
 	

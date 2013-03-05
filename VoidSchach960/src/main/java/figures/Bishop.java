@@ -1,6 +1,8 @@
 package figures;
 
 
+import java.util.List;
+
 import image.FigureImage;
 import helper.*;
 import board.*;
@@ -175,7 +177,7 @@ public class Bishop extends Figure
 		}
 	}
 	
-	public void getReachableMoves( BasicChessGameInterface game,BasicMoveIterator result )
+	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
 		posIter.clear(); 
 		getNorthEastIterator( game,posIter );
@@ -184,7 +186,7 @@ public class Bishop extends Figure
 		getSouthWestIterator( game,posIter );
 		
 		while( posIter.hasNext() ) {
-			result.addMove( Move.get( position,posIter.next() ) );
+			result.add( Move.get( position,posIter.next() ) );
 		}
 	}
 	

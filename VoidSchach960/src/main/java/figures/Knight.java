@@ -1,5 +1,7 @@
 package figures;
 
+import java.util.List;
+
 import image.FigureImage;
 import helper.*;
 import board.*;
@@ -48,13 +50,13 @@ public class Knight extends Figure
 		return posIter;
 	}
 	
-	public void getReachableMoves( BasicChessGameInterface game,BasicMoveIterator result )
+	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
 		PositionIterator posIter = getIterator( game );
 		while( posIter.hasNext() ) {
 			Position checkPosition = posIter.next();
 			if( isReachable( checkPosition,game ) ) {
-				result.addMove( Move.get( position,checkPosition ) );
+				result.add( Move.get( position,checkPosition ) );
 			}
 		}
 	}

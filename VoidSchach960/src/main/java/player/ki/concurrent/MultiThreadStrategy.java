@@ -11,7 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import helper.Move;
-import helper.MoveIterator;
 import player.ki.AbstractComputerPlayerUI;
 import player.ki.DynamicEvaluation;
 import board.ChessGameInterface;
@@ -39,14 +38,13 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
 	{
 		assert numberOfEvaluatedMoves == 0 : "method is invoked by several threads at the same time";
 		
-		final MoveIterator iter = game.getPossibleMoves( );
+		final List<Move> possibleMoves = game.getPossibleMoves( );
 		
-		totalNumberOfMoves = iter.totalNumberOfMoves();
+		totalNumberOfMoves = possibleMoves.size();
 		showProgress(0, totalNumberOfMoves);
 		
-		List<MoveEvaluationCallable> moveEvaluationCallables = new ArrayList<MoveEvaluationCallable>(totalNumberOfMoves);
-		while (iter.hasMoreMoves()) {
-			final Move move = iter.nextMove();
+		final List<MoveEvaluationCallable> moveEvaluationCallables = new ArrayList<MoveEvaluationCallable>(totalNumberOfMoves);
+		for(Move move: possibleMoves) {
 			
 			moveEvaluationCallables.add(
 					new MoveEvaluationCallable(

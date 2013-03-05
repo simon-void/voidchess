@@ -1,5 +1,7 @@
 package figures;
 
+import java.util.List;
+
 import image.FigureImage;
 import helper.*;
 import board.*;
@@ -160,7 +162,7 @@ public class King extends RochadeFigure
 		return isCheck;
 	}
 	
-	public void getReachableMoves( BasicChessGameInterface game,BasicMoveIterator result )
+	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
 		int minRow    = Math.max( position.row-1,0 );
 		int minColumn = Math.max( position.column-1,0 );
@@ -174,7 +176,7 @@ public class King extends RochadeFigure
 						(game.isFreeArea( checkPosition ) || 
 						 game.getFigure( checkPosition ).isWhite!=isWhite)
 				) {
-					result.addMove( Move.get( position,checkPosition ) );
+					result.add( Move.get( position,checkPosition ) );
 				}
 			}
 		}
@@ -186,7 +188,7 @@ public class King extends RochadeFigure
 					if( game.getFigure( pos ).canParticipateInRochade() &&
 						isReachable( pos,game ) ) {
 						
-						result.addMove( Move.get( position,pos ) );
+						result.add( Move.get( position,pos ) );
 					}
 					break;
 				}
@@ -197,7 +199,7 @@ public class King extends RochadeFigure
 					if( game.getFigure( pos ).canParticipateInRochade() &&
 						isReachable( pos,game ) ) {
 						
-						result.addMove( Move.get( position,pos ) );
+						result.add( Move.get( position,pos ) );
 					}
 					break;
 				}

@@ -1,5 +1,7 @@
 package figures;
 
+import java.util.List;
+
 import image.FigureImage;
 import helper.*;
 import board.*;
@@ -111,7 +113,7 @@ public class Pawn extends Figure
 		return false;
 	}
 	
-	public void getReachableMoves( BasicChessGameInterface game,BasicMoveIterator result )
+	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
 		int minColumn = Math.max( position.column-1,0 );
 		int maxColumn = Math.min( position.column+1,7 );
@@ -120,7 +122,7 @@ public class Pawn extends Figure
 		for( int column= minColumn;column<=maxColumn;column++ ) {
 			Position checkPosition = Position.get( oneForwardRow,column );
 			if( isReachable( checkPosition,game ) ) {
-				result.addMove( Move.get( position,checkPosition ) );
+				result.add( Move.get( position,checkPosition ) );
 			}
 		}
 		
@@ -130,7 +132,7 @@ public class Pawn extends Figure
 		if( position.row==pawnStartRow ) {
 			Position twoForwardPosition = Position.get( twoForwardRow,position.column );
 			if( isReachable( twoForwardPosition,game ) ) {
-				result.addMove( Move.get( position,twoForwardPosition ) );
+				result.add( Move.get( position,twoForwardPosition ) );
 			}
 		}
 	}

@@ -1,5 +1,7 @@
 package figures;
 
+import java.util.List;
+
 import image.FigureImage;
 import helper.*;
 import board.*;
@@ -37,7 +39,7 @@ public class Queen extends Figure
 		return bishop.isReachable( to,game ) || rock.isReachable( to,game );
 	}
 	
-	public void getReachableMoves( BasicChessGameInterface game,BasicMoveIterator result )
+	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
 		bishop.getReachableMoves(game,result);
 		rock.getReachableMoves( game,result );

@@ -1,5 +1,8 @@
 package figures;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import junit.framework.TestCase;
 import image.*;
 import board.*;
@@ -81,9 +84,9 @@ public class KingTest extends TestCase
 		Position from           = Position.get( "e1" );
 		Figure    king = game.getFigure( from );
 		
-		BasicMoveIterator moveIter = new BasicMoveIterator();
+		List<Move> moveIter = new LinkedList<>();
 		king.getReachableMoves( game,moveIter );
-		assertEquals( 0,moveIter.totalNumberOfMoves() );
+		assertEquals( 0,moveIter.size() );
 	}
 	
 	public void testIsPassiveBound()
@@ -130,15 +133,15 @@ public class KingTest extends TestCase
 		SimpleArrayBoard board = new SimpleArrayBoard( des );
     
 		Figure king = board.getFigure( Position.get( "f1" ) );
-		BasicMoveIterator moveIter = new BasicMoveIterator();
+		List<Move> moveIter = new LinkedList<>();
 		king.getPossibleMoves(board,moveIter);
-		assertEquals( 7,moveIter.totalNumberOfMoves() );
+		assertEquals( 7,moveIter.size() );
 		
 		board.init( 621 );
 		king = board.getFigure( board.getKingPosition( true ) );
-		moveIter = new BasicMoveIterator();
+		moveIter = new LinkedList<>();
 		king.getPossibleMoves(board,moveIter);
-		assertEquals( 0,moveIter.totalNumberOfMoves() );
+		assertEquals( 0,moveIter.size() );
 		
 		ChessGame game=new ChessGame( 621 );
 		game.move( Move.get("c2-c3") );
@@ -147,8 +150,8 @@ public class KingTest extends TestCase
 		game.move( Move.get("g8-c4") );
 		game.move( Move.get("c2-h7") );
 		Position pos = Position.get( "e8" );
-		MoveIterator movesFrom = FigureTest.getPossibleMovesFrom( game,pos );
-		assertEquals( 1,movesFrom.totalNumberOfMoves() );
+		List<Move> movesFrom = FigureTest.getPossibleMovesFrom( game,pos );
+		assertEquals( 1,movesFrom.size() );
 	}
 
 	public void testDidRochade()

@@ -1,5 +1,7 @@
 package player.ki;
 
+import java.util.List;
+
 import image.FigureImageFactoryMock;
 import junit.framework.*;
 import board.*;
@@ -108,11 +110,9 @@ public class ComputerPlayerTest extends TestCase
 		final String initDescription = game.toString();
 		DynamicEvaluation dynamicEvaluation  = new DynamicEvaluation( pruner,new StaticEvaluation() );
 		
-		MoveIterator iter = game.getPossibleMoves( );
-		Move move         = null;
+		List<Move> possibleMoves = game.getPossibleMoves( );
 		try {
-			while( iter.hasMoreMoves() ) {
-				move = iter.nextMove();
+			for(Move move: possibleMoves) {
 				dynamicEvaluation.evaluateMove( game,move );
 				//Invariante: evaluateMove darf game nicht ändern
 				String msg = "after Move:"+move.toString()+" History:"+game.getHistory();

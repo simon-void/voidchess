@@ -1,5 +1,7 @@
 package board;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 import image.*;
 import helper.*;
@@ -135,7 +137,7 @@ public class ChessGameTest extends TestCase
 		move = Move.get(pos1,pos2);
 		
 		assertTrue( game.isMoveable(pos1,pos2,false) );
-		assertEquals( 16,game.getPossibleMoves().totalNumberOfMoves() );
+		assertEquals( 16,game.getPossibleMoves().size() );
 		game.move( move );
 		game.move( Move.get("e1-f1") );
 		game.move( Move.get("d8-f8") );
@@ -144,7 +146,7 @@ public class ChessGameTest extends TestCase
 		game.undo();
 		game.undo();
 		game.undo();
-		assertEquals( 16,game.getPossibleMoves().totalNumberOfMoves() );
+		assertEquals( 16,game.getPossibleMoves().size() );
 		assertTrue( game.isMoveable(pos1,pos2,false) );
 		
 		
@@ -511,14 +513,14 @@ public class ChessGameTest extends TestCase
 		game.move(Move.get("c6-b4"));
 		game.move(Move.get("g1-f3"));
 		game.move(Move.get("b4-c2"));
-		MoveIterator iter = game.getPossibleMoves( );
-		assertEquals( 1,iter.totalNumberOfMoves() );
+		List<Move> possibleMoves = game.getPossibleMoves( );
+		assertEquals( 1,possibleMoves.size() );
 		
 		String des     = "black 0 King-white-g1-2 Bishop-black-b6 King-black-e8-0";
 		ChessGame game = new ChessGame( des );
 		game.move( Move.get("b6-c5") );
-		iter = game.getPossibleMoves( );
-		assertEquals( 4,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves( );
+		assertEquals( 4,possibleMoves.size() );
 		
 		des = "black 0 Rock-white-a1-0 Rock-white-f1-1 King-white-g1-1-true "
 		      +"Pawn-white-a2-false Pawn-white-b2-false Bishop-white-d2 Bishop-white-e2 "
@@ -528,23 +530,23 @@ public class ChessGameTest extends TestCase
 		      +"Rock-black-c8-1 Queen-black-d8 Rock-black-f8-1 King-black-g8-1";
 		 game = new ChessGame( des );
 		 game.move( Move.get( "b6-f2" ) );
-		 iter = game.getPossibleMoves( );
-		 assertEquals( 4,iter.totalNumberOfMoves() );
+		 possibleMoves = game.getPossibleMoves( );
+		 assertEquals( 4,possibleMoves.size() );
 		 
 		des  = "black 0 Pawn-white-b2-false King-white-d3-2 Rock-black-h4-1 "+
 					 "Rock-black-a8-0 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get( "a8-a3" ) );
-		iter = game.getPossibleMoves( );
+		possibleMoves = game.getPossibleMoves( );
 		
-		assertEquals( 5,iter.totalNumberOfMoves() );
+		assertEquals( 5,possibleMoves.size() );
 		
 		des  = "black 0 King-white-d3-2 Knight-black-e5 Bishop-black-g8 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get( "g8-h7" ) );
-		iter = game.getPossibleMoves( );
+		possibleMoves = game.getPossibleMoves( );
 		
-		assertEquals( 5,iter.totalNumberOfMoves() );
+		assertEquals( 5,possibleMoves.size() );
 		
 		des  = "white 2 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 King-white-e1-0 "+
 					 "Queen-white-d1 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 Pawn-white-a2-false "+
@@ -557,30 +559,30 @@ public class ChessGameTest extends TestCase
 					 "Rock-black-h8-0";
 		game = new ChessGame( des );
 		game.move( Move.get( "d1-a4" ) );
-		iter = game.getPossibleMoves( );
+		possibleMoves = game.getPossibleMoves( );
 		
-		assertEquals( 6,iter.totalNumberOfMoves() );
+		assertEquals( 6,possibleMoves.size() );
 		
 		des = "black 0 King-white-e1-0 Rock-white-d2-2 Queen-black-e2 "+
 					"Bishop-black-b4 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get( "b4-c3" ) );
-		iter = game.getPossibleMoves( );
+		possibleMoves = game.getPossibleMoves( );
 		
-		assertEquals( 1,iter.totalNumberOfMoves() );
+		assertEquals( 1,possibleMoves.size() );
 		
 		des     = "black 0 King-white-g1-2 Pawn-black-c4-false Pawn-white-d4-true "+
 							"Bishop-black-b6 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get("c4-d3") );
-		iter = game.getPossibleMoves();
-		assertEquals( 4,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves();
+		assertEquals( 4,possibleMoves.size() );
 		
 		des     = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get("e8-a8") );
-		iter = game.getPossibleMoves();
-		assertEquals( 3,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves();
+		assertEquals( 3,possibleMoves.size() );
 		
 		des = "black 0 King-white-h1-3 Pawn-white-c7-false "
 			 +"Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false "
@@ -588,23 +590,23 @@ public class ChessGameTest extends TestCase
 		game = new ChessGame( des );
 		game.move( Move.get("b7-c6") );
 		game.move( Move.get("c7-c8") );
-		iter = game.getPossibleMoves();
-		assertEquals( 1,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves();
+		assertEquals( 1,possibleMoves.size() );
 		
 		des     = "black 0 King-white-g7-6 King-black-e8-0 Rock-black-h8-0";
 		game = new ChessGame( des );
-		iter = game.getPossibleMoves();
-		assertEquals( 12,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves();
+		assertEquals( 12,possibleMoves.size() );
 		
 		des     = "white 0 King-white-g6-6 Pawn-white-g7-false King-black-e8-0 Knight-black-h8";
 		game = new ChessGame( des );
-		iter = game.getPossibleMoves();
-		assertEquals( 7,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves();
+		assertEquals( 7,possibleMoves.size() );
 		
 		des     = "white 0 Rock-white-b1-0 King-white-d1-0 Rock-white-e1-0 Bishop-black-d3 King-black-d8-0";
 		game = new ChessGame( des );
-		iter = game.getPossibleMoves();
-		assertEquals( 22,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves();
+		assertEquals( 22,possibleMoves.size() );
 		
 		game=new ChessGame( 518 );
 		game.move( Move.get("e2-e4") );
@@ -614,8 +616,8 @@ public class ChessGameTest extends TestCase
 		game.move( Move.get("b5-c6") );
 		game.move( Move.get("b8-d7") );
 		game.move( Move.get("c6-b5") );
-		iter = game.getPossibleMoves();
-		assertEquals( 19,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves();
+		assertEquals( 19,possibleMoves.size() );
 		
 		game=new ChessGame( 621 );
 		game.move( Move.get("g2-g3") );
@@ -625,8 +627,8 @@ public class ChessGameTest extends TestCase
 		game.move( Move.get("d1-c2") );
 		game.move( Move.get("e8-f8") );
 		game.move( Move.get("c2-h7") );
-		iter = game.getPossibleMoves();
-		assertEquals( 1,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves();
+		assertEquals( 1,possibleMoves.size() );
 		
 		des = "white 0 Rock-black-e1-8 "
 			 +"Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 "
@@ -634,8 +636,8 @@ public class ChessGameTest extends TestCase
 		game = new ChessGame( des );
 		game.move( Move.get( "f2-e1" ) );
 		game.move( Move.get( "e2-f1" ) );
-		iter = game.getPossibleMoves();
-		assertEquals( 2,iter.totalNumberOfMoves() );
+		possibleMoves = game.getPossibleMoves();
+		assertEquals( 2,possibleMoves.size() );
 	}
 	
 	public void testIsCheck()

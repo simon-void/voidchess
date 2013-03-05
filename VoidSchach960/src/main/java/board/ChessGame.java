@@ -1,6 +1,7 @@
 package board;
 
 import java.util.*;
+
 import image.*;
 import figures.*;
 import helper.*;
@@ -527,22 +528,22 @@ public class ChessGame implements ChessGameInterface
 		return CheckSearch.isCheck( game,game.getKingPosition( isWhiteInCheck ) );
 	}
 	
-	public MoveIterator getPossibleMoves()
+	public List<Move> getPossibleMoves()
 	{
 		final Position kingPos = game.getKingPosition( whiteTurn );
 		
-		BasicMoveIterator iter = new BasicMoveIterator();
+		List<Move> possibleMoves = new ArrayList<>(50);
 		FigureIterator figureIter = game.getFigures();
 
-		getFigure( kingPos ).getPossibleMoves( game,iter );
+		getFigure( kingPos ).getPossibleMoves( game,possibleMoves );
 		while( figureIter.hasNext() ) {
 			Figure figure = figureIter.next();
 			if( figure.isWhite()==whiteTurn && !figure.isKing() ) {
-				figure.getPossibleMoves( game,iter );
+				figure.getPossibleMoves( game,possibleMoves );
 			}
 		}
 			
-		return iter;
+		return possibleMoves;
 	}
 	
 	public int countReachableMoves( boolean forWhite )

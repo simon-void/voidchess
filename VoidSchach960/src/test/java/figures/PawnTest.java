@@ -1,5 +1,8 @@
 package figures;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import junit.framework.TestCase;
 import image.*;
 import board.*;
@@ -73,13 +76,13 @@ public class PawnTest extends TestCase
 		FigureImage figureImage = new FigureImageMock(10,20,30);
     
 		Figure pawn1 = game.getFigure( Position.get( "b4" ) );
-		BasicMoveIterator moveIter1 = new BasicMoveIterator();
+		List<Move> moveIter1 = new LinkedList<>();
 		pawn1.getPossibleMoves(game,moveIter1);
-		assertEquals( moveIter1.totalNumberOfMoves(),2 );
+		assertEquals( moveIter1.size(),2 );
 		
 		Pawn pawn2 = new Pawn(figureImage,false,Position.get( "h7" ) );
-		BasicMoveIterator moveIter2 = new BasicMoveIterator();
+		List<Move> moveIter2 = new LinkedList<>();
 		pawn2.getPossibleMoves(game,moveIter2);
-		assertEquals( moveIter2.totalNumberOfMoves(),2 );
+		assertEquals( moveIter2.size(),2 );
 	}
 }

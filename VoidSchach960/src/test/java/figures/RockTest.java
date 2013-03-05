@@ -1,5 +1,8 @@
 package figures;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import junit.framework.TestCase;
 import image.*;
 import board.*;
@@ -57,9 +60,9 @@ public class RockTest extends TestCase
 		SimpleArrayBoard game = new SimpleArrayBoard( des );
     
 		Figure rock = game.getFigure( Position.get( "e4" ) );
-		BasicMoveIterator moveIter = new BasicMoveIterator();
+		List<Move> moveIter = new LinkedList<>();
 		rock.getPossibleMoves(game,moveIter);
-		assertEquals( moveIter.totalNumberOfMoves(),11 );
+		assertEquals( moveIter.size(),11 );
 	}
 	
 }

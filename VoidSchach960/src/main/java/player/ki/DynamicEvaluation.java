@@ -2,6 +2,8 @@
 
 package player.ki;
 
+import java.util.List;
+
 import board.*;
 import helper.*;
 
@@ -68,10 +70,10 @@ public class DynamicEvaluation
 		}
 
 		float minValue = valuewrapper.INITAL;
-		MoveIterator iter = game.getPossibleMoves();
-		while( iter.hasMoreMoves() ) {
+		
+		final List<Move> possibleMoves = game.getPossibleMoves();
+		for(Move move: possibleMoves) {
 			float tempValue;
-			Move move = iter.nextMove();
 
 			assert (game.isFreeArea( move.to ) || !game.getFigure( move.to ).isKing() )
 				:	"getMin:"+
@@ -126,11 +128,10 @@ public class DynamicEvaluation
 		}
 
 		float maxValue = valuewrapper.INITAL;
-		MoveIterator iter = game.getPossibleMoves();
-
-		while( iter.hasMoreMoves() ){
+		
+		final List<Move> possibleMoves = game.getPossibleMoves();
+    for(Move move: possibleMoves) {
 			float tempValue;
-			Move move = iter.nextMove();
 
 			assert (game.isFreeArea( move.to ) || !game.getFigure( move.to ).isKing() )
 				:	"getMax:"+

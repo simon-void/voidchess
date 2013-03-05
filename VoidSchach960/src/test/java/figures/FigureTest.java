@@ -252,15 +252,13 @@ public class FigureTest extends TestCase
 		);
 	}
 
-	public static MoveIterator getPossibleMovesFrom( ChessGameInterface game,Position from )
+	public static List<Move> getPossibleMovesFrom( ChessGameInterface game,Position from )
 	{
-		BasicMoveIterator moveIter;
-		moveIter = new BasicMoveIterator();
-		MoveIterator allMoves = game.getPossibleMoves();
-		while( allMoves.hasMoreMoves() ) {
-			Move move = allMoves.nextMove();
+	  List<Move> moveIter = new LinkedList<>();
+		List<Move> allMoves = game.getPossibleMoves();
+		for(Move move: allMoves ) {
 			if( move.from.equalsPosition( from ) ) {
-				moveIter.addMove( move );
+				moveIter.add( move );
 			}
 		}
 		return moveIter;

@@ -1,5 +1,8 @@
 package figures;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import junit.framework.TestCase;
 import image.*;
 import board.*;
@@ -38,9 +41,9 @@ public class QueenTest extends TestCase
 		SimpleArrayBoard game = new SimpleArrayBoard( des );
     
 		Figure queen = game.getFigure( Position.get( "d1" ) );
-		BasicMoveIterator moveIter = new BasicMoveIterator();
+		List<Move> moveIter = new LinkedList<>();
 		queen.getPossibleMoves(game,moveIter);
-		assertEquals( moveIter.totalNumberOfMoves(),17 );
+		assertEquals( moveIter.size(),17 );
 	}
 
 }

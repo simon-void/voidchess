@@ -1,5 +1,8 @@
 package figures;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import junit.framework.TestCase;
 import image.*;
 import board.*;
@@ -51,12 +54,12 @@ public class KnightTest extends TestCase
 		SimpleArrayBoard game = new SimpleArrayBoard( des );
     
 		Figure knight1 = game.getFigure( Position.get( "a1" ) );
-		BasicMoveIterator moveIter1 = new BasicMoveIterator();
+		List<Move> moveIter1 = new LinkedList<>();
 		knight1.getPossibleMoves(game,moveIter1);
-		assertEquals( moveIter1.totalNumberOfMoves(),2 );
+		assertEquals( moveIter1.size(),2 );
 		Figure knight2 = game.getFigure( Position.get( "g6" ) );
-		BasicMoveIterator moveIter2 = new BasicMoveIterator();
+		List<Move> moveIter2 = new LinkedList<>();
 		knight2.getPossibleMoves(game,moveIter2);
-		assertEquals( moveIter2.totalNumberOfMoves(),6 );
+		assertEquals( moveIter2.size(),6 );
 	}
 }

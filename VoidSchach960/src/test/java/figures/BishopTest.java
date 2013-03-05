@@ -1,5 +1,8 @@
 package figures;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import junit.framework.TestCase;
 import image.*;
 import board.*;
@@ -48,8 +51,8 @@ public class BishopTest extends TestCase
 		SimpleArrayBoard game = new SimpleArrayBoard( des );
     
 		Figure bishop = game.getFigure( Position.get( "b1" ) );
-		BasicMoveIterator moveIter = new BasicMoveIterator();
+		List<Move> moveIter = new LinkedList<>();
 		bishop.getPossibleMoves(game,moveIter);
-		assertEquals( moveIter.totalNumberOfMoves(),7 );
+		assertEquals( moveIter.size(),7 );
 	}
 }

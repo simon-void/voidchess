@@ -1,6 +1,9 @@
 package figures;
 
 import java.awt.Graphics;
+import java.util.LinkedList;
+import java.util.List;
+
 import image.FigureImage;
 import helper.*;
 import board.*;
@@ -19,7 +22,7 @@ public abstract class Figure
 	//Position der Figur
 	protected Position position;
 	
-	private BasicMoveIterator reachableMoves = new BasicMoveIterator();
+	private List<Move> reachableMoves = new LinkedList<>();
 	
 	Figure( FigureImage figureImage,boolean isWhite,Position startPosition,byte typeIndex )
 	{
@@ -183,44 +186,30 @@ public abstract class Figure
 	
 	abstract public int countReachableMoves( BasicChessGameInterface game );
 	
-	abstract public void getReachableMoves( BasicChessGameInterface game,BasicMoveIterator result );
+	abstract public void getReachableMoves( BasicChessGameInterface game,List<Move> result );
 	
 	final public void getReachableMoves( 
 	                                                  BasicChessGameInterface game,
 	                                                  PositionIterator restrictedPositions,
-	                                                  BasicMoveIterator result )
+	                                                  List<Move> result )
 	{
 		while( restrictedPositions.hasNext() ) {
 			Position to = restrictedPositions.next();
 			if( isReachable( to,game ) ) {
-				result.addMove( Move.get( position,to ) );
+				result.add( Move.get( position,to ) );
 			}
 		}
 	}
 	
-//	final public void getPossibleMoves( 
-//	                                    SimpleChessBoardInterface game,
-//	                                    PositionIterator restrictedPositions
-//	                                    ,BasicMoveIterator result)
-//	{
-//		while( restrictedPositions.hasNext() ) {
-//			Position to = restrictedPositions.next();
-//			if( !isBound( to,game ) ) { 
-//				result.addMove( Move.get( position,to ) );
-//			}
-//		}
-//	}
-	
-	final public void getPossibleMoves( SimpleChessBoardInterface game,BasicMoveIterator result )
+	final public void getPossibleMoves( SimpleChessBoardInterface game,List<Move> result )
 	{
 		reachableMoves.clear();
 		getReachableMoves( game,reachableMoves );
 		
-		while( reachableMoves.hasMoreMoves() ) {
-			Move move = reachableMoves.nextMove();
+		for( Move move: reachableMoves ) {
 			Position checkPosition = move.to;
 			if( !isBound( checkPosition,game ) ) { 
-				result.addMove( move );
+				result.add( move );
 			}
 		}
 	}
