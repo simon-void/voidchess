@@ -40,8 +40,8 @@ public class RuntimeFacade
 
 	static void assertJavaVersion( String javaVersion )
 	{
-		if( javaVersion.compareTo( "1.4" )<0 ) {
-			throw new RuntimeException( "Dieses Spiel verlangt mindestens eine Javaversion von 1.4. Sie verwenden Version:"+javaVersion+". Um eine aktuelle Javaversion downzuloaden wenden Sie sich an www.sun.com .");
+		if( javaVersion.compareTo( "1.7" )<0 ) {
+			throw new RuntimeException( "Dieses Spiel verlangt mindestens eine Javaversion von 1.7. Sie verwenden Version:"+javaVersion+". Um eine aktuelle Javaversion downzuloaden wenden Sie sich an www.sun.com .");
 		}
 	}
 
