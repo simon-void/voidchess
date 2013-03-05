@@ -13,7 +13,6 @@ public enum ImageType {
   W_ROCK,
   W_QUEEN,
   W_KING,
-  B_W_KING,
   ICON;
   
   public String getFileName()
