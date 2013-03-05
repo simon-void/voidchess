@@ -32,7 +32,7 @@ public class ChessGame implements ChessGameInterface
 	{
 		hasHitFigure     = false; 
 		normalSupervisor = supervisor;
-		dummySupervisor  = new DummyChessGameSupervisor();
+		dummySupervisor  = new ChessGameSupervisorDummy();
 		this.supervisor  = normalSupervisor;
 		figureFactory    = new FigureFactory( figureImageFactory );
 		mementoStack     = new MementoStack();
@@ -48,7 +48,7 @@ public class ChessGame implements ChessGameInterface
 	 */
 	public ChessGame( String game_description )
 	{
-		this( new DummyChessGameSupervisor(),game_description,new FigureImageFactoryMock("",true) );
+		this( new ChessGameSupervisorDummy(),game_description,new FigureImageFactoryMock("",true) );
 	}
 	
 	/**für JUnit-TestKlassen
@@ -56,7 +56,7 @@ public class ChessGame implements ChessGameInterface
 	 */
 	public ChessGame( int initialPosition )
 	{
-		this( new DummyChessGameSupervisor(),initialPosition,new FigureImageFactoryMock("",true) );
+		this( new ChessGameSupervisorDummy(),initialPosition,new FigureImageFactoryMock("",true) );
 	}
 	
 	/**wird nur implizit für JUnit-tests verwendet
@@ -69,7 +69,7 @@ public class ChessGame implements ChessGameInterface
 	           FigureImageFactory figureImageFactory )
 	{
 		normalSupervisor = supervisor;
-		dummySupervisor  = new DummyChessGameSupervisor();
+		dummySupervisor  = new ChessGameSupervisorDummy();
 		this.supervisor  = normalSupervisor;
 		figureFactory    = new FigureFactory( figureImageFactory );
 		mementoStack     = new MementoStack();
@@ -104,7 +104,7 @@ public class ChessGame implements ChessGameInterface
 	                   	FigureImageFactory figureImageFactory )
 	{
 		normalSupervisor = supervisor;
-		dummySupervisor  = new DummyChessGameSupervisor();
+		dummySupervisor  = new ChessGameSupervisorDummy();
 		this.supervisor  = normalSupervisor;
 		figureFactory    = new FigureFactory( figureImageFactory );
 		mementoStack     = new MementoStack();

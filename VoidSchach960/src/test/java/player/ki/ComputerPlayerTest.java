@@ -32,7 +32,7 @@ public class ComputerPlayerTest extends TestCase
 		testTermination( game );
 		
 		
-		game = new ChessGame( new DummyChessGameSupervisor(),new FigureImageFactoryMock("",true ) );
+		game = new ChessGame( new ChessGameSupervisorDummy(),new FigureImageFactoryMock("",true ) );
 		game.move( Move.get("c2-c3") );
 		testTermination( game );
 		

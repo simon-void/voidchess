@@ -3,7 +3,7 @@ package helper;
 /**
  * @author stephan
  */
-public class DummyChessGameSupervisor 
+public class ChessGameSupervisorDummy 
 implements ChessGameSupervisor
 {
 

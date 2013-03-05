@@ -21,7 +21,7 @@ public class ChessGameTest extends TestCase
 
 	protected void setUp() throws Exception
 	{
-		game=new ChessGame( new DummyChessGameSupervisor(),new FigureImageFactoryMock("",true) );
+		game=new ChessGame( new ChessGameSupervisorDummy(),new FigureImageFactoryMock("",true) );
 	}
 	
 	public void testIsFreeArea()
