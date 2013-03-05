@@ -3,12 +3,12 @@ package helper;
 /**
  * @author stephan
  */
-public class MockChessGameSupervisor implements ChessGameSupervisor
+public class ChessGameSupervisorMock implements ChessGameSupervisor
 {
 	private boolean allOK  = false;
 	private String  defaultPawnTransform = "nofigure";
 	
-	public MockChessGameSupervisor( String defaultPawnTransform )
+	public ChessGameSupervisorMock( String defaultPawnTransform )
 	{
 		this.defaultPawnTransform = defaultPawnTransform;
 	}

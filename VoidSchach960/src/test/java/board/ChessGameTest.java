@@ -391,7 +391,7 @@ public class ChessGameTest extends TestCase
 	
 	public void testHandleTrasformPawn()
 	{
-		MockChessGameSupervisor mock = new MockChessGameSupervisor( "Knight" );
+		ChessGameSupervisorMock mock = new ChessGameSupervisorMock( "Knight" );
 		String des     = "black 0 King-white-e1-0 Pawn-black-g2-false "
 										+"King-black-e8-0";
 		ChessGame game = new ChessGame( des );
