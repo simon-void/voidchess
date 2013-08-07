@@ -20,7 +20,7 @@ abstract class AbstractConcurrencyStrategy implements ConcurrencyStrategy
 	 */
 	public abstract SortedSet<EvaluatedMove> evaluatePossibleMoves(final ChessGameInterface game, final DynamicEvaluation  dynamicEvaluation);
 	
-	protected void showProgress(int movesDone, final int totalNumberOfMoves)
+	final protected void showProgress(int movesDone, final int totalNumberOfMoves)
 	{
 		ui.setProgress(movesDone,totalNumberOfMoves );
 	}

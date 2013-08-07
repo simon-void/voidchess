@@ -7,9 +7,7 @@ import figures.*;
  * @author stephan
  */
 public class CheckSearch
-{	
-	private static Position lastCheckPosition = Position.get("a4");
-
+{
 	public static CheckStatus analyseCheck( SimpleChessBoardInterface game,boolean whiteInCheck )
 	{
 		Position kingPos = game.getKingPosition( whiteInCheck );
@@ -24,7 +22,8 @@ public class CheckSearch
 		switch( attackPositions.countPositions() ) {
 			case 0:  return CheckStatus.NO_CHECK;
 			case 1:  return getPossiblePositions( kingPos,attackPositions.next() );
-			default: return CheckStatus.DOUBLE_CHECK;
+			case 2:  return CheckStatus.DOUBLE_CHECK;
+			default: throw new IllegalStateException("more than 2 attackers are impossible "+attackPositions.countPositions());
 		}
 	}
 	
@@ -124,32 +123,18 @@ public class CheckSearch
 		return new CheckStatus( result );
 	}
 	
-	
-	
-	
 	public static boolean isCheck( BasicChessGameInterface game,Position kingPos )
-	{
-		if( !game.isFreeArea( lastCheckPosition ) ) {
-			Figure lastAttacker = game.getFigure( lastCheckPosition );
-			if( lastAttacker.hasDifferentColor( game.getFigure( kingPos ) ) ) {
-				if( lastAttacker.isReachable( kingPos,game ) ) return true;
-			}
-		}
-		
-		BasicPositionIterator attackPositions = new BasicPositionIterator(2);
-		isCheckByBishopOrQueen( game,kingPos,attackPositions );
-		isCheckByKing( 			game,kingPos,attackPositions );
-		isCheckByKnight( 		game,kingPos,attackPositions );
-		isCheckByPawn( 			game,kingPos,attackPositions );
-		isCheckByRockOrQueen( 	game,kingPos,attackPositions );
-		if( !attackPositions.isEmpty() ) {
-			lastCheckPosition = attackPositions.next();
-			return true;
-		}
+	{		
+		final BasicPositionIterator attackPositions = new BasicPositionIterator(2);
+		if(isCheckByBishopOrQueen( game,kingPos,attackPositions )) return true;
+		if(isCheckByRockOrQueen(   game,kingPos,attackPositions )) return true;
+		if(isCheckByKnight( 		   game,kingPos,attackPositions )) return true;
+		if(isCheckByKing(          game,kingPos,attackPositions )) return true;
+		if(isCheckByPawn( 			   game,kingPos,attackPositions )) return true;
 		return false;
 	}
 	
-	private static void isCheckByKing(BasicChessGameInterface game,Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByKing(BasicChessGameInterface game,Position kingPos,BasicPositionIterator attackerPos )
 	{
 		int minRow    = Math.max( 0,kingPos.row-1 );
 		int maxRow    = Math.min( 7,kingPos.row+1 );
@@ -162,26 +147,27 @@ public class CheckSearch
 					Position pos = Position.get( row,column );
 					if( !game.isFreeArea( pos ) && game.getFigure( pos ).isKing() ) {
 						attackerPos.addPosition( pos );
-						return;
+						return true;
 					}
 				}
 			}
 		}
+		return false;
 	}
 	
-	private static void isCheckByPawn(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByPawn(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
 	{
 		boolean isWhite     = game.getFigure( kingPos ).isWhite();
 		int possiblePawnRow = isWhite?kingPos.row+1:kingPos.row-1;
 		
-		if( possiblePawnRow<0 || possiblePawnRow>7 ) return;
+		if( possiblePawnRow<0 || possiblePawnRow>7 ) return false;
 		if( kingPos.column!=0 ) {
 			Position pos = Position.get( possiblePawnRow,kingPos.column-1 );
 			if( !game.isFreeArea( pos ) ) {
 				Figure figure = game.getFigure( pos );
 				if( figure.isWhite()!=isWhite && figure.isPawn() ) {
 					attackerPos.addPosition( pos );
-					return;
+					return true;
 				}
 			}
 		}
@@ -192,13 +178,15 @@ public class CheckSearch
 				Figure figure = game.getFigure( pos );
 				if( figure.isWhite()!=isWhite && figure.isPawn() ) {
 					attackerPos.addPosition( pos );
-					return;
+					return true;
 				}
 			}
 		}
+		
+		return false;
 	}
 	
-	private static void isCheckByKnight(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByKnight(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
 	{
 		boolean isWhite = game.getFigure( kingPos ).isWhite();
 		
@@ -217,15 +205,16 @@ public class CheckSearch
 						Figure figure = game.getFigure( pos );
 						if( figure.isWhite()!=isWhite && figure.isKnight() ) {
 							attackerPos.addPosition( pos );
-							return;
+							return true;
 						}
 					}
 				}
 			}
 		}
+		return false;
 	}
 	
-	private static void isCheckByBishopOrQueen(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByBishopOrQueen(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
 	{
 		boolean isWhite = game.getFigure( kingPos ).isWhite();
 		int column,row;
@@ -241,7 +230,7 @@ public class CheckSearch
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isBishop() || figure.isQueen() ) {
 				attackerPos.addPosition( pos );
-				return;
+				return true;
 			}
 			break;
 		}
@@ -256,7 +245,7 @@ public class CheckSearch
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isBishop() || figure.isQueen() ) {
 				attackerPos.addPosition( pos );
-				return;
+				return true;
 			}
 			break;
 		}
@@ -271,7 +260,7 @@ public class CheckSearch
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isBishop() || figure.isQueen() ) {
 				attackerPos.addPosition( pos );
-				return;
+				return true;
 			}
 			break;
 		}
@@ -286,13 +275,14 @@ public class CheckSearch
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isBishop() || figure.isQueen() ) {
 				attackerPos.addPosition( pos );
-				return;
+				return true;
 			}
 			break;
 		}
+		return false;
 	}
 
-	private static void isCheckByRockOrQueen(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByRockOrQueen(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
 	{
 		
 		boolean isWhite = game.getFigure( kingPos ).isWhite();
@@ -304,7 +294,10 @@ public class CheckSearch
 			if( game.isFreeArea( pos ) ) continue;
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
-			if( figure.isRock() || figure.isQueen() ) attackerPos.addPosition( pos );
+			if( figure.isRock() || figure.isQueen() ) {
+			  attackerPos.addPosition( pos );
+			  return true;
+			}
 			break;
 		}
 		for( int row=kingPos.row-1;row>=0;row-- ) {						//vertikale Reihe
@@ -312,7 +305,10 @@ public class CheckSearch
 			if( game.isFreeArea( pos ) ) continue;
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
-			if( figure.isRock() || figure.isQueen() ) attackerPos.addPosition( pos );
+			if( figure.isRock() || figure.isQueen() ) {
+        attackerPos.addPosition( pos );
+        return true;
+      }
 			break;
 		}
 		for( int column=kingPos.column+1;column<8;column++ ) {//horizontale Reihe
@@ -320,7 +316,10 @@ public class CheckSearch
 			if( game.isFreeArea( pos ) ) continue;
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
-			if( figure.isRock() || figure.isQueen() ) attackerPos.addPosition( pos );
+			if( figure.isRock() || figure.isQueen() ) {
+        attackerPos.addPosition( pos );
+        return true;
+      }
 			break;
 		}
 		for( int column=kingPos.column-1;column>=0;column-- ) {//horizontale Reihe
@@ -328,9 +327,13 @@ public class CheckSearch
 			if( game.isFreeArea( pos ) ) continue;
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
-			if( figure.isRock() || figure.isQueen() ) attackerPos.addPosition( pos );
+			if( figure.isRock() || figure.isQueen() ) {
+        attackerPos.addPosition( pos );
+        return true;
+      }
 			break;
 		}
+		return false;
 	}
 
 	final public static int signum( int number )
