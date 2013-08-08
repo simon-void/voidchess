@@ -1,5 +1,7 @@
 package player.ki;
 
+import java.util.List;
+
 import board.*;
 import helper.*;
 import figures.*;
@@ -40,9 +42,8 @@ class StaticEvaluation implements StaticEvaluationInterface
 		float whiteFigures = 0;
 		float blackFigures = 0;
 		
-		FigureIterator figures = game.getFigures();
-		while( figures.hasNext() ) {
-			Figure figure = figures.next();
+		final List<Figure> figures = game.getFigures();
+    for(Figure figure: figures) {
 			if( figure.isWhite() ) {
 				if( figure.isPawn() ) {
 					whiteFigures += PAWN_VALUE;
@@ -91,9 +92,9 @@ class StaticEvaluation implements StaticEvaluationInterface
 	{
 		float whiteEvaluation = 0;
 		float blackEvaluation = 0;
-		FigureIterator figures = game.getFigures();
-		while( figures.hasNext() ) {
-			Figure figure = figures.next();
+		
+		final List<Figure> figures = game.getFigures();
+    for(Figure figure: figures) {
 			Position pos  = figure.getPosition();
 			if( figure.isPawn() ) {
 				if( figure.isWhite() ) whiteEvaluation += evaluatePawn( game,pos );
@@ -296,9 +297,8 @@ class StaticEvaluation implements StaticEvaluationInterface
 	
 	private boolean gameStillContainsQueenOfColor( ChessGameInterface game,final boolean white )
 	{
-		FigureIterator figures = game.getFigures();
-		while( figures.hasNext() ) {
-			Figure figure = figures.next();
+	  final List<Figure> figures = game.getFigures();
+    for(Figure figure: figures) {
 			if( figure.isWhite()==white && figure.isQueen() ) {
 				return true;
 			}

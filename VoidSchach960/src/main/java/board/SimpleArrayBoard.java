@@ -4,6 +4,8 @@
 
 package board;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import image.*;
@@ -291,14 +293,14 @@ implements SimpleChessBoardInterface
 		return game[pos.row][pos.column]==null;
 	}
 	
-	public FigureIterator getFigures()
+	public List<Figure> getFigures()
 	{
-		FigureIterator figureIter = new FigureIterator();
+	  List<Figure> figureIter = new ArrayList<Figure>(16);
 		
 		for( int row=0;row<8;row++ ) {
 			for( int column=0;column<8;column++ ) {
 				if( game[row][column] != null ) {
-					figureIter.addFigure( game[row][column] );
+					figureIter.add( game[row][column] );
 				}
 			}
 		}

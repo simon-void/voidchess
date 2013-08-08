@@ -1,9 +1,10 @@
 package board;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 import figures.*;
 import helper.CheckStatus;
-import helper.FigureIterator;
 import helper.Position;
 import image.*;
 
@@ -81,8 +82,8 @@ public class SimpleBoardTest extends TestCase
 	public void testGetFigures()
 	{
 		board.setFigure( Position.get("c2"),null );
-		FigureIterator iter = board.getFigures();
-		assertEquals( 31,iter.countFigures() );
+	  List<Figure> figures = board.getFigures();
+		assertEquals( 31,figures.size() );
 	}
 	
 	public void testGetCheckStatus()

@@ -77,7 +77,7 @@ public class ChessGameTest extends TestCase
 		String des      = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 "
 										 +"Knight-white-c2 Knight-white-e7 King-black-e8-0";
 		ChessGame game = new ChessGame( des );
-		assertEquals( 6,game.getFigures().countFigures() );
+		assertEquals( 6,game.getFigures().size() );
 	}
 	
 	public void testMove()

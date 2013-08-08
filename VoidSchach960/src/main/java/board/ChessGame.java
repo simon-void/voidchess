@@ -158,7 +158,7 @@ public class ChessGame implements ChessGameInterface
 		game.setFigure(pos,figure);
 	}
 	
-	public FigureIterator getFigures()
+	public List<Figure> getFigures()
 	{
 		return game.getFigures();
 	}
@@ -335,9 +335,8 @@ public class ChessGame implements ChessGameInterface
 
 	private void informFiguresOfMove(Move move)
 	{
-		FigureIterator figureIter = game.getFigures();
-		while( figureIter.hasNext() ) {
-			Figure figure = figureIter.next();
+		final List<Figure> figures = game.getFigures();
+		for(Figure figure: figures) {
 			figure.figureMoved( move );
 		}
 	}
@@ -463,9 +462,8 @@ public class ChessGame implements ChessGameInterface
 	
 	private boolean noMovesLeft( boolean caseWhite )
 	{
-		FigureIterator figureIter = game.getFigures();
-		while( figureIter.hasNext() ) {
-			Figure figure = figureIter.next();
+	  final List<Figure> figures = game.getFigures();
+    for(Figure figure: figures) {
 			if( figure.isWhite()==caseWhite && 
 				 figure.isSelectable( game ) ) {
 				return false;
@@ -481,9 +479,8 @@ public class ChessGame implements ChessGameInterface
 		int numberOfWhiteKnights = 0;
 		int numberOfBlackKnights = 0;
 		
-		FigureIterator figureIter = game.getFigures();
-		while( figureIter.hasNext() ) {
-			Figure figure = figureIter.next();
+		final List<Figure> figures = game.getFigures();
+    for(Figure figure: figures) {
 			if(  figure.isPawn()
 				|| figure.isRock()
 				|| figure.isQueen() ) {
@@ -531,13 +528,12 @@ public class ChessGame implements ChessGameInterface
 	public List<Move> getPossibleMoves()
 	{
 		final Position kingPos = game.getKingPosition( whiteTurn );
-		
-		List<Move> possibleMoves = new ArrayList<>(50);
-		FigureIterator figureIter = game.getFigures();
+		final List<Move> possibleMoves = new ArrayList<>(50);
 
 		getFigure( kingPos ).getPossibleMoves( game,possibleMoves );
-		while( figureIter.hasNext() ) {
-			Figure figure = figureIter.next();
+		
+		final List<Figure> figures = game.getFigures();
+    for(Figure figure: figures) {
 			if( figure.isWhite()==whiteTurn && !figure.isKing() ) {
 				figure.getPossibleMoves( game,possibleMoves );
 			}
@@ -550,9 +546,8 @@ public class ChessGame implements ChessGameInterface
 	{
 		int count = 0;
 		
-		FigureIterator figureIter = game.getFigures();
-		while( figureIter.hasNext() ) {
-			Figure figure = figureIter.next();
+		final List<Figure> figures = game.getFigures();
+    for(Figure figure: figures) {
 			if( figure.isWhite()==forWhite ) {
 				count += figure.countReachableMoves( game );
 			}
