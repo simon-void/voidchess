@@ -95,7 +95,7 @@ public class SimpleBoardTest extends TestCase
 		status = board.getCheckStatus( true );
 		assertTrue( status.isCheck() );
 		assertFalse( status.onlyKingCanMove() );
-		assertEquals( 3,status.getPossiblePositions().countPositions() );
+		assertEquals( 3,status.getPossiblePositions().size() );
 		
 		des = "white 0 King-white-e1-3 Queen-black-f1 "
 			 +"Knight-white-g4 Queen-black-e5 King-black-g7-3";

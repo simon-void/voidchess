@@ -1,5 +1,6 @@
 package figures;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import image.FigureImage;
@@ -10,7 +11,7 @@ import board.*;
  */
 public class Knight extends Figure
 {
-	private BasicPositionIterator posIter = new BasicPositionIterator(); 
+  private List<Position> posIter = new ArrayList<Position>(8); 
 	
 	public Knight(FigureImage figureImage, boolean isWhite, Position startPosition)
 	{
@@ -30,7 +31,7 @@ public class Knight extends Figure
 		return game.isFreeArea(to) || hasDifferentColor( game.getFigure(to) );
 	}
 	
-	private PositionIterator getIterator( BasicChessGameInterface game )
+	private List<Position> getIterator( BasicChessGameInterface game )
 	{
 		posIter.clear();
 		
@@ -42,7 +43,7 @@ public class Knight extends Figure
 		for( int row=minRow;row<=maxRow;row++ ) {
 			for( int column=minColumn;column<=maxColumn;column++ ) {
 				if( Math.abs(row-position.row)+Math.abs(column-position.column) == 3 ) {
-					posIter.addPosition( Position.get( row,column ) );
+					posIter.add( Position.get( row,column ) );
 				}
 			}
 		}
@@ -52,9 +53,8 @@ public class Knight extends Figure
 	
 	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
-		PositionIterator posIter = getIterator( game );
-		while( posIter.hasNext() ) {
-			Position checkPosition = posIter.next();
+	  List<Position> posIter = getIterator( game );
+		for(Position checkPosition: posIter) {
 			if( isReachable( checkPosition,game ) ) {
 				result.add( Move.get( position,checkPosition ) );
 			}
@@ -63,9 +63,8 @@ public class Knight extends Figure
 	
 	public boolean isSelectable( SimpleChessBoardInterface game )
 	{
-		PositionIterator posIter = getIterator( game );
-		while( posIter.hasNext() ) {
-			Position checkPosition = posIter.next();
+	  List<Position> positions = getIterator( game );
+    for(Position checkPosition: positions) {
 			if( isMoveable( checkPosition,game ) ) {
 				return true;
 			}
@@ -76,7 +75,7 @@ public class Knight extends Figure
 	
 	public int countReachableMoves( BasicChessGameInterface game )
 	{
-		return getIterator( game ).countPositions();
+		return getIterator( game ).size();
 	}
 	
 	public boolean isKnight()

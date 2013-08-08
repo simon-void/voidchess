@@ -1,6 +1,7 @@
 package figures;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import image.FigureImage;
@@ -11,7 +12,7 @@ import board.*;
  */
 public class Bishop extends Figure
 {
-	private BasicPositionIterator posIter = new BasicPositionIterator(); 
+	private List<Position> positions = new ArrayList<Position>(8); 
 	
 	public Bishop(FigureImage figureImage, boolean isWhite, Position startPosition)
 	{
@@ -85,7 +86,7 @@ public class Bishop extends Figure
 		return game.isFreeArea(to) || hasDifferentColor( game.getFigure(to) );
 	}
 	
-	private void getNorthEastIterator( BasicChessGameInterface game,BasicPositionIterator result )
+	private void getNorthEastIterator( BasicChessGameInterface game,List<Position> result )
 	{
 		int row,column;
 		
@@ -98,17 +99,17 @@ public class Bishop extends Figure
 			Position checkPosition = Position.get( row,column );
 			Figure figure = game.getFigure( checkPosition );
 			if( figure==null ) {
-				result.addPosition( checkPosition );
+				result.add( checkPosition );
 			}else{
 				if( isWhite!=figure.isWhite ) {
-					result.addPosition( checkPosition );
+					result.add( checkPosition );
 				}
 				break;
 			}
 		}
 	}
 	
-	private void getSouthEastIterator( BasicChessGameInterface game,BasicPositionIterator result )
+	private void getSouthEastIterator( BasicChessGameInterface game,List<Position> result )
 	{
 		int row,column;
 		
@@ -121,17 +122,17 @@ public class Bishop extends Figure
 			Position checkPosition = Position.get( row,column );
 			Figure figure = game.getFigure( checkPosition );
 			if( figure==null ) {
-				result.addPosition( checkPosition );
+				result.add( checkPosition );
 			}else{
 				if( isWhite!=figure.isWhite ) {
-					result.addPosition( checkPosition );
+					result.add( checkPosition );
 				}
 				break;
 			}
 		}
 	}
 	
-	private void getNorthWestIterator( BasicChessGameInterface game,BasicPositionIterator result )
+	private void getNorthWestIterator( BasicChessGameInterface game,List<Position> result )
 	{
 		int row,column;
 		
@@ -144,17 +145,17 @@ public class Bishop extends Figure
 			Position checkPosition = Position.get( row,column );
 			Figure figure = game.getFigure( checkPosition );
 			if( figure==null ) {
-				result.addPosition( checkPosition );
+				result.add( checkPosition );
 			}else{
 				if( isWhite!=figure.isWhite ) {
-					result.addPosition( checkPosition );
+					result.add( checkPosition );
 				}
 				break;
 			}
 		}
 	}
 	
-	private void getSouthWestIterator( BasicChessGameInterface game,BasicPositionIterator result )
+	private void getSouthWestIterator( BasicChessGameInterface game,List<Position> result )
 	{
 		int row,column;
 		
@@ -167,10 +168,10 @@ public class Bishop extends Figure
 			Position checkPosition = Position.get( row,column );
 			Figure figure = game.getFigure( checkPosition );
 			if( figure==null ) {
-				result.addPosition( checkPosition );
+				result.add( checkPosition );
 			}else{
 				if( isWhite!=figure.isWhite ) {
-					result.addPosition( checkPosition );
+					result.add( checkPosition );
 				}
 				break;
 			}
@@ -179,64 +180,64 @@ public class Bishop extends Figure
 	
 	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
-		posIter.clear(); 
-		getNorthEastIterator( game,posIter );
-		getSouthEastIterator( game,posIter );
-		getNorthWestIterator( game,posIter );
-		getSouthWestIterator( game,posIter );
+		positions.clear(); 
+		getNorthEastIterator( game,positions );
+		getSouthEastIterator( game,positions );
+		getNorthWestIterator( game,positions );
+		getSouthWestIterator( game,positions );
 		
-		while( posIter.hasNext() ) {
-			result.add( Move.get( position,posIter.next() ) );
+		for(Position pos: positions) {
+			result.add( Move.get( position,pos ) );
 		}
 	}
 	
 	public boolean isSelectable( SimpleChessBoardInterface game )
 	{	
-		posIter.clear();
-		getNorthEastIterator( game,posIter );
-		while( posIter.hasNext() ) {
-			if( !isBound( posIter.next(),game ) ) { 
+		positions.clear();
+		getNorthEastIterator( game,positions );
+		for(Position pos: positions) {
+			if( !isBound( pos,game ) ) { 
 				return true;
 			}
 		}
-		posIter.clear();
+		positions.clear();
 
-		getSouthEastIterator( game,posIter );
-		while( posIter.hasNext() ) {
-			if( !isBound( posIter.next(),game ) ) { 
+		getSouthEastIterator( game,positions );
+		for(Position pos: positions) {
+			if( !isBound( pos,game ) ) { 
 				return true;
 			}
 		}
-		posIter.clear();
+		positions.clear();
 		
-		getNorthWestIterator( game,posIter );
-		while( posIter.hasNext() ) {
-			if( !isBound( posIter.next(),game ) ) { 
+		getNorthWestIterator( game,positions );
+		for(Position pos: positions) {
+			if( !isBound( pos,game ) ) { 
 				return true;
 			}
 		}
-		posIter.clear();
+		positions.clear();
 		
-		getSouthWestIterator( game,posIter );
-		while( posIter.hasNext() ) {
-			if( !isBound( posIter.next(),game ) ) { 
+		getSouthWestIterator( game,positions );
+		for(Position pos: positions) {
+			if( !isBound( pos,game ) ) { 
 				return true;
 			}
 		}
-		posIter.clear();
+		positions.clear();
 		
 		return false;
 	}
 	
 	public int countReachableMoves( BasicChessGameInterface game )
 	{
-		posIter.clear(); 
-		getNorthEastIterator( game,posIter );
-		getSouthEastIterator( game,posIter );
-		getNorthWestIterator( game,posIter );
-		getSouthWestIterator( game,posIter );
+		positions.clear(); 
+		getNorthEastIterator( game,positions );
+		getSouthEastIterator( game,positions );
+		getNorthWestIterator( game,positions );
+		getSouthWestIterator( game,positions );
 
-		return posIter.countPositions();
+		return positions.size();
 	}
 	
 	public boolean isBishop()

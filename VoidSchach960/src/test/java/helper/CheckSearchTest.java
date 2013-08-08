@@ -1,5 +1,7 @@
 package helper;
 
+import java.util.List;
+
 import board.SimpleArrayBoard;
 import junit.framework.TestCase;
 
@@ -52,10 +54,9 @@ public class CheckSearchTest extends TestCase
 		
 		assertTrue( status.isCheck() );
 		assertFalse( status.onlyKingCanMove() );
-		PositionIterator iter = status.getPossiblePositions();
-		assertTrue( iter.hasNext() );
-		assertTrue( iter.next().equalsPosition( Position.get( "e5" ) ) );
-		assertFalse( iter.hasNext() );
+		List<Position> possiblePositions = status.getPossiblePositions();
+		assertEquals(1, possiblePositions.size() );
+		assertTrue( possiblePositions.get(0).equalsPosition( Position.get( "e5" ) ) );
 		
 		des = "white 0 King-white-e4-4 King-black-e6-4";
 		game.init( des );
@@ -77,10 +78,10 @@ public class CheckSearchTest extends TestCase
 		
 		assertTrue( status.isCheck() );
 		assertFalse( status.onlyKingCanMove() );
-		iter = status.getPossiblePositions();
-		assertEquals( iter.countPositions(),2 );
-		assertTrue( iter.contains( Position.get("e6") ) );
-		assertTrue( iter.contains( Position.get("e7") ) );
+		possiblePositions = status.getPossiblePositions();
+		assertEquals( 2, possiblePositions.size() );
+		assertTrue( possiblePositions.contains( Position.get("e6") ) );
+		assertTrue( possiblePositions.contains( Position.get("e7") ) );
 		
 		des = "white 0 King-white-e1-0 Rock-white-h2-1 Queen-black-h4";
 		game.init( des );
@@ -88,10 +89,10 @@ public class CheckSearchTest extends TestCase
 		
 		assertTrue( status.isCheck() );
 		assertFalse( status.onlyKingCanMove() );
-		iter = status.getPossiblePositions();
-		assertEquals( iter.countPositions(),3 );
-		assertTrue( iter.contains( Position.get("h4") ) );
-		assertTrue( iter.contains( Position.get("g3") ) );
-		assertTrue( iter.contains( Position.get("f2") ) );
+		possiblePositions = status.getPossiblePositions();
+		assertEquals( 3, possiblePositions.size() );
+		assertTrue( possiblePositions.contains( Position.get("h4") ) );
+		assertTrue( possiblePositions.contains( Position.get("g3") ) );
+		assertTrue( possiblePositions.contains( Position.get("f2") ) );
 	}
 }

@@ -190,11 +190,10 @@ public abstract class Figure
 	
 	final public void getReachableMoves( 
 	                                                  BasicChessGameInterface game,
-	                                                  PositionIterator restrictedPositions,
+	                                                  List<Position> restrictedPositions,
 	                                                  List<Move> result )
 	{
-		while( restrictedPositions.hasNext() ) {
-			Position to = restrictedPositions.next();
+	  for(Position to: restrictedPositions) {
 			if( isReachable( to,game ) ) {
 				result.add( Move.get( position,to ) );
 			}

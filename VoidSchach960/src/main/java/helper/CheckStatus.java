@@ -1,5 +1,9 @@
 package helper;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * @author stephan
  */
@@ -10,16 +14,16 @@ public class CheckStatus
 	
 	private boolean isCheck;
 	private boolean onlyKingCanMove;
-	private PositionIterator possiblePositions;
+	private List<Position> possiblePositions;
 	
 	private CheckStatus(boolean isCheck,boolean onlyKingCanMove )
 	{
 		this.isCheck         = isCheck;
 		this.onlyKingCanMove = onlyKingCanMove;
-		possiblePositions    = null;
+		possiblePositions    = Collections.emptyList();
 	}
 	
-	CheckStatus( PositionIterator possiblePositions )
+	CheckStatus( List<Position> possiblePositions )
 	{
 		isCheck                = true;
 		onlyKingCanMove        = false;
@@ -36,7 +40,7 @@ public class CheckStatus
 		return onlyKingCanMove;
 	}
 	
-	public PositionIterator getPossiblePositions()
+	public List<Position> getPossiblePositions()
 	{
 		return possiblePositions;
 	}

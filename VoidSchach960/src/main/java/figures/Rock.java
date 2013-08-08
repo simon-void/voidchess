@@ -1,5 +1,6 @@
 package figures;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import image.FigureImage;
@@ -10,7 +11,7 @@ import board.*;
  */
 public class Rock extends RochadeFigure
 {
-	private BasicPositionIterator posIter = new BasicPositionIterator(); 
+  private List<Position> positions = new ArrayList<Position>(8);
 	
 	public Rock(FigureImage figureImage, boolean isWhite, Position startPosition)
 	{
@@ -59,7 +60,7 @@ public class Rock extends RochadeFigure
 		return game.isFreeArea(to) || hasDifferentColor( game.getFigure(to) );
 	}
 	
-	private void getNorthIterator( BasicChessGameInterface game,BasicPositionIterator result )
+	private void getNorthIterator( BasicChessGameInterface game,List<Position> result )
 	{
 		int row              = position.row;
 		
@@ -69,17 +70,17 @@ public class Rock extends RochadeFigure
 			Position checkPosition = Position.get( row,position.column );
 			Figure figure = game.getFigure( checkPosition );
 			if( figure==null ) {
-				result.addPosition( checkPosition );
+				result.add( checkPosition );
 			}else{
 				if( isWhite!=figure.isWhite ) {
-					result.addPosition( checkPosition );
+					result.add( checkPosition );
 				}
 				break;
 			}
 		}
 	}
 	
-	private void getSouthIterator( BasicChessGameInterface game,BasicPositionIterator result )
+	private void getSouthIterator( BasicChessGameInterface game,List<Position> result )
 	{
 		int row              = position.row;
 		
@@ -89,17 +90,17 @@ public class Rock extends RochadeFigure
 			Position checkPosition = Position.get( row,position.column );
 			Figure figure = game.getFigure( checkPosition );
 			if( figure==null ) {
-				result.addPosition( checkPosition );
+				result.add( checkPosition );
 			}else{
 				if( isWhite!=figure.isWhite ) {
-					result.addPosition( checkPosition );
+					result.add( checkPosition );
 				}
 				break;
 			}
 		}
 	}
 	
-	private void getEastIterator( BasicChessGameInterface game,BasicPositionIterator result )
+	private void getEastIterator( BasicChessGameInterface game,List<Position> result )
 	{
 		int column            = position.column;
 		
@@ -109,17 +110,17 @@ public class Rock extends RochadeFigure
 			Position checkPosition = Position.get( position.row,column );
 			Figure figure = game.getFigure( checkPosition );
 			if( figure==null ) {
-				result.addPosition( checkPosition );
+				result.add( checkPosition );
 			}else{
 				if( isWhite!=figure.isWhite ) {
-					result.addPosition( checkPosition );
+					result.add( checkPosition );
 				}
 				break;
 			}
 		}
 	}
 	
-	private void getWestIterator( BasicChessGameInterface game,BasicPositionIterator result )
+	private void getWestIterator( BasicChessGameInterface game,List<Position> result )
 	{
 		int column            = position.column;
 		
@@ -129,10 +130,10 @@ public class Rock extends RochadeFigure
 			Position checkPosition = Position.get( position.row,column );
 			Figure figure = game.getFigure( checkPosition );
 			if( figure==null ) {
-				result.addPosition( checkPosition );
+				result.add( checkPosition );
 			}else{
 				if( isWhite!=figure.isWhite ) {
-					result.addPosition( checkPosition );
+					result.add( checkPosition );
 				}
 				break;
 			}
@@ -141,63 +142,63 @@ public class Rock extends RochadeFigure
 	
 	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
-		posIter.clear(); 
-		getNorthIterator( game,posIter );
-		getSouthIterator( game,posIter );
-		getEastIterator(  game,posIter );
-		getWestIterator(  game,posIter );
+		positions.clear(); 
+		getNorthIterator( game,positions );
+		getSouthIterator( game,positions );
+		getEastIterator(  game,positions );
+		getWestIterator(  game,positions );
 		
-		while( posIter.hasNext() ) {
-			result.add( Move.get( position,posIter.next() ) );
+		for(Position pos: positions) {
+			result.add( Move.get( position,pos ) );
 		}
 	}
 	
 	public boolean isSelectable( SimpleChessBoardInterface game )
 	{
-		posIter.clear(); 
-		getNorthIterator( game,posIter );
-		while( posIter.hasNext() ) {
-			if( !isBound( posIter.next(),game ) ) { 
+		positions.clear(); 
+		getNorthIterator( game,positions );
+		for(Position pos: positions) {
+			if( !isBound( pos,game ) ) { 
 				return true;
 			}
 		}
-		posIter.clear();
+		positions.clear();
 		
-		getSouthIterator( game,posIter );
-		while( posIter.hasNext() ) {
-			if( !isBound( posIter.next(),game ) ) { 
+		getSouthIterator( game,positions );
+		for(Position pos: positions) {
+			if( !isBound( pos,game ) ) { 
 				return true;
 			}
 		}
-		posIter.clear();
+		positions.clear();
 		
-		getEastIterator( game,posIter );
-		while( posIter.hasNext() ) {
-			if( !isBound( posIter.next(),game ) ) { 
+		getEastIterator( game,positions );
+		for(Position pos: positions) {
+			if( !isBound( pos,game ) ) { 
 				return true;
 			}
 		}
-		posIter.clear();
+		positions.clear();
 				
-		getWestIterator( game,posIter );
-		while( posIter.hasNext() ) {
-			if( !isBound( posIter.next(),game ) ) { 
+		getWestIterator( game,positions );
+		for(Position pos: positions) {
+			if( !isBound( pos,game ) ) { 
 				return true;
 			}
 		}
-		posIter.clear();
+		positions.clear();
 		
 		return false;
 	}
 	
 	public int countReachableMoves( BasicChessGameInterface game )
 	{
-		posIter.clear(); 
-		getNorthIterator( game,posIter );
-		getSouthIterator( game,posIter );
-		getEastIterator(  game,posIter );
-		getWestIterator(  game,posIter );
-		return posIter.countPositions();
+		positions.clear(); 
+		getNorthIterator( game,positions );
+		getSouthIterator( game,positions );
+		getEastIterator(  game,positions );
+		getWestIterator(  game,positions );
+		return positions.size();
 	}
 	
 	public boolean isRock()

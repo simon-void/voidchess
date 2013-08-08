@@ -1,5 +1,8 @@
 package helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import board.*;
 import figures.*;
 
@@ -10,8 +13,8 @@ public class CheckSearch
 {
 	public static CheckStatus analyseCheck( SimpleChessBoardInterface game,boolean whiteInCheck )
 	{
-		Position kingPos = game.getKingPosition( whiteInCheck );
-		BasicPositionIterator attackPositions = new BasicPositionIterator(2);
+		final Position kingPos = game.getKingPosition( whiteInCheck );
+		final List<Position> attackPositions = new ArrayList<Position>(2);
 		
 		isCheckByBishopOrQueen( game,kingPos,attackPositions );
 		isCheckByKing( 			game,kingPos,attackPositions );
@@ -19,11 +22,11 @@ public class CheckSearch
 		isCheckByPawn( 			game,kingPos,attackPositions );
 		isCheckByRockOrQueen( 	game,kingPos,attackPositions );
 		
-		switch( attackPositions.countPositions() ) {
+		switch( attackPositions.size() ) {
 			case 0:  return CheckStatus.NO_CHECK;
-			case 1:  return getPossiblePositions( kingPos,attackPositions.next() );
+			case 1:  return getPossiblePositions( kingPos,attackPositions.get(0) );
 			case 2:  return CheckStatus.DOUBLE_CHECK;
-			default: throw new IllegalStateException("more than 2 attackers are impossible "+attackPositions.countPositions());
+			default: throw new IllegalStateException("more than 2 attackers are impossible "+attackPositions.size());
 		}
 	}
 	
@@ -33,64 +36,70 @@ public class CheckSearch
 		if( lastMove.isRochade()   )     return analyseCheckAfterRochade(   game,whiteInCheck,lastMove );
 		if( lastMove.pawnTransformed() ) return analyseCheckAfterPawnTransform( game,whiteInCheck,lastMove );
 
-		Position kingPos   = game.getKingPosition( whiteInCheck );
-		Figure movedFigure = game.getFigure( lastMove.to );
-		BasicPositionIterator attacker = new BasicPositionIterator();
+		final Position kingPos   = game.getKingPosition( whiteInCheck );
+		final Figure movedFigure = game.getFigure( lastMove.to );
+		final List<Position> attackPositions = new ArrayList<Position>(2);
 
 		if( movedFigure.isReachable( kingPos,game ) ) {
-			attacker.addPosition( lastMove.to );
+		  attackPositions.add( lastMove.to );
 		}
 		
 		Position passiveAttacker = getPassiveAttacker( game,kingPos,lastMove.from );
 		if( passiveAttacker!=null ) {
-			attacker.addPosition( passiveAttacker );
+		  attackPositions.add( passiveAttacker );
 		}
 		
-		final int attackerNumber = attacker.countPositions();
-		if( attackerNumber==0 ) return CheckStatus.NO_CHECK;
-		if( attackerNumber==1 ) return getPossiblePositions( kingPos,attacker.next() );
-		return CheckStatus.DOUBLE_CHECK;
+		switch( attackPositions.size() ) {
+      case 0:  return CheckStatus.NO_CHECK;
+      case 1:  return getPossiblePositions( kingPos,attackPositions.get(0) );
+      case 2:  return CheckStatus.DOUBLE_CHECK;
+      default: throw new IllegalStateException("more than 2 attackers are impossible "+attackPositions.size());
+		}
 	}
 	
 	private static CheckStatus analyseCheckAfterEnpassent( SimpleChessBoardInterface game,boolean whiteInCheck, Move lastMove )
 	{
-		Position kingPos          = game.getKingPosition( whiteInCheck );
+	  final Position kingPos          = game.getKingPosition( whiteInCheck );
 
-		BasicPositionIterator attacker = new BasicPositionIterator();
-		Figure attackFigure = game.getFigure( lastMove.to );
-		Position passiveAttacker = getPassiveAttacker( game,kingPos,lastMove.from );
+		final List<Position> attackPositions = new ArrayList<Position>(2);
+		final Figure attackFigure = game.getFigure( lastMove.to );
+		final Position passiveAttacker = getPassiveAttacker( game,kingPos,lastMove.from );
 		
 		if( attackFigure.isReachable( kingPos,game ) ) {
-			attacker.addPosition( attackFigure.getPosition() );
+		  attackPositions.add( attackFigure.getPosition() );
 		}
 		if( passiveAttacker!=null ) {
-			attacker.addPosition( passiveAttacker );
+		  attackPositions.add( passiveAttacker );
 		}
 		
-		final int attackerNumber = attacker.countPositions();
-		if( attackerNumber==0 ) return CheckStatus.NO_CHECK;
-		if( attackerNumber==1 ) return getPossiblePositions( kingPos,attacker.next() );
-		return CheckStatus.DOUBLE_CHECK;
+		switch( attackPositions.size() ) {
+      case 0:  return CheckStatus.NO_CHECK;
+      case 1:  return getPossiblePositions( kingPos,attackPositions.get(0) );
+      case 2:  return CheckStatus.DOUBLE_CHECK;
+      default: throw new IllegalStateException("more than 2 attackers are impossible "+attackPositions.size());
+		}
 	}
 
 	private static CheckStatus analyseCheckAfterPawnTransform( SimpleChessBoardInterface game,boolean whiteInCheck, Move lastMove )
 	{
 		Position kingPos         = game.getKingPosition( whiteInCheck );
 		Figure   transformedPawn = game.getFigure( lastMove.to );
-		BasicPositionIterator attacker = new BasicPositionIterator();
+		final List<Position> attackPositions = new ArrayList<Position>(2);
 		Position passiveAttacker = getPassiveAttacker( game,kingPos,lastMove.from );
 		
 		if( transformedPawn.isReachable( kingPos,game) ) {
-			attacker.addPosition( lastMove.to );
+		  attackPositions.add( lastMove.to );
 		}
 		if( passiveAttacker!=null && !passiveAttacker.equalsPosition(lastMove.to) ) {
-			attacker.addPosition( passiveAttacker );
+		  attackPositions.add( passiveAttacker );
 		}
 
-		final int attackerNumber = attacker.countPositions();
-		if( attackerNumber==0 ) return CheckStatus.NO_CHECK;
-		if( attackerNumber==1 ) return getPossiblePositions( kingPos,attacker.next() );
-		return CheckStatus.DOUBLE_CHECK;
+		switch( attackPositions.size() ) {
+      case 0:  return CheckStatus.NO_CHECK;
+      case 1:  return getPossiblePositions( kingPos,attackPositions.get(0) );
+      case 2:  return CheckStatus.DOUBLE_CHECK;
+      default: throw new IllegalStateException("more than 2 attackers are impossible "+attackPositions.size());
+		}
 	}
 	
 	private static CheckStatus analyseCheckAfterRochade( SimpleChessBoardInterface game,boolean whiteInCheck, Move lastMove )
@@ -108,24 +117,22 @@ public class CheckSearch
 	
 	private static CheckStatus getPossiblePositions( Position kingPos,Position attackerPos )
 	{
-		PositionIterator result;
+	  List<Position> result;
 		if( !areStraightPositions( kingPos, attackerPos ) && !areDiagonalPositions( kingPos, attackerPos )) {
-			BasicPositionIterator iter = new BasicPositionIterator();
-			iter = new BasicPositionIterator();
-			iter.addPosition( attackerPos );
-			result = iter;
+		  //Knight attacks
+			result = new ArrayList<Position>(1);
+			result.add( attackerPos );
 		}else {
-			CompositePositionIterator iter = new CompositePositionIterator();
-			iter.addPosition( attackerPos );
-			iter.addPositionIterator( getInBetweenPositions(attackerPos,kingPos ) );
-			result = iter;
+		  //diagonal or straight attack
+			result = getInBetweenPositions(attackerPos,kingPos );
+			result.add(attackerPos);
 		}
 		return new CheckStatus( result );
 	}
 	
 	public static boolean isCheck( BasicChessGameInterface game,Position kingPos )
 	{		
-		final BasicPositionIterator attackPositions = new BasicPositionIterator(2);
+	  final List<Position> attackPositions = new ArrayList<Position>(2);
 		if(isCheckByBishopOrQueen( game,kingPos,attackPositions )) return true;
 		if(isCheckByRockOrQueen(   game,kingPos,attackPositions )) return true;
 		if(isCheckByKnight( 		   game,kingPos,attackPositions )) return true;
@@ -134,7 +141,7 @@ public class CheckSearch
 		return false;
 	}
 	
-	private static boolean isCheckByKing(BasicChessGameInterface game,Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByKing(BasicChessGameInterface game,Position kingPos,List<Position> attackerPos )
 	{
 		int minRow    = Math.max( 0,kingPos.row-1 );
 		int maxRow    = Math.min( 7,kingPos.row+1 );
@@ -146,7 +153,7 @@ public class CheckSearch
 				if( row!=kingPos.row || column!=kingPos.column ) {
 					Position pos = Position.get( row,column );
 					if( !game.isFreeArea( pos ) && game.getFigure( pos ).isKing() ) {
-						attackerPos.addPosition( pos );
+						attackerPos.add( pos );
 						return true;
 					}
 				}
@@ -155,7 +162,7 @@ public class CheckSearch
 		return false;
 	}
 	
-	private static boolean isCheckByPawn(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByPawn(BasicChessGameInterface game, Position kingPos,List<Position> attackerPos )
 	{
 		boolean isWhite     = game.getFigure( kingPos ).isWhite();
 		int possiblePawnRow = isWhite?kingPos.row+1:kingPos.row-1;
@@ -166,7 +173,7 @@ public class CheckSearch
 			if( !game.isFreeArea( pos ) ) {
 				Figure figure = game.getFigure( pos );
 				if( figure.isWhite()!=isWhite && figure.isPawn() ) {
-					attackerPos.addPosition( pos );
+					attackerPos.add( pos );
 					return true;
 				}
 			}
@@ -177,7 +184,7 @@ public class CheckSearch
 			if( !game.isFreeArea( pos ) ) {
 				Figure figure = game.getFigure( pos );
 				if( figure.isWhite()!=isWhite && figure.isPawn() ) {
-					attackerPos.addPosition( pos );
+					attackerPos.add( pos );
 					return true;
 				}
 			}
@@ -186,7 +193,7 @@ public class CheckSearch
 		return false;
 	}
 	
-	private static boolean isCheckByKnight(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByKnight(BasicChessGameInterface game, Position kingPos,List<Position> attackerPos )
 	{
 		boolean isWhite = game.getFigure( kingPos ).isWhite();
 		
@@ -204,7 +211,7 @@ public class CheckSearch
 					if( !game.isFreeArea( pos ) ) {
 						Figure figure = game.getFigure( pos );
 						if( figure.isWhite()!=isWhite && figure.isKnight() ) {
-							attackerPos.addPosition( pos );
+							attackerPos.add( pos );
 							return true;
 						}
 					}
@@ -214,7 +221,7 @@ public class CheckSearch
 		return false;
 	}
 	
-	private static boolean isCheckByBishopOrQueen(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByBishopOrQueen(BasicChessGameInterface game, Position kingPos,List<Position> attackerPos )
 	{
 		boolean isWhite = game.getFigure( kingPos ).isWhite();
 		int column,row;
@@ -229,7 +236,7 @@ public class CheckSearch
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isBishop() || figure.isQueen() ) {
-				attackerPos.addPosition( pos );
+				attackerPos.add( pos );
 				return true;
 			}
 			break;
@@ -244,7 +251,7 @@ public class CheckSearch
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isBishop() || figure.isQueen() ) {
-				attackerPos.addPosition( pos );
+				attackerPos.add( pos );
 				return true;
 			}
 			break;
@@ -259,7 +266,7 @@ public class CheckSearch
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isBishop() || figure.isQueen() ) {
-				attackerPos.addPosition( pos );
+				attackerPos.add( pos );
 				return true;
 			}
 			break;
@@ -274,7 +281,7 @@ public class CheckSearch
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isBishop() || figure.isQueen() ) {
-				attackerPos.addPosition( pos );
+				attackerPos.add( pos );
 				return true;
 			}
 			break;
@@ -282,7 +289,7 @@ public class CheckSearch
 		return false;
 	}
 
-	private static boolean isCheckByRockOrQueen(BasicChessGameInterface game, Position kingPos,BasicPositionIterator attackerPos )
+	private static boolean isCheckByRockOrQueen(BasicChessGameInterface game, Position kingPos,List<Position> attackerPos )
 	{
 		
 		boolean isWhite = game.getFigure( kingPos ).isWhite();
@@ -295,7 +302,7 @@ public class CheckSearch
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isRock() || figure.isQueen() ) {
-			  attackerPos.addPosition( pos );
+			  attackerPos.add( pos );
 			  return true;
 			}
 			break;
@@ -306,7 +313,7 @@ public class CheckSearch
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isRock() || figure.isQueen() ) {
-        attackerPos.addPosition( pos );
+        attackerPos.add( pos );
         return true;
       }
 			break;
@@ -317,7 +324,7 @@ public class CheckSearch
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isRock() || figure.isQueen() ) {
-        attackerPos.addPosition( pos );
+        attackerPos.add( pos );
         return true;
       }
 			break;
@@ -328,7 +335,7 @@ public class CheckSearch
 			Figure figure = game.getFigure( pos );
 			if( figure.isWhite()==isWhite ) break;
 			if( figure.isRock() || figure.isQueen() ) {
-        attackerPos.addPosition( pos );
+        attackerPos.add( pos );
         return true;
       }
 			break;
@@ -342,6 +349,12 @@ public class CheckSearch
 		if( number<0 ) return -1;
 		return 0;
 	}
+	
+	final public static int abs( int number )
+  {
+    if( number<0 ) return  -number;
+    return number;
+  }
 	
 	final public static boolean areStraightPositions( Position first,Position second )
 	{
@@ -371,21 +384,24 @@ public class CheckSearch
 		return true;
 	}
 	
-	final static private PositionIterator getInBetweenPositions( Position first,Position second )
+	final static private List<Position> getInBetweenPositions( Position first,Position second )
 	{
 		final int rowStep    = signum( second.row-first.row );
 		final int columnStep = signum( second.column-first.column );
 		
+		//this list might be added another Position later
+		final int positionNumberPlusOne = abs(second.row-first.row)+abs(second.column-first.column);
+		
 		int row    = first.row + rowStep;
 		int column = first.column + columnStep;
-		BasicPositionIterator iter = new BasicPositionIterator();
+		final List<Position> middlePositions = new ArrayList<Position>(positionNumberPlusOne);
 		while( row!=second.row || column!=second.column ) {
-			iter.addPosition( Position.get( row,column ) );
+			middlePositions.add( Position.get( row,column ) );
 			row+=rowStep;
 			column+=columnStep;
 		}
 		
-		return iter;
+		return middlePositions;
 	}
 	
 	final static private Position getPassiveAttacker( BasicChessGameInterface game,
