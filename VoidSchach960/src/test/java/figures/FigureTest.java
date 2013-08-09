@@ -8,6 +8,8 @@ import image.*;
 import helper.*;
 import board.*;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * @author stephan
  */
@@ -118,7 +120,7 @@ public class FigureTest extends TestCase
 	public void testIsPassivetBound()
 	{
 		String des     = "white 0 King-white-e1-0 Rock-white-e3-4 Queen-black-e5";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
 		
 		Position from           = Position.get( "e3" );
 		Position to1            = Position.get( "e2" );
@@ -139,7 +141,7 @@ public class FigureTest extends TestCase
 	public void testIsBound() throws Exception
 	{
 		String des = "white 0 King-white-e1-0 Rock-white-e3-4 Queen-black-e5";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
 
 		Position from1 = Position.get( "e3" );
 		Position from2 = Position.get( "e1" );
@@ -185,7 +187,7 @@ public class FigureTest extends TestCase
 	public void testIsMoveable()
 	{
 		String des     = "white 0 King-white-e1-0 Rock-white-h2-1 Queen-black-h4";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
 		
 		Position from           = Position.get( "h2" );
 		Position to1            = Position.get( "f2" );

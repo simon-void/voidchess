@@ -7,6 +7,8 @@ import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
+
+import static org.mockito.Mockito.mock;
 /**
  * @author stephan
  */
@@ -48,7 +50,7 @@ public class BishopTest extends TestCase
 	{
 		String des     = "white 0 Bishop-white-b1 King-white-e1-0 "
 										+"Knight-white-f7";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
     
 		Figure bishop = game.getFigure( Position.get( "b1" ) );
 		List<Move> moveIter = new LinkedList<>();

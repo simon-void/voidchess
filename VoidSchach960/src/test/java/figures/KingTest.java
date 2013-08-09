@@ -8,6 +8,8 @@ import image.*;
 import board.*;
 import helper.*;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * @author stephan
  */
@@ -93,7 +95,7 @@ public class KingTest extends TestCase
 	{
 		String des     = "black 0 Knight-white-b6 Rock-black-a8-0 "
 										+"King-black-e8-0 Rock-black-h8-0";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
 		
 		FigureImage figureImage = new FigureImageMock(10,20,30);
 		Position from           = Position.get( "e8" );
@@ -130,7 +132,7 @@ public class KingTest extends TestCase
 	{
 		String des     = "white 0 Rock-white-a1-0 King-white-f1-0 "
 										+"Rock-white-h1-0";
-		SimpleArrayBoard board = new SimpleArrayBoard( des );
+		SimpleArrayBoard board = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
     
 		Figure king = board.getFigure( Position.get( "f1" ) );
 		List<Move> moveIter = new LinkedList<>();

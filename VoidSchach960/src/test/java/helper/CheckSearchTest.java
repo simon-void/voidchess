@@ -2,8 +2,11 @@ package helper;
 
 import java.util.List;
 
+import board.LastMoveProvider;
 import board.SimpleArrayBoard;
 import junit.framework.TestCase;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author stephan
@@ -49,7 +52,7 @@ public class CheckSearchTest extends TestCase
 	public void testAnalyseCheck()
 	{
 		String des = "white 0 King-white-e4-4 King-black-e5-4";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
 		CheckStatus status = CheckSearch.analyseCheck( game,true );
 		
 		assertTrue( status.isCheck() );

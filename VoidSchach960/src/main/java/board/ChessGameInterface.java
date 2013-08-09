@@ -17,7 +17,7 @@ public interface ChessGameInterface extends BasicChessGameInterface
 	final public static int RESIGN                    = 6;
 
 	public void    initGame(  int chess960  );
-	public ChessGameInterface copyGame();
+	public List<ChessGameInterface> copyGame(int neededInstances);
 	
 	public boolean isWhiteTurn();
 	public int     countFigures();

@@ -1,5 +1,7 @@
 package board;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -30,7 +32,7 @@ public class SimpleBoardTest extends TestCase
 
 	protected void setUp() throws Exception
 	{
-		board = new SimpleArrayBoard( new FigureImageFactoryMock("",true) );
+		board = new SimpleArrayBoard( new FigureImageFactoryMock("",true), mock(LastMoveProvider.class) );
 	}
 	
 	public void testInit()

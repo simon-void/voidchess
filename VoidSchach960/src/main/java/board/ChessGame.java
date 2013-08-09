@@ -9,7 +9,7 @@ import helper.*;
 /**
  * @author stephan
  */
-public class ChessGame implements ChessGameInterface
+public class ChessGame implements ChessGameInterface, LastMoveProvider
 {
 	private SimpleChessBoardInterface game;
 	private FigureFactory figureFactory;
@@ -38,7 +38,7 @@ public class ChessGame implements ChessGameInterface
 		mementoStack     = new MementoStack();
 		extendedMoveStack= new ExtendedMoveStack();
 		numberStack      = new NumberStack();
-		game             = new SimpleArrayBoard( figureImageFactory );
+		game             = new SimpleArrayBoard( figureImageFactory, this );
 
 		initGame();
 	}
@@ -87,7 +87,7 @@ public class ChessGame implements ChessGameInterface
 			st.nextToken();
 		}
 		
-		game = new SimpleArrayBoard( figureImageFactory );
+		game = new SimpleArrayBoard( figureImageFactory, this );
 		game.init( game_description );
 		
 		memorizeGame();
@@ -116,38 +116,51 @@ public class ChessGame implements ChessGameInterface
 		numberOfMovesWithoutHit = 0;
 		figureCount 			= 32;
 		
-		game = new SimpleArrayBoard( figureImageFactory );
+		game = new SimpleArrayBoard( figureImageFactory, this );
 		game.init( initialPosition );
 		
 		memorizeGame();
 	}
 	
+	@Override
 	public void setSupervisor( ChessGameSupervisor supervisor )
 	{
 		normalSupervisor = supervisor;
 		useNormalSupervisor();
 	}
 	
+	@Override
 	public void useNormalSupervisor()
 	{
 		supervisor = normalSupervisor;
 	}
 	
+	@Override
 	public void useDummySupervisor()
 	{
 		supervisor = dummySupervisor;
 	}
 	
+	@Override
+	public ExtendedMove getLastMove()
+	{
+	  if(extendedMoveStack.isEmpty()) return null;
+	  return extendedMoveStack.topExtendedMove();
+	}
+	
+	@Override
 	public Position getKingPosition( boolean whiteKing )
 	{
 		return game.getKingPosition( whiteKing );
 	}
 	
+	@Override
 	public boolean isFreeArea( Position pos )
 	{
 		return game.isFreeArea(pos);
 	}
 	
+	@Override
 	public Figure getFigure( Position pos )
 	{
 		return game.getFigure(pos);
@@ -158,11 +171,13 @@ public class ChessGame implements ChessGameInterface
 		game.setFigure(pos,figure);
 	}
 	
+	@Override
 	public List<Figure> getFigures()
 	{
 		return game.getFigures();
 	}
 	
+	@Override
 	public boolean isSelectable( Position pos,boolean whitePlayer )
 	{
 		if( isFreeArea( pos ) ) return false;
@@ -170,6 +185,7 @@ public class ChessGame implements ChessGameInterface
 		return figure.isWhite()==whitePlayer && figure.isSelectable( game );
 	}
 	
+	@Override
 	public boolean isMoveable( Position from,Position to,boolean whitePlayer )
 	{
 		if( isFreeArea( from ) ) return false;
@@ -177,11 +193,13 @@ public class ChessGame implements ChessGameInterface
 		return figure.isWhite()==whitePlayer && figure.isMoveable( to,game );
 	}
 	
+	@Override
 	public int countFigures()
 	{
 		return figureCount;
 	}
 	
+	@Override
 	public int move( Move move )
 	{
 		assert !isFreeArea( move.from )
@@ -239,6 +257,7 @@ public class ChessGame implements ChessGameInterface
 		return hitFigure;
 	}
 	
+	@Override
 	public boolean hasHitFigure()
 	{
 		return hasHitFigure;
@@ -340,6 +359,7 @@ public class ChessGame implements ChessGameInterface
 		}
 	}
 	
+	@Override
 	public void undo()
 	{
 		whiteTurn = !whiteTurn;
@@ -402,6 +422,7 @@ public class ChessGame implements ChessGameInterface
 		}
 	}
 	
+	@Override
 	public String toString()
 	{
 		StringBuilder buffer = new StringBuilder( 512 );
@@ -426,6 +447,7 @@ public class ChessGame implements ChessGameInterface
 	  initGame( 518 );	//normale Schachposition
 	}
 	
+	@Override
 	public void initGame(  int chess960 )
 	{
 		whiteTurn = true;
@@ -514,16 +536,19 @@ public class ChessGame implements ChessGameInterface
 		return occurencesOfMemento >= 3;
 	}
 	
+	@Override
 	public boolean isWhiteTurn()
 	{
 		return whiteTurn;
 	}
 	
+	@Override
 	public boolean isCheck( boolean isWhiteInCheck)
 	{
 		return CheckSearch.isCheck( game,game.getKingPosition( isWhiteInCheck ) );
 	}
 	
+	@Override
 	public List<Move> getPossibleMoves()
 	{
 		final Position kingPos = game.getKingPosition( whiteTurn );
@@ -541,6 +566,7 @@ public class ChessGame implements ChessGameInterface
 		return possibleMoves;
 	}
 	
+	@Override
 	public int countReachableMoves( boolean forWhite )
 	{
 		int count = 0;
@@ -555,11 +581,19 @@ public class ChessGame implements ChessGameInterface
 		return count;
 	}
 	
-	public ChessGameInterface copyGame()
+	@Override
+	public List<ChessGameInterface> copyGame(int neededInstances)
 	{
-		//TODO 3-Zug-Matt fällt so weg
-		return new ChessGame( toString() );
-//		return new ChessGame(this);
+	  final List<ChessGameInterface> gameInstances = new ArrayList<ChessGameInterface>(neededInstances);
+	  gameInstances.add(this);
+	  
+	  if(neededInstances>1) {
+	    final String gameDes = toString();
+	    for(int i=1;i<neededInstances;i++) {
+	      gameInstances.add(new ChessGame(gameDes));
+	    }
+	  }
+	  return gameInstances;
 	}
 
 	private void memorizeGame()

@@ -68,8 +68,10 @@ public class ChessGameTest extends TestCase
 	
 	public void testCopy() throws Exception
 	{
-		ChessGame copy = (ChessGame)game.copyGame();
-		assertTrue( game.equals(copy) );
+		List<ChessGameInterface> copies = game.copyGame(4);
+		for(ChessGameInterface copy: copies) {
+		  assertEquals("game and copy", game.toString(), copy.toString() );
+		}
 	}
 	
 	public void testGetFigures()

@@ -1,6 +1,7 @@
 package player.ki.concurrent;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
@@ -43,11 +44,15 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
 		final AtomicInteger numberOfFinnishedEvaluations = new AtomicInteger(0);
 		
 		final List<Future<EvaluatedMove>> evaluationFutures = new ArrayList<Future<EvaluatedMove>>(totalNumberOfMoves);
+		final Iterator<ChessGameInterface> gameInstances = game.copyGame(totalNumberOfMoves).iterator();
+		
+		long time = System.currentTimeMillis();
+		
 		for(Move move: possibleMoves) {
 		  evaluationFutures.add(
 		    executorService.submit(
 		      new MoveEvaluationCallable(
-		          game.copyGame(),	move, dynamicEvaluation, numberOfFinnishedEvaluations
+		          gameInstances.next(),	move, dynamicEvaluation, numberOfFinnishedEvaluations
 		      )
 		    )
 		  );
@@ -67,6 +72,9 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
         result.add(evaluatedMove);
       } catch (Exception e) {/*shouldn't happen*/}
     }
+    
+    long duration = time - System.currentTimeMillis();
+    System.out.println("time:"+duration);
     
     assert !result.isEmpty() : "no evaluation of a possible moves was successfull";
     

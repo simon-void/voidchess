@@ -7,6 +7,8 @@ import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
+
+import static org.mockito.Mockito.mock;
 /**
  * @author stephan
  */
@@ -38,7 +40,7 @@ public class QueenTest extends TestCase
 	public void testGetPossibleMoves()
 	{
 		String des     = "white 0 Queen-white-d1 King-white-e1-0 ";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
     
 		Figure queen = game.getFigure( Position.get( "d1" ) );
 		List<Move> moveIter = new LinkedList<>();

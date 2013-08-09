@@ -7,6 +7,8 @@ import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
+
+import static org.mockito.Mockito.mock;
 /**
  * @author stephan
  */
@@ -71,7 +73,7 @@ public class PawnTest extends TestCase
 	{
 		String des     = "black 0 Pawn-white-a4-true Pawn-black-b4-false "
 		                +"King-black-e8-0 Pawn-black-h7-false";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
 		
 		FigureImage figureImage = new FigureImageMock(10,20,30);
     

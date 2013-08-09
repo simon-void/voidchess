@@ -15,8 +15,10 @@ import figures.*;
 public class SimpleArrayBoard
 implements SimpleChessBoardInterface
 {
-	private Figure[][] game;
-	private FigureFactory figureFactory;
+	final private Figure[][] game;
+	final private LastMoveProvider lastMoveProvider;
+	final private FigureFactory figureFactory;
+	
 	private Position whiteKingPosition;
 	private Position blackKingPosition;
 	
@@ -27,17 +29,18 @@ implements SimpleChessBoardInterface
 	private CheckStatus whiteCheckStatus;
 	private CheckStatus blackCheckStatus;
 
-	SimpleArrayBoard( FigureImageFactory figureImageFactory )
+	SimpleArrayBoard( FigureImageFactory figureImageFactory, LastMoveProvider lastMoveProvider )
 	{
 		figureFactory = new FigureFactory( figureImageFactory );
 		game          = new Figure[8][8];
+		this.lastMoveProvider = lastMoveProvider;
 		init();
 	}
 	
 	//für Testzwecke
-	public SimpleArrayBoard( String des )
+	public SimpleArrayBoard( String des, LastMoveProvider lastMoveProvider )
 	{
-		this( new FigureImageFactoryMock("",true) );
+		this( new FigureImageFactoryMock("",true), lastMoveProvider );
 		init( des );
 	}
 	
@@ -68,14 +71,15 @@ implements SimpleChessBoardInterface
 	
 	public CheckStatus getCheckStatus( boolean isWhite )
 	{
+	  final ExtendedMove lastMove = lastMoveProvider.getLastMove();
 		if( isWhite ) {
 			if( whiteCheckStatus==null ) {
-				whiteCheckStatus = CheckSearch.analyseCheck( this,isWhite );
+				whiteCheckStatus = CheckSearch.analyseCheck( this,isWhite,lastMove );
 			}
 			return whiteCheckStatus;
 		}else {
 			if( blackCheckStatus==null ) {
-				blackCheckStatus = CheckSearch.analyseCheck( this,isWhite );
+				blackCheckStatus = CheckSearch.analyseCheck( this,isWhite,lastMove );
 			}
 			return blackCheckStatus;
 		}
@@ -156,7 +160,7 @@ implements SimpleChessBoardInterface
 	public void init( int chess960 )
 	{
 		assert ( chess960>=0 && chess960<960 ) : "chess960 out of bounds";
-		
+			
 		clear();
 		Position pos;
 		

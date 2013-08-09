@@ -7,6 +7,8 @@ import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
+
+import static org.mockito.Mockito.mock;
 /**
  * @author stephan
  */
@@ -57,7 +59,7 @@ public class RockTest extends TestCase
 	{
 		String des     = "white 0 King-white-e2-0 Pawn-black-b4-false "
 										+"Rock-white-e4-2 King-black-e8-0";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
     
 		Figure rock = game.getFigure( Position.get( "e4" ) );
 		List<Move> moveIter = new LinkedList<>();

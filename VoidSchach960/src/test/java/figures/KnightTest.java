@@ -8,6 +8,8 @@ import image.*;
 import board.*;
 import helper.*;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * @author stephan
  */
@@ -51,7 +53,7 @@ public class KnightTest extends TestCase
 	{
 		String des     = "white 0 Knight-white-a1 King-white-e1-0 "
 										+"Knight-white-g6";
-		SimpleArrayBoard game = new SimpleArrayBoard( des );
+		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
     
 		Figure knight1 = game.getFigure( Position.get( "a1" ) );
 		List<Move> moveIter1 = new LinkedList<>();

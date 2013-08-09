@@ -33,6 +33,10 @@ public class CheckSearch
 	
 	public static CheckStatus analyseCheck( SimpleChessBoardInterface game,boolean whiteInCheck,ExtendedMove lastMove )
 	{
+	  if(lastMove==null) {
+	    return analyseCheck(game, whiteInCheck);
+	  }
+	  
 		if( lastMove.isEnpassent() )     return analyseCheckAfterEnpassent( game,whiteInCheck,lastMove );
 		if( lastMove.isRochade()   )     return analyseCheckAfterRochade(   game,whiteInCheck,lastMove );
 		if( lastMove.pawnTransformed() ) return analyseCheckAfterPawnTransform( game,whiteInCheck,lastMove );
