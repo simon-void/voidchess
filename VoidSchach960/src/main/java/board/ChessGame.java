@@ -262,12 +262,11 @@ public class ChessGame implements ChessGameInterface
 	
 	private Rock extractRochadeRock( Move move )
 	{
-		Figure movingFigure = getFigure( move.from );
-		Figure rochadeRock = getFigure(  move.to );
-		if( movingFigure.isKing() &&
-			rochadeRock!=null &&
-			rochadeRock.isWhite()==movingFigure.isWhite() )
-		{
+		final Figure movingFigure = getFigure( move.from );
+		if(!movingFigure.isKing()) return null;
+		
+		final Figure rochadeRock = getFigure(  move.to );
+		if( rochadeRock!=null && rochadeRock.isWhite()==movingFigure.isWhite() ) {
 			setFigure( move.to,null );	//der Turm wird kurzfristig vom Brett genommen
 			((King)movingFigure).performRochade();
 			return (Rock)rochadeRock;

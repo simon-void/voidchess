@@ -632,7 +632,7 @@ public class ChessGameTest extends TestCase
 		
 		des = "white 0 Rock-black-e1-8 "
 			 +"Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 "
-			 +"Knight-white-g4 Queen-black-e5 King-black-g7-3";
+			 +"Knight-white-g4 Queen-black-e8 King-black-g7-3";
 		game = new ChessGame( des );
 		game.move( Move.get( "f2-e1" ) );
 		game.move( Move.get( "e2-f1" ) );

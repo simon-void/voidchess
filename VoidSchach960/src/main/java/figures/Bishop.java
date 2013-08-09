@@ -7,6 +7,9 @@ import java.util.List;
 import image.FigureImage;
 import helper.*;
 import board.*;
+
+import static helper.CheckSearch.signum;
+
 /**
  * @author stephan
  */
@@ -21,71 +24,35 @@ public class Bishop extends Figure
 	
 	public boolean isReachable(Position to,BasicChessGameInterface game)
 	{
-		int horizontal_difference = Math.abs( position.row-to.row );
-		int vertical_difference   = Math.abs( position.column-to.column );
+	  final int row_difference    = to.row-position.row;
+    final int column_difference = to.column-position.column;
+    
+		final int abs_row_difference    = Math.abs( row_difference );
+		final int abs_column_difference = Math.abs( column_difference );
 		
-		if( horizontal_difference!=vertical_difference || horizontal_difference==0 ) {
+		if( abs_row_difference!=abs_column_difference || abs_row_difference==0 ) {
 			return false;
 		}
 		
-		boolean first_bigger  = position.row>to.row;
-		boolean second_bigger = position.column>to.column;
+		final int row_step = signum(row_difference);
+		final int column_step = signum(column_difference);
 		
-		if( first_bigger==second_bigger ) {
-			return isNorthEastReachable( to,game );
-		}else{
-			return isSouthEastReachable( to,game );
-		}
-	}
-	
-	private boolean isNorthEastReachable( Position to,BasicChessGameInterface game )
-	{
-		int min_column,min_row,max_row;
-		if(to.row<position.row) {
-			min_column = to.column+1;
-			min_row    = to.row+1;
-			max_row    = position.row;
-		}else{
-			min_column = position.column+1;
-			min_row    = position.row+1;
-			max_row    = to.row;
+		int row = position.row+row_step;
+		int column = position.column+column_step;
+		
+		while(row!=to.row) {
+		  final Position pos = Position.get(row, column);
+		  if(!game.isFreeArea(pos)) {
+		    return false;
+		  }
+		  row+=row_step;
+		  column+=column_step;
 		}
 		
-		while( min_row<max_row ){
-			Position middlePosition = Position.get( min_row,min_column );
-			if( !game.isFreeArea(middlePosition) ) {
-				return false;
-			}
-			min_row++;
-			min_column++;
-		}
-		return game.isFreeArea(to) || hasDifferentColor( game.getFigure(to) );
+		final Figure hitFigure = game.getFigure(to);
+		return hitFigure==null || hasDifferentColor(hitFigure);
 	}
-	
-	private boolean isSouthEastReachable( Position to,BasicChessGameInterface game )
-	{
-		int max_column,min_row,max_row;
-		if(to.row<position.row) {
-			max_column = to.column-1;
-			min_row    = to.row+1;
-			max_row    = position.row;
-		}else{
-			max_column = position.column-1;
-			min_row    = position.row+1;
-			max_row    = to.row;
-		}
 		
-		while( min_row<max_row ){
-			Position middlePosition = Position.get( min_row,max_column );
-			if( !game.isFreeArea(middlePosition) ) {
-				return false;
-			}
-			min_row++;
-			max_column--;
-		}
-		return game.isFreeArea(to) || hasDifferentColor( game.getFigure(to) );
-	}
-	
 	private void getNorthEastIterator( BasicChessGameInterface game,List<Position> result )
 	{
 		int row,column;
@@ -101,7 +68,7 @@ public class Bishop extends Figure
 			if( figure==null ) {
 				result.add( checkPosition );
 			}else{
-				if( isWhite!=figure.isWhite ) {
+				if( hasDifferentColor(figure) ) {
 					result.add( checkPosition );
 				}
 				break;
@@ -124,7 +91,7 @@ public class Bishop extends Figure
 			if( figure==null ) {
 				result.add( checkPosition );
 			}else{
-				if( isWhite!=figure.isWhite ) {
+				if( hasDifferentColor(figure) ) {
 					result.add( checkPosition );
 				}
 				break;
@@ -147,7 +114,7 @@ public class Bishop extends Figure
 			if( figure==null ) {
 				result.add( checkPosition );
 			}else{
-				if( isWhite!=figure.isWhite ) {
+				if( hasDifferentColor(figure) ) {
 					result.add( checkPosition );
 				}
 				break;
@@ -170,7 +137,7 @@ public class Bishop extends Figure
 			if( figure==null ) {
 				result.add( checkPosition );
 			}else{
-				if( isWhite!=figure.isWhite ) {
+				if( hasDifferentColor(figure) ) {
 					result.add( checkPosition );
 				}
 				break;
