@@ -173,7 +173,7 @@ public abstract class Figure
 			if( isKing() ) {
 				return isPassiveBound( to,game );
 			}
-			return !checkStatus.getPossiblePositions().contains( to ) || isPassiveBound( to,game  );
+			return !checkStatus.getCheckInterceptPositions().contains( to ) || isPassiveBound( to,game  );
 		}else {									//kein Schach
 			return isPassiveBound( to,game );
 		}

@@ -1,7 +1,6 @@
 package helper;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -40,7 +39,7 @@ public class CheckStatus
 		return onlyKingCanMove;
 	}
 	
-	public List<Position> getPossiblePositions()
+	public List<Position> getCheckInterceptPositions()
 	{
 		return possiblePositions;
 	}

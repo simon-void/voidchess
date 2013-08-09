@@ -54,7 +54,7 @@ public class CheckSearchTest extends TestCase
 		
 		assertTrue( status.isCheck() );
 		assertFalse( status.onlyKingCanMove() );
-		List<Position> possiblePositions = status.getPossiblePositions();
+		List<Position> possiblePositions = status.getCheckInterceptPositions();
 		assertEquals(1, possiblePositions.size() );
 		assertTrue( possiblePositions.get(0).equalsPosition( Position.get( "e5" ) ) );
 		
@@ -78,7 +78,7 @@ public class CheckSearchTest extends TestCase
 		
 		assertTrue( status.isCheck() );
 		assertFalse( status.onlyKingCanMove() );
-		possiblePositions = status.getPossiblePositions();
+		possiblePositions = status.getCheckInterceptPositions();
 		assertEquals( 2, possiblePositions.size() );
 		assertTrue( possiblePositions.contains( Position.get("e6") ) );
 		assertTrue( possiblePositions.contains( Position.get("e7") ) );
@@ -89,7 +89,7 @@ public class CheckSearchTest extends TestCase
 		
 		assertTrue( status.isCheck() );
 		assertFalse( status.onlyKingCanMove() );
-		possiblePositions = status.getPossiblePositions();
+		possiblePositions = status.getCheckInterceptPositions();
 		assertEquals( 3, possiblePositions.size() );
 		assertTrue( possiblePositions.contains( Position.get("h4") ) );
 		assertTrue( possiblePositions.contains( Position.get("g3") ) );
