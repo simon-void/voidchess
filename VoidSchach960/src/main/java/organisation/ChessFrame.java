@@ -12,7 +12,16 @@ public class ChessFrame extends JFrame
 		try {
 			helper.RuntimeFacade.assertJavaVersion();
 			Images.loadImageResources();
-			new ChessFrame();
+			//Swing UI updates have to come from the SwingHandler or something
+			SwingUtilities.invokeLater(
+			    new Runnable() {            
+            @Override
+            public void run()
+            {
+              new ChessFrame();
+            }
+          }
+			);
 		}catch( Exception e ) {
 			StringBuilder sb = new StringBuilder( 64 );
 			sb.append( "Das Spiel wurde aufgrund eines Fehlers abgebrochen." );

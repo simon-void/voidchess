@@ -5,6 +5,8 @@ import helper.Move;
 import java.awt.*;
 import java.util.*;
 
+import javax.swing.SwingUtilities;
+
 
 
 /**
@@ -58,7 +60,7 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI
 	final static private Rectangle THOUGHT_RECTANGLE 
 								= new Rectangle( 49,46,102,19 );
 	
-	private TreeSet referenceSet;
+	private TreeSet<Float> referenceSet;
 	private float value;
 	private int smileFactor;
 	private boolean showValue;
@@ -85,7 +87,30 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI
 		setPreferredSize( new Dimension(200,400) );
 	}
 
-	public void setProgress(int index, int total)
+//	@Override
+//	public void setProgress(final int index, final int total)
+//	{
+//	  SwingUtilities.invokeLater(new Runnable() {      
+//      @Override
+//      public void run() {
+//        setProgressForReal(index, total);
+//      }
+//    });
+//	}
+//	
+//	@Override
+//  public void setValue(final float value, final Move move)
+//  {
+//	  SwingUtilities.invokeLater(new Runnable() {      
+//      @Override
+//      public void run() {
+//        setValueForReal(value, move);
+//      }
+//    });
+//  }
+	
+	@Override
+  public void setProgress(int index, int total)
 	{
 		showValue = false;
 		this.index = index;
@@ -94,7 +119,8 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI
 		paintImmediately( THOUGHT_RECTANGLE );
 	}
 
-	public void setValue(float value,Move move)
+	@Override
+  public void setValue(float value,Move move)
 	{
 		showValue = true;
 		setSmileFactor( value );

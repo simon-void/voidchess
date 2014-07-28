@@ -19,7 +19,7 @@ class SingleThreadStrategy extends AbstractConcurrencyStrategy
 	@Override
 	public SortedSet<EvaluatedMove> evaluatePossibleMoves(ChessGameInterface game, DynamicEvaluation dynamicEvaluation)
 	{
-		final List<Move> possibleMoves = game.getPossibleMoves( );
+		final List<Move> possibleMoves = getPossibleMoves(game);
 		
 		final int totalNumberOfMoves = possibleMoves.size();
 		showProgress(0, totalNumberOfMoves);

@@ -1,5 +1,6 @@
 package board;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -139,7 +140,7 @@ public class ChessGameTest extends TestCase
 		move = Move.get(pos1,pos2);
 		
 		assertTrue( game.isMoveable(pos1,pos2,false) );
-		assertEquals( 16,game.getPossibleMoves().size() );
+		assertEquals( 16,getPossibleMoves(game).size() );
 		game.move( move );
 		game.move( Move.get("e1-f1") );
 		game.move( Move.get("d8-f8") );
@@ -148,7 +149,7 @@ public class ChessGameTest extends TestCase
 		game.undo();
 		game.undo();
 		game.undo();
-		assertEquals( 16,game.getPossibleMoves().size() );
+		assertEquals( 16,getPossibleMoves(game).size() );
 		assertTrue( game.isMoveable(pos1,pos2,false) );
 		
 		
@@ -515,13 +516,13 @@ public class ChessGameTest extends TestCase
 		game.move(Move.get("c6-b4"));
 		game.move(Move.get("g1-f3"));
 		game.move(Move.get("b4-c2"));
-		List<Move> possibleMoves = game.getPossibleMoves( );
+		List<Move> possibleMoves = getPossibleMoves(game);
 		assertEquals( 1,possibleMoves.size() );
 		
 		String des     = "black 0 King-white-g1-2 Bishop-black-b6 King-black-e8-0";
 		ChessGame game = new ChessGame( des );
 		game.move( Move.get("b6-c5") );
-		possibleMoves = game.getPossibleMoves( );
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 4,possibleMoves.size() );
 		
 		des = "black 0 Rock-white-a1-0 Rock-white-f1-1 King-white-g1-1-true "
@@ -532,21 +533,21 @@ public class ChessGameTest extends TestCase
 		      +"Rock-black-c8-1 Queen-black-d8 Rock-black-f8-1 King-black-g8-1";
 		 game = new ChessGame( des );
 		 game.move( Move.get( "b6-f2" ) );
-		 possibleMoves = game.getPossibleMoves( );
+		 possibleMoves = getPossibleMoves(game);
 		 assertEquals( 4,possibleMoves.size() );
 		 
 		des  = "black 0 Pawn-white-b2-false King-white-d3-2 Rock-black-h4-1 "+
 					 "Rock-black-a8-0 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get( "a8-a3" ) );
-		possibleMoves = game.getPossibleMoves( );
+		possibleMoves = getPossibleMoves(game);
 		
 		assertEquals( 5,possibleMoves.size() );
 		
 		des  = "black 0 King-white-d3-2 Knight-black-e5 Bishop-black-g8 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get( "g8-h7" ) );
-		possibleMoves = game.getPossibleMoves( );
+		possibleMoves = getPossibleMoves(game);
 		
 		assertEquals( 5,possibleMoves.size() );
 		
@@ -561,7 +562,7 @@ public class ChessGameTest extends TestCase
 					 "Rock-black-h8-0";
 		game = new ChessGame( des );
 		game.move( Move.get( "d1-a4" ) );
-		possibleMoves = game.getPossibleMoves( );
+		possibleMoves = getPossibleMoves(game);
 		
 		assertEquals( 6,possibleMoves.size() );
 		
@@ -569,7 +570,7 @@ public class ChessGameTest extends TestCase
 					"Bishop-black-b4 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get( "b4-c3" ) );
-		possibleMoves = game.getPossibleMoves( );
+		possibleMoves = getPossibleMoves(game);
 		
 		assertEquals( 1,possibleMoves.size() );
 		
@@ -577,13 +578,13 @@ public class ChessGameTest extends TestCase
 							"Bishop-black-b6 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get("c4-d3") );
-		possibleMoves = game.getPossibleMoves();
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 4,possibleMoves.size() );
 		
 		des     = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
 		game = new ChessGame( des );
 		game.move( Move.get("e8-a8") );
-		possibleMoves = game.getPossibleMoves();
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 3,possibleMoves.size() );
 		
 		des = "black 0 King-white-h1-3 Pawn-white-c7-false "
@@ -592,22 +593,22 @@ public class ChessGameTest extends TestCase
 		game = new ChessGame( des );
 		game.move( Move.get("b7-c6") );
 		game.move( Move.get("c7-c8") );
-		possibleMoves = game.getPossibleMoves();
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 1,possibleMoves.size() );
 		
 		des     = "black 0 King-white-g7-6 King-black-e8-0 Rock-black-h8-0";
 		game = new ChessGame( des );
-		possibleMoves = game.getPossibleMoves();
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 12,possibleMoves.size() );
 		
 		des     = "white 0 King-white-g6-6 Pawn-white-g7-false King-black-e8-0 Knight-black-h8";
 		game = new ChessGame( des );
-		possibleMoves = game.getPossibleMoves();
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 7,possibleMoves.size() );
 		
 		des     = "white 0 Rock-white-b1-0 King-white-d1-0 Rock-white-e1-0 Bishop-black-d3 King-black-d8-0";
 		game = new ChessGame( des );
-		possibleMoves = game.getPossibleMoves();
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 22,possibleMoves.size() );
 		
 		game=new ChessGame( 518 );
@@ -618,7 +619,7 @@ public class ChessGameTest extends TestCase
 		game.move( Move.get("b5-c6") );
 		game.move( Move.get("b8-d7") );
 		game.move( Move.get("c6-b5") );
-		possibleMoves = game.getPossibleMoves();
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 19,possibleMoves.size() );
 		
 		game=new ChessGame( 621 );
@@ -629,7 +630,7 @@ public class ChessGameTest extends TestCase
 		game.move( Move.get("d1-c2") );
 		game.move( Move.get("e8-f8") );
 		game.move( Move.get("c2-h7") );
-		possibleMoves = game.getPossibleMoves();
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 1,possibleMoves.size() );
 		
 		des = "white 0 Rock-black-e1-8 "
@@ -638,7 +639,7 @@ public class ChessGameTest extends TestCase
 		game = new ChessGame( des );
 		game.move( Move.get( "f2-e1" ) );
 		game.move( Move.get( "e2-f1" ) );
-		possibleMoves = game.getPossibleMoves();
+		possibleMoves = getPossibleMoves(game);
 		assertEquals( 2,possibleMoves.size() );
 	}
 	
@@ -662,5 +663,12 @@ public class ChessGameTest extends TestCase
 		game.move( Move.get("a7-a6") );
 		game.move( Move.get("c2-h7") );
 		assertEquals( "c2-h7,a7-a6,d1-c2,g8-f7",game.getHistory() );
+	}
+	
+	private List<Move> getPossibleMoves(ChessGame game)
+	{
+	  List<Move> possibleMoves = new LinkedList<Move>();
+    game.getPossibleMoves(possibleMoves);
+    return possibleMoves;
 	}
 }

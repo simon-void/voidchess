@@ -6,14 +6,11 @@ import java.util.Comparator;
 /**
  * @author stephan
  */
-public class InverseValueComperator implements Serializable, Comparator
+public class InverseValueComperator implements Serializable, Comparator<Float>
 {
 
-	public int compare(Object o1, Object o2)
-	{
-		Float first = (Float)o1;
-		Float second= (Float)o2;
-		
+	public int compare(Float first, Float second)
+	{		
 		return second.compareTo( first );
 	}
 

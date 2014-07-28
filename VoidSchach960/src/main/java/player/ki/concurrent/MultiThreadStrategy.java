@@ -37,7 +37,7 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
 	  //the progress bar will always show correctly 0% (so '1' as second parameter is fine)
 	  showProgress(0, 1);
 	  
-		final List<Move> possibleMoves = game.getPossibleMoves();
+		final List<Move> possibleMoves = getPossibleMoves(game);
 		assert !possibleMoves.isEmpty() : "no moves were possible and therefore evaluatable";
 		
 		final int totalNumberOfMoves = possibleMoves.size();

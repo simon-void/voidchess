@@ -257,7 +257,8 @@ public class FigureTest extends TestCase
 	public static List<Move> getPossibleMovesFrom( ChessGameInterface game,Position from )
 	{
 	  List<Move> moveIter = new LinkedList<>();
-		List<Move> allMoves = game.getPossibleMoves();
+		List<Move> allMoves = new LinkedList<>();
+		game.getPossibleMoves(allMoves);
 		for(Move move: allMoves ) {
 			if( move.from.equalsPosition( from ) ) {
 				moveIter.add( move );

@@ -549,10 +549,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	}
 	
 	@Override
-	public List<Move> getPossibleMoves()
+	public void getPossibleMoves(List<Move> possibleMoves)
 	{
 		final Position kingPos = game.getKingPosition( whiteTurn );
-		final List<Move> possibleMoves = new ArrayList<>(50);
 
 		getFigure( kingPos ).getPossibleMoves( game,possibleMoves );
 		
@@ -562,8 +561,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 				figure.getPossibleMoves( game,possibleMoves );
 			}
 		}
-			
-		return possibleMoves;
 	}
 	
 	@Override

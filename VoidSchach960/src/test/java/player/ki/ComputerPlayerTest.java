@@ -1,5 +1,6 @@
 package player.ki;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import image.FigureImageFactoryMock;
@@ -110,7 +111,8 @@ public class ComputerPlayerTest extends TestCase
 		final String initDescription = game.toString();
 		DynamicEvaluation dynamicEvaluation  = new DynamicEvaluation( pruner,new StaticEvaluation() );
 		
-		List<Move> possibleMoves = game.getPossibleMoves( );
+		List<Move> possibleMoves = new LinkedList<Move>();
+		game.getPossibleMoves(possibleMoves);
 		try {
 			for(Move move: possibleMoves) {
 				dynamicEvaluation.evaluateMove( game,move );

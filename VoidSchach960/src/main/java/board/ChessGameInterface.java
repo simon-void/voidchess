@@ -27,7 +27,7 @@ public interface ChessGameInterface extends BasicChessGameInterface
 	public boolean isMoveable( Position from,Position to,boolean whitePlayer );
 	public boolean isFreeArea(Position pos);
 	public int     move(Move move);
-	public List<Move> getPossibleMoves( );
+	public void getPossibleMoves(List<Move> possibleMoves );
 	public int     countReachableMoves( boolean isWhite );
 
 	public void useNormalSupervisor();
