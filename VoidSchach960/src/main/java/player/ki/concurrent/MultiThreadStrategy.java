@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -19,14 +18,14 @@ import player.ki.DynamicEvaluation;
 import board.ChessGameInterface;
 
 class MultiThreadStrategy extends AbstractConcurrencyStrategy
-{	
-	private final ExecutorService executorService;
-	
+{
+  final private DelayedExecutorService delayedExecutorService;
+  
 	MultiThreadStrategy(AbstractComputerPlayerUI ui, int numberOfCores)
 	{
 		super(ui);
 		
-		executorService = Executors.newFixedThreadPool(numberOfCores);
+		delayedExecutorService = new DelayedExecutorService(numberOfCores);
 	}
 	
 
@@ -43,22 +42,21 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
 		final int totalNumberOfMoves = possibleMoves.size();
 		final AtomicInteger numberOfFinnishedEvaluations = new AtomicInteger(0);
 		
-		final List<Future<EvaluatedMove>> evaluationFutures = new ArrayList<Future<EvaluatedMove>>(totalNumberOfMoves);
 		final Iterator<ChessGameInterface> gameInstances = game.copyGame(totalNumberOfMoves).iterator();
+		
+		final LinkedList<Callable<EvaluatedMove>> movesToEvaluate = new LinkedList<Callable<EvaluatedMove>>();
+		for(Move move: possibleMoves) {
+		  movesToEvaluate.add(
+        new MoveEvaluationCallable(
+            gameInstances.next(), move, dynamicEvaluation, numberOfFinnishedEvaluations
+        )
+      );
+    }
+		delayedExecutorService.setCallablesToExecute(movesToEvaluate);
 		
 		long time = System.currentTimeMillis();
 		
-		for(Move move: possibleMoves) {
-		  evaluationFutures.add(
-		    executorService.submit(
-		      new MoveEvaluationCallable(
-		          gameInstances.next(),	move, dynamicEvaluation, numberOfFinnishedEvaluations
-		      )
-		    )
-		  );
-		}
-		
-		blockAndShowProgressUntillEvaluationIsDone(numberOfFinnishedEvaluations, totalNumberOfMoves);
+		final List<Future<EvaluatedMove>> evaluationFutures = blockAndShowProgressUntillEvaluationIsDone(numberOfFinnishedEvaluations, totalNumberOfMoves);
 		
     final SortedSet<EvaluatedMove> result = new TreeSet<EvaluatedMove>();
     for (Future<EvaluatedMove> evaluatedMoveFuture : evaluationFutures) {
@@ -81,27 +79,37 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
     return result;
 	}
 	
-	private void blockAndShowProgressUntillEvaluationIsDone(final AtomicInteger numberOfFinnishedEvaluations, final int totalNumberOfMoves)
+	private List<Future<EvaluatedMove>> blockAndShowProgressUntillEvaluationIsDone(final AtomicInteger numberOfFinnishedEvaluations, final int totalNumberOfMoves)
 	{
+	  final List<Future<EvaluatedMove>> evaluationFutures = new ArrayList<Future<EvaluatedMove>>(totalNumberOfMoves);
+	  
+	  delayedExecutorService.executeOneCallableForEachThread(evaluationFutures);
+	  	  
 	  int lastNumberOfFinnishedEvaluations = 0;
 	  boolean notAllEvaluationsDone = true;
 	  
 	  while(notAllEvaluationsDone) {
 	    //sleep for a second
-	    sleep(1000);
+	    sleep(300);
 	    //than check the number of finnished Evaluations 
 	    
 	    final int nowNumberOfFinnishedEvaluations = numberOfFinnishedEvaluations.get();
 	    if(nowNumberOfFinnishedEvaluations>lastNumberOfFinnishedEvaluations) {
 	      //more evaluations have been finnished
-	      //so update the lastNumberOfFinnishedEvaluations for the next iteration 
+	      //so update the lastNumberOfFinnishedEvaluations for the next iteration
+	      final int freeThreads = nowNumberOfFinnishedEvaluations - lastNumberOfFinnishedEvaluations;
 	      lastNumberOfFinnishedEvaluations = nowNumberOfFinnishedEvaluations;
 	      //and update the progress bar
+     
 	      showProgress(nowNumberOfFinnishedEvaluations, totalNumberOfMoves);
+	      
+        delayedExecutorService.executeCallables(freeThreads, evaluationFutures);
 	    }
 	    //check if all evaluations are done
 	    notAllEvaluationsDone = nowNumberOfFinnishedEvaluations<totalNumberOfMoves; 
 	  }
+	  
+	  return evaluationFutures;
 	}
 	
 	private void sleep(final int numberOfMilliseconds)
@@ -175,5 +183,43 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
 				numberOfFinnishedEvaluations.incrementAndGet();
 			}
 		}
+	}
+	
+	private static class DelayedExecutorService
+	{
+	  private final ExecutorService executorService;
+	  private final int numberOfThreads;
+	  
+	  private LinkedList<Callable<EvaluatedMove>> callablesToExecute;
+	  
+	  DelayedExecutorService(int numberOfCores)
+	  {	    
+	    numberOfThreads = numberOfCores;
+	    executorService = Executors.newFixedThreadPool(numberOfCores);
+	  }
+	  
+	  public void setCallablesToExecute(LinkedList<Callable<EvaluatedMove>> callablesToExecute)
+	  {
+	    this.callablesToExecute = callablesToExecute;
+	  }
+	  
+	  public void executeOneCallableForEachThread(List<Future<EvaluatedMove>> resultFutures)
+	  {
+	    executeCallables(numberOfThreads, resultFutures);
+	  }
+	  
+	  public void executeCallables(final int numberOfCallablesToExecute, List<Future<EvaluatedMove>> resultFutures)
+    {      
+      for(int i=0;i<numberOfThreads;i++) {
+        if(callablesToExecute.isEmpty()) {
+          break;
+        }
+        resultFutures.add(
+          executorService.submit(
+            callablesToExecute.removeFirst()
+          )
+        );
+      }
+    }
 	}
 }
