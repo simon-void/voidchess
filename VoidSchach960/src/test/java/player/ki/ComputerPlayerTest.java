@@ -130,6 +130,33 @@ public class ComputerPlayerTest extends TestCase
 		}
 	}
 	
+	public void testTermination( ChessGame game,SearchTreePruner pruner, Move move )
+  {
+    final String initDescription = game.toString();
+    DynamicEvaluation dynamicEvaluation  = new DynamicEvaluation( pruner,new StaticEvaluation() );
+    
+    List<Move> possibleMoves = new LinkedList<Move>();
+    game.getPossibleMoves(possibleMoves);
+    
+    if(!possibleMoves.contains(move)) {
+      throw new RuntimeException( "suggested move:"+move.toString()+ "not possible in initial position: "+initDescription );
+    }
+    
+    try {
+      dynamicEvaluation.evaluateMove( game,move );
+      //Invariante: evaluateMove darf game nicht ändern
+      String msg = "after Move:"+move.toString()+" History:"+game.getHistory();
+      assertEquals( msg,initDescription,game.toString() );
+    }catch(Exception e) {
+      String gamestring = game.toString();
+      throw new RuntimeException( e.toString()+"-after Moves:"+game.getHistory()+" -leading to position:"+gamestring );
+    }catch( AssertionError e ) {
+      AssertionError extendedE = new AssertionError( e.getMessage()+" History:"+game.getHistory() );
+      extendedE.setStackTrace( e.getStackTrace() );
+      throw extendedE;
+    }
+  }
+	
 	public static void main( String[] args )
 	{
 		//Loadtest
@@ -140,7 +167,7 @@ public class ComputerPlayerTest extends TestCase
 		"Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 "+
 		"Rock-black-a8-0 Knight-black-b8 Bishop-black-c8 "+
 		"Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
-		loadTest( des );
+		//loadTest( des );
 		
 		//Grundaufstellung mit Bauern vor König und ohne Läufer
 		des = "white 0 Rock-white-a1-0 Knight-white-b1 "+
@@ -189,17 +216,23 @@ public class ComputerPlayerTest extends TestCase
 	private static void loadTest( String des )
 	{
 		ChessGame game = new ChessGame( des );
-		ComputerPlayerTest computerPlayer = new ComputerPlayerTest( "loadtest" );
-		
-		try {
-			System.out.println( "Loadtest: Berechnung gestartet" );
-			long time = System.currentTimeMillis();
-			computerPlayer.testTermination( game,new SimplePruner( 2,3,2 ) );
-			System.out.println( "Loadtest: Dauer:"+(System.currentTimeMillis()-time)+"ms" );
-			RuntimeFacade.printMemoryUsage( "Speicherverbrauch used/total" );
-		}catch( RuntimeException e ) {
-			System.out.println( "Loadtestfehler:"+e.getMessage() );
-		}
+		SearchTreePruner pruner = new SimplePruner( 2,3,2 );
+		loadTest(game, pruner);
 	}
+	
+	private static void loadTest( ChessGame game, SearchTreePruner pruner )
+  {
+    ComputerPlayerTest computerPlayer = new ComputerPlayerTest( "loadtest" );
+    
+    try {
+      System.out.println( "Loadtest: Berechnung gestartet" );
+      long time = System.currentTimeMillis();
+      computerPlayer.testTermination( game,pruner );
+      System.out.println( "Loadtest: Dauer:"+(System.currentTimeMillis()-time)+"ms" );
+      RuntimeFacade.printMemoryUsage( "Speicherverbrauch used/total" );
+    }catch( RuntimeException e ) {
+      System.out.println( "Loadtestfehler:"+e.getMessage() );
+    }
+  }
 
 }

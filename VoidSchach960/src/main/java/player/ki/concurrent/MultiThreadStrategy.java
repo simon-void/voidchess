@@ -1,16 +1,17 @@
 package player.ki.concurrent;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import helper.Move;
 import player.ki.AbstractComputerPlayerUI;
@@ -19,13 +20,17 @@ import board.ChessGameInterface;
 
 class MultiThreadStrategy extends AbstractConcurrencyStrategy
 {
-  final private DelayedExecutorService delayedExecutorService;
+//  final private DelayedExecutorService delayedExecutorService;
+  private final ExecutorService executorService;
+  private final int numberOfThreads;
   
 	MultiThreadStrategy(AbstractComputerPlayerUI ui, int numberOfCores)
 	{
 		super(ui);
 		
-		delayedExecutorService = new DelayedExecutorService(numberOfCores);
+		numberOfThreads = numberOfCores;
+		executorService = Executors.newFixedThreadPool(numberOfCores);
+//		delayedExecutorService = new DelayedExecutorService(numberOfCores);
 	}
 	
 
@@ -35,41 +40,17 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
 	  //as long as the first parameter is 0 and the second one is bigger
 	  //the progress bar will always show correctly 0% (so '1' as second parameter is fine)
 	  showProgress(0, 1);
-	  
-		final List<Move> possibleMoves = getPossibleMoves(game);
-		assert !possibleMoves.isEmpty() : "no moves were possible and therefore evaluatable";
 		
-		final int totalNumberOfMoves = possibleMoves.size();
-		final AtomicInteger numberOfFinnishedEvaluations = new AtomicInteger(0);
-		
-		final Iterator<ChessGameInterface> gameInstances = game.copyGame(totalNumberOfMoves).iterator();
-		
-		final LinkedList<Callable<EvaluatedMove>> movesToEvaluate = new LinkedList<Callable<EvaluatedMove>>();
-		for(Move move: possibleMoves) {
-		  movesToEvaluate.add(
-        new MoveEvaluationCallable(
-            gameInstances.next(), move, dynamicEvaluation, numberOfFinnishedEvaluations
-        )
-      );
-    }
-		delayedExecutorService.setCallablesToExecute(movesToEvaluate);
-		
+		final LinkedList<Callable<EvaluatedMove>> movesToEvaluate = getEvaluatableMoves(game, dynamicEvaluation);
+
 		long time = System.currentTimeMillis();
 		
-		final List<Future<EvaluatedMove>> evaluationFutures = blockAndShowProgressUntillEvaluationIsDone(numberOfFinnishedEvaluations, totalNumberOfMoves);
-		
-    final SortedSet<EvaluatedMove> result = new TreeSet<EvaluatedMove>();
-    for (Future<EvaluatedMove> evaluatedMoveFuture : evaluationFutures) {
-      try {
-        //get() shouldn't need to block but it shouldn't be a problem is if it does
-        final EvaluatedMove evaluatedMove = evaluatedMoveFuture.get();
-        if(evaluatedMove==null) {
-          //only possible in case of exception
-          continue;
-        }
-        result.add(evaluatedMove);
-      } catch (Exception e) {/*shouldn't happen*/}
-    }
+		SortedSet<EvaluatedMove> result = Collections.emptySortedSet();
+		try{
+		  result = evaluate(movesToEvaluate);//resultFutures.get();
+		}catch(Exception e){
+		  e.printStackTrace();
+		}
     
     long duration = time - System.currentTimeMillis();
     System.out.println("time:"+duration);
@@ -79,89 +60,71 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
     return result;
 	}
 	
-	private List<Future<EvaluatedMove>> blockAndShowProgressUntillEvaluationIsDone(final AtomicInteger numberOfFinnishedEvaluations, final int totalNumberOfMoves)
+	private SortedSet<EvaluatedMove> evaluate(final LinkedList<Callable<EvaluatedMove>> movesToEvaluate)
+	throws InterruptedException, ExecutionException
 	{
-	  final List<Future<EvaluatedMove>> evaluationFutures = new ArrayList<Future<EvaluatedMove>>(totalNumberOfMoves);
+	  SortedSet<EvaluatedMove> result = new TreeSet<EvaluatedMove>();
+
+    final int totalNumberOfMoves = movesToEvaluate.size();
+    
+    CompletionService<EvaluatedMove> ecs = new ExecutorCompletionService<EvaluatedMove>(executorService);
+    submitCallables(movesToEvaluate, ecs, numberOfThreads);
+    
+    for (int i = 0; i < totalNumberOfMoves; ++i) {
+      //wait for an evaluation to be finished
+      EvaluatedMove evaluatedMove = ecs.take().get();
+      //show the progress
+      showProgress(i, totalNumberOfMoves);
+      //add a new move to be evaluated to the queue (if some are left)
+      submitCallables(movesToEvaluate, ecs, 1);
+      //add this evaluation to result set
+      if(evaluatedMove!=null) {
+        result.add(evaluatedMove);
+      }
+    }
 	  
-	  delayedExecutorService.executeOneCallableForEachThread(evaluationFutures);
-	  	  
-	  int lastNumberOfFinnishedEvaluations = 0;
-	  boolean notAllEvaluationsDone = true;
-	  
-	  while(notAllEvaluationsDone) {
-	    //sleep for a second
-	    sleep(300);
-	    //than check the number of finnished Evaluations 
-	    
-	    final int nowNumberOfFinnishedEvaluations = numberOfFinnishedEvaluations.get();
-	    if(nowNumberOfFinnishedEvaluations>lastNumberOfFinnishedEvaluations) {
-	      //more evaluations have been finnished
-	      //so update the lastNumberOfFinnishedEvaluations for the next iteration
-	      final int freeThreads = nowNumberOfFinnishedEvaluations - lastNumberOfFinnishedEvaluations;
-	      lastNumberOfFinnishedEvaluations = nowNumberOfFinnishedEvaluations;
-	      //and update the progress bar
-     
-	      showProgress(nowNumberOfFinnishedEvaluations, totalNumberOfMoves);
-	      
-        delayedExecutorService.executeCallables(freeThreads, evaluationFutures);
-	    }
-	    //check if all evaluations are done
-	    notAllEvaluationsDone = nowNumberOfFinnishedEvaluations<totalNumberOfMoves; 
-	  }
-	  
-	  return evaluationFutures;
+	  return result;
 	}
 	
-	private void sleep(final int numberOfMilliseconds)
+	private LinkedList<Callable<EvaluatedMove>> getEvaluatableMoves(final ChessGameInterface game, final DynamicEvaluation dynamicEvaluation)
 	{
-	  try{
-	    Thread.sleep(numberOfMilliseconds);
-	  } catch(InterruptedException e) {}
+	  final List<Move> possibleMoves = getPossibleMoves(game);
+    assert !possibleMoves.isEmpty() : "no moves were possible and therefore evaluatable";
+    
+    final int totalNumberOfMoves = possibleMoves.size();
+    
+    final Iterator<ChessGameInterface> gameInstances = game.copyGame(totalNumberOfMoves).iterator();
+    
+    final LinkedList<Callable<EvaluatedMove>> movesToEvaluate = new LinkedList<Callable<EvaluatedMove>>();
+    for(Move move: possibleMoves) {
+      movesToEvaluate.add(
+        new MoveEvaluationCallable(
+            gameInstances.next(), move, dynamicEvaluation//, delayedExecutorService
+        )
+      );
+    }
+    
+    return movesToEvaluate;
 	}
-	
-//	private synchronized void moveEvaluated()
-//	{
-//		numberOfEvaluatedMoves++;
-//		
-//		showProgress();
-//	}
-//	
-//	private synchronized void addException(Move move, Exception e)
-//	{		
-//		//TODO make better message
-//		exceptions.add(move.toString()+" caused "+e.toString());
-//		
-//		moveEvaluated();
-//	}
-//	
-//	private void showProgress()
-//	{
-//		showProgress(numberOfEvaluatedMoves, totalNumberOfMoves);
-//	}
-//	
-//	private void assertNoExceptionsWhileEvaluatingGame(ChessGameInterface game)
-//	{
-//		//TODO better exception handling (e.g. incorporate game as String)
-//		if( !exceptions.isEmpty() ) {
-//			StringBuilder sb = new StringBuilder();
-//			for(String msg: exceptions) {
-//				sb.append(msg).append("; \n");
-//			}
-//			
-//			throw new RuntimeException("exception(s) while computing moves: \n"+sb.toString());
-//		}
-//	}
+  
+  private void submitCallables(LinkedList<Callable<EvaluatedMove>> movesToEvaluate, CompletionService<EvaluatedMove> completionService, int numberOfMovesToSubmit)
+  {
+    for(int i=0;i<numberOfMovesToSubmit; i++) {
+      if(movesToEvaluate.isEmpty()) {
+        break;
+      }
+      completionService.submit(movesToEvaluate.removeFirst());
+    }
+  }
 	
 	private static class MoveEvaluationCallable implements Callable<EvaluatedMove>
 	{
-	  final AtomicInteger numberOfFinnishedEvaluations;
 		private final DynamicEvaluation dynamicEvaluation;
 		private final ChessGameInterface game;
 		private final Move move; 
 		
-		MoveEvaluationCallable(ChessGameInterface game, Move move, DynamicEvaluation dynamicEvaluation, final AtomicInteger numberOfFinnishedEvaluations)
+		MoveEvaluationCallable(ChessGameInterface game, Move move, DynamicEvaluation dynamicEvaluation)
 		{
-		  this.numberOfFinnishedEvaluations = numberOfFinnishedEvaluations;
 			this.dynamicEvaluation = dynamicEvaluation;
 			this.game = game;
 			this.move = move;
@@ -175,51 +138,10 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
 				return evaluatedMove;
 			} catch (Exception e) {
 			  //print out the error
-			  e.printStackTrace(System.err);
+			  e.printStackTrace();
 			  return null;
-			}finally{
-			  //this Callable is finished so increment this counter
-			  //so that the progress can be examined
-				numberOfFinnishedEvaluations.incrementAndGet();
 			}
 		}
 	}
 	
-	private static class DelayedExecutorService
-	{
-	  private final ExecutorService executorService;
-	  private final int numberOfThreads;
-	  
-	  private LinkedList<Callable<EvaluatedMove>> callablesToExecute;
-	  
-	  DelayedExecutorService(int numberOfCores)
-	  {	    
-	    numberOfThreads = numberOfCores;
-	    executorService = Executors.newFixedThreadPool(numberOfCores);
-	  }
-	  
-	  public void setCallablesToExecute(LinkedList<Callable<EvaluatedMove>> callablesToExecute)
-	  {
-	    this.callablesToExecute = callablesToExecute;
-	  }
-	  
-	  public void executeOneCallableForEachThread(List<Future<EvaluatedMove>> resultFutures)
-	  {
-	    executeCallables(numberOfThreads, resultFutures);
-	  }
-	  
-	  public void executeCallables(final int numberOfCallablesToExecute, List<Future<EvaluatedMove>> resultFutures)
-    {      
-      for(int i=0;i<numberOfThreads;i++) {
-        if(callablesToExecute.isEmpty()) {
-          break;
-        }
-        resultFutures.add(
-          executorService.submit(
-            callablesToExecute.removeFirst()
-          )
-        );
-      }
-    }
-	}
 }
