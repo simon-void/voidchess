@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Created-By: Stephan Schroeder (simon.void at gmx.de)
+Main-Class: organisation.ChessFrame
+
+Implementation-Version: 2.2.3
