@@ -1,8 +1,0 @@
-.*
-!.gitignore
-gwt-unitCache
-test-classes
-war/tarot
-war/WEB-INF/deploy
-war/WEB-INF/lib
-war/WEB-INF/classes
