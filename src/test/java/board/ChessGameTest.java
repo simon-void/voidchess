@@ -527,6 +527,10 @@ public class ChessGameTest
 		assertTrue( game.countFigures()==4 );
 		game.move( Move.get( "e8-e7" ) );
 		assertTrue( game.countFigures()==3 );
+		game.undo();
+		assertTrue( game.countFigures()==4 );
+		game.undo();
+    assertTrue( game.countFigures()==5 );
 	}
 
   @Test

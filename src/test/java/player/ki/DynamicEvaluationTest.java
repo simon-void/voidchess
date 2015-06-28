@@ -63,15 +63,15 @@ public class DynamicEvaluationTest
   @Test
 	public void testFailingPosition()
   {
-	//Grundaufstellung nach e4, d5, e5
     ChessGame game = new ChessGame(518);
     game.move(Move.get("e2-e4"));
     game.move(Move.get("d7-d5"));
     game.move(Move.get("e4-e5"));
     
     SearchTreePruner pruner = new SimplePruner( 2,4,3 );
-
+    assertEquals(game.countFigures(), 32, "figureCount");
     evaluateDynamic(game, Move.get("e8-d7"), pruner);
+    assertEquals(game.countFigures(), 32, "figureCount");
   }
 	
 	private void evaluateDynamic(ChessGame game, Move move, SearchTreePruner pruner)

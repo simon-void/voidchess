@@ -375,7 +375,11 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 		}
 		activeFigure.undoMove( lastMove.from );
 		
-		if( wasRochade )  			    undoRochade( lastMove );
+		if(lastMove.hasHitFigure()) {
+		  figureCount++;
+		}
+		
+		if( wasRochade )                undoRochade( lastMove );
 		if( lastMove.isEnpassent() )    undoEnpassent( lastMove );
 		if( lastMove.pawnTransformed() )undoPawnTransformation( lastMove );
 		rebuildPawnEnpassentCapability();
