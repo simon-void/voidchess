@@ -3,22 +3,19 @@ package figures;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 /**
  * @author stephan
  */
-public class RockTest extends TestCase
+public class RockTest
 {
-	public RockTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+	@Test
 	public void testIsReachable()
 	{
 		String des     = "white 0 Pawn-white-c2-false Rock-white-c4-2 "
@@ -41,7 +38,8 @@ public class RockTest extends TestCase
 		assertFalse( rock.isReachable(to5,game) );
 		assertFalse( rock.isReachable(from,game) );
 	}
-	
+
+  @Test
 	public void testUndoMove()
 	{
 		FigureImageFactoryMock figureImageFactory = new FigureImageFactoryMock( "Rock",true );
@@ -54,7 +52,8 @@ public class RockTest extends TestCase
 		rock.undoMove( Position.get("a1") );
 		assertTrue( rock.canParticipateInRochade() );
 	}
-	
+
+  @Test
 	public void testGetPossibleMoves()
 	{
 		String des     = "white 0 King-white-e2-0 Pawn-black-b4-false "
@@ -66,5 +65,4 @@ public class RockTest extends TestCase
 		rock.getPossibleMoves(game,moveIter);
 		assertEquals( moveIter.size(),11 );
 	}
-	
 }

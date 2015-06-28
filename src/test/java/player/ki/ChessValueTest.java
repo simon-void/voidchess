@@ -4,13 +4,14 @@
 
 package player.ki;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 public class ChessValueTest
-extends TestCase
 {
 	private ChessValue wrapper = ChessValue.getInstance();
 	
+	@Test
 	public void testChessvalueToString()
 	{
 		float value = wrapper.getFloatValue( -1 );
@@ -30,7 +31,8 @@ extends TestCase
 		value = wrapper.getThisComputerPlayerIsMatt( 12 );
 		assertEquals( "du bist matt in 12",wrapper.chessvalueToString( value ) );
 	}
-	
+
+  @Test
 	public void testHasAlmostSameValue()
 	{
 		assertTrue(
@@ -88,5 +90,4 @@ extends TestCase
 			)
 		);
 	}
-
 }

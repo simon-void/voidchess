@@ -1,10 +1,11 @@
 package board;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 import java.util.List;
 
-import junit.framework.TestCase;
 import figures.*;
 import helper.CheckStatus;
 import helper.Position;
@@ -13,7 +14,7 @@ import image.*;
 /**
  * @author stephan
  */
-public class SimpleBoardTest extends TestCase
+public class SimpleBoardTest
 {
 	private SimpleChessBoardInterface board;
 	final private String initial = "Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "+
@@ -24,17 +25,14 @@ public class SimpleBoardTest extends TestCase
 	"Pawn-black-e7-false Pawn-black-f7-false Pawn-black-g7-false Pawn-black-h7-false "+
 	"Rock-black-a8-0 Knight-black-b8 Bishop-black-c8 "+
 	"Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
-	
-	public SimpleBoardTest(String arg0)
-	{
-		super(arg0);
-	}
 
-	protected void setUp() throws Exception
+	@BeforeMethod
+	public void setUp()
 	{
 		board = new SimpleArrayBoard( new FigureImageFactoryMock("",true), mock(LastMoveProvider.class) );
 	}
 	
+	@Test
 	public void testInit()
 	{
 		Figure figure = board.getFigure( Position.get("a1") );
@@ -48,7 +46,8 @@ public class SimpleBoardTest extends TestCase
 		figure = board.getFigure( Position.get("e3") );
 		assertNull( figure );
 	}
-	
+
+  @Test
 	public void testInit960()
 	{
 		board.init( 518 );
@@ -66,13 +65,15 @@ public class SimpleBoardTest extends TestCase
 			fail( "AssertionError should have been thrown:Argument smaller than 0" );
 		}catch( AssertionError e) {}
 	}
-	
+
+  @Test
 	public void testIsFreeArea()
 	{
 		assertTrue(  board.isFreeArea( Position.get("a3")) );
 		assertFalse( board.isFreeArea( Position.get("a2")) );
 	}
-	
+
+  @Test
 	public void testSetFigure()
 	{
 		Figure figure = board.getFigure( Position.get("b1") );
@@ -80,14 +81,16 @@ public class SimpleBoardTest extends TestCase
 		board.setFigure( to,figure );
 		assertTrue( board.getFigure( to ).isKnight() );
 	}
-	
+
+  @Test
 	public void testGetFigures()
 	{
 		board.setFigure( Position.get("c2"),null );
 	  List<Figure> figures = board.getFigures();
 		assertEquals( 31,figures.size() );
 	}
-	
+
+  @Test
 	public void testGetCheckStatus()
 	{
 		CheckStatus status = board.getCheckStatus( true );
@@ -108,6 +111,7 @@ public class SimpleBoardTest extends TestCase
 		assertTrue( status.onlyKingCanMove() );
 	}
 
+  @Test
 	public void testToString()
 	{
 		assertEquals( initial,board.toString() );

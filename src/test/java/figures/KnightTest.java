@@ -3,23 +3,20 @@ package figures;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 /**
  * @author stephan
  */
-public class KnightTest extends TestCase
+public class KnightTest
 {
-	public KnightTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+  @Test
 	public void testIsReachable()
 	{
 		String des     = "black 0 Pawn-white-c2-false Knight-black-d4 "
@@ -48,7 +45,8 @@ public class KnightTest extends TestCase
 		assertFalse( knight.isReachable(to8,game) );
 		assertFalse( knight.isReachable(from,game) );
 	}
-	
+
+  @Test
 	public void testGetPossibleMoves()
 	{
 		String des     = "white 0 Knight-white-a1 King-white-e1-0 "

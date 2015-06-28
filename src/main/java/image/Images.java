@@ -6,8 +6,6 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import junit.framework.Assert;
-
 public class Images{
   private final static Image[] images = new Image[ImageType.values().length];
 
@@ -23,10 +21,17 @@ public class Images{
 
   public static Image get( ImageType imageType )
   {
-    Assert.assertNotNull("iamgeType", imageType);
+    assertNotNull(imageType, "iamgeType");
     final Image image = images[imageType.ordinal()];
-    Assert.assertNotNull(imageType.toString(), imageType);
+    assertNotNull(image, imageType.toString());
     
     return image; 
+  }
+  
+  private static void assertNotNull(Object o, String msg )
+  {
+    if(o==null) {
+      throw new AssertionError("object was null: "+msg);
+    }
   }
 }

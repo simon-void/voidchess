@@ -1,4 +1,9 @@
 /.project
+
 /.settings
+
 /.classpath
+
 /bin
+/lib/*
+/test-output

@@ -3,22 +3,19 @@ package figures;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 /**
  * @author stephan
  */
-public class BishopTest extends TestCase
-{
-	public BishopTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+public class BishopTest
+{	
+  @Test
 	public void testIsReachable()
 	{
 		String des     = "white 0 Pawn-white-c2-false Bishop-white-d3- "
@@ -45,7 +42,8 @@ public class BishopTest extends TestCase
 		assertFalse( bishop.isReachable(to7,game) );
 		assertFalse( bishop.isReachable(from,game) );
 	}
-	
+
+  @Test
 	public void testGetPossibleMoves()
 	{
 		String des     = "white 0 Bishop-white-b1 King-white-e1-0 "

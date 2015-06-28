@@ -6,12 +6,14 @@ import java.util.TreeSet;
 
 import player.ki.ChessValue;
 import helper.Move;
-import junit.framework.TestCase;
+
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 public class EvaluatedMoveTest
-extends TestCase
 {	
-	public void testGetter() throws Exception
+  @Test
+	public void testGetter()
 	{
 		final Move move   = Move.get("a2-a3");
 		final float value = -2.9123f;
@@ -21,8 +23,9 @@ extends TestCase
 		assertEquals(move, eMove.getMove());
 		assertEquals(value, eMove.getValue());
 	}
-	
-	public void testCompareTo() throws Exception
+
+  @Test
+	public void testCompareTo()
 	{
 		EvaluatedMove e1_1 = new EvaluatedMove(Move.get("b2-b4"), .1f);
 		EvaluatedMove e1_2 = new EvaluatedMove(Move.get("c2-c4"), .1f);
@@ -34,8 +37,9 @@ extends TestCase
 		assertEquals(-1, e1_1.compareTo(e2));
 		assertEquals( 1, e1_1.compareTo(e3));
 	}
-	
-	public void testOrderingInSortedSet() throws Exception 
+
+  @Test
+	public void testOrderingInSortedSet()
 	{
 		ChessValue wrapper = ChessValue.getInstance();
 		

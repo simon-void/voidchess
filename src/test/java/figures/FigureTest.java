@@ -3,37 +3,36 @@ package figures;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import image.*;
 import helper.*;
 import board.*;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 /**
  * @author stephan
  */
-public class FigureTest extends TestCase
+public class FigureTest
 {
 	private FigureImageMock figureImage = new FigureImageMock( 10,20,30 );
 	
-	public FigureTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+	@Test
 	public void testConstructor()
 	{
 		new MockFigure( figureImage,true,Position.get(0,0) );
 	}
-	
+
+  @Test
 	public void testPaint()
 	{
 		Figure figure=new MockFigure( figureImage,true,Position.get(0,0) );
 		figure.paint(null,10,20,30);
 		figureImage.verify();
 	}
-	
+
+  @Test
 	public void testIsDifferentColor()
 	{
 		Figure figure1=new MockFigure( figureImage,true,Position.get(0,0) );
@@ -43,17 +42,20 @@ public class FigureTest extends TestCase
 		assertFalse( figure2.hasDifferentColor(figure1) );
 		assertFalse( figure3.hasDifferentColor(figure3) );
 	}
-	
+
+  @Test
 	public void testCanBeHitByEnpasent()
 	{
-		assertFalse( "should be false for all figures but pawns",
+		assertFalse(
 		  new MockFigure(	figureImage,
 			  				true,
 			  				Position.get(0,0)
-			  			).canBeHitByEnpasent()
+			  			).canBeHitByEnpasent(),
+ 			"should be false for all figures but pawns"
 		);
 	}
-	
+
+  @Test
 	public void testToString()
 	{
 		Position pos            = Position.get( "g4" );
@@ -62,7 +64,8 @@ public class FigureTest extends TestCase
 		Figure figure2=new Bishop( figureImage,false,pos );
 		assertEquals("Bishop-black-g4",figure2.toString() );
 	}
-	
+
+  @Test
 	public void testSubtypes()
 	{
 		Position pos            = Position.get( "g4" );
@@ -73,7 +76,8 @@ public class FigureTest extends TestCase
 		new Queen( figureImage,true,pos );
 		new King( figureImage,true,pos );
 	}
-	
+
+  @Test
 	public void testIsWhite()
 	{
 		Position pos            = Position.get( "g4" );
@@ -84,7 +88,8 @@ public class FigureTest extends TestCase
 		Figure figure2 = new Knight( figureImage,false,pos );
 		assertFalse( figure2.isWhite() ); 
 	}
-	
+
+  @Test
 	public void testFigureMoved()
 	{
 		Position from           = Position.get( "c1" );
@@ -97,7 +102,8 @@ public class FigureTest extends TestCase
 		figure1.figureMoved( Move.get( thirdpos,from ) );
 		assertEquals( figure1.toString(),"Bishop-white-g5" );
 	}
-	
+
+  @Test
 	public void testRochade()
 	{
 		Position from           = Position.get( "c1" );
@@ -107,16 +113,17 @@ public class FigureTest extends TestCase
 		assertFalse( new Pawn(figureImage,true,from).canParticipateInRochade() );
 
 		Figure king = new King(figureImage,true,from);
-		assertTrue( "unmoved king",king.canParticipateInRochade() );
+		assertTrue(king.canParticipateInRochade(), "unmoved king");
 		king.figureMoved( move );
-		assertFalse( "moved king",king.canParticipateInRochade() );
+		assertFalse(king.canParticipateInRochade(), "moved king");
 		
 		Figure rock = new Rock(figureImage,false,from);
-		assertTrue( "unmoved rock",rock.canParticipateInRochade() );
+		assertTrue(rock.canParticipateInRochade(), "unmoved rock");
 		rock.figureMoved( move );
-		assertFalse( "moved rock",rock.canParticipateInRochade() );
+		assertFalse(rock.canParticipateInRochade(), "moved rock");
 	}
-	
+
+  @Test
 	public void testIsPassivetBound()
 	{
 		String des     = "white 0 King-white-e1-0 Rock-white-e3-4 Queen-black-e5";
@@ -137,7 +144,8 @@ public class FigureTest extends TestCase
 		assertTrue(  rock.isPassiveBound(to4,game) );
 		assertTrue(  rock.isPassiveBound(to5,game) );
 	}
-	
+
+  @Test
 	public void testIsBound() throws Exception
 	{
 		String des = "white 0 King-white-e1-0 Rock-white-e3-4 Queen-black-e5";
@@ -183,7 +191,8 @@ public class FigureTest extends TestCase
 		assertFalse(  king.isBound( to6,game ) );
 		assertTrue(  king.isBound( to7,game ) );
 	}
-	
+
+  @Test
 	public void testIsMoveable()
 	{
 		String des     = "white 0 King-white-e1-0 Rock-white-h2-1 Queen-black-h4";
@@ -202,7 +211,8 @@ public class FigureTest extends TestCase
 		assertFalse( rock.isMoveable(to3,game) );
 		assertFalse( rock.isMoveable(to4,game) );
 	}
-	
+
+  @Test
 	public void testGetTypeInfo()
 	{
 		Position from1 = Position.get( "e3" );
@@ -233,24 +243,29 @@ public class FigureTest extends TestCase
 		List figureByteList = new LinkedList();
 		//Die byte-Werte müssen paarweise disjunkt sein
 		figureByteList.add( pawnByte );
-		assertFalse(	"Bytewert sollte noch nicht in der Liste sein",
-						figureByteList.contains( rockByte )
+		assertFalse(
+		    figureByteList.contains( rockByte ),
+				"Bytewert sollte noch nicht in der Liste sein"
 		);
 		figureByteList.add( rockByte );
-		assertFalse(	"Bytewert sollte noch nicht in der Liste sein",
-						figureByteList.contains( knightByte )
+		assertFalse(
+				figureByteList.contains( knightByte ),
+				"Bytewert sollte noch nicht in der Liste sein"
 		);
 		figureByteList.add( knightByte );
-		assertFalse(	"Bytewert sollte noch nicht in der Liste sein",
-						figureByteList.contains( bishopByte )
+		assertFalse(
+				figureByteList.contains( bishopByte ),
+				"Bytewert sollte noch nicht in der Liste sein"
 		);
 		figureByteList.add( bishopByte );
-		assertFalse(	"Bytewert sollte noch nicht in der Liste sein",
-						figureByteList.contains( queenByte )
+		assertFalse(
+				figureByteList.contains( queenByte ),
+				"Bytewert sollte noch nicht in der Liste sein"
 		);
 		figureByteList.add( queenByte );
-		assertFalse(	"Bytewert sollte noch nicht in der Liste sein",
-						figureByteList.contains( kingByte )
+		assertFalse(
+				figureByteList.contains( kingByte ),
+				"Bytewert sollte noch nicht in der Liste sein"
 		);
 	}
 

@@ -1,21 +1,19 @@
 package helper;
 
 import figures.Pawn;
-import junit.framework.TestCase;
+
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 /**
  * @author stephan
  */
-public class ExtendedMoveTest extends TestCase
+public class ExtendedMoveTest
 {
 	private ExtendedMove extendedMove;
-
-	public ExtendedMoveTest(String arg0)
-	{
-		super(arg0);
-	}
 	
-	protected void setUp() throws Exception
+	@BeforeMethod
+	protected void setUp()
 	{
 		extendedMove = 
 			new ExtendedMove( 
@@ -29,36 +27,43 @@ public class ExtendedMoveTest extends TestCase
 				false );
 	}
 	
+	@Test
 	public void testFrom()
 	{
 		assertTrue( extendedMove.from.equalsPosition( Position.get("a1")) );
 	}
-	
+
+  @Test
 	public void testTo()
 	{
 		assertTrue( extendedMove.to.equalsPosition( Position.get("d1")) );
 	}
-	
+
+  @Test
 	public void testGetFigure()
 	{
 		assertTrue( extendedMove.getFigure()==null );
 	}
-	
+
+  @Test
 	public void testGetColorOfMove()
 	{
 		assertTrue( extendedMove.getColorOfMove() );
 	}
-	
+
+  @Test
 	public void testIsRochade()
 	{
 		assertFalse( extendedMove.isRochade() );
 	}
-	
+
+  @Test
 	public void testIsEnpassent()
 	{
 		assertFalse( extendedMove.isEnpassent() );
 	}
 
+  @Test
 	public void testHasHitFigure()
 	{
 		assertFalse( extendedMove.hasHitFigure() );

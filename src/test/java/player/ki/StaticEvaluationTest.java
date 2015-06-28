@@ -1,18 +1,16 @@
 package player.ki;
 
 import board.ChessGame;
-import junit.framework.TestCase;
+
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 /**
  * @author stephan
  */
-public class StaticEvaluationTest extends TestCase
+public class StaticEvaluationTest
 {
-	public StaticEvaluationTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+  @Test
 	public void testEvaluation()
 	{
 		String des = "black 0 Rock-white-a1-0 King-white-e1-0 "
@@ -29,5 +27,4 @@ public class StaticEvaluationTest extends TestCase
 		assertTrue( evaluation.evaluate(game,true) >0 );
 		assertTrue( evaluation.evaluate(game,false)<0 );
 	}
-
 }

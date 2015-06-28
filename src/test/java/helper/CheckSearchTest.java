@@ -4,27 +4,25 @@ import java.util.List;
 
 import board.LastMoveProvider;
 import board.SimpleArrayBoard;
-import junit.framework.TestCase;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 /**
  * @author stephan
  */
-public class CheckSearchTest extends TestCase
+public class CheckSearchTest
 {
-	public CheckSearchTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+  @Test
 	public void testSignum()
 	{
 		assertEquals(  1,CheckSearch.signum(  4 ) );
 		assertEquals(  0,CheckSearch.signum(  0 ) );
 		assertEquals( -1,CheckSearch.signum(-34 ) );
 	}
-	
+
+  @Test
 	public void testAreDiagonalPositions()
 	{
 		Position pos1 = Position.get( "a1" );
@@ -36,7 +34,8 @@ public class CheckSearchTest extends TestCase
 		assertFalse(CheckSearch.areDiagonalPositions( pos1,pos2 ) );
 		assertFalse(CheckSearch.areDiagonalPositions( pos1,pos3 ) );
 	}
-	
+
+  @Test
 	public void testAreStraightPositions()
 	{
 		Position pos1 = Position.get( "a1" );
@@ -48,7 +47,8 @@ public class CheckSearchTest extends TestCase
 		assertTrue( CheckSearch.areStraightPositions( pos1,pos2 ) );
 		assertTrue( CheckSearch.areStraightPositions( pos1,pos3 ) );
 	}
-	
+
+  @Test
 	public void testAnalyseCheck()
 	{
 		String des = "white 0 King-white-e4-4 King-black-e5-4";

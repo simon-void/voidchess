@@ -6,11 +6,13 @@ package player.ki;
 
 import board.*;
 import helper.*;
-import junit.framework.TestCase;
+
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 public class DynamicEvaluationTest
-extends TestCase
 {
+  @Test
 	public void testEvaluateMove()
 	{
 		String des = "black 0 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false";
@@ -22,7 +24,8 @@ extends TestCase
 		//Invariante: evaluateMove darf game nicht ändern
 		assertEquals( des,game.toString() );
 	}
-	
+
+  @Test
 	public void testMinMaxSheme()
 	{
 		String des = "white 0 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "+
@@ -56,7 +59,8 @@ extends TestCase
 			fail( "Min-Max-Berechnung ist zu hoch,Soll:~6.5,Ist:"+value );
 		}
 	}
-	
+
+  @Test
 	public void testFailingPosition()
   {
 	//Grundaufstellung nach e4, d5, e5
@@ -83,12 +87,11 @@ extends TestCase
       assertEquals( msg,initDescription,game.toString() );
     }catch(Exception e) {
       String gamestring = game.toString();
-      throw new RuntimeException( e.toString()+"-after Moves:"+game.getHistory()+" -leading to position:"+gamestring );
+      throw new RuntimeException( e.toString()+"-after Moves:"+game.getCompleteHistory()+" -leading to position:"+gamestring );
     }catch( AssertionError e ) {
       AssertionError extendedE = new AssertionError( e.getMessage()+" History:"+game.getHistory() );
       extendedE.setStackTrace( e.getStackTrace() );
       throw extendedE;
     }
 	}
-
 }

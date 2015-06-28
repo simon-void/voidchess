@@ -439,8 +439,19 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	
 	public String getHistory()
 	{
-		return extendedMoveStack.getLatestMoves( 4 );
+		return getHistory( 4 );
 	}
+	
+	public String getHistory(int numberOfHalvMoves)
+  {
+    return extendedMoveStack.getLatestMoves( numberOfHalvMoves );
+  }
+	
+	public String getCompleteHistory()
+  {
+	  final int numberOfMovesSaved = extendedMoveStack.size();
+    return extendedMoveStack.getLatestMoves( numberOfMovesSaved );
+  }
 	
 	private void initGame()
 	{
@@ -774,6 +785,11 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 		void clear()
 		{
 			index = 0;
+		}
+		
+		int size()
+		{
+		  return index;
 		}
 		
 		String getLatestMoves( int count )

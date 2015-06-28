@@ -1,18 +1,14 @@
 package helper;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 /**
  * @author stephan
  */
-public class PositionTest extends TestCase
+public class PositionTest
 {
-
-	public PositionTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+  @Test
 	public void testConstructor()
 	{
 		Position pos1 = Position.get( 0,7 );
@@ -32,7 +28,8 @@ public class PositionTest extends TestCase
 		assertTrue( pos2.column == 0 );
 		assertTrue( pos2.row    == 7 );
 	}
-	
+
+  @Test
 	public void testToString()
 	{
 		Position pos1=Position.get(0,0);
@@ -43,6 +40,7 @@ public class PositionTest extends TestCase
 		assertEquals( "h8",pos3.toString() );
 	}
 
+  @Test
 	public void testEquals()
 	{
 		Position pos1 = Position.get( "d4" );
@@ -53,7 +51,8 @@ public class PositionTest extends TestCase
 		assertFalse( pos2.equalsPosition( pos3 ) );
 		assertTrue( pos1.equalsPosition( pos3 ) );
 	}
-	
+
+  @Test
 	public void testNotInBounds()
 	{
 		assertTrue( Position.notInBounds( -1,4 ) );

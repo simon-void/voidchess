@@ -1,25 +1,24 @@
 package figures;
 
-import junit.framework.TestCase;
+
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
+
 import image.*;
 import helper.*;
 
 /**
  * @author stephan
  */
-public class FigureFactoryTest extends TestCase
+public class FigureFactoryTest
 {
-
-	public FigureFactoryTest(String arg0)
-	{
-		super(arg0);
-	}
-
+  @Test
   public void testConstructor()
 	{
 		new FigureFactory( new FigureImageFactoryMock("notest",true) );
 	}
-	
+
+  @Test
 	public void testGet()
 	{
 		Position pos = Position.get( "b3" );
@@ -48,7 +47,8 @@ public class FigureFactoryTest extends TestCase
 		new FigureFactory( figureImageFactory ).getPawn(pos,false);
 		figureImageFactory.verify();
 	}
-	
+
+  @Test
 	public void testSetFigureFactory()
 	{
 		try
@@ -62,7 +62,8 @@ public class FigureFactoryTest extends TestCase
 			fail( "unused FigureImageFactory" );
 		} catch (NullPointerException e){}
 	}
-	
+
+  @Test
 	public void testGetFigureByString()
 	{
 		FigureImageFactoryMock figureImageFactory = new FigureImageFactoryMock( "King",true );

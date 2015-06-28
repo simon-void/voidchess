@@ -3,22 +3,20 @@ package figures;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
+
 /**
  * @author stephan
  */
-public class PawnTest extends TestCase
+public class PawnTest
 {
-	public PawnTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+  @Test
 	public void testCanBeHitByEnpasent()
 	{
 		FigureImage figureImage = new FigureImageMock(10,20,30);
@@ -33,7 +31,8 @@ public class PawnTest extends TestCase
     pawn.figureMoved(other_move);
     assertFalse( pawn.canBeHitByEnpasent() );
 	}
-	
+
+  @Test
 	public void testIsReachable()
 	{
 		String des     = "white 0 Pawn-white-a2-false Pawn-white-b3-false";
@@ -68,7 +67,8 @@ public class PawnTest extends TestCase
 		assertTrue( pawn.isReachable(to3,game) );
 		assertFalse( pawn.isReachable(to4,game) );
 	}
-	
+
+  @Test
 	public void testGetPossibleMoves()
 	{
 		String des     = "black 0 Pawn-white-a4-true Pawn-black-b4-false "

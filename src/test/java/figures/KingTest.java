@@ -3,23 +3,20 @@ package figures;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 /**
  * @author stephan
  */
-public class KingTest extends TestCase
+public class KingTest
 {
-	public KingTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+  @Test
 	public void testIsReachable()
 	{
 		String des     = "white 0 Rock-white-a1-0 King-white-e1-0 "
@@ -79,7 +76,8 @@ public class KingTest extends TestCase
 		king           = new King(figureImage,true,from);
 		assertFalse( king.isReachable(to1,game)  );
 	}
-	
+
+  @Test
 	public void testGetReachableMoves()
 	{
 		ChessGame game = new ChessGame( 621 );
@@ -90,7 +88,8 @@ public class KingTest extends TestCase
 		king.getReachableMoves( game,moveIter );
 		assertEquals( 0,moveIter.size() );
 	}
-	
+
+  @Test
 	public void testIsPassiveBound()
 	{
 		String des     = "black 0 Knight-white-b6 Rock-black-a8-0 "
@@ -127,7 +126,8 @@ public class KingTest extends TestCase
 		assertTrue(  king.isPassiveBound(to3,game) );
 		assertFalse( king.isPassiveBound(to4,game) );
 	}
-	
+
+  @Test
 	public void testGetPossibleMoves()
 	{
 		String des     = "white 0 Rock-white-a1-0 King-white-f1-0 "
@@ -156,6 +156,7 @@ public class KingTest extends TestCase
 		assertEquals( 1,movesFrom.size() );
 	}
 
+  @Test
 	public void testDidRochade()
 	{
 		String des     = "white 0 Rock-white-a1-0 King-white-e1-0 "
@@ -167,5 +168,4 @@ public class KingTest extends TestCase
 		game.move( Move.get( "e1-a1" ) );
 		assertTrue( king.didRochade() );
 	}
-
 }

@@ -5,17 +5,18 @@
 package player.ki;
 
 import helper.Position;
+import board.ChessGame;
 
 import java.util.*;
 
-import board.ChessGame;
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 public class StaticSpaceEvaluationTest
-extends TestCase
 {
 	StaticSpaceEvaluation evaluation = new StaticSpaceEvaluation();
 	
+	@Test
 	public void testEvaluation()
 	{
 		String des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
@@ -35,13 +36,15 @@ extends TestCase
 		float evaluateForWhite2 = evaluation.evaluate(game2,true);
 		assertTrue( evaluateForWhite2 < evaluateForWhite );
 	}
-	
+
+  @Test
 	public void testGetMaxFigureDistance()
 	{
 		assertEquals( 7,evaluation.getKingDistance( Position.get( "e1" ),Position.get( "e8" ) ) );
 		assertEquals(  4,evaluation.getKingDistance( Position.get( "b7" ),Position.get( "e8" ) ) );
 	}
-	
+
+  @Test
 	public void testCountRestSpace()
 	{
 		String des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";

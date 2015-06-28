@@ -1,7 +1,8 @@
 package image;
 
 import java.awt.Graphics;
-import junit.framework.Assert;
+
+import static org.testng.Assert.assertTrue;;
 
 /**
  * @author stephan
@@ -26,7 +27,7 @@ public class FigureImageMock implements FigureImage
 	
 	public void verify()
 	{
-		Assert.assertTrue("wrong parameter",allOK );
+		assertTrue(allOK, "wrong parameter" );
 	}
 
 }

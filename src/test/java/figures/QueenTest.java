@@ -3,22 +3,20 @@ package figures;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import image.*;
 import board.*;
 import helper.*;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
+
 /**
  * @author stephan
  */
-public class QueenTest extends TestCase
+public class QueenTest
 {
-	public QueenTest(String arg0)
-	{
-		super(arg0);
-	}
-	
+  @Test
 	public void testIsReachable()
 	{
 		String des     = "white 0 Queen-white-e2";
@@ -36,7 +34,8 @@ public class QueenTest extends TestCase
 		assertFalse( queen.isReachable(to3,game) );
 		assertFalse( queen.isReachable(from,game) );
 	}
-	
+
+  @Test
 	public void testGetPossibleMoves()
 	{
 		String des     = "white 0 Queen-white-d1 King-white-e1-0 ";
@@ -47,5 +46,4 @@ public class QueenTest extends TestCase
 		queen.getPossibleMoves(game,moveIter);
 		assertEquals( moveIter.size(),17 );
 	}
-
 }

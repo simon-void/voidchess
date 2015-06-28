@@ -4,11 +4,12 @@
 
 package helper;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 public class RuntimeFacadeTest
-extends TestCase
 {
+  @Test
 	public void testAssertJavaVersion()
 	{
 		try {

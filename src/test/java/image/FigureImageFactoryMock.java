@@ -1,6 +1,7 @@
 package image;
 
-import junit.framework.Assert;
+import static org.testng.Assert.assertTrue;
+
 /**
  * @author stephan
  */
@@ -23,7 +24,7 @@ public class FigureImageFactoryMock implements FigureImageFactory
   
   public void verify()
   {
-  	Assert.assertTrue( "falsche Methode,vermutlich von FigureFactory aufgerufen",allOk );
+  	assertTrue( allOk, "falsche Methode,vermutlich von FigureFactory aufgerufen" );
   }
   
 	public FigureImage getKing(boolean isWhite)
@@ -61,5 +62,4 @@ public class FigureImageFactoryMock implements FigureImageFactory
 		allOk = methodToTest.equals( "Pawn") && isWhite==this.isWhite;
 		return figureImage;
 	}
-
 }

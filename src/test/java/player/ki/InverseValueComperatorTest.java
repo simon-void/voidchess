@@ -1,24 +1,22 @@
 package player.ki;
 
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.annotations.*;
 
 /**
  * @author stephan
  */
-public class InverseValueComperatorTest extends TestCase
+public class InverseValueComperatorTest
 {
 	private InverseValueComperator comp;
-
-	public InverseValueComperatorTest(String arg0)
-	{
-		super(arg0);
-	}
-
-	protected void setUp() throws Exception
+	
+	@BeforeMethod
+	public void setUp()
 	{
 		comp = new InverseValueComperator();
 	}
 	
+	@Test
 	public void testCompare()
 	{
 		Float first = new Float( 1.2 );
@@ -28,5 +26,4 @@ public class InverseValueComperatorTest extends TestCase
 		assertTrue( comp.compare( second,first)== 1 );
 		assertTrue( comp.compare( first,first)==  0 );
 	}
-
 }

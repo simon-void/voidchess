@@ -3,7 +3,9 @@ package board;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
+
 import image.*;
 import helper.*;
 import figures.*;
@@ -11,27 +13,25 @@ import figures.*;
 /**
  * @author stephan
  */
-public class ChessGameTest extends TestCase
+public class ChessGameTest
 {
   private ChessGame game;
 
-	public ChessGameTest(String arg0)
-	{
-		super(arg0);
-	}
-
-	protected void setUp() throws Exception
+	@BeforeMethod
+	public void setUp()
 	{
 		game=new ChessGame( new ChessGameSupervisorDummy(),new FigureImageFactoryMock("",true) );
 	}
 	
+	@Test
 	public void testIsFreeArea()
 	{
 		assertTrue( game.isFreeArea( Position.get("a3") ) );
 		assertFalse(game.isFreeArea( Position.get("c1") ) );
 		assertFalse(game.isFreeArea( Position.get("d7") ) );
 	}
-	
+
+  @Test
 	public void testGetFigure()
 	{
 		assertTrue( game.getFigure( Position.get("e3") )==null );
@@ -42,7 +42,8 @@ public class ChessGameTest extends TestCase
 		assertTrue( bishop instanceof Bishop );
 		assertFalse( bishop.isWhite() );
 	}
-	
+
+  @Test
 	public void testToString()
 	{
 		String code = "white 0 "
@@ -60,21 +61,25 @@ public class ChessGameTest extends TestCase
 								 +"Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
 		assertEquals( code,game.toString() );
 	}
-	
+
+  @Test
 	public void testEquals()
 	{
 		ChessGame copy = new ChessGame( game.toString() );
 		assertTrue( game.equals(copy) );
 	}
-	
+
+  @Test
 	public void testCopy() throws Exception
 	{
 		List<ChessGameInterface> copies = game.copyGame(4);
+		
 		for(ChessGameInterface copy: copies) {
-		  assertEquals("game and copy", game.toString(), copy.toString() );
+		  assertEquals(game.toString(), copy.toString(), "game and copy");
 		}
 	}
-	
+
+  @Test
 	public void testGetFigures()
 	{
 		String des      = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 "
@@ -82,7 +87,8 @@ public class ChessGameTest extends TestCase
 		ChessGame game = new ChessGame( des );
 		assertEquals( 6,game.getFigures().size() );
 	}
-	
+
+  @Test
 	public void testMove()
 	{
 		String des     = "white 0 King-white-e1-0 Pawn-white-c2-false King-black-e8-0";
@@ -92,7 +98,8 @@ public class ChessGameTest extends TestCase
 		String new_des = "black 1 King-white-e1-0 Pawn-white-c4-true King-black-e8-0";
 		assertEquals( new_des,game.toString() );
 	}
-	
+
+  @Test
 	public void testUndo()
 	{
 		String des     = "white 0 King-white-e1-0 Rock-white-h1-0 King-black-e8-0";
@@ -268,7 +275,8 @@ public class ChessGameTest extends TestCase
 		game.undo();
 		assertEquals( des,game.toString() );
 	}
-	
+
+  @Test
 	public void testHandleEnpasent()
 	{
 		String des     = "black 0 Pawn-white-c4-true Pawn-black-b4-false "
@@ -280,7 +288,8 @@ public class ChessGameTest extends TestCase
 										+"King-black-e8-0";
 		assertEquals( new_des,game.toString() );
 	}
-	
+
+  @Test
 	public void testHandleRochade()
 	{
 		String des     = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0 ";
@@ -318,7 +327,8 @@ public class ChessGameTest extends TestCase
 		new_des = "black 1 Rock-white-f1-1 King-white-g1-1-true King-black-e8-0";
 		assertEquals( new_des,game.toString() );
 	}
-	
+
+  @Test
 	public void testIsMatt()
 	{
 		String des     = "black 0 King-white-e1-0 Queen-black-h2 "
@@ -327,7 +337,8 @@ public class ChessGameTest extends TestCase
 		int endoption = game.move( Move.get( "h2-e2" ) );
 		assertTrue( endoption==ChessGameInterface.MATT );
 	}
-	
+
+  @Test
 	public void testIsDrawBecauseOfNoMoves()
 	{
 		String des     = "black 0 King-white-e1-0 Queen-black-h2 "
@@ -337,6 +348,7 @@ public class ChessGameTest extends TestCase
 		assertTrue( endoption==ChessGameInterface.PATT );
 	}
 
+  @Test
 	public void testIsDrawBecauseOfLowMaterial()
 	{
 		String des     = "white 0 King-white-e1-0 Bishop-black-g2 "
@@ -345,7 +357,8 @@ public class ChessGameTest extends TestCase
 		int endoption = game.move( Move.get( "e1-f2" ) );
 		assertTrue( endoption==ChessGameInterface.DRAW );
 	}
-	
+
+  @Test
 	public void testIsDrawBecauseOfThreeTimesSamePosition()
 	{
 		//Ich gehe davon aus, daﬂ es ein Unterschied in der Stellung ist,
@@ -371,7 +384,8 @@ public class ChessGameTest extends TestCase
 		endoption = game.move( blackReturn );
 		assertTrue( endoption==ChessGameInterface.THREE_TIMES_SAME_POSITION );
 	}
-	
+
+  @Test
 	public void testIsDrawBecauseOf50HitlessMoves()
 	{
 		String des     = "white 98 King-white-e1-0 Pawn-white-a2-false "
@@ -391,7 +405,8 @@ public class ChessGameTest extends TestCase
 		endoption = game.move( Move.get("b4-b3") );
 		assertTrue( endoption==ChessGameInterface.FIFTY_MOVES_NO_HIT );
 	}
-	
+
+  @Test
 	public void testHandleTrasformPawn()
 	{
 		ChessGameSupervisorMock mock = new ChessGameSupervisorMock( "Knight" );
@@ -404,7 +419,8 @@ public class ChessGameTest extends TestCase
 										+"King-black-e8-0";
 		assertEquals( new_des,game.toString() );
 	}
-	
+
+  @Test
 	public void testIsSelectable()
 	{
 		String des     = "white 0 King-white-e1-0 Queen-black-g2 "
@@ -424,7 +440,8 @@ public class ChessGameTest extends TestCase
 		game= new ChessGame( des );
 		assertTrue( game.isSelectable( Position.get("a6"),false ) );
 	}
-	
+
+  @Test
 	public void testIsMoveable()
 	{
 		String des     = "white 0 King-white-e1-0 Queen-black-g2 "
@@ -451,7 +468,8 @@ public class ChessGameTest extends TestCase
 		assertTrue( game.isMoveable( from,to,true ) );
 		assertFalse( game.isFreeArea( from ) );
 	}
-	
+
+  @Test
 	public void testColorChangedBetweenMoves()
 	{
 		String des     = "white 0 King-white-e1-0 Pawn-black-g3-false "
@@ -463,7 +481,8 @@ public class ChessGameTest extends TestCase
 			fail();
 		}catch( AssertionError e ) {}
 	}
-	
+
+  @Test
 	public void testChecksForMoveMovesFigureNotNull()
 	{
 		String des     = "white 0 King-white-e1-0 Pawn-black-g3-false "
@@ -474,7 +493,8 @@ public class ChessGameTest extends TestCase
 			fail();
 		}catch( AssertionError e ) {}
 	}
-	
+
+  @Test
 	public void testHasHitBiggerFigure()
 	{
 		String des     = "white 0 King-white-h2-3 Queen-black-h3 "
@@ -495,7 +515,8 @@ public class ChessGameTest extends TestCase
 		game.move( Move.get( "e7-d7" ) );
 		assertFalse( game.hasHitFigure() );
 	}
-	
+
+  @Test
 	public void testCountFigures()
 	{
 		String des     = "white 0 King-white-e1-0 Pawn-black-a5-true "
@@ -507,7 +528,8 @@ public class ChessGameTest extends TestCase
 		game.move( Move.get( "e8-e7" ) );
 		assertTrue( game.countFigures()==3 );
 	}
-	
+
+  @Test
 	public void testGetPossibleMoves()
 	{
 		game.move(Move.get("g1-f3"));
@@ -642,14 +664,30 @@ public class ChessGameTest extends TestCase
 		possibleMoves = getPossibleMoves(game);
 		assertEquals( 2,possibleMoves.size() );
 	}
-	
+  
+  @Test
+  public void testGetPossibleMovesAfterIndirectChessAfterEnpassent()
+  {
+    game.move(Move.get("e2-e4"));
+    game.move(Move.get("d7-d5"));
+    game.move(Move.get("e4-e5"));
+    game.move(Move.get("e8-d7"));
+    game.move(Move.get("d1-g4"));
+    game.move(Move.get("f7-f5"));
+    game.move(Move.get("e5-f6")); //en-passant
+    List<Move> possibleMoves = getPossibleMoves(game);
+    assertEquals( possibleMoves.size(), 4 );
+  }
+
+  @Test
 	public void testIsCheck()
 	{
 		String des     = "white 0 King-white-g1-2 Bishop-black-f2 King-black-e8-0";
 		ChessGame game = new ChessGame( des );
 		assertTrue( game.isCheck( true ) );
 	}
-	
+
+  @Test
 	public void testGetHistory()
 	{
 		ChessGame game = new ChessGame( 621 );

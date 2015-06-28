@@ -22,5 +22,4 @@ public class ChessGameSupervisorMock implements ChessGameSupervisor
 	{
 		return allOK;
 	}
-
 }
