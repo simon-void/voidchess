@@ -35,6 +35,8 @@ implements ActionListener
 		
 		comboBox = new JComboBox();
 		designLayout();
+		//preselect the second option
+		comboBox.setSelectedIndex(1);
 	}
 	
 	private void designLayout()
