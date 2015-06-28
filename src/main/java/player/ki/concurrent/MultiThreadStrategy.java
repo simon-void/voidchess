@@ -42,8 +42,6 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
 	  showProgress(0, 1);
 		
 		final LinkedList<Callable<EvaluatedMove>> movesToEvaluate = getEvaluatableMoves(game, dynamicEvaluation);
-
-		long time = System.currentTimeMillis();
 		
 		SortedSet<EvaluatedMove> result = Collections.emptySortedSet();
 		try{
@@ -51,10 +49,7 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy
 		}catch(Exception e){
 		  e.printStackTrace();
 		}
-    
-    long duration = time - System.currentTimeMillis();
-    System.out.println("time:"+duration);
-    
+        
     assert !result.isEmpty() : "no evaluation of a possible moves was successfull";
     
     return result;
