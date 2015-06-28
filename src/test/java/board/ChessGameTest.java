@@ -413,7 +413,7 @@ public class ChessGameTest
 		String des     = "black 0 King-white-e1-0 Pawn-black-g2-false "
 										+"King-black-e8-0";
 		ChessGame game = new ChessGame( des );
-		game.setSupervisor( mock );
+		game.useSupervisor( mock );
 		game.move( Move.get( "g2-g1" ) );
 		String new_des = "white 1 King-white-e1-0 Knight-black-g1 "
 										+"King-black-e8-0";
@@ -714,14 +714,14 @@ public class ChessGameTest
     ChessGame game = new ChessGame( 621 );
     game.move( Move.get("g2-g3") );
     game.move( Move.get("f7-f6") );
-    assertEquals(game.getHistory(), "f7-f6,g2-g3");
+    assertEquals(game.getCompleteHistory(), "f7-f6,g2-g3");
     game.move( Move.get("c2-c3") );
     game.move( Move.get("g8-f7") );
-    assertEquals(game.getHistory(), "g8-f7,c2-c3,f7-f6,g2-g3");
+    assertEquals(game.getCompleteHistory(), "g8-f7,c2-c3,f7-f6,g2-g3");
     game.move( Move.get("d1-c2") );
     game.move( Move.get("a7-a6") );
     game.move( Move.get("c2-h7") );
-    assertEquals(game.getHistory(), "c2-h7,a7-a6,d1-c2,g8-f7,c2-c3,f7-f6,g2-g3");
+    assertEquals(game.getCompleteHistory(), "c2-h7,a7-a6,d1-c2,g8-f7,c2-c3,f7-f6,g2-g3");
   }
 	
 	private List<Move> getPossibleMoves(ChessGame game)

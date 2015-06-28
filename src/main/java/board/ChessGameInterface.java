@@ -30,8 +30,8 @@ public interface ChessGameInterface extends BasicChessGameInterface
 	public void getPossibleMoves(List<Move> possibleMoves );
 	public int     countReachableMoves( boolean isWhite );
 
-	public void useNormalSupervisor();
-	public void useDummySupervisor();
-	public void setSupervisor( ChessGameSupervisor supervisor );
+//	public void useNormalSupervisor();
+	public ChessGameSupervisor suspendInteractiveSupervisor();
+	public void useSupervisor( ChessGameSupervisor supervisor );
 	public void undo();
 }

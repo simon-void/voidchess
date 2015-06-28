@@ -38,7 +38,7 @@ public class DynamicEvaluation
 		boolean thisMove_hasHitFigure = game.hasHitFigure();
 		boolean thisMove_isChess = game.isCheck( !forWhite );
 
-		game.useDummySupervisor();
+		final ChessGameSupervisor interactiveSupervisor = game.suspendInteractiveSupervisor();
 		int endoption = game.move( move );
 
 		float result;
@@ -51,7 +51,7 @@ public class DynamicEvaluation
 			result = valuewrapper.getDrawValue();
 		}
 
-		game.useNormalSupervisor();
+		game.useSupervisor(interactiveSupervisor);
 		game.undo();
 		return result;
 	}

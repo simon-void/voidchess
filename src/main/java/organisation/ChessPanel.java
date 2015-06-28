@@ -56,7 +56,7 @@ implements ActionListener
 		chessGameUI = new ChessGameUI(game);
 		panel960    = new Chess960Panel( game,chessGameUI );
 		table = new Table(game,chessGameUI,this,panel960 );
-		game.setSupervisor( table );
+		game.useSupervisor( table );
 		humanPlayer = new HumanPlayer( table,true,chessGameUI,game );
 		ComputerPlayerUI computerPlayerUI = new ComputerPlayerUI();
 		ComputerPlayer kiPlayer = new ComputerPlayer( table,game,computerPlayerUI );

@@ -15,7 +15,7 @@ public class King extends RochadeFigure
 	public King(FigureImage figureImage, boolean isWhite, Position startPosition)
 	{
 		super( figureImage,isWhite, startPosition,(byte)6 );
-		didRochade				= false;
+		didRochade = false;
 	}
 	
 	public King(FigureImage figureImage, boolean isWhite, Position startPosition,

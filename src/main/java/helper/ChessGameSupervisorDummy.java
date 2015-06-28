@@ -6,7 +6,8 @@ package helper;
 public class ChessGameSupervisorDummy 
 implements ChessGameSupervisor
 {
-
+  final static public ChessGameSupervisor INSTANCE = new ChessGameSupervisorDummy();
+  
 	public String askForPawnChange( Position pawnPosition)
 	{
 		return "Queen";

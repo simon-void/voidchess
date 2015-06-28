@@ -21,8 +21,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	private int figureCount;
 	private boolean hasHitFigure;
 	private ChessGameSupervisor supervisor;
-	private ChessGameSupervisor normalSupervisor;
-	final private ChessGameSupervisor dummySupervisor;
 	
   /** der normale Konstruktor, der von auﬂerhalb verwendet werden sollte
    * @param supervisor
@@ -30,10 +28,8 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
    */
 	public ChessGame( ChessGameSupervisor supervisor, FigureImageFactory figureImageFactory )
 	{
-		hasHitFigure     = false; 
-		normalSupervisor = supervisor;
-		dummySupervisor  = new ChessGameSupervisorDummy();
-		this.supervisor  = normalSupervisor;
+		hasHitFigure     = false;
+		this.supervisor  = supervisor;
 		figureFactory    = new FigureFactory( figureImageFactory );
 		mementoStack     = new MementoStack();
 		extendedMoveStack= new ExtendedMoveStack();
@@ -68,9 +64,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	           String game_description,
 	           FigureImageFactory figureImageFactory )
 	{
-		normalSupervisor = supervisor;
-		dummySupervisor  = new ChessGameSupervisorDummy();
-		this.supervisor  = normalSupervisor;
+		this.supervisor  = supervisor;
 		figureFactory    = new FigureFactory( figureImageFactory );
 		mementoStack     = new MementoStack();
 		extendedMoveStack= new ExtendedMoveStack();
@@ -103,9 +97,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	                   	int initialPosition,
 	                   	FigureImageFactory figureImageFactory )
 	{
-		normalSupervisor = supervisor;
-		dummySupervisor  = new ChessGameSupervisorDummy();
-		this.supervisor  = normalSupervisor;
+		this.supervisor  = supervisor;
 		figureFactory    = new FigureFactory( figureImageFactory );
 		mementoStack     = new MementoStack();
 		extendedMoveStack= new ExtendedMoveStack();
@@ -123,22 +115,17 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	}
 	
 	@Override
-	public void setSupervisor( ChessGameSupervisor supervisor )
+	public void useSupervisor( ChessGameSupervisor supervisor )
 	{
-		normalSupervisor = supervisor;
-		useNormalSupervisor();
+	  this.supervisor = supervisor;
 	}
 	
 	@Override
-	public void useNormalSupervisor()
+	public ChessGameSupervisor suspendInteractiveSupervisor()
 	{
-		supervisor = normalSupervisor;
-	}
-	
-	@Override
-	public void useDummySupervisor()
-	{
-		supervisor = dummySupervisor;
+	  ChessGameSupervisor normalSupervisor = supervisor;
+		supervisor = ChessGameSupervisorDummy.INSTANCE;
+		return normalSupervisor;
 	}
 	
 	@Override
