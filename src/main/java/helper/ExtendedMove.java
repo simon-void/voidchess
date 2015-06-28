@@ -24,13 +24,13 @@ public class ExtendedMove extends Move
 							boolean  pawnTrasformation )
 	{
 		super(from,to);
-		this.hitFigure     						= hitFigure;
-		this.pawnHitByEnpassantOrRochadeRock	= pawnHitByEnpassantOrRochadeRock;
-		this.white								= white;
-		this.isRochade							= isRochade;
-		this.hitsEnpassent						= hitsEnpassent;
-		this.pawnTransformation					= pawnTrasformation;
-		hasHitFigure							= hitFigure!=null||hitsEnpassent;
+    this.hitFigure          = hitFigure;
+    this.pawnHitByEnpassantOrRochadeRock = pawnHitByEnpassantOrRochadeRock;
+    this.white              = white;
+    this.isRochade          = isRochade;
+    this.hitsEnpassent      = hitsEnpassent;
+    this.pawnTransformation = pawnTrasformation;
+    hasHitFigure            = hitFigure != null || hitsEnpassent;
 	}
 	
 	public Figure getFigure()

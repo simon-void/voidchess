@@ -84,7 +84,7 @@ public class DynamicEvaluationTest
       dynamicEvaluation.evaluateMove( game,move );
       //Invariante: evaluateMove darf game nicht ändern
       String msg = "after Move:"+move.toString()+" History:"+game.getHistory();
-      assertEquals( msg,initDescription,game.toString() );
+      assertEquals( initDescription,game.toString(),msg );
     }catch(Exception e) {
       String gamestring = game.toString();
       throw new RuntimeException( e.toString()+"-after Moves:"+game.getCompleteHistory()+" -leading to position:"+gamestring );

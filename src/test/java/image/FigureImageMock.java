@@ -9,6 +9,8 @@ import static org.testng.Assert.assertTrue;;
  */
 public class FigureImageMock implements FigureImage
 {
+  final public static FigureImageMock defaultInstance = new FigureImageMock( 10,20,30 );
+  
 	private int intended_x,intended_y,intended_areaSize;
 	private boolean allOK;
 	

@@ -31,7 +31,7 @@ public class CheckSearch
 		}
 	}
 	
-	public static CheckStatus analyseCheck( SimpleChessBoardInterface game,boolean whiteInCheck,ExtendedMove lastMove )
+	public static CheckStatus analyseCheck( SimpleChessBoardInterface game,boolean whiteInCheck, ExtendedMove lastMove )
 	{
 	  if(lastMove==null) {
 	    return analyseCheck(game, whiteInCheck);
@@ -68,7 +68,13 @@ public class CheckSearch
 
 		final List<Position> attackPositions = new ArrayList<Position>(2);
 		final Figure attackFigure = game.getFigure( lastMove.to );
-		final Position passiveAttacker = getPassiveAttacker( game,kingPos,lastMove.from );
+		
+		Position passiveAttacker = getPassiveAttacker( game,kingPos,lastMove.from );
+		if(passiveAttacker==null){
+		  //an attackpath may have opend over the diagonal of the removed pawn 
+		  Position removedPawnPos = Position.get(lastMove.from.row, lastMove.to.column);
+		  passiveAttacker = getPassiveAttacker( game,kingPos,removedPawnPos );
+		}
 		
 		if( attackFigure.isReachable( kingPos,game ) ) {
 		  attackPositions.add( attackFigure.getPosition() );

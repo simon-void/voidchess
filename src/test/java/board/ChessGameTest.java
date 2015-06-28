@@ -674,7 +674,8 @@ public class ChessGameTest
     game.move(Move.get("e8-d7"));
     game.move(Move.get("d1-g4"));
     game.move(Move.get("f7-f5"));
-    game.move(Move.get("e5-f6")); //en-passant
+    game.move(Move.get("e5-f6")); //en-passant creates indirect chess path
+    assertTrue(game.getLastMove().isEnpassent());
     List<Move> possibleMoves = getPossibleMoves(game);
     assertEquals( possibleMoves.size(), 4 );
   }

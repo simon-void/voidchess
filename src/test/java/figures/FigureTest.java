@@ -16,7 +16,7 @@ import org.testng.annotations.*;
  */
 public class FigureTest
 {
-	private FigureImageMock figureImage = new FigureImageMock( 10,20,30 );
+	private FigureImageMock figureImage = FigureImageMock.defaultInstance;
 	
 	@Test
 	public void testConstructor()
@@ -240,7 +240,7 @@ public class FigureTest
 		Byte queenByte  = new Byte(  queen.getTypeInfo() );
 		Byte kingByte   = new Byte(   king.getTypeInfo() );
 		
-		List figureByteList = new LinkedList();
+		List<Byte> figureByteList = new LinkedList<>();
 		//Die byte-Werte müssen paarweise disjunkt sein
 		figureByteList.add( pawnByte );
 		assertFalse(

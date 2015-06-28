@@ -1,13 +1,17 @@
 package helper;
 
+import image.FigureImageMock;
+
 import java.util.List;
 
 import board.LastMoveProvider;
 import board.SimpleArrayBoard;
-
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
+
 import org.testng.annotations.*;
+
+import figures.Pawn;
 
 /**
  * @author stephan
@@ -98,4 +102,68 @@ public class CheckSearchTest
 		assertTrue( possiblePositions.contains( Position.get("g3") ) );
 		assertTrue( possiblePositions.contains( Position.get("f2") ) );
 	}
+  
+  @Test
+  void testAnalyseDiagonalCheckAfterEnpassent()
+  {
+    // black moved f7-f5 to counter the check from the diagonal, white played e5-f6
+    String des = "black 0 King-white-e1-0 Queen-white-g4 Pawn-white-f6-false King-black-d7-1";
+    
+    ExtendedMove extendedMove = getEnpassentMove(Move.get("e5-f6"));
+    LastMoveProvider moveProvider = mock(LastMoveProvider.class);
+    when(moveProvider.getLastMove()).thenReturn(extendedMove);
+    SimpleArrayBoard game = new SimpleArrayBoard( des, moveProvider );
+    CheckStatus status = CheckSearch.analyseCheck( game, false, extendedMove );
+    
+    assertTrue( status.isCheck() );
+    assertFalse( status.onlyKingCanMove() );
+    List<Position> possiblePositions = status.getCheckInterceptPositions();
+    assertEquals(possiblePositions.size(), 3);
+  }
+  
+  @Test
+  void testAnalyseStraightCheckAfterEnpassent()
+  {
+    // black moved f7-f5, white played e5-f6
+    String des = "black 0 King-white-e1-0 Queen-white-e4 Pawn-white-f6-false King-black-e8-0";
+    
+    ExtendedMove extendedMove = getEnpassentMove(Move.get("e5-f6"));
+    LastMoveProvider moveProvider = mock(LastMoveProvider.class);
+    when(moveProvider.getLastMove()).thenReturn(extendedMove);
+    SimpleArrayBoard game = new SimpleArrayBoard( des, moveProvider );
+    CheckStatus status = CheckSearch.analyseCheck( game, false, extendedMove );
+    
+    assertTrue( status.isCheck() );
+    assertFalse( status.onlyKingCanMove() );
+    List<Position> possiblePositions = status.getCheckInterceptPositions();
+    assertEquals(possiblePositions.size(), 4);
+  }
+  
+  @Test
+  void testAnalysePawnCheckAfterEnpassent()
+  {
+    // black moved f7-f5, white played e5-f6
+    String des = "black 0 King-white-e1-0 Pawn-white-f6-false King-black-e7-1";
+    
+    ExtendedMove extendedMove = getEnpassentMove(Move.get("e5-f6"));
+    LastMoveProvider moveProvider = mock(LastMoveProvider.class);
+    when(moveProvider.getLastMove()).thenReturn(extendedMove);
+    SimpleArrayBoard game = new SimpleArrayBoard( des, moveProvider );
+    CheckStatus status = CheckSearch.analyseCheck( game, false, extendedMove );
+    
+    assertTrue( status.isCheck() );
+    assertFalse( status.onlyKingCanMove() );
+    List<Position> possiblePositions = status.getCheckInterceptPositions();
+    assertEquals(possiblePositions.size(), 1);
+  }
+  
+  private ExtendedMove getEnpassentMove(Move move)
+  {
+    boolean isWhiteMove = move.to.row>move.from.row;
+    Pawn hitByEnpassant = new Pawn(FigureImageMock.defaultInstance, !isWhiteMove, Position.get(move.from.row, move.to.column));
+    
+    ExtendedMove extendedMove = new ExtendedMove(move.from, move.to, null, hitByEnpassant, isWhiteMove, false, true, false);
+    
+    return extendedMove;
+  }
 }

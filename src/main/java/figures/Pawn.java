@@ -54,16 +54,15 @@ public class Pawn extends Figure
 	
 	private boolean isStraightReachable( Position to,BasicChessGameInterface game )
 	{
-		int oneForwardRow = isWhite()?position.row+1:position.row-1;
-		int twoForwardRow = isWhite()?position.row+2:position.row-2;
-		int pawnStartRow  = isWhite()?1:6;
-		
 		if( to.column== position.column ) {
+		  int oneForwardRow = isWhite()?position.row+1:position.row-1;
 			Position oneForwardPosition = Position.get( oneForwardRow,position.column );
 			if( oneForwardPosition.equalsPosition( to ) ) {
 				return game.isFreeArea( to );
 			}
+			int pawnStartRow  = isWhite()?1:6;
 			if( position.row == pawnStartRow ) {
+			  int twoForwardRow = isWhite()?position.row+2:position.row-2;
 				Position twoForwardPosition = Position.get( twoForwardRow,position.column );
 				return to.equalsPosition( twoForwardPosition )
 						&& game.isFreeArea( twoForwardPosition )
@@ -76,16 +75,16 @@ public class Pawn extends Figure
 	
 	private boolean isDiagonalReachable( Position to,BasicChessGameInterface game )
 	{
-		int oneForwardRow = isWhite()?position.row+1:position.row-1;
+	  int oneForwardRow = isWhite()?position.row+1:position.row-1;
 		
 		if( position.column!= 0 ) {
 			int leftColumn  = position.column - 1;
 			Position leftForwardPosition = Position.get( oneForwardRow,leftColumn );
-			Position leftPosition        = Position.get( position.row,leftColumn );
 			if( to.equalsPosition( leftForwardPosition ) ) {
 				if(!game.isFreeArea( to ) && hasDifferentColor( game.getFigure( to ) ) ) {
 					return true;
 				}
+				Position leftPosition        = Position.get( position.row,leftColumn );
 				if( !game.isFreeArea( leftPosition ) 
 				 && game.getFigure( leftPosition ).canBeHitByEnpasent()
 				 && hasDifferentColor(game.getFigure( leftPosition ) ) 
