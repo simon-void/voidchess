@@ -39,12 +39,30 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 		initGame();
 	}
 	
+	/**für CopyConstructor
+   */
+  public ChessGame(ChessGame other, String desc)
+  {
+    final FigureImageFactoryMock figureImageFactoryMock = new FigureImageFactoryMock("",true);
+    hasHitFigure     = other.hasHitFigure;
+    supervisor       = ChessGameSupervisorDummy.INSTANCE;
+    figureFactory    = new FigureFactory( figureImageFactoryMock );
+    mementoStack     = new MementoStack(other.mementoStack);
+    extendedMoveStack= new ExtendedMoveStack(other.extendedMoveStack);
+    numberStack      = new NumberStack(other.numberStack);
+    game             = new SimpleArrayBoard( desc, this );
+    
+    whiteTurn = other.whiteTurn;
+    numberOfMovesWithoutHit = other.numberOfMovesWithoutHit;
+    figureCount = other.figureCount;
+  }
+	
 	/**für JUnit-TestKlassen
 	 * @param game_description
 	 */
 	public ChessGame( String game_description )
 	{
-		this( new ChessGameSupervisorDummy(),game_description,new FigureImageFactoryMock("",true) );
+		this( ChessGameSupervisorDummy.INSTANCE,game_description,new FigureImageFactoryMock("",true) );
 	}
 	
 	/**für JUnit-TestKlassen
@@ -52,7 +70,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	 */
 	public ChessGame( int initialPosition )
 	{
-		this( new ChessGameSupervisorDummy(),initialPosition,new FigureImageFactoryMock("",true) );
+		this( ChessGameSupervisorDummy.INSTANCE,initialPosition,new FigureImageFactoryMock("",true) );
 	}
 	
 	/**wird nur implizit für JUnit-tests verwendet
@@ -589,7 +607,8 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	  if(neededInstances>1) {
 	    final String gameDes = toString();
 	    for(int i=1;i<neededInstances;i++) {
-	      gameInstances.add(new ChessGame(gameDes));
+	      ChessGame copy = new ChessGame(this, gameDes);
+	      gameInstances.add(copy);
 	    }
 	  }
 	  return gameInstances;

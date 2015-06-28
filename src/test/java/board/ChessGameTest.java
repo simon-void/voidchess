@@ -20,7 +20,7 @@ public class ChessGameTest
 	@BeforeMethod
 	public void setUp()
 	{
-		game=new ChessGame( new ChessGameSupervisorDummy(),new FigureImageFactoryMock("",true) );
+		game=new ChessGame( ChessGameSupervisorDummy.INSTANCE,new FigureImageFactoryMock("",true) );
 	}
 	
 	@Test
@@ -78,6 +78,32 @@ public class ChessGameTest
 		  assertEquals(game.toString(), copy.toString(), "game and copy");
 		}
 	}
+  
+  @Test(dependsOnMethods={"testIsDrawBecauseOfThreeTimesSamePosition","testCopy"})
+  public void testDeepCopy()
+  {
+    Move whiteMove  = Move.get( "g1-f3" );
+    Move whiteReturn= Move.get( "f3-g1" );
+    Move blackMove  = Move.get( "b8-c6" );
+    Move blackReturn= Move.get( "c6-b8" );
+    
+    game.move(whiteMove);
+    game.move(blackMove);
+    game.move(whiteReturn);
+    game.move(blackReturn);
+    game.move(whiteMove);
+    game.move(blackMove);
+    game.move(whiteReturn);
+    game.move(blackReturn);
+    game.move(whiteMove);
+    game.move(blackMove);
+    game.move(whiteReturn);
+    
+    ChessGameInterface copy = game.copyGame(3).get(1);
+    int gameState = copy.move(blackReturn);
+    
+    assertEquals(gameState, ChessGameInterface.THREE_TIMES_SAME_POSITION, "game state");
+  }
 
   @Test
 	public void testGetFigures()

@@ -51,7 +51,7 @@ implements ActionListener
 		buttonPanel.add( startButton );
 		buttonPanel.add( switchButton );
 		
-		ChessGame game = new ChessGame( new ChessGameSupervisorDummy(),
+		ChessGame game = new ChessGame( ChessGameSupervisorDummy.INSTANCE,
 										new FileFigureImageFactory(this) );
 		chessGameUI = new ChessGameUI(game);
 		panel960    = new Chess960Panel( game,chessGameUI );

@@ -8,6 +8,9 @@ implements ChessGameSupervisor
 {
   final static public ChessGameSupervisor INSTANCE = new ChessGameSupervisorDummy();
   
+  private ChessGameSupervisorDummy()
+  {}
+  
 	public String askForPawnChange( Position pawnPosition)
 	{
 		return "Queen";

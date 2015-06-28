@@ -28,7 +28,7 @@ public class ComputerPlayerTest
     game.move(Move.get("e3-f2"));
     testTermination(game);
 
-    game = new ChessGame(new ChessGameSupervisorDummy(), new FigureImageFactoryMock("", true));
+    game = new ChessGame(ChessGameSupervisorDummy.INSTANCE, new FigureImageFactoryMock("", true));
     game.move(Move.get("c2-c3"));
     testTermination(game);
 
