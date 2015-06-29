@@ -166,18 +166,23 @@ public abstract class Figure
 	final public boolean isBound( Position to,SimpleChessBoardInterface game )
 	{
 		CheckStatus checkStatus = game.getCheckStatus( isWhite );
-		if( checkStatus.onlyKingCanMove() ) {	//Doppelschach
-			return !isKing() || isPassiveBound( to,game );
-		}
-		if( checkStatus.isCheck() ) {			//einfaches Schach
-			if( isKing() ) {
-				return isPassiveBound( to,game );
-			}
-			return !checkStatus.getCheckInterceptPositions().contains( to ) || isPassiveBound( to,game  );
-		}else {									//kein Schach
-			return isPassiveBound( to,game );
-		}
+		return isBound(to, game, checkStatus);
 	}
+	
+	final public boolean isBound( Position to,SimpleChessBoardInterface game, CheckStatus checkStatus )
+  {
+    if( checkStatus.onlyKingCanMove() ) { //Doppelschach
+      return !isKing() || isPassiveBound( to,game );
+    }
+    if( checkStatus.isCheck() ) {     //einfaches Schach
+      if( isKing() ) {
+        return isPassiveBound( to,game );
+      }
+      return !checkStatus.getCheckInterceptPositions().contains( to ) || isPassiveBound( to,game  );
+    }else {                 //kein Schach
+      return isPassiveBound( to,game );
+    }
+  }
 	
 	final public boolean isMoveable( Position to,SimpleChessBoardInterface game )
 	{
@@ -204,10 +209,11 @@ public abstract class Figure
 	{
 		reachableMoves.clear();
 		getReachableMoves( game,reachableMoves );
+    final CheckStatus checkStatus = game.getCheckStatus( isWhite );
 		
 		for( Move move: reachableMoves ) {
 			Position checkPosition = move.to;
-			if( !isBound( checkPosition,game ) ) { 
+			if( !isBound( checkPosition,game,checkStatus ) ) { 
 				result.add( move );
 			}
 		}

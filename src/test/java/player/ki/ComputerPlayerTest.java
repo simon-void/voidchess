@@ -99,13 +99,13 @@ public class ComputerPlayerTest
 
   private void testTermination(ChessGame game)
   {
-    testTermination(game, new SimplePruner(1, 2, 2));
+    testTermination(game, new SimplePruner(1, 2, 2), new StaticEvaluation());
   }
 
-  private void testTermination(ChessGame game, SearchTreePruner pruner)
+  private void testTermination(ChessGame game, SearchTreePruner pruner, StaticEvaluationInterface staticEvaluation)
   {
     final NumberFormat numberFormat = NumberFormat.getPercentInstance();
-    DynamicEvaluation dynamicEvaluation = new DynamicEvaluation(pruner, new StaticEvaluation());
+    DynamicEvaluation dynamicEvaluation = new DynamicEvaluation(pruner, staticEvaluation);
 
     List<Move> possibleMoves = new LinkedList<Move>();
     game.getPossibleMoves(possibleMoves);
@@ -179,7 +179,8 @@ public class ComputerPlayerTest
 //    game.move(Move.get("b1-c3"));
 //    game.move(Move.get("c8-g4"));
     SearchTreePruner pruner = new SimplePruner(2, 3, 2);
-    loadTest(game, pruner, "Benchmark");
+    StaticEvaluationInterface staticEvaluation = new StaticEvaluation();//ConstantEvaluation();
+    loadTest(game, pruner, staticEvaluation, "Benchmark");
   }
   
   private static void loadTest()
@@ -240,10 +241,11 @@ public class ComputerPlayerTest
   {
     ChessGame game = new ChessGame(des);
     SearchTreePruner pruner = new SimplePruner(2, 3, 2);
-    loadTest(game, pruner, "Loadtest");
+    StaticEvaluationInterface staticEvaluation = new StaticEvaluation();
+    loadTest(game, pruner, staticEvaluation, "Loadtest");
   }
 
-  private static void loadTest(ChessGame game, SearchTreePruner pruner, String type)
+  private static void loadTest(ChessGame game, SearchTreePruner pruner, StaticEvaluationInterface staticEvaluation, String type)
   {
     DecimalFormat decimalFormat = new DecimalFormat("#.0"); 
     ComputerPlayerTest computerPlayer = new ComputerPlayerTest();
@@ -251,7 +253,7 @@ public class ComputerPlayerTest
     try {
       System.out.println(type+": Berechnung gestartet");
       long time = System.currentTimeMillis();
-      computerPlayer.testTermination(game, pruner);
+      computerPlayer.testTermination(game, pruner, staticEvaluation);
       System.out.println("Dauer: " + decimalFormat.format((System.currentTimeMillis() - time)/1000.0) + "s");
       RuntimeFacade.printMemoryUsage("Speicherverbrauch used/total");
     } catch (RuntimeException e) {

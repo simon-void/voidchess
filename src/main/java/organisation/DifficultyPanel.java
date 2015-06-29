@@ -23,17 +23,19 @@ implements ActionListener
 	final private ComputerPlayer player;
 	final private SimplePruner level_1_pruner,level_2_pruner,level_3_pruner;
 	
-	final private JComboBox comboBox;
+	final private JComboBox<String> comboBox;
 	
 	public DifficultyPanel( ComputerPlayer player,ChessGameInterface game )
 	{
-		level_1_pruner = new SimplePruner( 1,4,2 );
+	  //it's a good idea to have figureHitRadius bigger than chessRadius
+	  //else the ai tries to prevent material loss through bad chesses 
+		level_1_pruner = new SimplePruner( 1,4,3 );
 		level_2_pruner = new SimplePruner( 2,3,2 );
 		level_3_pruner = new SimplePruner( 2,4,3 );
 		this.player = player;
 		player.setSearchTreePruner( level_1_pruner );
 		
-		comboBox = new JComboBox();
+		comboBox = new JComboBox<>();
 		designLayout();
 		//preselect the second option
 		comboBox.setSelectedIndex(1);

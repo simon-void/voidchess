@@ -16,25 +16,12 @@ class StaticEvaluation implements StaticEvaluationInterface
 	final private static double KNIGHT_VALUE = 3f;
 	final private static double BISHOP_VALUE = 3f;
 	final private static double QUEEN_VALUE  = 9f;
-	
-	//TODO remove call_counter
-	private static int call_counter = 0;
-	
-	public static int getCallCounter()
-	{
-		int result = call_counter;
-		call_counter = 0;
-		return result;
-	}
-	
-	
+		
 	public float evaluate(ChessGameInterface game,final boolean forWhite)
 	{
-		call_counter++;
-		
-		return	evaluateFigures(   game,forWhite ) +
-				evaluateRuledArea( game,forWhite ) +
-				evaluatePosition(  game,forWhite );
+		return	evaluateFigures(   game,forWhite )
+		      +	evaluateRuledArea( game,forWhite ) 
+				  + evaluatePosition(  game,forWhite );
 	}
 	
 	private float evaluateFigures( ChessGameInterface game,final boolean forWhite )
