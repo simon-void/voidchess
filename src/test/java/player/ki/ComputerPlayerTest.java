@@ -1,13 +1,15 @@
 package player.ki;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
 import image.FigureImageFactoryMock;
 import board.*;
 import helper.*;
-
 import static org.testng.Assert.*;
+
 import org.testng.annotations.*;
 
 /**
@@ -102,17 +104,17 @@ public class ComputerPlayerTest
 
   private void testTermination(ChessGame game, SearchTreePruner pruner)
   {
-    final String initDescription = game.toString();
+    final NumberFormat numberFormat = NumberFormat.getPercentInstance();
     DynamicEvaluation dynamicEvaluation = new DynamicEvaluation(pruner, new StaticEvaluation());
 
     List<Move> possibleMoves = new LinkedList<Move>();
     game.getPossibleMoves(possibleMoves);
+    final double numberOfPossibleMoves = possibleMoves.size();
+    int moveIndex = 0;
     try {
       for (Move move : possibleMoves) {
         dynamicEvaluation.evaluateMove(game, move);
-        // Invariante: evaluateMove darf game nicht ändern
-        String msg = "after Move:" + move.toString() + " History:" + game.getHistory();
-        assertEquals(initDescription, game.toString(), msg);
+        System.out.println(numberFormat.format((++moveIndex)/numberOfPossibleMoves));
       }
     } catch (Exception e) {
       String gamestring = game.toString();
@@ -155,6 +157,32 @@ public class ComputerPlayerTest
   }
 
   public static void main(String[] args)
+  {
+    if(args.length==1 && args[0].equals("benchmark")) {
+      benchmark();
+    }else{
+      loadTest();
+    }
+  }
+  
+  private static void benchmark()
+  {
+    ChessGame game = new ChessGame();
+    game.move(Move.get("e2-e4"));
+    game.move(Move.get("e7-e5"));
+    game.move(Move.get("g1-f3"));
+    game.move(Move.get("b8-c6"));
+    game.move(Move.get("f1-b5"));
+    game.move(Move.get("f8-c5"));
+//    game.move(Move.get("d2-d3"));
+//    game.move(Move.get("d7-d6"));
+//    game.move(Move.get("b1-c3"));
+//    game.move(Move.get("c8-g4"));
+    SearchTreePruner pruner = new SimplePruner(2, 3, 2);
+    loadTest(game, pruner, "Benchmark");
+  }
+  
+  private static void loadTest()
   {
     // Loadtest
     System.out.println("Loadtest: Start");
@@ -205,7 +233,6 @@ public class ComputerPlayerTest
     // Grundaufstellung mit Bauern vor König und ohne Königsläufer
     // ist in etwa so groß wie
     // Grundaufstellung mit Bauern vor König und ohne Dame!!! Warum?
-    System.out.println("Loadtest: Ende");
     System.exit(0);
   }
 
@@ -213,21 +240,24 @@ public class ComputerPlayerTest
   {
     ChessGame game = new ChessGame(des);
     SearchTreePruner pruner = new SimplePruner(2, 3, 2);
-    loadTest(game, pruner);
+    loadTest(game, pruner, "Loadtest");
   }
 
-  private static void loadTest(ChessGame game, SearchTreePruner pruner)
+  private static void loadTest(ChessGame game, SearchTreePruner pruner, String type)
   {
+    DecimalFormat decimalFormat = new DecimalFormat("#.0"); 
     ComputerPlayerTest computerPlayer = new ComputerPlayerTest();
 
     try {
-      System.out.println("Loadtest: Berechnung gestartet");
+      System.out.println(type+": Berechnung gestartet");
       long time = System.currentTimeMillis();
       computerPlayer.testTermination(game, pruner);
-      System.out.println("Loadtest: Dauer:" + (System.currentTimeMillis() - time) + "ms");
+      System.out.println("Dauer: " + decimalFormat.format((System.currentTimeMillis() - time)/1000.0) + "s");
       RuntimeFacade.printMemoryUsage("Speicherverbrauch used/total");
     } catch (RuntimeException e) {
-      System.out.println("Loadtestfehler:" + e.getMessage());
+      System.out.println(type+"fehler:" + e.getMessage());
+    }finally{
+      System.out.println(type+": Ende");
     }
   }
 

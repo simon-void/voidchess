@@ -73,6 +73,13 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 		this( ChessGameSupervisorDummy.INSTANCE,initialPosition,new FigureImageFactoryMock("",true) );
 	}
 	
+	/**für JUnit-TestKlassen: Standardaufstellung
+   */
+  public ChessGame()
+  {
+    this( 518 );
+  }
+	
 	/**wird nur implizit für JUnit-tests verwendet
 	 * @param supervisor
 	 * @param game_description

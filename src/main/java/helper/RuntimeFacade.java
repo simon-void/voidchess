@@ -4,6 +4,8 @@
 
 package helper;
 
+import java.text.NumberFormat;
+
 public class RuntimeFacade
 {
 	final private static Runtime runtime = Runtime.getRuntime();
@@ -19,17 +21,18 @@ public class RuntimeFacade
 	
 	public static void printMemoryUsage( String mark )
 	{
+	  NumberFormat numberFormat = NumberFormat.getPercentInstance();
 		long total = runtime.totalMemory();
 		long free  = runtime.freeMemory();
 		long used  = total-free;
 		
 		StringBuilder sb = new StringBuilder( 32 );
 		sb.append( mark );
-		sb.append( ":" );
-		sb.append( (used/1000) );
-		sb.append( "kbyte " );
-		sb.append( (total/1000) );
-		sb.append( "kbyte" );
+		sb.append( ": " );
+		sb.append( numberFormat.format(used/(double)total));
+		sb.append( " of ");
+    sb.append( (total/1000000) );
+    sb.append( "MB" );
 		System.out.println( sb.toString() );
 	}
 	
