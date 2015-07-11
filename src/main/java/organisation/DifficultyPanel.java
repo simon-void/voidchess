@@ -51,7 +51,7 @@ public class DifficultyPanel
         comboBox.setEditable(false);
         comboBox.addActionListener(this);
 
-        add(new JLabel("Schwirigkeitsgrad:"));
+        add(new JLabel("Schwierigkeitsgrad:"));
         add(comboBox);
     }
 
