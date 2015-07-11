@@ -1,4 +1,4 @@
-package organisation;
+package ui;
 
 import helper.Position;
 import player.HumanPlayerInterface;

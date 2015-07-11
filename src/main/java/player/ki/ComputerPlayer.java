@@ -3,7 +3,7 @@ package player.ki;
 import board.ChessGameInterface;
 import helper.Position;
 import helper.RuntimeFacade;
-import organisation.TableInterface;
+import ui.TableInterface;
 import player.PlayerInterface;
 import player.ki.concurrent.ConcurrencyStrategy;
 import player.ki.concurrent.ConcurrencyStrategyFactory;

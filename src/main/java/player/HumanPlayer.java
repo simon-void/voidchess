@@ -3,8 +3,8 @@ package player;
 import board.ChessGameInterface;
 import helper.Move;
 import helper.Position;
-import organisation.ChessGameUI;
-import organisation.TableInterface;
+import ui.ChessGameUI;
+import ui.TableInterface;
 
 import javax.swing.*;
 

@@ -1,4 +1,4 @@
-package organisation;
+package ui;
 
 import image.ImageType;
 import image.Images;

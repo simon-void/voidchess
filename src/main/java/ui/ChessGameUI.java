@@ -1,4 +1,4 @@
-package organisation;
+package ui;
 
 import board.BasicChessGameInterface;
 import helper.Move;

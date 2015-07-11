@@ -1,4 +1,4 @@
-package organisation;
+package ui;
 
 import board.ChessGameInterface;
 import helper.ChessGameSupervisor;

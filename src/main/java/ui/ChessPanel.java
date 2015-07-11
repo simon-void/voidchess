@@ -2,7 +2,7 @@
  * Created on 11.09.2006
  */
 
-package organisation;
+package ui;
 
 import board.ChessGame;
 import board.ChessGameInterface;
