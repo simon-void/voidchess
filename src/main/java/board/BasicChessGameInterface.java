@@ -1,17 +1,19 @@
 package board;
 
-import java.util.List;
-
-import helper.Position;
 import figures.Figure;
+import helper.Position;
+
+import java.util.List;
 
 /**
  * @author stephan
  */
-public interface BasicChessGameInterface
-{
-	public boolean isFreeArea( Position pos );
-	public Figure getFigure( Position pos );
-	public Position getKingPosition( boolean whiteKing );
-	public List<Figure> getFigures();
+public interface BasicChessGameInterface {
+    public boolean isFreeArea(Position pos);
+
+    public Figure getFigure(Position pos);
+
+    public Position getKingPosition(boolean whiteKing);
+
+    public List<Figure> getFigures();
 }

@@ -2,7 +2,6 @@ package board;
 
 import helper.ExtendedMove;
 
-public interface LastMoveProvider
-{
-  ExtendedMove getLastMove();
+public interface LastMoveProvider {
+    ExtendedMove getLastMove();
 }

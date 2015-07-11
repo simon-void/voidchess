@@ -3,23 +3,19 @@ package helper;
 /**
  * @author stephan
  */
-public class ChessGameSupervisorMock implements ChessGameSupervisor
-{
-	private boolean allOK  = false;
-	private String  defaultPawnTransform = "nofigure";
-	
-	public ChessGameSupervisorMock( String defaultPawnTransform )
-	{
-		this.defaultPawnTransform = defaultPawnTransform;
-	}
+public class ChessGameSupervisorMock implements ChessGameSupervisor {
+    private boolean allOK = false;
+    private String defaultPawnTransform = "nofigure";
 
-	public String askForPawnChange( Position pawnPosition)
-	{
-		return defaultPawnTransform;
-	}
+    public ChessGameSupervisorMock(String defaultPawnTransform) {
+        this.defaultPawnTransform = defaultPawnTransform;
+    }
 
-	public boolean everythingWentAsExpected()
-	{
-		return allOK;
-	}
+    public String askForPawnChange(Position pawnPosition) {
+        return defaultPawnTransform;
+    }
+
+    public boolean everythingWentAsExpected() {
+        return allOK;
+    }
 }

@@ -3,7 +3,6 @@ package helper;
 /**
  * @author stephan
  */
-public interface ChessGameSupervisor
-{
-	public String askForPawnChange( Position pawnPosition );
+public interface ChessGameSupervisor {
+    public String askForPawnChange(Position pawnPosition);
 }

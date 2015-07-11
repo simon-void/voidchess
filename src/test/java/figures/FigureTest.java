@@ -1,16 +1,17 @@
 package figures;
 
+import board.ChessGameInterface;
+import board.LastMoveProvider;
+import board.SimpleArrayBoard;
+import helper.Move;
+import helper.Position;
+import org.testng.annotations.Test;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import image.*;
-import helper.*;
-import board.*;
-
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
-
-import org.testng.annotations.*;
 
 /**
  * @author stephan
@@ -23,9 +24,9 @@ public class FigureTest {
 
     @Test
     public void testIsDifferentColor() {
-        Figure figure1 = new MockFigure( true, Position.get(0, 0));
-        Figure figure2 = new MockFigure( true, Position.get(0, 0));
-        Figure figure3 = new MockFigure( false, Position.get(0, 0));
+        Figure figure1 = new MockFigure(true, Position.get(0, 0));
+        Figure figure2 = new MockFigure(true, Position.get(0, 0));
+        Figure figure3 = new MockFigure(false, Position.get(0, 0));
         assertTrue(figure1.hasDifferentColor(figure3));
         assertFalse(figure2.hasDifferentColor(figure1));
         assertFalse(figure3.hasDifferentColor(figure3));
@@ -45,31 +46,31 @@ public class FigureTest {
     @Test
     public void testToString() {
         Position pos = Position.get("g4");
-        Figure figure1 = new MockFigure( true, pos);
+        Figure figure1 = new MockFigure(true, pos);
         assertEquals("MockFigure-white-g4", figure1.toString());
-        Figure figure2 = new Bishop( false, pos);
+        Figure figure2 = new Bishop(false, pos);
         assertEquals("Bishop-black-g4", figure2.toString());
     }
 
     @Test
     public void testSubtypes() {
         Position pos = Position.get("g4");
-        new Pawn( true, pos);
-        new Rock( true, pos);
-        new Knight( true, pos);
-        new Bishop( true, pos);
-        new Queen( true, pos);
-        new King( true, pos);
+        new Pawn(true, pos);
+        new Rock(true, pos);
+        new Knight(true, pos);
+        new Bishop(true, pos);
+        new Queen(true, pos);
+        new King(true, pos);
     }
 
     @Test
     public void testIsWhite() {
         Position pos = Position.get("g4");
 
-        Figure figure1 = new Rock( true, pos);
+        Figure figure1 = new Rock(true, pos);
         assertTrue(figure1.isWhite());
 
-        Figure figure2 = new Knight( false, pos);
+        Figure figure2 = new Knight(false, pos);
         assertFalse(figure2.isWhite());
     }
 
@@ -79,7 +80,7 @@ public class FigureTest {
         Position to = Position.get("g5");
         Position thirdpos = Position.get("f5");
 
-        Figure figure1 = new Bishop( true, from);
+        Figure figure1 = new Bishop(true, from);
         figure1.figureMoved(Move.get(from, to));
         assertEquals(figure1.toString(), "Bishop-white-g5");
         figure1.figureMoved(Move.get(thirdpos, from));
@@ -92,14 +93,14 @@ public class FigureTest {
         Position to = Position.get("g5");
         Move move = Move.get(from, to);
 
-        assertFalse(new Pawn( true, from).canParticipateInRochade());
+        assertFalse(new Pawn(true, from).canParticipateInRochade());
 
-        Figure king = new King( true, from);
+        Figure king = new King(true, from);
         assertTrue(king.canParticipateInRochade(), "unmoved king");
         king.figureMoved(move);
         assertFalse(king.canParticipateInRochade(), "moved king");
 
-        Figure rock = new Rock( false, from);
+        Figure rock = new Rock(false, from);
         assertTrue(rock.canParticipateInRochade(), "unmoved rock");
         rock.figureMoved(move);
         assertFalse(rock.canParticipateInRochade(), "moved rock");
@@ -117,7 +118,7 @@ public class FigureTest {
         Position to4 = Position.get("e6");
         Position to5 = Position.get("d3");
 
-        Rock rock = new Rock( true, from);
+        Rock rock = new Rock(true, from);
 
         assertFalse(rock.isPassiveBound(to1, game));
         assertFalse(rock.isPassiveBound(to2, game));
@@ -141,8 +142,8 @@ public class FigureTest {
         Position to6 = Position.get("d2");
         Position to7 = Position.get("a1");
 
-        Rock rock = new Rock( true, from1);
-        King king = new King( true, from2);
+        Rock rock = new Rock(true, from1);
+        King king = new King(true, from2);
 
         assertFalse(rock.isBound(to1, game));
         assertFalse(rock.isBound(to2, game));
@@ -183,7 +184,7 @@ public class FigureTest {
         Position to3 = Position.get("g3");
         Position to4 = Position.get("e2");
 
-        Rock rock = new Rock( true, from);
+        Rock rock = new Rock(true, from);
 
         assertTrue(rock.isMoveable(to1, game));
         assertTrue(rock.isMoveable(to2, game));
@@ -196,20 +197,20 @@ public class FigureTest {
         Position from1 = Position.get("e3");
         Position from2 = Position.get("e1");
 
-        Pawn pawn1 = new Pawn( true, from1);
-        Pawn pawn2 = new Pawn( true, from1);
-        Pawn pawn3 = new Pawn( false, from1);
-        Pawn pawn4 = new Pawn( true, from2);
+        Pawn pawn1 = new Pawn(true, from1);
+        Pawn pawn2 = new Pawn(true, from1);
+        Pawn pawn3 = new Pawn(false, from1);
+        Pawn pawn4 = new Pawn(true, from2);
 
         assertTrue(pawn1.getTypeInfo() == pawn2.getTypeInfo());    //gleiche Objekte sollten die gleiche TypeInfo haben
         assertTrue(pawn1.getTypeInfo() != pawn3.getTypeInfo()); //unterschiedliche TypeInfo bei unterschiedliche Farbe
         assertTrue(pawn1.getTypeInfo() == pawn4.getTypeInfo()); //Position geht nicht mit ein
 
-        Rock rock = new Rock( true, from1);
-        Knight knight = new Knight( true, from1);
-        Bishop bishop = new Bishop( true, from1);
-        Queen queen = new Queen( true, from1);
-        King king = new King( true, from2);
+        Rock rock = new Rock(true, from1);
+        Knight knight = new Knight(true, from1);
+        Bishop bishop = new Bishop(true, from1);
+        Queen queen = new Queen(true, from1);
+        King king = new King(true, from2);
 
         Byte pawnByte = new Byte(pawn1.getTypeInfo());
         Byte rockByte = new Byte(rock.getTypeInfo());
