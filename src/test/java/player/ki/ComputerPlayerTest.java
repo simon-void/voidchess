@@ -179,7 +179,7 @@ public class ComputerPlayerTest
 //    game.move(Move.get("b1-c3"));
 //    game.move(Move.get("c8-g4"));
     SearchTreePruner pruner = new SimplePruner(2, 3, 2);
-    StaticEvaluationInterface staticEvaluation = new StaticEvaluation();//ConstantEvaluation();
+    StaticEvaluationInterface staticEvaluation = new StaticEvaluation();//new ConstantEvaluation();//
     loadTest(game, pruner, staticEvaluation, "Benchmark");
   }
   
