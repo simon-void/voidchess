@@ -22,7 +22,7 @@ public class ChessPanel
         implements ActionListener {
     final private static String startString = "Start";
     final private static String resignString = "Aufgeben";
-    final private static String switchString = "Plätze tauschen";
+    final private static String switchString = "Pl\u00E4tze tauschen";
 
     private PlayerInterface humanPlayer;
     private PlayerInterface computerPlayer;

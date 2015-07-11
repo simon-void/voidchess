@@ -17,8 +17,7 @@ import java.util.Map;
 /**
  * @author stephan
  */
-public class ChessGameUI
-        extends JComponent {
+public class ChessGameUI extends JComponent {
     private int areaSize, borderSize;
     private boolean whiteView;
     private Position from, to;

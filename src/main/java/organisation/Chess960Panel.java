@@ -44,7 +44,7 @@ public class Chess960Panel
 
         add(classicButton);
         add(random960Button);
-        add(new JLabel(" Eröffnungsstellung:"));
+        add(new JLabel(" Er\u00F6ffnungsstellung:"));
         add(positionIndexField);
     }
 
