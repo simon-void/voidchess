@@ -2,24 +2,19 @@ package figures;
 
 import java.util.List;
 
-import image.FigureImage;
-import image.FigureImageMock;
 import helper.*;
 import board.*;
+import image.ImageType;
+
 /**
  * @author stephan
  */
 class MockFigure extends Figure
 {  
-	MockFigure( FigureImage figureImage, boolean isWhite,Position position )
+	MockFigure(boolean isWhite, Position position )
 	{
-		super( figureImage,isWhite,position,(byte)7  );
+		super(isWhite, position, (byte) 7);
 	}
-
-  MockFigure( boolean isWhite,Position position )
-  {
-    this( FigureImageMock.defaultInstance, isWhite, position  );
-  }
 	
 	public boolean isReachable(Position to,BasicChessGameInterface game)
 	{
@@ -43,5 +38,10 @@ class MockFigure extends Figure
 	protected String getType()
 	{
 		return "MockFigure";
+	}
+
+	public ImageType getImageType()
+	{
+		throw new IllegalStateException("MockFigure has no Image(Type)");
 	}
 }

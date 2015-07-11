@@ -10,14 +10,14 @@ abstract public class RochadeFigure extends Figure
 	protected int stepsTaken;
 	final private Position initialPos;
 
-	public RochadeFigure(FigureImage figureImage, boolean isWhite, Position startPosition,byte typeIndex)
+	public RochadeFigure(boolean isWhite, Position startPosition,byte typeIndex)
 	{
-		this( figureImage,isWhite,startPosition,0,typeIndex );
+		this(isWhite,startPosition,0,typeIndex );
 	}
 	
-	public RochadeFigure(FigureImage figureImage, boolean isWhite, Position startPosition,int stepsTaken,byte typeIndex )
+	public RochadeFigure(boolean isWhite, Position startPosition,int stepsTaken,byte typeIndex )
 	{
-		super( figureImage,isWhite,startPosition,typeIndex );
+		super(isWhite,startPosition,typeIndex );
 		initialPos      = startPosition;
 		this.stepsTaken = stepsTaken;
 	}

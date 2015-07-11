@@ -24,17 +24,16 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	
   /** der normale Konstruktor, der von außerhalb verwendet werden sollte
    * @param supervisor
-   * @param figureImageFactory
    */
-	public ChessGame( ChessGameSupervisor supervisor, FigureImageFactory figureImageFactory )
+	public ChessGame( ChessGameSupervisor supervisor)
 	{
 		hasHitFigure     = false;
 		this.supervisor  = supervisor;
-		figureFactory    = new FigureFactory( figureImageFactory );
+		figureFactory    = new FigureFactory(  );
 		mementoStack     = new MementoStack();
 		extendedMoveStack= new ExtendedMoveStack();
 		numberStack      = new NumberStack();
-		game             = new SimpleArrayBoard( figureImageFactory, this );
+		game             = new SimpleArrayBoard( this );
 
 		initGame();
 	}
@@ -43,10 +42,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
    */
   public ChessGame(ChessGame other, String desc)
   {
-    final FigureImageFactoryMock figureImageFactoryMock = new FigureImageFactoryMock("",true);
     hasHitFigure     = other.hasHitFigure;
     supervisor       = ChessGameSupervisorDummy.INSTANCE;
-    figureFactory    = new FigureFactory( figureImageFactoryMock );
+    figureFactory    = new FigureFactory(  );
     mementoStack     = new MementoStack(other.mementoStack);
     extendedMoveStack= new ExtendedMoveStack(other.extendedMoveStack);
     numberStack      = new NumberStack(other.numberStack);
@@ -62,15 +60,15 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	 */
 	public ChessGame( String game_description )
 	{
-		this( ChessGameSupervisorDummy.INSTANCE,game_description,new FigureImageFactoryMock("",true) );
+		this( ChessGameSupervisorDummy.INSTANCE,game_description);
 	}
 	
 	/**für JUnit-TestKlassen
-	 * @param game_description
+	 * @param initialPosition
 	 */
 	public ChessGame( int initialPosition )
 	{
-		this( ChessGameSupervisorDummy.INSTANCE,initialPosition,new FigureImageFactoryMock("",true) );
+		this( ChessGameSupervisorDummy.INSTANCE,initialPosition);
 	}
 	
 	/**für JUnit-TestKlassen: Standardaufstellung
@@ -83,14 +81,11 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	/**wird nur implizit für JUnit-tests verwendet
 	 * @param supervisor
 	 * @param game_description
-	 * @param figureImageFactory
 	 */
-	private ChessGame( ChessGameSupervisor supervisor,
-	           String game_description,
-	           FigureImageFactory figureImageFactory )
+	private ChessGame( ChessGameSupervisor supervisor, String game_description)
 	{
 		this.supervisor  = supervisor;
-		figureFactory    = new FigureFactory( figureImageFactory );
+		figureFactory    = new FigureFactory(  );
 		mementoStack     = new MementoStack();
 		extendedMoveStack= new ExtendedMoveStack();
 		numberStack      = new NumberStack();
@@ -106,7 +101,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 			st.nextToken();
 		}
 		
-		game = new SimpleArrayBoard( figureImageFactory, this );
+		game = new SimpleArrayBoard( this );
 		game.init( game_description );
 		
 		memorizeGame();
@@ -116,14 +111,12 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 	/**wird nur implizit für JUnit-tests verwendet
 	 * @param supervisor
 	 * @param initialPosition
-	 * @param figureImageFactory
 	 */
 	private ChessGame(	ChessGameSupervisor supervisor,
-	                   	int initialPosition,
-	                   	FigureImageFactory figureImageFactory )
+	                   	int initialPosition)
 	{
 		this.supervisor  = supervisor;
-		figureFactory    = new FigureFactory( figureImageFactory );
+		figureFactory    = new FigureFactory(  );
 		mementoStack     = new MementoStack();
 		extendedMoveStack= new ExtendedMoveStack();
 		numberStack      = new NumberStack();
@@ -133,7 +126,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider
 		numberOfMovesWithoutHit = 0;
 		figureCount 			= 32;
 		
-		game = new SimpleArrayBoard( figureImageFactory, this );
+		game = new SimpleArrayBoard(this );
 		game.init( initialPosition );
 		
 		memorizeGame();

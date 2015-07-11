@@ -5,7 +5,6 @@ import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-import image.FigureImageFactoryMock;
 import board.*;
 import helper.*;
 import static org.testng.Assert.*;
@@ -30,7 +29,7 @@ public class ComputerPlayerTest
     game.move(Move.get("e3-f2"));
     testTermination(game);
 
-    game = new ChessGame(ChessGameSupervisorDummy.INSTANCE, new FigureImageFactoryMock("", true));
+    game = new ChessGame(ChessGameSupervisorDummy.INSTANCE);
     game.move(Move.get("c2-c3"));
     testTermination(game);
 

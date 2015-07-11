@@ -1,11 +1,17 @@
 package organisation;
 
 import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.util.HashMap;
+import java.util.Map;
+
 import board.*;
 import helper.*;
-import figures.*;
 import javax.swing.*;
 
+import image.FigureImage;
+import image.ImageType;
+import image.Images;
 import player.HumanPlayerInterface;
 /**
  * @author stephan
@@ -17,24 +23,33 @@ extends JComponent
 	private boolean whiteView;
 	private Position from,to;
 	private BasicChessGameInterface game;
+	private Map<ImageType, FigureImage> imageTypeToImage;
 	ChessGameAdapter adapter;
 	
-	public ChessGameUI( BasicChessGameInterface game )
+	public ChessGameUI( BasicChessGameInterface game, ImageObserver imageObserver)
 	{		
 		this.game  = game;
 		areaSize   = 50;
 		borderSize = 25;
 		whiteView  = true;
-		setPreferredSize( new Dimension( 2*borderSize+8*areaSize,2*borderSize+8*areaSize ) );
-		setBorder( BorderFactory.createCompoundBorder(
-								 BorderFactory.createLineBorder( Color.black ),
-								 BorderFactory.createBevelBorder( 0,Color.gray,Color.darkGray )
-							 )
-		);
+		setPreferredSize(new Dimension(2 * borderSize + 8 * areaSize, 2 * borderSize + 8 * areaSize));
+		setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(Color.black),
+                        BorderFactory.createBevelBorder(0, Color.gray, Color.darkGray)
+                )
+        );
 		adapter = new ChessGameAdapter( this );
-		addMouseListener( adapter );
-		addMouseMotionListener( adapter );
-		setDoubleBuffered( true );
+		addMouseListener(adapter);
+		addMouseMotionListener(adapter);
+		setDoubleBuffered(true);
+
+        imageTypeToImage = new HashMap<>(20);
+        for(ImageType imageType: ImageType.values()) {
+            if(imageType.isFigure) {
+                FigureImage figureImage = new FigureImage(imageObserver, Images.get(imageType));
+                imageTypeToImage.put(imageType, figureImage);
+            }
+        }
 	}
 	
 	public void repaintAfterMove( Move move )
@@ -68,21 +83,21 @@ extends JComponent
 		int y_pos = borderSize+areaSize*(whiteView? 7-row:row );
 		
 		int repaintSize = areaSize+1;
-		paintImmediately( x_pos,y_pos,repaintSize*8,repaintSize );
+		paintImmediately(x_pos, y_pos, repaintSize * 8, repaintSize);
 	}
 	
 	public void repaintAtOnce()
 	{
 		Dimension dim = getSize();
-		paintImmediately( 0,0,dim.width,dim.height );
+		paintImmediately(0, 0, dim.width, dim.height);
 	}
 	
 	protected void paintComponent( Graphics g )
 	{
 		if( game==null ) return;
-		paintBoard( g );
-		paintFigures( g );
-		paintActivAreas( g );
+		paintBoard(g);
+		paintFigures(g);
+		paintActivAreas(g);
 	}
 
 	private void paintBoard( Graphics g )
@@ -106,10 +121,16 @@ extends JComponent
 			for( int column=0;column<8;column++ ) {
 				Position pos = Position.get( row,column );
 				if( !game.isFreeArea( pos ) ) {
-					Figure figure = game.getFigure( pos );
 					int x_pos = borderSize+areaSize*(whiteView?column:7-column);
-					int y_pos = borderSize+areaSize*(whiteView? 7-row: row);
-					figure.paint( g,x_pos,y_pos,areaSize );
+                    int y_pos = borderSize+areaSize*(whiteView? 7-row: row);
+
+                    ImageType imageType = game.getFigure( pos ).getImageType();
+                    FigureImage figureImage = imageTypeToImage.get(imageType);
+                    if(figureImage!=null) {
+                        figureImage.paint(g,x_pos,y_pos,areaSize );
+                    }else{
+                        throw new IllegalArgumentException("unknown imageType: "+imageType);
+                    }
 				}
 			}
 		}

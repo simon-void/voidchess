@@ -16,12 +16,6 @@ public class Images{
   {
     final ClassLoader cl = Images.class.getClassLoader();
     for( ImageType imageType: ImageType.values() ) {
-//      final URL url = Images.class.getResource( imageType.getFileName() );
-//      final String path = "image/"+imageType.getFileName();
-//      final URL url = cl.getResource(path);
-//      final Image img = ImageIO.read(url);
-
-//      final Image img = Toolkit.getDefaultToolkit().getImage(url);
       images[imageType.ordinal()] = readFromImageDir(imageType.getFileName());
     }
   }

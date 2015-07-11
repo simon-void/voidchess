@@ -21,14 +21,13 @@ public class QueenTest
 	{
 		String des     = "white 0 Queen-white-e2";
 		ChessGame game = new ChessGame( des );
-		
-		FigureImage figureImage = new FigureImageMock(10,20,30);
+
 		Position from           = Position.get( "e2" );
 		Position to1            = Position.get( "e5" );
 		Position to2            = Position.get( "c4" );
 		Position to3            = Position.get( "d4" );
     
-		Queen queen = new Queen(figureImage,true,from);
+		Queen queen = new Queen(true,from);
 		assertTrue( queen.isReachable(to1,game) );
 		assertTrue( queen.isReachable(to2,game) );
 		assertFalse( queen.isReachable(to3,game) );

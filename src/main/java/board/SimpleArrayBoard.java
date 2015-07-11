@@ -29,9 +29,9 @@ implements SimpleChessBoardInterface
 	private CheckStatus whiteCheckStatus;
 	private CheckStatus blackCheckStatus;
 
-	SimpleArrayBoard( FigureImageFactory figureImageFactory, LastMoveProvider lastMoveProvider )
+	SimpleArrayBoard(LastMoveProvider lastMoveProvider)
 	{
-		figureFactory = new FigureFactory( figureImageFactory );
+		figureFactory = new FigureFactory();
 		game          = new Figure[8][8];
 		this.lastMoveProvider = lastMoveProvider;
 		init();
@@ -40,7 +40,7 @@ implements SimpleChessBoardInterface
 	//für Testzwecke
 	public SimpleArrayBoard( String des, LastMoveProvider lastMoveProvider )
 	{
-		this( new FigureImageFactoryMock("",true), lastMoveProvider );
+		this(lastMoveProvider );
 		init( des );
 	}
 	

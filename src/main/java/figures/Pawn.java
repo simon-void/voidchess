@@ -5,6 +5,8 @@ import java.util.List;
 import image.FigureImage;
 import helper.*;
 import board.*;
+import image.ImageType;
+
 /**
  * @author stephan
  */
@@ -12,15 +14,15 @@ public class Pawn extends Figure
 {
 	private boolean canBeHitByEnpasent;
 
-	public Pawn(FigureImage figureImage, boolean isWhite,Position position)
+	public Pawn(boolean isWhite,Position position)
 	{
-		super( figureImage,isWhite,position,(byte)1 );
+		super(isWhite, position, (byte)1 );
 		canBeHitByEnpasent = false;
 	}
 	
-	public Pawn(FigureImage figureImage, boolean isWhite,Position position,boolean canBeHitByEnpasent)
+	public Pawn(boolean isWhite, Position position, boolean canBeHitByEnpasent)
 	{
-		super( figureImage,isWhite,position,(byte)1 );
+		super(isWhite, position, (byte)1 );
 		this.canBeHitByEnpasent = canBeHitByEnpasent;
 	}
 	
@@ -130,7 +132,7 @@ public class Pawn extends Figure
 		
 		if( position.row==pawnStartRow ) {
 			Position twoForwardPosition = Position.get( twoForwardRow,position.column );
-			if( isReachable( twoForwardPosition,game ) ) {
+			if( isReachable(twoForwardPosition, game) ) {
 				result.add( Move.get( position,twoForwardPosition ) );
 			}
 		}
@@ -144,7 +146,7 @@ public class Pawn extends Figure
 		
 		for( int column= minColumn;column<=maxColumn;column++ ) {
 			Position checkPosition = Position.get( oneForwardRow,column );
-			if( isMoveable( checkPosition,game ) ) {
+			if( isMoveable(checkPosition, game) ) {
 				return true;
 			}
 		}
@@ -154,7 +156,7 @@ public class Pawn extends Figure
 		
 		if( position.row==pawnStartRow ) {
 			Position twoForwardPosition = Position.get( twoForwardRow,position.column );
-			if( isMoveable( twoForwardPosition,game ) ) {
+			if( isMoveable(twoForwardPosition, game) ) {
 				return true;
 			}
 		}
@@ -171,7 +173,7 @@ public class Pawn extends Figure
 		
 		for( int column= minColumn;column<=maxColumn;column++ ) {
 			Position checkPosition = Position.get( oneForwardRow,column );
-			if( isReachable( checkPosition,game ) ) {
+			if( isReachable(checkPosition, game) ) {
 				count++;
 			}
 		}
@@ -181,7 +183,7 @@ public class Pawn extends Figure
 		
 		if( position.row==pawnStartRow ) {
 			Position twoForwardPosition = Position.get( twoForwardRow,position.column );
-			if( isReachable( twoForwardPosition,game ) ) {
+			if( isReachable(twoForwardPosition, game) ) {
 				count++;
 			}
 		}
@@ -206,5 +208,14 @@ public class Pawn extends Figure
 	protected String getType()
 	{
 		return "Pawn";
+	}
+
+	public ImageType getImageType()
+	{
+		if(isWhite) {
+			return ImageType.W_PAWN;
+		} else {
+			return ImageType.B_PAWN;
+		}
 	}
 }

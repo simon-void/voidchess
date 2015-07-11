@@ -20,7 +20,7 @@ public class ChessGameTest
 	@BeforeMethod
 	public void setUp()
 	{
-		game=new ChessGame( ChessGameSupervisorDummy.INSTANCE,new FigureImageFactoryMock("",true) );
+		game=new ChessGame( ChessGameSupervisorDummy.INSTANCE );
 	}
 	
 	@Test

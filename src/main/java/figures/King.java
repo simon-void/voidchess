@@ -5,6 +5,8 @@ import java.util.List;
 import image.FigureImage;
 import helper.*;
 import board.*;
+import image.ImageType;
+
 /**
  * @author stephan
  */
@@ -12,16 +14,15 @@ public class King extends RochadeFigure
 {
 	private boolean didRochade;
 
-	public King(FigureImage figureImage, boolean isWhite, Position startPosition)
+	public King(boolean isWhite, Position startPosition)
 	{
-		super( figureImage,isWhite, startPosition,(byte)6 );
+		super(isWhite, startPosition,(byte)6 );
 		didRochade = false;
 	}
 	
-	public King(FigureImage figureImage, boolean isWhite, Position startPosition,
-							int stepsTaken,boolean didRochade )
+	public King(boolean isWhite, Position startPosition, int stepsTaken, boolean didRochade )
 	{
-		super( figureImage,isWhite, startPosition,stepsTaken,(byte)6 );
+		super( isWhite, startPosition,stepsTaken,(byte)6 );
 		this.didRochade = didRochade;
 	}
 	
@@ -156,7 +157,7 @@ public class King extends RochadeFigure
 		game.setFigure( position,null );
 		Figure hitFigure = game.getFigure( to );
 		game.setFigure( to,this );
-		boolean isCheck = CheckSearch.isCheck( game,to );
+		boolean isCheck = CheckSearch.isCheck(game, to);
 		game.setFigure( to,hitFigure );
 		game.setFigure( position,this );
 		return isCheck;
@@ -166,8 +167,8 @@ public class King extends RochadeFigure
 	{
 		int minRow    = Math.max( position.row-1,0 );
 		int minColumn = Math.max( position.column-1,0 );
-		int maxRow    = Math.min( position.row+1,7 );
-		int maxColumn = Math.min( position.column+1,7 );
+		int maxRow    = Math.min(position.row + 1, 7);
+		int maxColumn = Math.min(position.column + 1, 7);
 		
 		for( int row=minRow;row<=maxRow;row++ ) {
 			for( int column=minColumn;column<=maxColumn;column++ ) {
@@ -251,7 +252,7 @@ public class King extends RochadeFigure
 		for( int row=minRow;row<=maxRow;row++ ) {
 			for( int column=minColumn;column<=maxColumn;column++ ) {
 				Position checkPosition = Position.get( row,column );
-				if( isReachable( checkPosition,game ) ) {
+				if( isReachable(checkPosition, game) ) {
 					count++;
 				}
 			}
@@ -259,14 +260,14 @@ public class King extends RochadeFigure
 		
 		if( position.column+2<8 ) {
 			Position shortRochade = Position.get( position.row,position.column+2 );
-			if( isReachable( shortRochade,game ) ) {
+			if( isReachable(shortRochade, game) ) {
 				count++;
 			}
 		}
 		
 		if( position.column-2>=0 ) {
 			Position longRochade = Position.get( position.row,position.column-2 );
-			if( isReachable( longRochade,game ) ) {
+			if( isReachable(longRochade, game) ) {
 				count++;
 			}
 		}
@@ -298,7 +299,7 @@ public class King extends RochadeFigure
 		String parentString = super.toString();
 		StringBuilder buffer = new StringBuilder( parentString.length()+5 );
 		
-		buffer.append( parentString );
+		buffer.append(parentString);
 		if( didRochade ) buffer.append( "-true" );
 		
 		return buffer.toString();
@@ -312,5 +313,14 @@ public class King extends RochadeFigure
 	protected String getType()
 	{
 		return "King";
+	}
+
+	public ImageType getImageType()
+	{
+		if(isWhite) {
+			return ImageType.W_KING;
+		} else {
+			return ImageType.B_KING;
+		}
 	}
 }

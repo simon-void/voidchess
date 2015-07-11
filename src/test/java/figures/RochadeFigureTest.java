@@ -13,9 +13,8 @@ public class RochadeFigureTest
   {
     Position initial = Position.get( "e1" );
     Position second  = Position.get( "d1" );
-    
-    FigureImage figureImage = new FigureImageMock(10,20,30);
-    King king = new King( figureImage,true,initial );
+
+    King king = new King( true,initial );
     
     assertEquals( king.getInitialPosition(),initial );
     king.figureMoved( Move.get( initial,second ) );

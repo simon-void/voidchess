@@ -1,7 +1,5 @@
 package helper;
 
-import image.FigureImageMock;
-
 import java.util.List;
 
 import board.LastMoveProvider;
@@ -160,7 +158,7 @@ public class CheckSearchTest
   private ExtendedMove getEnpassentMove(Move move)
   {
     boolean isWhiteMove = move.to.row>move.from.row;
-    Pawn hitByEnpassant = new Pawn(FigureImageMock.defaultInstance, !isWhiteMove, Position.get(move.from.row, move.to.column));
+    Pawn hitByEnpassant = new Pawn(!isWhiteMove, Position.get(move.from.row, move.to.column));
     
     ExtendedMove extendedMove = new ExtendedMove(move.from, move.to, null, hitByEnpassant, isWhiteMove, false, true, false);
     

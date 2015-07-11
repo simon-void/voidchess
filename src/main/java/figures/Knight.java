@@ -6,6 +6,8 @@ import java.util.List;
 import image.FigureImage;
 import helper.*;
 import board.*;
+import image.ImageType;
+
 /**
  * @author stephan
  */
@@ -13,9 +15,9 @@ public class Knight extends Figure
 {
   private List<Position> posIter = new ArrayList<Position>(8); 
 	
-	public Knight(FigureImage figureImage, boolean isWhite, Position startPosition)
+	public Knight(boolean isWhite, Position startPosition)
 	{
-		super( figureImage,isWhite,startPosition,(byte)3 );
+		super(isWhite,startPosition,(byte)3 );
 	}
 	
 	public boolean isReachable(Position to,BasicChessGameInterface game)
@@ -37,8 +39,8 @@ public class Knight extends Figure
 		
 		int minRow    = Math.max( position.row-2,0 );
 		int minColumn = Math.max( position.column-2,0 );
-		int maxRow    = Math.min( position.row+2,7 );
-		int maxColumn = Math.min( position.column+2,7 );
+		int maxRow    = Math.min(position.row + 2, 7);
+		int maxColumn = Math.min(position.column + 2, 7);
 		
 		for( int row=minRow;row<=maxRow;row++ ) {
 			for( int column=minColumn;column<=maxColumn;column++ ) {
@@ -53,7 +55,7 @@ public class Knight extends Figure
 	
 	public void getReachableMoves( BasicChessGameInterface game,List<Move> result )
 	{
-	  List<Position> posIter = getIterator( game );
+	  List<Position> posIter = getIterator(game);
 		for(Position checkPosition: posIter) {
 			if( isReachable( checkPosition,game ) ) {
 				result.add( Move.get( position,checkPosition ) );
@@ -65,7 +67,7 @@ public class Knight extends Figure
 	{
 	  List<Position> positions = getIterator( game );
     for(Position checkPosition: positions) {
-			if( isMoveable( checkPosition,game ) ) {
+			if( isMoveable(checkPosition, game) ) {
 				return true;
 			}
 		}
@@ -86,5 +88,14 @@ public class Knight extends Figure
 	protected String getType()
 	{
 		return "Knight";
+	}
+
+	public ImageType getImageType()
+	{
+		if(isWhite) {
+			return ImageType.W_KNIGHT;
+		} else {
+			return ImageType.B_KNIGHT;
+		}
 	}
 }

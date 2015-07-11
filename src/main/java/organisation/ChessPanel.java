@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import image.*;
 import board.*;
 import helper.*;
 import player.ki.*;
@@ -51,9 +50,8 @@ implements ActionListener
 		buttonPanel.add( startButton );
 		buttonPanel.add( switchButton );
 		
-		ChessGame game = new ChessGame( ChessGameSupervisorDummy.INSTANCE,
-										new FileFigureImageFactory(this) );
-		chessGameUI = new ChessGameUI(game);
+		ChessGame game = new ChessGame( ChessGameSupervisorDummy.INSTANCE );
+		chessGameUI = new ChessGameUI(game, this);
 		panel960    = new Chess960Panel( game,chessGameUI );
 		table = new Table(game,chessGameUI,this,panel960 );
 		game.useSupervisor( table );

@@ -22,8 +22,7 @@ public class KnightTest
 		String des     = "black 0 Pawn-white-c2-false Knight-black-d4 "
 										+"Knight-black-f5";
 		ChessGame game = new ChessGame( des );
-		
-		FigureImage figureImage = new FigureImageMock(10,20,30);
+
 		Position from           = Position.get( "d4" );
 		Position to1            = Position.get( "b3" );
 		Position to2            = Position.get( "b5" );
@@ -34,7 +33,7 @@ public class KnightTest
 		Position to7            = Position.get( "d1" );
 		Position to8            = Position.get( "f5" );
     
-		Knight knight = new Knight(figureImage,false,from);
+		Knight knight = new Knight(false,from);
 		assertTrue( knight.isReachable(to1,game) );
 		assertTrue( knight.isReachable(to2,game) );
 		assertTrue( knight.isReachable(to3,game) );

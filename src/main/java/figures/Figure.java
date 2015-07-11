@@ -7,6 +7,7 @@ import java.util.List;
 import image.FigureImage;
 import helper.*;
 import board.*;
+import image.ImageType;
 
 /**
  * @author stephan
@@ -17,16 +18,13 @@ public abstract class Figure
 	final protected boolean isWhite;
 	//kodiert Name der Figur + Farbe
 	final protected byte    typeInfo;
-	//Aussehen der Figur
-	final protected FigureImage figureImage;
 	//Position der Figur
 	protected Position position;
 	
 	private List<Move> reachableMoves = new LinkedList<>();
-	
-	Figure( FigureImage figureImage,boolean isWhite,Position startPosition,byte typeIndex )
+
+	Figure(boolean isWhite, Position startPosition, byte typeIndex)
 	{
-		this.figureImage = figureImage;
 		this.position    = startPosition;
 		this.isWhite     = isWhite;
 		this.typeInfo	 = computeTypeInfo( typeIndex,isWhite );
@@ -35,15 +33,11 @@ public abstract class Figure
 			:"TypeInfo out of Bounds";
 	}
 	
-	public Position getPosition()
-	{
+	public Position getPosition() {
 		return position;
 	}
-	
-	final public void paint( Graphics g,int x_pos,int y_pos,int areaSize )
-	{
-		figureImage.paint(g,x_pos,y_pos,areaSize );
-	}
+
+	abstract public ImageType getImageType();
 	
 	final public boolean hasDifferentColor( Figure other )
 	{

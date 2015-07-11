@@ -22,8 +22,7 @@ public class KingTest
 		String des     = "white 0 Rock-white-a1-0 King-white-e1-0 "
 										+"Rock-white-h1-0";
 		ChessGame game = new ChessGame( des );
-		
-		FigureImage figureImage = new FigureImageMock(10,20,30);
+
 		Position from           = Position.get( "e1" );
 		Position to1            = Position.get( "f1" );
 		Position to2            = Position.get( "g1" );
@@ -34,7 +33,7 @@ public class KingTest
 		Position to7            = Position.get( "a1" );
 		Position to8            = Position.get( "h1" );
     
-		King king = new King(figureImage,true,from);
+		King king = new King(true,from);
 		assertTrue( king.isReachable(to1,game) );
 		assertFalse( king.isReachable(to2,game) );
 		assertTrue( king.isReachable(to3,game) );
@@ -59,7 +58,7 @@ public class KingTest
 		to6            = Position.get( "e6" );
 		to7            = Position.get( "h8" );
     
-		king = new King(figureImage,false,from);
+		king = new King(false,from);
 		assertFalse( king.isReachable(to1,game)  );
 		assertTrue(  king.isReachable(to2,game)  );
 		assertTrue(  king.isReachable(to3,game)  );
@@ -73,7 +72,7 @@ public class KingTest
 		game = new ChessGame( 621 );
 		from           = Position.get( "e1" );
 		to1            = Position.get( "f1" );
-		king           = new King(figureImage,true,from);
+		king           = new King(true,from);
 		assertFalse( king.isReachable(to1,game)  );
 	}
 
@@ -95,15 +94,14 @@ public class KingTest
 		String des     = "black 0 Knight-white-b6 Rock-black-a8-0 "
 										+"King-black-e8-0 Rock-black-h8-0";
 		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
-		
-		FigureImage figureImage = new FigureImageMock(10,20,30);
+
 		Position from           = Position.get( "e8" );
 		Position to1            = Position.get( "c8" );
 		Position to2            = Position.get( "d7" );
 		Position to3            = Position.get( "g8" );
 		Position to4            = Position.get( "e7" );
 
-		King king = new King(figureImage,false,from);
+		King king = new King(false,from);
 		
 		assertTrue(  king.isPassiveBound(to1,game) );
 		assertTrue(  king.isPassiveBound(to2,game) );
@@ -119,7 +117,7 @@ public class KingTest
 		to3  = Position.get( "h8" );
 		to4  = Position.get( "e7" );
 
-		king = new King(figureImage,false,from);
+		king = new King(false,from);
 		
 		assertTrue(  king.isPassiveBound(to1,game) );
 		assertTrue(  king.isPassiveBound(to2,game) );

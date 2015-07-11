@@ -21,8 +21,7 @@ public class BishopTest
 		String des     = "white 0 Pawn-white-c2-false Bishop-white-d3- "
 										+"Knight-black-b5";
 		ChessGame game = new ChessGame( des );
-		
-		FigureImage figureImage = new FigureImageMock(10,20,30);
+
 		Position from           = Position.get( "d3" );
 		Position to1            = Position.get( "b5" );
 		Position to2            = Position.get( "h7" );
@@ -32,7 +31,7 @@ public class BishopTest
 		Position to6            = Position.get( "b1" );
 		Position to7            = Position.get( "d4" );
     
-		Bishop bishop = new Bishop(figureImage,true,from);
+		Bishop bishop = new Bishop(true,from);
 		assertTrue( bishop.isReachable(to1,game) );
 		assertTrue( bishop.isReachable(to2,game) );
 		assertTrue( bishop.isReachable(to3,game) );

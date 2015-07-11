@@ -1,68 +1,55 @@
 package figures;
 
 import java.util.StringTokenizer;
-import image.FigureImageFactory;
+
 import helper.*;
 /**
  * @author stephan
  */
 final public class FigureFactory
 {
-	private FigureImageFactory figureImageFactory;
-  
-	public FigureFactory( FigureImageFactory figureImageFactory )
-	{
-		this.figureImageFactory = figureImageFactory;
-	}
-  
 	public Figure getKing(Position pos, boolean isWhite)
 	{
-		return new King( figureImageFactory.getKing( isWhite ),isWhite,pos );
-	}
-	
-	private Figure getKing(Position pos, boolean isWhite,int stepsTaken,boolean didRochade)
-	{
-		return new King( figureImageFactory.getKing( isWhite ),isWhite,pos,stepsTaken,didRochade );
+		return new King(isWhite, pos);
 	}
 
-	public Figure getQueen(Position pos, boolean isWhite)
+	private Figure getKing(Position pos, boolean isWhite, int stepsTaken, boolean didRochade)
 	{
-		return new Queen( figureImageFactory.getQueen( isWhite ),isWhite,pos );
+		return new King(isWhite, pos, stepsTaken, didRochade);
+	}
+
+	public Figure getQueen(Position pos, boolean isWhite) {
+		return new Queen(isWhite, pos);
 	}
 
 	public Figure getBishop(Position pos, boolean isWhite)
 	{
-		return new Bishop( figureImageFactory.getBishop( isWhite ),isWhite,pos );
+		return new Bishop(isWhite, pos);
 	}
 
 	public Figure getKnight(Position pos, boolean isWhite)
 	{
-		return new Knight( figureImageFactory.getKnight( isWhite ),isWhite,pos );
+		return new Knight(isWhite, pos);
 	}
 
 	public Figure getRock(Position pos, boolean isWhite)
 	{
-		return new Rock( figureImageFactory.getRock( isWhite ),isWhite,pos );
+		return new Rock(isWhite, pos);
 	}
-	
-	private Figure getRock(Position pos, boolean isWhite,int stepsTaken)
+
+	private Figure getRock(Position pos, boolean isWhite, int stepsTaken)
 	{
-		return new Rock( figureImageFactory.getKing( isWhite ),isWhite,pos,stepsTaken );
+		return new Rock(isWhite, pos, stepsTaken);
 	}
 
 	public Figure getPawn(Position pos, boolean isWhite)
 	{
-		return new Pawn( figureImageFactory.getPawn( isWhite ),isWhite,pos );
+		return new Pawn(isWhite, pos);
 	}
-	
-	private Figure getPawn(Position pos, boolean isWhite,boolean canBeHitByEnpasent)
+
+	private Figure getPawn(Position pos, boolean isWhite, boolean canBeHitByEnpasent)
 	{
-		return new Pawn( figureImageFactory.getKing( isWhite ),isWhite,pos,canBeHitByEnpasent );
-	}
-	
-	public void setFigureImageFactory( FigureImageFactory figureImageFactory )
-	{
-		this.figureImageFactory = figureImageFactory;
+		return new Pawn(isWhite, pos, canBeHitByEnpasent);
 	}
 	
 	public Figure getFigureByString( String description )

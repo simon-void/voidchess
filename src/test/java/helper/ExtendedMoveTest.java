@@ -72,7 +72,7 @@ public class ExtendedMoveTest
 				Position.get( "b5" ),
 				Position.get( "a6" ),
 				null,
-				new Pawn( null,false,Position.get( "a5" ),true ),
+				new Pawn( false,Position.get( "a5" ),true ),
 				true,
 				false,
 				true,
@@ -83,7 +83,7 @@ public class ExtendedMoveTest
 			new ExtendedMove( 
 				Position.get( "b5" ),
 				Position.get( "a6" ),
-				new Pawn( null,false,Position.get( "a6" ),false ),
+				new Pawn( false,Position.get( "a6" ),false ),
 				null,
 				true,
 				false,

@@ -7,6 +7,7 @@ import java.util.List;
 import image.FigureImage;
 import helper.*;
 import board.*;
+import image.ImageType;
 
 import static helper.CheckSearch.signum;
 
@@ -17,9 +18,9 @@ public class Bishop extends Figure
 {
 	private List<Position> positions = new ArrayList<Position>(8); 
 	
-	public Bishop(FigureImage figureImage, boolean isWhite, Position startPosition)
+	public Bishop(boolean isWhite, Position startPosition)
 	{
-		super( figureImage,isWhite,startPosition,(byte)4 );	
+		super( isWhite,startPosition,(byte)4 );
 	}
 	
 	public boolean isReachable(Position to,BasicChessGameInterface game)
@@ -185,7 +186,7 @@ public class Bishop extends Figure
 		}
 		positions.clear();
 		
-		getSouthWestIterator( game,positions );
+		getSouthWestIterator(game, positions);
 		for(Position pos: positions) {
 			if( !isBound( pos,game ) ) { 
 				return true;
@@ -199,10 +200,10 @@ public class Bishop extends Figure
 	public int countReachableMoves( BasicChessGameInterface game )
 	{
 		positions.clear(); 
-		getNorthEastIterator( game,positions );
-		getSouthEastIterator( game,positions );
-		getNorthWestIterator( game,positions );
-		getSouthWestIterator( game,positions );
+		getNorthEastIterator(game, positions);
+		getSouthEastIterator(game, positions);
+		getNorthWestIterator(game, positions);
+		getSouthWestIterator(game, positions);
 
 		return positions.size();
 	}
@@ -215,5 +216,14 @@ public class Bishop extends Figure
 	protected String getType()
 	{
 		return "Bishop";
+	}
+
+	public ImageType getImageType()
+	{
+		if(isWhite) {
+			return ImageType.W_BISHOP;
+		} else {
+			return ImageType.B_BISHOP;
+		}
 	}
 }

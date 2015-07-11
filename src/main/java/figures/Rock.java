@@ -6,6 +6,8 @@ import java.util.List;
 import image.FigureImage;
 import helper.*;
 import board.*;
+import image.ImageType;
+
 /**
  * @author stephan
  */
@@ -13,14 +15,14 @@ public class Rock extends RochadeFigure
 {
   private List<Position> positions = new ArrayList<Position>(8);
 	
-	public Rock(FigureImage figureImage, boolean isWhite, Position startPosition)
+	public Rock(boolean isWhite, Position startPosition)
 	{
-		super( figureImage,isWhite,startPosition,(byte)2 );
+		super( isWhite,startPosition,(byte)2 );
 	}
 	
-	public Rock(FigureImage figureImage, boolean isWhite, Position startPosition,int stepsTaken)
+	public Rock(boolean isWhite, Position startPosition,int stepsTaken)
 	{
-		super( figureImage,isWhite,startPosition,stepsTaken,(byte)2 );
+		super( isWhite,startPosition,stepsTaken,(byte)2 );
 	}
 	
 	public boolean isReachable(Position to,BasicChessGameInterface game)
@@ -41,7 +43,7 @@ public class Rock extends RochadeFigure
 			if( !game.isFreeArea( middlePosition ) ) return false;
 		}
 		
-		return game.isFreeArea(to) || hasDifferentColor( game.getFigure(to) );
+		return game.isFreeArea(to) || hasDifferentColor(game.getFigure(to));
 	}
 	
 	private boolean isVerticalReachable( Position to,BasicChessGameInterface game )
@@ -180,7 +182,7 @@ public class Rock extends RochadeFigure
 		}
 		positions.clear();
 				
-		getWestIterator( game,positions );
+		getWestIterator(game, positions);
 		for(Position pos: positions) {
 			if( !isBound( pos,game ) ) { 
 				return true;
@@ -194,10 +196,10 @@ public class Rock extends RochadeFigure
 	public int countReachableMoves( BasicChessGameInterface game )
 	{
 		positions.clear(); 
-		getNorthIterator( game,positions );
-		getSouthIterator( game,positions );
-		getEastIterator(  game,positions );
-		getWestIterator(  game,positions );
+		getNorthIterator(game, positions);
+		getSouthIterator(game, positions);
+		getEastIterator(game, positions);
+		getWestIterator(game, positions);
 		return positions.size();
 	}
 	
@@ -209,5 +211,14 @@ public class Rock extends RochadeFigure
 	protected String getType()
 	{
 		return "Rock";
+	}
+
+	public ImageType getImageType()
+	{
+		if(isWhite) {
+			return ImageType.W_ROCK;
+		} else {
+			return ImageType.B_ROCK;
+		}
 	}
 }

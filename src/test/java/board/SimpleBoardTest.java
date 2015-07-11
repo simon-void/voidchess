@@ -29,7 +29,7 @@ public class SimpleBoardTest
 	@BeforeMethod
 	public void setUp()
 	{
-		board = new SimpleArrayBoard( new FigureImageFactoryMock("",true), mock(LastMoveProvider.class) );
+		board = new SimpleArrayBoard( mock(LastMoveProvider.class) );
 	}
 	
 	@Test

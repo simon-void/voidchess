@@ -21,8 +21,7 @@ public class RockTest
 		String des     = "white 0 Pawn-white-c2-false Rock-white-c4-2 "
 		                +"Knight-black-g4";
 		ChessGame game = new ChessGame( des );
-		
-		FigureImage figureImage = new FigureImageMock(10,20,30);
+
 		Position from           = Position.get( "c4" );
 		Position to1            = Position.get( "c3" );
 		Position to2            = Position.get( "g4" );
@@ -30,7 +29,7 @@ public class RockTest
 		Position to4            = Position.get( "h4" );
 		Position to5            = Position.get( "d5" );
     
-		Rock rock = new Rock(figureImage,true,from);
+		Rock rock = new Rock(true,from);
 		assertTrue( rock.isReachable(to1,game) );
 		assertTrue( rock.isReachable(to2,game) );
 		assertFalse( rock.isReachable(to3,game) );
@@ -42,8 +41,7 @@ public class RockTest
   @Test
 	public void testUndoMove()
 	{
-		FigureImageFactoryMock figureImageFactory = new FigureImageFactoryMock( "Rock",true );
-		FigureFactory     figureFactory = new FigureFactory( figureImageFactory );
+		FigureFactory     figureFactory = new FigureFactory(  );
 		Rock rock = (Rock)figureFactory.getRock( Position.get("a1"),false );
 		
 		assertTrue( rock.canParticipateInRochade() );

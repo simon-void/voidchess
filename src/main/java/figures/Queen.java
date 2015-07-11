@@ -5,6 +5,8 @@ import java.util.List;
 import image.FigureImage;
 import helper.*;
 import board.*;
+import image.ImageType;
+
 /**
  * @author stephan
  */
@@ -13,25 +15,25 @@ public class Queen extends Figure
 	private Bishop bishop;
 	private Rock   rock;
 
-	public Queen(FigureImage figureImage, boolean isWhite, Position startPosition)
+	public Queen(boolean isWhite, Position startPosition)
 	{
-		super( figureImage,isWhite,startPosition,(byte)5 );
-		bishop = new Bishop( null,isWhite,startPosition );
-		rock   = new Rock(   null,isWhite,startPosition );
+		super(isWhite,startPosition,(byte)5 );
+		bishop = new Bishop(isWhite,startPosition );
+		rock   = new Rock(  isWhite,startPosition );
 	}
 
 	public void figureMoved( Move move )
 	{
-		bishop.figureMoved( move );
+		bishop.figureMoved(move);
 		rock.figureMoved(   move );
 		super.figureMoved(  move );
 	}
 
 	public void undoMove( Position oldPosition )
 	{
-		bishop.undoMove( oldPosition );
-		rock.undoMove(   oldPosition );
-		super.undoMove(  oldPosition );
+		bishop.undoMove(oldPosition);
+		rock.undoMove(oldPosition);
+		super.undoMove(oldPosition);
 	}
 	
 	public boolean isReachable(Position to,BasicChessGameInterface game)
@@ -52,7 +54,7 @@ public class Queen extends Figure
 	
 	public int countReachableMoves( BasicChessGameInterface game )
 	{
-		return rock.countReachableMoves( game ) + bishop.countReachableMoves( game );
+		return rock.countReachableMoves(game) + bishop.countReachableMoves(game);
 	}
 	
 	public boolean isQueen()
@@ -63,5 +65,14 @@ public class Queen extends Figure
 	protected String getType()
 	{
 		return "Queen";
+	}
+
+	public ImageType getImageType()
+	{
+		if(isWhite) {
+			return ImageType.W_QUEEN;
+		} else {
+			return ImageType.B_QUEEN;
+		}
 	}
 }

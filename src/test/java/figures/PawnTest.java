@@ -19,12 +19,11 @@ public class PawnTest
   @Test
 	public void testCanBeHitByEnpasent()
 	{
-		FigureImage figureImage = new FigureImageMock(10,20,30);
 		Move move       = Move.get( Position.get( "e2" ),Position.get( "e4" ) );
 		Move other_move = Move.get( Position.get( "d2" ),Position.get( "d4" ) );
 		
     
-    Pawn pawn = new Pawn(figureImage,true,move.from);
+    Pawn pawn = new Pawn(true,move.from);
     assertFalse( pawn.canBeHitByEnpasent() );
     pawn.figureMoved(move);
     assertTrue( pawn.canBeHitByEnpasent() );
@@ -74,15 +73,13 @@ public class PawnTest
 		String des     = "black 0 Pawn-white-a4-true Pawn-black-b4-false "
 		                +"King-black-e8-0 Pawn-black-h7-false";
 		SimpleArrayBoard game = new SimpleArrayBoard( des, mock(LastMoveProvider.class) );
-		
-		FigureImage figureImage = new FigureImageMock(10,20,30);
-    
+
 		Figure pawn1 = game.getFigure( Position.get( "b4" ) );
 		List<Move> moveIter1 = new LinkedList<>();
 		pawn1.getPossibleMoves(game,moveIter1);
 		assertEquals( moveIter1.size(),2 );
 		
-		Pawn pawn2 = new Pawn(figureImage,false,Position.get( "h7" ) );
+		Pawn pawn2 = new Pawn(false,Position.get( "h7" ) );
 		List<Move> moveIter2 = new LinkedList<>();
 		pawn2.getPossibleMoves(game,moveIter2);
 		assertEquals( moveIter2.size(),2 );
