@@ -1,9 +1,10 @@
 /.project
-
+/.idea
 /.settings
-
 /.classpath
 
 /bin
 /lib/*
 /test-output
+
+*.iml
