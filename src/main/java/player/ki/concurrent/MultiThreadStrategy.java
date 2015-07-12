@@ -15,7 +15,7 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy {
 
     MultiThreadStrategy(AbstractComputerPlayerUI ui, int numberOfCores) {
         super(ui);
-
+        
         numberOfThreads = numberOfCores;
         executorService = Executors.newFixedThreadPool(numberOfCores);
 //		delayedExecutorService = new DelayedExecutorService(numberOfCores);

@@ -34,7 +34,7 @@ public class ComputerPlayer
         standardPruner = new SimplePruner(1, 2, 2);
         standardEvaluation = new StaticEvaluation();
         dynamicEvaluation = new DynamicEvaluation(standardPruner, standardEvaluation);
-        concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui);
+        concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, 1);
         initEvaluation();
     }
 
@@ -133,5 +133,9 @@ public class ComputerPlayer
     public void setSearchTreePruner(SearchTreePruner pruner) {
         standardPruner = pruner;
         dynamicEvaluation.setSearchTreePruner(pruner);
+    }
+
+    public void setNumberOfCoresToUse(int numberOfCoresToUse) {
+        concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, numberOfCoresToUse);
     }
 }

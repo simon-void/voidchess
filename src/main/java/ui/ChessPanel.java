@@ -13,6 +13,7 @@ import player.ki.ComputerPlayer;
 import player.ki.ComputerPlayerUI;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +33,7 @@ public class ChessPanel
     private ChessGameUI chessGameUI;
     private Chess960Panel panel960;
     private DifficultyPanel difficultyPanel;
+    private CoresPanel coresPanel;
     private boolean humanPlaysWhite;
 
     ChessPanel() {
@@ -62,13 +64,14 @@ public class ChessPanel
         computerPlayer = kiPlayer;
         table.setWhitePlayer(humanPlayer);
         table.setBlackPlayer(computerPlayer);
-        difficultyPanel = new DifficultyPanel(kiPlayer, game);
         humanPlaysWhite = true;
+
+        JPanel computerPlayerOptionsPanel = getComputerPlayerSettingsPanel(kiPlayer);
 
         JPanel computerUIPanel = new JPanel(new BorderLayout());
         computerUIPanel.setBackground(Color.WHITE);
         computerUIPanel.add(computerPlayerUI, BorderLayout.CENTER);
-        computerUIPanel.add(difficultyPanel, BorderLayout.SOUTH);
+        computerUIPanel.add(computerPlayerOptionsPanel, BorderLayout.SOUTH);
 
         JPanel gameUIPanel = new JPanel();
         gameUIPanel.setBackground(Color.WHITE);
@@ -81,6 +84,26 @@ public class ChessPanel
         add(panel960, layout, 2, 1);
         add(computerUIPanel, layout, 1, 2);
         add(gameUIPanel, layout, 2, 2);
+    }
+
+    private JPanel getComputerPlayerSettingsPanel(ComputerPlayer computerPlayer) {
+        difficultyPanel = new DifficultyPanel(computerPlayer);
+        coresPanel = new CoresPanel(computerPlayer);
+
+        if(!coresPanel.hasOptions()) {
+            return difficultyPanel;
+        }
+
+        JPanel panel = new JPanel(new GridLayout(2, 2));
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(new LineBorder(Color.LIGHT_GRAY));
+        panel.setBackground(Color.WHITE);
+        panel.add(difficultyPanel.getLabel());
+        panel.add(difficultyPanel);
+        panel.add(coresPanel.getLabel());
+        panel.add(coresPanel);
+
+        return panel;
     }
 
     private void add(JComponent component, GridBagLayout layout, int x, int y) {
@@ -107,6 +130,7 @@ public class ChessPanel
         switchButton.setEnabled(false);
         panel960.setEnabled(false);
         difficultyPanel.setEnabled(false);
+        coresPanel.setEnabled(false);
         table.startGame();
     }
 
@@ -141,6 +165,7 @@ public class ChessPanel
         switchButton.setEnabled(true);
         panel960.setEnabled(true);
         difficultyPanel.setEnabled(true);
+        coresPanel.setEnabled(true);
     }
 
     private void switchPlayer() {

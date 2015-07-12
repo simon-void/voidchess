@@ -26,7 +26,7 @@ public class DifficultyPanel
 
     final private JComboBox<String> comboBox;
 
-    public DifficultyPanel(ComputerPlayer player, ChessGameInterface game) {
+    public DifficultyPanel(ComputerPlayer player) {
         //it's a good idea to have figureHitRadius bigger than chessRadius
         //else the ai tries to prevent material loss through bad chesses
         level_1_pruner = new SimplePruner(1, 4, 3);
@@ -43,7 +43,7 @@ public class DifficultyPanel
 
     private void designLayout() {
         setBackground(Color.WHITE);
-        setBorder(new LineBorder(Color.LIGHT_GRAY));
+//        setBorder(new LineBorder(Color.LIGHT_GRAY));
 
         comboBox.addItem(LEVEL1_TEXT);
         comboBox.addItem(LEVEL2_TEXT);
@@ -51,7 +51,7 @@ public class DifficultyPanel
         comboBox.setEditable(false);
         comboBox.addActionListener(this);
 
-        add(new JLabel("Schwierigkeitsgrad:"));
+//        add(new JLabel("Schwierigkeitsgrad:"));
         add(comboBox);
     }
 
@@ -69,4 +69,7 @@ public class DifficultyPanel
         }
     }
 
+    public JLabel getLabel() {
+        return new JLabel("Schwierigkeitsgrad:");
+    }
 }
