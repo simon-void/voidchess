@@ -702,14 +702,14 @@ public class ChessGameTest {
         ChessGame game = new ChessGame(621);
         game.move(Move.get("g2-g3"));
         game.move(Move.get("f7-f6"));
-        assertEquals(game.getHistory(), "f7-f6,g2-g3");
+        assertEquals(game.getHistory(), "g2-g3,f7-f6");
         game.move(Move.get("c2-c3"));
         game.move(Move.get("g8-f7"));
-        assertEquals(game.getHistory(), "g8-f7,c2-c3,f7-f6,g2-g3");
+        assertEquals(game.getHistory(), "g2-g3,f7-f6,c2-c3,g8-f7");
         game.move(Move.get("d1-c2"));
         game.move(Move.get("a7-a6"));
         game.move(Move.get("c2-h7"));
-        assertEquals(game.getHistory(), "c2-h7,a7-a6,d1-c2,g8-f7");
+        assertEquals(game.getHistory(), "g8-f7,d1-c2,a7-a6,c2-h7");
     }
 
     @Test
@@ -717,14 +717,14 @@ public class ChessGameTest {
         ChessGame game = new ChessGame(621);
         game.move(Move.get("g2-g3"));
         game.move(Move.get("f7-f6"));
-        assertEquals(game.getCompleteHistory(), "f7-f6,g2-g3");
+        assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6");
         game.move(Move.get("c2-c3"));
         game.move(Move.get("g8-f7"));
-        assertEquals(game.getCompleteHistory(), "g8-f7,c2-c3,f7-f6,g2-g3");
+        assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6,c2-c3,g8-f7");
         game.move(Move.get("d1-c2"));
         game.move(Move.get("a7-a6"));
         game.move(Move.get("c2-h7"));
-        assertEquals(game.getCompleteHistory(), "c2-h7,a7-a6,d1-c2,g8-f7,c2-c3,f7-f6,g2-g3");
+        assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6,c2-c3,g8-f7,d1-c2,a7-a6,c2-h7");
     }
 
     private List<Move> getPossibleMoves(ChessGame game) {

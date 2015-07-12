@@ -1,0 +1,92 @@
+### e4 e5 offene Spiele
+
+##spaninsch
+e2-e4,e7-e5,g1-f3,b8-c6,f1-b5,a7-a6
+
+##italienisch
+e2-e4,e7-e5,g1-f3,b8-c6,f1-c4
+
+##schottisch
+e2-e4,e7-e5,g1-f3,b8-c6,d2-d4
+
+##Berliner Verteidigung
+e2-e4,e7-e5,g1-f3,g8-f6,f3-e5,d7-d6
+
+##Wiener Spiel
+#e2-e4,e7-e5,b1-c3
+
+##Läufer-Eröffnung
+#e2-e4,e7-e5,f1-c4
+
+##Simons Spiel
+e2-e4,e7-e5,g1-f3,d7-d6,d2-d4,c8-g4,d4-e5
+e2-e4,e7-e5,g1-f3,d7-d6,d2-d4,e5-d4,b8-c6,f1-b5
+
+
+### e4 nicht e5 halboffen
+
+##Sizilianisch
+#e2-e4,c7-c5
+
+##Französisch
+#e2-e4,e7-e6
+
+##Caro-Kahn
+#e2-e4,c7-c6
+
+##Alekhines Verteidigung
+#e2-e4,g8-c6
+
+##Pircs Verteidigung
+#e2-e4,g7-g6
+
+##Moderne Verteidigung
+#e2-e4,g8-c6
+
+##Skandinavische Verteidigung
+e2-e4,d7-d5,e4-d5,d8-d5,b1-c3,d5-a5,d2-d4,c7-c6,g1-f3
+e2-e4,d7-d5,e4-d5,d8-d5,b1-c3,d5-a5,g1-f3,c7-c6,d2-d4
+#Patzer Variante
+e2-e4,d7-d5,e4-d5,d8-d5,b1-c3,d5-e5
+
+##Nimzowitsch Verteidigung
+#e2-e4,b8-c6
+
+
+### d4 d5 geschlossene Spiele
+
+##Queens Gambit
+#d2-d4,d7-d5,c2-c4
+
+##Colle System
+d2-d4,d7-d5,g1-f3,g8-f6,e2-e3
+
+##London System
+d2-d4,d7-d5,g1-f3,g8-f6,c1-f4
+
+##Torre Angriff
+d2-d4,d7-d5,g1-f3,g8-f6,c1-g5
+
+
+### d4 Sf6 Indische Verteidigung
+
+##Nimzo-indisch
+d2-d4,g8-f6,c2-c4,e7-e6,b1-c3,f8-b4
+
+##Königs-indisch
+d2-d4,g8-f6,c2-c4,g7-g6,b1-c3,f8-g7
+
+##Grünfeld-Verteidigung
+d2-d4,g8-f6,c2-c4,g7-g6,b1-c3,d7-d5
+
+##Königinen-indisch
+d2-d4,g8-f6,c2-c4,e7-e6,g1-f3,b7-b6
+
+##Modernes Benoni
+d2-d4,g8-f6,c2-c4,c7-c5,d4-d5,e7-e6
+
+##Budapest-Gambit
+#d2-d4,g8-f6,c2-c4,e7-e5
+
+##altindische Verteidigung
+#d2-d4,g8-f6,c2-c4,d7-d6

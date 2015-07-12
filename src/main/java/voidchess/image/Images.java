@@ -1,5 +1,7 @@
 package voidchess.image;
 
+import voidchess.helper.ResourceFinder;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
@@ -30,24 +32,13 @@ public class Images {
     }
 
     private static Image readFromImageDir(String fileName) {
-        final String path = "src/main/resources/image/" + fileName;
-        File file = new File(path);
-        boolean fileE = file.exists();
-
-        InputStream imageStream = null;
-
+        final String relativePath = "image/"+fileName;
         try {
-            imageStream = new FileInputStream(path);
-        } catch (FileNotFoundException e) {
-            //we're probably inside a jar
-            imageStream = Images.class.getResourceAsStream("/image/" + fileName);
-        }
-
-        try {
+            InputStream imageStream = ResourceFinder.getResourceStream(relativePath);
             final Image img = ImageIO.read(imageStream);
             return img;
         } catch (Exception e) {
-            throw new IllegalStateException("couldn't find voidchess.image: " + path);
+            throw new IllegalStateException("couldn't find image: " + relativePath);
         }
     }
 }

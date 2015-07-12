@@ -432,6 +432,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         return extendedMoveStack.getLatestMoves(numberOfHalvMoves);
     }
 
+    @Override
     public String getCompleteHistory() {
         final int numberOfMovesSaved = extendedMoveStack.size();
         return extendedMoveStack.getLatestMoves(numberOfMovesSaved);
@@ -748,13 +749,15 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
             final int MIN_INDEX = Math.max(0, index - count);
             StringBuilder sb = new StringBuilder(24);
-            for (int i = index - 1; i >= MIN_INDEX; i--) {
+
+//            for (int i = index - 1; i >= MIN_INDEX; i--) {
+            for (int i = MIN_INDEX; i<index; i++) {
                 sb.append(extendedMoveArray[i].toString());
                 sb.append(",");
             }
             final int deleteCharAt = sb.length() - 1;
             if (deleteCharAt < 0) {
-                return "*";
+                return "";
             }
             sb.deleteCharAt(deleteCharAt);
 

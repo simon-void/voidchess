@@ -48,4 +48,9 @@ public interface ChessGameInterface extends BasicChessGameInterface {
     public void useSupervisor(ChessGameSupervisor supervisor);
 
     public void undo();
+
+    /**
+     * @return all the moves played so far in a string representation
+     */
+    public String getCompleteHistory();
 }

@@ -1,8 +1,10 @@
 package voidchess.player.ki;
 
 import voidchess.board.ChessGameInterface;
+import voidchess.helper.Move;
 import voidchess.helper.Position;
 import voidchess.helper.RuntimeFacade;
+import voidchess.player.ki.openings.OpeningsLibrary;
 import voidchess.ui.TableInterface;
 import voidchess.player.PlayerInterface;
 import voidchess.player.ki.concurrent.ConcurrencyStrategy;
@@ -10,6 +12,8 @@ import voidchess.player.ki.concurrent.ConcurrencyStrategyFactory;
 import voidchess.player.ki.concurrent.EvaluatedMove;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 import java.util.SortedSet;
 
 /**
@@ -25,6 +29,9 @@ public class ComputerPlayer
     private StaticEvaluationInterface standardEvaluation;
     private ConcurrencyStrategy concurrencyStrategy;
     private boolean usesStandardEvaluation;
+    private OpeningsLibrary openingsLibrary;
+    private boolean useLibrary;
+    private Random randomNumberGenerator;
 
     public ComputerPlayer(TableInterface table, ChessGameInterface game, AbstractComputerPlayerUI ui) {
         this.ui = ui;
@@ -35,10 +42,54 @@ public class ComputerPlayer
         standardEvaluation = new StaticEvaluation();
         dynamicEvaluation = new DynamicEvaluation(standardPruner, standardEvaluation);
         concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, 1);
+        openingsLibrary = new OpeningsLibrary("openings.txt");
+        randomNumberGenerator = new Random();
         initEvaluation();
     }
 
     public void play() {
+
+        EvaluatedMove chosenMove = getNextMove();
+        ui.setValue(chosenMove.getValue(), chosenMove.getMove());
+        table.move(chosenMove.getMove());
+
+        RuntimeFacade.collectGarbage();
+    }
+
+    private EvaluatedMove getNextMove() {
+        //lets see if the library contains a next move
+        EvaluatedMove nextMove = lookUpNextMove();
+        //we can always compute a next move
+        if(nextMove==null) {
+            nextMove = computeNextMove();
+        }
+        return nextMove;
+    }
+
+    private EvaluatedMove lookUpNextMove() {
+        if(useLibrary) {
+            String history = game.getCompleteHistory();
+            List<Move> possibleMoves = openingsLibrary.nextMove(history);
+            if(!possibleMoves.isEmpty()) {
+                //display that the computer is working
+                ui.setProgress(0, 1);
+                //pick a random move
+                Move randomMove = possibleMoves.get(randomNumberGenerator.nextInt(possibleMoves.size()));
+                //and evaluate it
+                boolean isWhitePlayer = game.isWhiteTurn();
+                game.move(randomMove);
+                Evaluaded evaluation = standardEvaluation.evaluate(game, isWhitePlayer);
+                game.undo();
+                System.out.println("lib move: "+randomMove);
+                return new EvaluatedMove(randomMove, evaluation);
+            }
+        }
+        //the library has no more information on this sequence
+        useLibrary = false;
+        return null;
+    }
+
+    private EvaluatedMove computeNextMove() {
         //the game starts with a static game evaluation that considers many things
         //but in the endgame, when only the king of one side can move than the only important thing is
         //how many possible moves the king has left. So the Evaluation strategy has to be changed.
@@ -62,12 +113,8 @@ public class ComputerPlayer
 //		System.out.println( "timePerCall: "+(timePerCall)+"ms" );
 //		System.out.println();
 
-        EvaluatedMove chosenMove = getMoveToPlay(sortedEvaluatedMoves);
-
-        ui.setValue(chosenMove.getValue(), chosenMove.getMove());
-        table.move(chosenMove.getMove());
-
-        RuntimeFacade.collectGarbage();
+        EvaluatedMove chosenMove = pickNextMoveByEvaluation(sortedEvaluatedMoves);
+        return chosenMove;
     }
 
     /**
@@ -77,7 +124,7 @@ public class ComputerPlayer
      * @param sortedEvaluatedMoves (set.first is the best move for the ki, set.last the worst)
      * @return the move the ki will make next
      */
-    private EvaluatedMove getMoveToPlay(SortedSet<EvaluatedMove> sortedEvaluatedMoves) {
+    private EvaluatedMove pickNextMoveByEvaluation(SortedSet<EvaluatedMove> sortedEvaluatedMoves) {
         Iterator<EvaluatedMove> evaluation = sortedEvaluatedMoves.iterator();
         EvaluatedMove bestMove = evaluation.next();
 
@@ -124,6 +171,7 @@ public class ComputerPlayer
         dynamicEvaluation.setEvaluationStrategy(standardEvaluation);
         dynamicEvaluation.setSearchTreePruner(standardPruner);
         usesStandardEvaluation = true;
+        useLibrary = true;
     }
 
     //die Funktion wird nur von HumanPlayer ben�tigt (bis jetzt)

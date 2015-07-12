@@ -7,7 +7,7 @@ public class EvaluatedMove implements Comparable<EvaluatedMove> {
     private final Move move;
     private final Evaluaded value;
 
-    EvaluatedMove(final Move move, final Evaluaded value) {
+    public EvaluatedMove(final Move move, final Evaluaded value) {
         assert move != null : "move parameter mustn't be null";
 
         this.move = move;
