@@ -80,6 +80,10 @@ public class ComputerPlayer
                 game.move(randomMove);
                 Evaluaded evaluation = standardEvaluation.evaluate(game, isWhitePlayer);
                 game.undo();
+
+                //wait before playing so that the user can clearly see the computer's move
+                wait(300);
+
                 return new EvaluatedMove(randomMove, evaluation);
             }
         }
@@ -185,5 +189,11 @@ public class ComputerPlayer
 
     public void setNumberOfCoresToUse(int numberOfCoresToUse) {
         concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, numberOfCoresToUse);
+    }
+
+    private void wait(final int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        }catch (InterruptedException e) {}
     }
 }
