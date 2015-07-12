@@ -21,6 +21,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private int figureCount;
     private boolean hasHitFigure;
     private ChessGameSupervisor supervisor;
+    private boolean isStandardGame = false;
 
     /**
      * der normale Konstruktor, der von auﬂerhalb verwendet werden sollte
@@ -444,6 +445,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     @Override
     public void initGame(int chess960) {
+        isStandardGame = chess960==518;
         whiteTurn = true;
         numberOfMovesWithoutHit = 0;
         figureCount = 32;
@@ -472,6 +474,10 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         }
 
         return true;
+    }
+
+    public boolean isStandardGame() {
+        return isStandardGame;
     }
 
     private boolean noMovesLeft(boolean caseWhite) {

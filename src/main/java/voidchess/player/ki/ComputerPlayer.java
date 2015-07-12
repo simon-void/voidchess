@@ -80,7 +80,6 @@ public class ComputerPlayer
                 game.move(randomMove);
                 Evaluaded evaluation = standardEvaluation.evaluate(game, isWhitePlayer);
                 game.undo();
-                System.out.println("lib move: "+randomMove);
                 return new EvaluatedMove(randomMove, evaluation);
             }
         }
@@ -150,7 +149,7 @@ public class ComputerPlayer
      */
     private void pickStaticSpaceEvaluationIfNeccessary() {
         if (usesStandardEvaluation && StaticSpaceEvaluation.shouldUseStaticSpaceEvaluation(game)) {
-            //wird genau einmal pro Spiel ausgef�hrt
+            //wird genau einmal pro Spiel ausgeführt
             dynamicEvaluation.setEvaluationStrategy(new StaticSpaceEvaluation());
             dynamicEvaluation.setSearchTreePruner(new FullMovePruner(2, 2, 2));
             usesStandardEvaluation = false;
@@ -161,7 +160,7 @@ public class ComputerPlayer
         return "Queen";
     }
 
-    //am Anfang jedes Spiels wird die EvaluationStrategie zur�ckgesetzt vom potentiel StaticSpaceEvaluation
+    //am Anfang jedes Spiels wird die EvaluationStrategie zurückgesetzt vom potentiel StaticSpaceEvaluation
     public void setIsPlaying(boolean isPlaying) {
         if (isPlaying) initEvaluation();
     }
@@ -171,10 +170,11 @@ public class ComputerPlayer
         dynamicEvaluation.setEvaluationStrategy(standardEvaluation);
         dynamicEvaluation.setSearchTreePruner(standardPruner);
         usesStandardEvaluation = true;
-        useLibrary = true;
+        //use the library only if the figures are used in the classical way (no Chess960)
+        useLibrary = game.isStandardGame();
     }
 
-    //die Funktion wird nur von HumanPlayer ben�tigt (bis jetzt)
+    //die Funktion wird nur von HumanPlayer benötigt (bis jetzt)
     public void setColor(boolean isWhite) {
     }
 
