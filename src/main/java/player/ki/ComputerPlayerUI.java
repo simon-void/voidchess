@@ -29,7 +29,7 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
     final static private int MOUTH_WIDTH = 34;
 
     final static private int HAND_START_X = HEAD_END_X;
-    final static private int HAND_START_Y = HEAD_END_Y - 10;
+    final static private int HAND_START_Y = HEAD_END_Y - 30;
     final static private int HAND_WITH = 50;
     final static private int HAND_HEIGHT = (HAND_WITH * 4) / 3;
     final static private int THUMB_HEIGHT = (HAND_WITH * 2) / 3;
@@ -80,30 +80,8 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
         referenceSet.add(new Float(wrapper.getFloatValue(4)));
         referenceSet.add(new Float(wrapper.getThisComputerPlayerIsMatt(20)));
 
-        setPreferredSize(new Dimension(200, 400));
+        setPreferredSize(new Dimension(200, 378));
     }
-
-//	@Override
-//	public void setProgress(final int index, final int total)
-//	{
-//	  SwingUtilities.invokeLater(new Runnable() {      
-//      @Override
-//      public void run() {
-//        setProgressForReal(index, total);
-//      }
-//    });
-//	}
-//	
-//	@Override
-//  public void setValue(final float value, final Move move)
-//  {
-//	  SwingUtilities.invokeLater(new Runnable() {      
-//      @Override
-//      public void run() {
-//        setValueForReal(value, move);
-//      }
-//    });
-//  }
 
     @Override
     public void setProgress(int index, int total) {
