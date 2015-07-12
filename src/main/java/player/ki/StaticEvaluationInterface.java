@@ -6,5 +6,5 @@ import board.ChessGameInterface;
  * @author stephan
  */
 interface StaticEvaluationInterface {
-    public abstract float evaluate(ChessGameInterface game, boolean forWhite);
+    public abstract Evaluaded evaluate(ChessGameInterface game, boolean forWhite);
 }

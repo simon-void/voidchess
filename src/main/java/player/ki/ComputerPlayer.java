@@ -86,7 +86,7 @@ public class ComputerPlayer
         while (evaluation.hasNext()) {
             if (Math.random() < 0.6) break;
             EvaluatedMove tempMove = evaluation.next();
-            if (ChessValue.getInstance().hasAlmostSameValue(tempMove.getValue(), bestMove.getValue())) {
+            if (tempMove.getValue().hasAlmostSameValue( bestMove.getValue())) {
                 chosenMove = tempMove;
             } else {
                 break;
@@ -103,7 +103,7 @@ public class ComputerPlayer
      */
     private void pickStaticSpaceEvaluationIfNeccessary() {
         if (usesStandardEvaluation && StaticSpaceEvaluation.shouldUseStaticSpaceEvaluation(game)) {
-            //wird genau einmal pro Spiel ausgeführt
+            //wird genau einmal pro Spiel ausgefï¿½hrt
             dynamicEvaluation.setEvaluationStrategy(new StaticSpaceEvaluation());
             dynamicEvaluation.setSearchTreePruner(new FullMovePruner(2, 2, 2));
             usesStandardEvaluation = false;
@@ -114,7 +114,7 @@ public class ComputerPlayer
         return "Queen";
     }
 
-    //am Anfang jedes Spiels wird die EvaluationStrategie zurückgesetzt vom potentiel StaticSpaceEvaluation
+    //am Anfang jedes Spiels wird die EvaluationStrategie zurï¿½ckgesetzt vom potentiel StaticSpaceEvaluation
     public void setIsPlaying(boolean isPlaying) {
         if (isPlaying) initEvaluation();
     }
@@ -126,7 +126,7 @@ public class ComputerPlayer
         usesStandardEvaluation = true;
     }
 
-    //die Funktion wird nur von HumanPlayer benötigt (bis jetzt)
+    //die Funktion wird nur von HumanPlayer benï¿½tigt (bis jetzt)
     public void setColor(boolean isWhite) {
     }
 

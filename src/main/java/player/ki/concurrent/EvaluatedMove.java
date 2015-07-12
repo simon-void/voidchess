@@ -1,12 +1,13 @@
 package player.ki.concurrent;
 
 import helper.Move;
+import player.ki.Evaluaded;
 
 public class EvaluatedMove implements Comparable<EvaluatedMove> {
     private final Move move;
-    private final float value;
+    private final Evaluaded value;
 
-    EvaluatedMove(final Move move, final float value) {
+    EvaluatedMove(final Move move, final Evaluaded value) {
         assert move != null : "move parameter mustn't be null";
 
         this.move = move;
@@ -17,15 +18,13 @@ public class EvaluatedMove implements Comparable<EvaluatedMove> {
         return move;
     }
 
-    public float getValue() {
+    public Evaluaded getValue() {
         return value;
     }
 
     public int compareTo(EvaluatedMove other) {
-        if (value == other.value) return 0;
-
-        if (value < other.value) return 1;
-        else return -1;
+        //moves with high evaluations should come first in a sorted list
+        return other.value.compareTo(value);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
             = new Rectangle(49, 46, 102, 19);
 
     private TreeSet<Float> referenceSet;
-    private float value;
+    private Evaluaded value;
     private int smileFactor;
     private boolean showValue;
     private int index;
@@ -69,16 +69,15 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
         index = 1;
         total = 1;
         smileFactor = CONTENT;
-        value = ChessValue.getInstance().INITAL;
+        value = Evaluaded.INITAL;
 
-        ChessValue wrapper = ChessValue.getInstance();
         referenceSet = new TreeSet(new InverseValueComperator());
-        referenceSet.add(new Float(wrapper.getOtherPlayerIsMatt(20)));
-        referenceSet.add(new Float(wrapper.getFloatValue(-4)));
-        referenceSet.add(new Float(wrapper.getFloatValue(-1)));
-        referenceSet.add(new Float(wrapper.getFloatValue(1)));
-        referenceSet.add(new Float(wrapper.getFloatValue(4)));
-        referenceSet.add(new Float(wrapper.getThisComputerPlayerIsMatt(20)));
+        referenceSet.add(Evaluaded.getOtherPlayerIsMatt(20).getCombinedEvaluation());
+        referenceSet.add(-4f);
+        referenceSet.add(-1f);
+        referenceSet.add(1f);
+        referenceSet.add(4f);
+        referenceSet.add(Evaluaded.getThisComputerPlayerIsMatt(20).getCombinedEvaluation());
 
         setPreferredSize(new Dimension(200, 378));
     }
@@ -93,9 +92,9 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
     }
 
     @Override
-    public void setValue(float value, Move move) {
+    public void setValue(Evaluaded value, Move move) {
         showValue = true;
-        setSmileFactor(value);
+        setSmileFactor(value.getCombinedEvaluation());
         this.value = value;
         paintImmediately(HAND_RECTANGLE);
         paintImmediately(MOUTH_RECTANGLE);
@@ -251,9 +250,9 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
             g.fillRect(49, 46, 110, 20);
             g.setColor(Color.BLACK);
 
-            if (value != ChessValue.getInstance().INITAL) {
+            if (value != Evaluaded.INITAL) {
                 FontMetrics metric = g.getFontMetrics();
-                String news = ChessValue.getInstance().chessvalueToString(value);
+                String news = value.toString();
                 g.drawString(news, 100 - metric.stringWidth(news) / 2, 60);
             }
         } else {

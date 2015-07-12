@@ -10,7 +10,7 @@ import board.ChessGameInterface;
 
 public class ConstantEvaluation implements StaticEvaluationInterface {
     @Override
-    public float evaluate(ChessGameInterface game, boolean forWhite) {
-        return 0;
+    public Evaluaded evaluate(ChessGameInterface game, boolean forWhite) {
+        return Evaluaded.DRAW;
     }
 }

@@ -77,9 +77,9 @@ public class HumanPlayer
     }
 
     public String askForPawnChange(Position pawnPosition) {
-        String[] figs = {"Dame", "Turm", "Läufer", "Springer"};
+        String[] figs = {"Dame", "Turm", "L\u00E4ufer", "Springer"};
         String out = (String) JOptionPane.showInputDialog(null,
-                "Wähle eine Figur",
+                "W\u00E4hle eine Figur",
                 "Bauernumwandlung",
                 JOptionPane.QUESTION_MESSAGE,
                 null,
@@ -88,7 +88,7 @@ public class HumanPlayer
 
         if (out.equals("Dame")) return "Queen";
         if (out.equals("Turm")) return "Rock";
-        if (out.equals("Läufer")) return "Bishop";
+        if (out.equals("L\u00E4ufer")) return "Bishop";
         return "Knight";
     }
 

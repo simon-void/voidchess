@@ -14,7 +14,7 @@ import java.util.List;
  */
 class StaticSpaceEvaluation implements StaticEvaluationInterface {
 
-    public float evaluate(ChessGameInterface game, boolean forWhite) {
+    public Evaluaded evaluate(ChessGameInterface game, boolean forWhite) {
         final int BASIC_VALUE = 200;
         Position whiteKingPos = null;
         Position blackKingPos = null;
@@ -54,7 +54,8 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
 
         if (colorOfWinnerIsWhite == forWhite) value = -value;
 
-        return value / 10.0f;
+        //TODO is there is better secondary evaluation that a static 0?
+        return Evaluaded.fromValues(value / 10.0f, 0);
     }
 
     int getKingDistance(Position pos1, Position pos2) {

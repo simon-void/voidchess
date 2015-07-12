@@ -153,7 +153,7 @@ public class ChessPanel
                 JOptionPane.showMessageDialog(this, "Unentschieden wegen \ndreimaliger Stellungswiederholung");
                 break;
             case ChessGameInterface.FIFTY_MOVES_NO_HIT:
-                JOptionPane.showMessageDialog(this, "Unentschieden,\nda 50 Züge keine Figure geschlagen wurde");
+                JOptionPane.showMessageDialog(this, "Unentschieden,\nda 50 Z\u00FCge keine Figure geschlagen wurde");
                 break;
             case ChessGameInterface.RESIGN:
                 JOptionPane.showMessageDialog(this, "Spieler hat aufgegeben");

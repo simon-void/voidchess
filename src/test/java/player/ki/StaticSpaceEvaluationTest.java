@@ -22,19 +22,19 @@ public class StaticSpaceEvaluationTest {
         String des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
-        float evaluateForWhite = evaluation.evaluate(game, true);
-        float evaluateForBlack = evaluation.evaluate(game, false);
+        Evaluaded evaluateForWhite = evaluation.evaluate(game, true);
+        Evaluaded evaluateForBlack = evaluation.evaluate(game, false);
 
-        assertTrue(evaluateForWhite < 0);
-        assertTrue(evaluateForBlack > 0);
-        assertTrue(evaluateForBlack == -evaluateForWhite);
+        assertTrue(evaluateForWhite.getCombinedEvaluation() < 0);
+        assertTrue(evaluateForBlack.getCombinedEvaluation() > 0);
+        assertEquals(evaluateForBlack.getCombinedEvaluation(), -evaluateForWhite.getCombinedEvaluation());
 
 
         des = "black 0 King-white-e1-0 Rock-black-b8-0 King-black-e8-0";
         ChessGame game2 = new ChessGame(des);
 
-        float evaluateForWhite2 = evaluation.evaluate(game2, true);
-        assertTrue(evaluateForWhite2 < evaluateForWhite);
+        Evaluaded evaluateForWhite2 = evaluation.evaluate(game2, true);
+        assertTrue(evaluateForWhite2.compareTo(evaluateForWhite)<0);
     }
 
     @Test

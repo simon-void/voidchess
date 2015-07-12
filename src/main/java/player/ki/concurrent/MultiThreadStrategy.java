@@ -4,6 +4,7 @@ import board.ChessGameInterface;
 import helper.Move;
 import player.ki.AbstractComputerPlayerUI;
 import player.ki.DynamicEvaluation;
+import player.ki.Evaluaded;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -109,7 +110,7 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy {
 
         public EvaluatedMove call() throws Exception {
             try {
-                final float value = dynamicEvaluation.evaluateMove(game, move);
+                final Evaluaded value = dynamicEvaluation.evaluateMove(game, move);
                 EvaluatedMove evaluatedMove = new EvaluatedMove(move, value);
 
                 return evaluatedMove;

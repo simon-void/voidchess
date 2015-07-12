@@ -18,10 +18,11 @@ class StaticEvaluation implements StaticEvaluationInterface {
     final private static double BISHOP_VALUE = 3f;
     final private static double QUEEN_VALUE = 9f;
 
-    public float evaluate(ChessGameInterface game, final boolean forWhite) {
-        return evaluateFigures(game, forWhite)
-                + evaluateRuledArea(game, forWhite)
-                + evaluatePosition(game, forWhite);
+    public Evaluaded evaluate(ChessGameInterface game, final boolean forWhite) {
+        float primaryEvaluation = evaluateFigures(game, forWhite);
+        float secondaryEvaluation = evaluateRuledArea(game, forWhite)
+                                  + evaluatePosition(game, forWhite);
+        return Evaluaded.fromValues(primaryEvaluation, secondaryEvaluation);
     }
 
     private float evaluateFigures(ChessGameInterface game, final boolean forWhite) {

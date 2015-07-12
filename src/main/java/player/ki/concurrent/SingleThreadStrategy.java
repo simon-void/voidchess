@@ -4,6 +4,7 @@ import board.ChessGameInterface;
 import helper.Move;
 import player.ki.AbstractComputerPlayerUI;
 import player.ki.DynamicEvaluation;
+import player.ki.Evaluaded;
 
 import java.util.List;
 import java.util.SortedSet;
@@ -24,7 +25,7 @@ class SingleThreadStrategy extends AbstractConcurrencyStrategy {
         int movesDone = 0;
         final SortedSet<EvaluatedMove> result = new TreeSet<EvaluatedMove>();
         for (Move move : possibleMoves) {
-            float value = dynamicEvaluation.evaluateMove(game, move);
+            Evaluaded value = dynamicEvaluation.evaluateMove(game, move);
             result.add(new EvaluatedMove(move, value));
 
             showProgress(++movesDone, totalNumberOfMoves);

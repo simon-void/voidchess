@@ -10,5 +10,5 @@ import javax.swing.*;
 public abstract class AbstractComputerPlayerUI extends JComponent {
     abstract public void setProgress(int part, int whole);
 
-    abstract public void setValue(float value, Move move);
+    abstract public void setValue(Evaluaded value, Move move);
 }
