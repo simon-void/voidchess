@@ -162,4 +162,23 @@ public class KingTest {
         game.move(Move.get("e1-a1"));
         assertTrue(king.didRochade());
     }
+
+    @Test
+    public void testImmidiatlyRochadeInChess960Positions() {
+        //siehe https://de.wikipedia.org/wiki/Chess960#Rochaderegeln
+
+        //rock on a1, king on b1 so b1-a1 should be possible as a first move
+        ChessGame game = new ChessGame(314);
+        Position c1 = Position.get("c1");
+        Position d1 = Position.get("d1");
+        boolean isRochadePossible = game.isMoveable(d1, c1, true);
+        assertTrue(isRochadePossible, "rochade should be possible");
+
+        //rock on a1, king on b1 so b1-a1 should be be possible as a first move
+        game = new ChessGame(759);
+        Position a1 = Position.get("a1");
+        Position b1 = Position.get("b1");
+        isRochadePossible = game.isMoveable(b1, a1, true);
+        assertFalse(isRochadePossible, "rochade should be impossible possible");
+    }
 }
