@@ -1,13 +1,12 @@
-package voidchess.player.ki.concurrent;
+package voidchess.player.ki.evaluation;
 
 import voidchess.helper.Move;
-import voidchess.player.ki.Evaluaded;
 
 public class EvaluatedMove implements Comparable<EvaluatedMove> {
     private final Move move;
-    private final Evaluaded value;
+    private final Evaluated value;
 
-    public EvaluatedMove(final Move move, final Evaluaded value) {
+    public EvaluatedMove(final Move move, final Evaluated value) {
         assert move != null : "move parameter mustn't be null";
 
         this.move = move;
@@ -18,18 +17,17 @@ public class EvaluatedMove implements Comparable<EvaluatedMove> {
         return move;
     }
 
-    public Evaluaded getValue() {
+    public Evaluated getValue() {
         return value;
     }
 
     public int compareTo(EvaluatedMove other) {
         //moves with high evaluations should come first in a sorted list
-        return other.value.compareTo(value);
+        return value.compareTo(other.value);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof EvaluatedMove)) return false;
         EvaluatedMove other = (EvaluatedMove) obj;
 
         return move.equalsMove(other.move);

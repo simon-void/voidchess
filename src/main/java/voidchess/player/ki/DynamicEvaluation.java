@@ -3,9 +3,12 @@ package voidchess.player.ki;
 import voidchess.board.ChessGameInterface;
 import voidchess.helper.ChessGameSupervisor;
 import voidchess.helper.Move;
+import voidchess.player.ki.evaluation.EvaluatedAsDraw;
+import voidchess.player.ki.evaluation.EvaluatedAsMatt;
+import voidchess.player.ki.evaluation.EvaluatedMove;
+import voidchess.player.ki.evaluation.Evaluated;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author stephan
@@ -16,7 +19,7 @@ public class DynamicEvaluation {
     private StaticEvaluationInterface strategy;
     private SearchTreePruner pruner;
 
-    DynamicEvaluation(SearchTreePruner pruner, StaticEvaluationInterface strategy) {
+    public DynamicEvaluation(SearchTreePruner pruner, StaticEvaluationInterface strategy) {
         setEvaluationStrategy(strategy);
         setSearchTreePruner(pruner);
     }
@@ -25,7 +28,7 @@ public class DynamicEvaluation {
         this(new SimplePruner(), new StaticEvaluation());
     }
 
-    public Evaluaded evaluateMove(final ChessGameInterface game, final Move move) {
+    public Evaluated evaluateMove(final ChessGameInterface game, final Move move) {
         int depth = 0;
         final boolean forWhite = game.isWhiteTurn();
         boolean thisMove_hasHitFigure = game.hasHitFigure();
@@ -34,14 +37,14 @@ public class DynamicEvaluation {
         final ChessGameSupervisor interactiveSupervisor = game.suspendInteractiveSupervisor();
         int endoption = game.move(move);
 
-        Evaluaded result;
+        Evaluated result;
         if (endoption == ChessGameInterface.NO_END) {
             final List<Move> minPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
             result = getMin(game, forWhite, depth, thisMove_isChess, thisMove_hasHitFigure, minPossibleMovesBuffer);
         } else if (endoption == ChessGameInterface.MATT) {
-            result = Evaluaded.getThisComputerPlayerIsMatt(depth + 1);
+            result = new EvaluatedAsMatt(depth + 1, true);
         } else {
-            result = Evaluaded.DRAW;
+            result = EvaluatedAsDraw.INSTANCE;
         }
 
         game.useSupervisor(interactiveSupervisor);
@@ -49,7 +52,7 @@ public class DynamicEvaluation {
         return result;
     }
 
-    private Evaluaded getMin(final ChessGameInterface game,
+    private Evaluated getMin(final ChessGameInterface game,
                          final boolean forWhite,
                          final int depth,
                          final boolean lastMove_isChess,
@@ -63,17 +66,16 @@ public class DynamicEvaluation {
                 thisMove_hasHitFigure,
                 lastMove_isChess,
                 lastMove_hasHitFigure)) {
-            return strategy.evaluate(game, forWhite);
+            return strategy.getPrimaryEvaluation(game, forWhite);
         }
-
-        Evaluaded minValue = Evaluaded.INITAL;
 
         minPossibleMovesBuffer.clear();
         game.getPossibleMoves(minPossibleMovesBuffer);
+        final NavigableSet<EvaluatedMove> primaryEvaluations = new TreeSet<EvaluatedMove>();
         final List<Move> maxPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
 
         for (Move move : minPossibleMovesBuffer) {
-            Evaluaded tempValue;
+            Evaluated primaryEval;
 
             assert (game.isFreeArea(move.to) || !game.getFigure(move.to).isKing())
                     : "getMin:" +
@@ -84,7 +86,7 @@ public class DynamicEvaluation {
             int endoption = game.move(move);
 
             if (endoption == ChessGameInterface.NO_END) {
-                tempValue = getMax(game,
+                primaryEval = getMax(game,
                         forWhite,
                         depth,
                         thisMove_isChess,
@@ -92,25 +94,39 @@ public class DynamicEvaluation {
                         maxPossibleMovesBuffer);
             } else if (endoption == ChessGameInterface.MATT) {
                 game.undo();
-                return Evaluaded.getOtherPlayerIsMatt(depth + 1);
+                return new EvaluatedAsMatt(depth + 1, false);
             } else {
-                tempValue = Evaluaded.DRAW;
+                primaryEval = EvaluatedAsDraw.INSTANCE;
             }
 
-            game.undo();
+            primaryEvaluations.add(new EvaluatedMove(move, primaryEval));
 
-            if (minValue == Evaluaded.INITAL || minValue.compareTo(tempValue)>0) {
-                minValue = tempValue;
+            game.undo();
+        }
+
+        //now get a secondaryEvaluation for the Moves with the smallest primary Evaluation
+        SortedSet<Evaluated> combinedEvaluations = new TreeSet<>();
+        final Evaluated minPrimary = primaryEvaluations.first().getValue();
+
+        for(EvaluatedMove evaluatedMove: primaryEvaluations) {
+            final Evaluated primaryEval = evaluatedMove.getValue();
+            if(primaryEval.isCloseToByPrimary(minPrimary)) {
+                game.move(evaluatedMove.getMove());
+                //add secondary Evaluation
+                strategy.addSecondaryEvaluation(game, forWhite, primaryEval);
+                combinedEvaluations.add(primaryEval);
+                game.undo();
+            }else{
+                //the set is sorted so once an element is to big, all the rest are
+                break;
             }
         }
 
-        assert minValue != Evaluaded.INITAL
-                : "no minimum found";
-
-        return minValue;
+        //minValue
+        return combinedEvaluations.first();
     }
 
-    private Evaluaded getMax(final ChessGameInterface game,
+    private Evaluated getMax(final ChessGameInterface game,
                          final boolean forWhite,
                          int depth,
                          final boolean lastMove_isChess,
@@ -125,17 +141,18 @@ public class DynamicEvaluation {
                 thisMove_hasHitFigure,
                 lastMove_isChess,
                 lastMove_hasHitFigure)) {
-            return strategy.evaluate(game, forWhite);
+            return strategy.getPrimaryEvaluation(game, forWhite);
         }
 
-        Evaluaded maxValue = Evaluaded.INITAL;
+        SortedSet<EvaluatedMove> movesWithPrimaryEvaluation = new TreeSet<>();
 
         maxPossibleMovesBuffer.clear();
         game.getPossibleMoves(maxPossibleMovesBuffer);
+        final NavigableSet<EvaluatedMove> primaryEvaluations = new TreeSet<EvaluatedMove>();
         final List<Move> minPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
 
         for (Move move : maxPossibleMovesBuffer) {
-            Evaluaded tempValue;
+            Evaluated primaryEval;
 
             assert (game.isFreeArea(move.to) || !game.getFigure(move.to).isKing())
                     : "getMax:" +
@@ -146,7 +163,7 @@ public class DynamicEvaluation {
             int endoption = game.move(move);
 
             if (endoption == ChessGameInterface.NO_END) {
-                tempValue = getMin(game,
+                primaryEval = getMin(game,
                         forWhite,
                         depth,
                         thisMove_isChess,
@@ -154,22 +171,36 @@ public class DynamicEvaluation {
                         minPossibleMovesBuffer);
             } else if (endoption == ChessGameInterface.MATT) {
                 game.undo();
-                return Evaluaded.getThisComputerPlayerIsMatt(depth + 1);
+                return new EvaluatedAsMatt(depth + 1, true);
             } else {
-                tempValue = Evaluaded.DRAW;
+                primaryEval = EvaluatedAsDraw.INSTANCE;
             }
 
-            game.undo();
+            primaryEvaluations.add(new EvaluatedMove(move, primaryEval));
 
-            if (maxValue == Evaluaded.INITAL || tempValue.compareTo(maxValue)>0) {
-                maxValue = tempValue;
+            game.undo();
+        }
+
+        //now get a secondaryEvaluation for the Moves with the smallest primary Evaluation
+        SortedSet<Evaluated> combinedEvaluations = new TreeSet<>();
+        final Evaluated maxPrimary = primaryEvaluations.last().getValue();
+
+        for(EvaluatedMove evaluatedMove: primaryEvaluations.descendingSet()) {
+            final Evaluated primaryEval = evaluatedMove.getValue();
+            if(primaryEval.isCloseToByPrimary(maxPrimary)) {
+                game.move(evaluatedMove.getMove());
+                //add secondary Evaluation
+                strategy.addSecondaryEvaluation(game, forWhite, primaryEval);
+                combinedEvaluations.add(primaryEval);
+                game.undo();
+            }else{
+                //the set is sorted in reverse so once an element is to small, all the rest are
+                break;
             }
         }
 
-        assert maxValue != Evaluaded.INITAL
-                : "no maximum found";
-
-        return maxValue;
+        //maxValue
+        return combinedEvaluations.last();
     }
 
     public void setEvaluationStrategy(StaticEvaluationInterface strategy) {

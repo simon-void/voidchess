@@ -1,10 +1,12 @@
 package voidchess.player.ki;
 
 import voidchess.board.ChessGameInterface;
+import voidchess.player.ki.evaluation.Evaluated;
 
 /**
  * @author stephan
  */
-interface StaticEvaluationInterface {
-    public abstract Evaluaded evaluate(ChessGameInterface game, boolean forWhite);
+public interface StaticEvaluationInterface {
+    public abstract Evaluated getPrimaryEvaluation(ChessGameInterface game, boolean forWhite);
+    public abstract void addSecondaryEvaluation(ChessGameInterface game, boolean forWhite, Evaluated withPrimaryEvaluation);
 }

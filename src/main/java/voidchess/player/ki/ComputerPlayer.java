@@ -4,17 +4,15 @@ import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
 import voidchess.helper.Position;
 import voidchess.helper.RuntimeFacade;
+import voidchess.player.ki.evaluation.Evaluated;
 import voidchess.player.ki.openings.OpeningsLibrary;
 import voidchess.ui.TableInterface;
 import voidchess.player.PlayerInterface;
 import voidchess.player.ki.concurrent.ConcurrencyStrategy;
 import voidchess.player.ki.concurrent.ConcurrencyStrategyFactory;
-import voidchess.player.ki.concurrent.EvaluatedMove;
+import voidchess.player.ki.evaluation.EvaluatedMove;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.SortedSet;
+import java.util.*;
 
 /**
  * @author stephan
@@ -78,7 +76,7 @@ public class ComputerPlayer
                 //and evaluate it
                 boolean isWhitePlayer = game.isWhiteTurn();
                 game.move(randomMove);
-                Evaluaded evaluation = standardEvaluation.evaluate(game, isWhitePlayer);
+                Evaluated evaluation = standardEvaluation.getPrimaryEvaluation(game, isWhitePlayer);
                 game.undo();
 
                 //wait before playing so that the user can clearly see the computer's move
@@ -101,7 +99,7 @@ public class ComputerPlayer
 //      TODO  real Timer
 //		long time = System.currentTimeMillis();
 
-        SortedSet<EvaluatedMove> sortedEvaluatedMoves = concurrencyStrategy.evaluatePossibleMoves(game, dynamicEvaluation);
+        NavigableSet<EvaluatedMove> sortedEvaluatedMoves = concurrencyStrategy.evaluatePossibleMoves(game, dynamicEvaluation);
 
 //		final int calls = StaticEvaluation.getCallCounter();
 //		final int totalNumberOfMoves = evaluation.totalNumberOfMoves();
@@ -127,16 +125,16 @@ public class ComputerPlayer
      * @param sortedEvaluatedMoves (set.first is the best move for the ki, set.last the worst)
      * @return the move the ki will make next
      */
-    private EvaluatedMove pickNextMoveByEvaluation(SortedSet<EvaluatedMove> sortedEvaluatedMoves) {
-        Iterator<EvaluatedMove> evaluation = sortedEvaluatedMoves.iterator();
+    private EvaluatedMove pickNextMoveByEvaluation(NavigableSet<EvaluatedMove> sortedEvaluatedMoves) {
+        Iterator<EvaluatedMove> evaluation = sortedEvaluatedMoves.descendingIterator();
         EvaluatedMove bestMove = evaluation.next();
 
         //as long as the top moves are almost equally good, pick randomly one (with a higher chance for the better move)
         EvaluatedMove chosenMove = bestMove;
         while (evaluation.hasNext()) {
             if (Math.random() < 0.6) break;
-            EvaluatedMove tempMove = evaluation.next();
-            if (tempMove.getValue().hasAlmostSameValue( bestMove.getValue())) {
+                EvaluatedMove tempMove = evaluation.next();
+            if (tempMove.getValue().isCloseToByCombined(bestMove.getValue())) {
                 chosenMove = tempMove;
             } else {
                 break;

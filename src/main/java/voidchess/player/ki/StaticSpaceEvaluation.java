@@ -3,6 +3,8 @@ package voidchess.player.ki;
 import voidchess.board.ChessGameInterface;
 import voidchess.figures.Figure;
 import voidchess.helper.Position;
+import voidchess.player.ki.evaluation.Evaluated;
+import voidchess.player.ki.evaluation.EvaluatedAsValue;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,7 +16,7 @@ import java.util.List;
  */
 class StaticSpaceEvaluation implements StaticEvaluationInterface {
 
-    public Evaluaded evaluate(ChessGameInterface game, boolean forWhite) {
+    public Evaluated getPrimaryEvaluation(ChessGameInterface game, boolean forWhite) {
         final int BASIC_VALUE = 200;
         Position whiteKingPos = null;
         Position blackKingPos = null;
@@ -55,7 +57,13 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         if (colorOfWinnerIsWhite == forWhite) value = -value;
 
         //TODO is there is better secondary evaluation that a static 0?
-        return Evaluaded.fromValues(value / 10.0f, 0);
+        return new EvaluatedAsValue(value / 10.0f);
+    }
+
+    @Override
+    public void addSecondaryEvaluation(ChessGameInterface game, boolean forWhite, Evaluated withPrimaryEvaluation) {
+        //do nothing (keep the secondary value = 0)
+        //TODO is there a good secondary matrix of success for space?
     }
 
     int getKingDistance(Position pos1, Position pos2) {

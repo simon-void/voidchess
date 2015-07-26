@@ -4,9 +4,11 @@ import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
 import voidchess.player.ki.AbstractComputerPlayerUI;
 import voidchess.player.ki.DynamicEvaluation;
+import voidchess.player.ki.evaluation.EvaluatedMove;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NavigableSet;
 import java.util.SortedSet;
 
 abstract class AbstractConcurrencyStrategy implements ConcurrencyStrategy {
@@ -20,7 +22,7 @@ abstract class AbstractConcurrencyStrategy implements ConcurrencyStrategy {
     /* (non-Javadoc)
      * @see voidchess.player.ki.concurrent.ConcurrencyStrategy#evaluatePossibleMoves(voidchess.board.ChessGameInterface, voidchess.player.ki.DynamicEvaluation)
      */
-    public abstract SortedSet<EvaluatedMove> evaluatePossibleMoves(final ChessGameInterface game, final DynamicEvaluation dynamicEvaluation);
+    public abstract NavigableSet<EvaluatedMove> evaluatePossibleMoves(final ChessGameInterface game, final DynamicEvaluation dynamicEvaluation);
 
     final protected void showProgress(int movesDone, final int totalNumberOfMoves) {
         ui.setProgress(movesDone, totalNumberOfMoves);

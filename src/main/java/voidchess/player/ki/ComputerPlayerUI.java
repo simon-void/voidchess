@@ -1,6 +1,10 @@
 package voidchess.player.ki;
 
 import voidchess.helper.Move;
+import voidchess.player.ki.evaluation.Evaluated;
+import voidchess.player.ki.evaluation.EvaluatedAsDraw;
+import voidchess.player.ki.evaluation.EvaluatedAsMatt;
+import voidchess.player.ki.evaluation.EvaluatedAsValue;
 
 import java.awt.*;
 import java.util.Iterator;
@@ -57,8 +61,8 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
     final static private Rectangle THOUGHT_RECTANGLE
             = new Rectangle(49, 46, 102, 19);
 
-    private TreeSet<Float> referenceSet;
-    private Evaluaded value;
+    private TreeSet<Evaluated> referenceSet;
+    private Evaluated value;
     private int smileFactor;
     private boolean showValue;
     private int index;
@@ -69,15 +73,15 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
         index = 1;
         total = 1;
         smileFactor = CONTENT;
-        value = Evaluaded.INITAL;
+        value = EvaluatedAsDraw.INSTANCE;
 
         referenceSet = new TreeSet(new InverseValueComperator());
-        referenceSet.add(Evaluaded.getOtherPlayerIsMatt(20).getCombinedEvaluation());
-        referenceSet.add(-4f);
-        referenceSet.add(-1f);
-        referenceSet.add(1f);
-        referenceSet.add(4f);
-        referenceSet.add(Evaluaded.getThisComputerPlayerIsMatt(20).getCombinedEvaluation());
+        referenceSet.add(new EvaluatedAsMatt(20, true));
+        referenceSet.add(new EvaluatedAsValue(-4f));
+        referenceSet.add(new EvaluatedAsValue(-1f));
+        referenceSet.add(new EvaluatedAsValue(1f));
+        referenceSet.add(new EvaluatedAsValue(4f));
+        referenceSet.add(new EvaluatedAsMatt(20, false));
 
         setPreferredSize(new Dimension(200, 378));
     }
@@ -92,9 +96,9 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
     }
 
     @Override
-    public void setValue(Evaluaded value, Move move) {
+    public void setValue(Evaluated value, Move move) {
         showValue = true;
-        setSmileFactor(value.getCombinedEvaluation());
+        setSmileFactor(value);
         this.value = value;
         paintImmediately(HAND_RECTANGLE);
         paintImmediately(MOUTH_RECTANGLE);
@@ -159,27 +163,26 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
                 NOSE_START_Y + NOSE_LENGHT);
     }
 
-    private void setSmileFactor(float value) {
-        Float floatvalue = new Float(value);
-        referenceSet.add(floatvalue);
+    private void setSmileFactor(final Evaluated value) {
+        referenceSet.add(value);
         Iterator iter = referenceSet.iterator();
-        if (iter.next().equals(floatvalue)) {
+        if (iter.next().equals(value)) {
             smileFactor = BIG_SMILE;
-        } else if (iter.next().equals(floatvalue)) {
+        } else if (iter.next().equals(value)) {
             smileFactor = LIGHT_SMILE;
-        } else if (iter.next().equals(floatvalue)) {
+        } else if (iter.next().equals(value)) {
             smileFactor = SLIGHT_SMILE;
-        } else if (iter.next().equals(floatvalue)) {
+        } else if (iter.next().equals(value)) {
             smileFactor = CONTENT;
-        } else if (iter.next().equals(floatvalue)) {
+        } else if (iter.next().equals(value)) {
             smileFactor = SLIGHT_GRIEF;
-        } else if (iter.next().equals(floatvalue)) {
+        } else if (iter.next().equals(value)) {
             smileFactor = LIGHT_GRIEF;
         } else {
             smileFactor = BIG_GRIEF;
         }
 
-        referenceSet.remove(floatvalue);
+        referenceSet.remove(value);
     }
 
     private void drawMouth(Graphics g) {
@@ -249,12 +252,9 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
             g.setColor(Color.WHITE);
             g.fillRect(49, 46, 110, 20);
             g.setColor(Color.BLACK);
-
-            if (value != Evaluaded.INITAL) {
-                FontMetrics metric = g.getFontMetrics();
-                String news = value.toString();
-                g.drawString(news, 100 - metric.stringWidth(news) / 2, 60);
-            }
+            FontMetrics metric = g.getFontMetrics();
+            String news = value.toString();
+            g.drawString(news, 100 - metric.stringWidth(news) / 2, 60);
         } else {
             g.setColor(Color.WHITE);
             g.fillRect(49, 46, 110, 20);

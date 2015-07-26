@@ -5,24 +5,33 @@ import voidchess.figures.Figure;
 import voidchess.figures.King;
 import voidchess.figures.Pawn;
 import voidchess.helper.Position;
+import voidchess.player.ki.evaluation.Evaluated;
+import voidchess.player.ki.evaluation.EvaluatedAsValue;
 
 import java.util.List;
 
 /**
  * @author stephan
  */
-class StaticEvaluation implements StaticEvaluationInterface {
+public class StaticEvaluation implements StaticEvaluationInterface {
     final private static double PAWN_VALUE = 1f;
     final private static double ROCK_VALUE = 4.5f;
     final private static double KNIGHT_VALUE = 3f;
     final private static double BISHOP_VALUE = 3f;
     final private static double QUEEN_VALUE = 9f;
 
-    public Evaluaded evaluate(ChessGameInterface game, final boolean forWhite) {
+    public Evaluated getPrimaryEvaluation(ChessGameInterface game, final boolean forWhite) {
         float primaryEvaluation = evaluateFigures(game, forWhite);
-        float secondaryEvaluation = evaluateRuledArea(game, forWhite)
-                                  + evaluatePosition(game, forWhite);
-        return Evaluaded.fromValues(primaryEvaluation, secondaryEvaluation);
+        return new EvaluatedAsValue(primaryEvaluation);
+    }
+
+    @Override
+    public void addSecondaryEvaluation(ChessGameInterface game, boolean forWhite, Evaluated withPrimaryEvaluation) {
+        if(withPrimaryEvaluation.isValue() && withPrimaryEvaluation.needsSecondaryEvaluation()) {
+            float secondaryEvaluation = evaluateRuledArea(game, forWhite)
+                    + evaluatePosition(game, forWhite);
+            withPrimaryEvaluation.setSecondaryEvaluation(secondaryEvaluation);
+        }
     }
 
     private float evaluateFigures(ChessGameInterface game, final boolean forWhite) {

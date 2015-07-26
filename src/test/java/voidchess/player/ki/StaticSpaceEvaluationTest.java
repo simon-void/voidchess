@@ -7,6 +7,8 @@ package voidchess.player.ki;
 import voidchess.board.ChessGame;
 import voidchess.helper.Position;
 import org.testng.annotations.Test;
+import voidchess.player.ki.evaluation.Evaluated;
+import voidchess.player.ki.evaluation.EvaluatedAsValue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,19 +24,23 @@ public class StaticSpaceEvaluationTest {
         String des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
-        Evaluaded evaluateForWhite = evaluation.evaluate(game, true);
-        Evaluaded evaluateForBlack = evaluation.evaluate(game, false);
+        Evaluated evaluateForWhite = evaluation.getPrimaryEvaluation(game, true);
+        Evaluated evaluateForBlack = evaluation.getPrimaryEvaluation(game, false);
 
-        assertTrue(evaluateForWhite.getCombinedEvaluation() < 0);
-        assertTrue(evaluateForBlack.getCombinedEvaluation() > 0);
-        assertEquals(evaluateForBlack.getCombinedEvaluation(), -evaluateForWhite.getCombinedEvaluation());
+        assertTrue(getCombinedEvaluation(evaluateForWhite) < 0);
+        assertTrue(getCombinedEvaluation(evaluateForBlack) > 0);
+        assertEquals(getCombinedEvaluation(evaluateForBlack), -getCombinedEvaluation(evaluateForWhite));
 
 
         des = "black 0 King-white-e1-0 Rock-black-b8-0 King-black-e8-0";
         ChessGame game2 = new ChessGame(des);
 
-        Evaluaded evaluateForWhite2 = evaluation.evaluate(game2, true);
+        Evaluated evaluateForWhite2 = evaluation.getPrimaryEvaluation(game2, true);
         assertTrue(evaluateForWhite2.compareTo(evaluateForWhite)<0);
+    }
+
+    private float getCombinedEvaluation(Evaluated evaluated) {
+        return Float.parseFloat(evaluated.toString().replace(',', '.'));
     }
 
     @Test

@@ -4,7 +4,8 @@ import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
 import voidchess.player.ki.AbstractComputerPlayerUI;
 import voidchess.player.ki.DynamicEvaluation;
-import voidchess.player.ki.Evaluaded;
+import voidchess.player.ki.evaluation.Evaluated;
+import voidchess.player.ki.evaluation.EvaluatedMove;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -24,14 +25,14 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy {
 
 
     @Override
-    public SortedSet<EvaluatedMove> evaluatePossibleMoves(final ChessGameInterface game, final DynamicEvaluation dynamicEvaluation) {
+    public NavigableSet<EvaluatedMove> evaluatePossibleMoves(final ChessGameInterface game, final DynamicEvaluation dynamicEvaluation) {
         //as long as the first parameter is 0 and the second one is bigger
         //the progress bar will always show correctly 0% (so '1' as second parameter is fine)
         showProgress(0, 1);
 
         final LinkedList<Callable<EvaluatedMove>> movesToEvaluate = getEvaluatableMoves(game, dynamicEvaluation);
 
-        SortedSet<EvaluatedMove> result = Collections.emptySortedSet();
+        NavigableSet<EvaluatedMove> result = Collections.emptyNavigableSet();
         try {
             result = evaluate(movesToEvaluate);//resultFutures.get();
         } catch (Exception e) {
@@ -43,9 +44,9 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy {
         return result;
     }
 
-    private SortedSet<EvaluatedMove> evaluate(final LinkedList<Callable<EvaluatedMove>> movesToEvaluate)
+    private NavigableSet<EvaluatedMove> evaluate(final LinkedList<Callable<EvaluatedMove>> movesToEvaluate)
             throws InterruptedException, ExecutionException {
-        SortedSet<EvaluatedMove> result = new TreeSet<EvaluatedMove>();
+        NavigableSet<EvaluatedMove> result = new TreeSet<EvaluatedMove>();
 
         final int totalNumberOfMoves = movesToEvaluate.size();
 
@@ -110,7 +111,7 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy {
 
         public EvaluatedMove call() throws Exception {
             try {
-                final Evaluaded value = dynamicEvaluation.evaluateMove(game, move);
+                final Evaluated value = dynamicEvaluation.evaluateMove(game, move);
                 EvaluatedMove evaluatedMove = new EvaluatedMove(move, value);
 
                 return evaluatedMove;

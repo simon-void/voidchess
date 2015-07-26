@@ -1,6 +1,7 @@
 package voidchess.player.ki;
 
 import voidchess.helper.Move;
+import voidchess.player.ki.evaluation.Evaluated;
 
 import javax.swing.*;
 
@@ -10,5 +11,5 @@ import javax.swing.*;
 public abstract class AbstractComputerPlayerUI extends JComponent {
     abstract public void setProgress(int part, int whole);
 
-    abstract public void setValue(Evaluaded value, Move move);
+    abstract public void setValue(Evaluated value, Move move);
 }
