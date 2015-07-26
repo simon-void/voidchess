@@ -62,4 +62,13 @@ final public class EvaluatedAsDraw implements Evaluated {
     public String toString() {
         return EvaluatedAsValue.format(0f);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if(other instanceof Evaluated) {
+            return compareTo((Evaluated)other)==0;
+        }else {
+            return false;
+        }
+    }
 }

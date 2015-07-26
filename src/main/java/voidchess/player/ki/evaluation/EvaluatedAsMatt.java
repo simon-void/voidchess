@@ -95,4 +95,13 @@ final public class EvaluatedAsMatt implements Evaluated {
 
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if(other instanceof Evaluated) {
+            return compareTo((Evaluated)other)==0;
+        }else {
+            return false;
+        }
+    }
 }

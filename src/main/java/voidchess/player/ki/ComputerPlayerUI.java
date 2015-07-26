@@ -164,7 +164,11 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
     }
 
     private void setSmileFactor(final Evaluated value) {
-        referenceSet.add(value);
+        final boolean valueNotInReferenceSet = !referenceSet.contains(value);
+        if(valueNotInReferenceSet) {
+            referenceSet.add(value);
+        }
+
         Iterator iter = referenceSet.iterator();
         if (iter.next().equals(value)) {
             smileFactor = BIG_SMILE;
@@ -182,7 +186,9 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
             smileFactor = BIG_GRIEF;
         }
 
-        referenceSet.remove(value);
+        if(valueNotInReferenceSet) {
+            referenceSet.remove(value);
+        }
     }
 
     private void drawMouth(Graphics g) {

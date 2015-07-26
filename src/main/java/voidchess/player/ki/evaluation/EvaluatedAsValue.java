@@ -100,6 +100,15 @@ final public class EvaluatedAsValue implements Evaluated {
     }
 
     @Override
+    public boolean equals(Object other) {
+        if(other instanceof Evaluated) {
+            return compareTo((Evaluated)other)==0;
+        }else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString() {
         return format(getCombinedEvaluation());
     }

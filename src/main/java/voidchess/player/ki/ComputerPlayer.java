@@ -77,6 +77,7 @@ public class ComputerPlayer
                 boolean isWhitePlayer = game.isWhiteTurn();
                 game.move(randomMove);
                 Evaluated evaluation = standardEvaluation.getPrimaryEvaluation(game, isWhitePlayer);
+                standardEvaluation.addSecondaryEvaluation(game,isWhitePlayer,evaluation);
                 game.undo();
 
                 //wait before playing so that the user can clearly see the computer's move
