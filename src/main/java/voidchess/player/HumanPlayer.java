@@ -37,9 +37,7 @@ public class HumanPlayer
     }
 
     public void move(Move move) {
-        from = null;
-        ui.markPosition(null, true);
-        ui.markPosition(null, false);
+        dropMarkedPositions();
         isMyTurn = false;
         table.move(move);
     }
@@ -94,6 +92,17 @@ public class HumanPlayer
 
     public void setIsPlaying(boolean isPlaying) {
         isMyTurn = isPlaying && isWhitePlayer;
+
+        if(!isPlaying) {
+            //removes selected fields even if game was aborted
+            dropMarkedPositions();
+        }
+    }
+
+    private void dropMarkedPositions() {
+        from = null;
+        ui.markPosition(null, true);
+        ui.markPosition(null, false);
     }
 
     public void setColor(boolean isWhite) {
