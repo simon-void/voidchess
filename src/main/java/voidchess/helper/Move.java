@@ -36,6 +36,26 @@ public class Move {
         return moves[fromrow][fromcolumn][torow][tocolumn];
     }
 
+    public static boolean isValid(String code) {
+        if(code==null || code.length()!=5 || code.charAt(2)!='-') {
+            return false;
+        }
+
+        int fromcolumn = (int) code.charAt(0) - 97;
+        int fromrow = (int) code.charAt(1) - 49;
+        int tocolumn = (int) code.charAt(3) - 97;
+        int torow = (int) code.charAt(4) - 49;
+
+        return  liesIn07Range(fromcolumn)&&
+                liesIn07Range(fromrow)&&
+                liesIn07Range(tocolumn)&&
+                liesIn07Range(torow);
+    }
+
+    private static boolean liesIn07Range(int number) {
+        return number>=0 && number<=7;
+    }
+
     protected Move(Position from, Position to) {
         this.from = from;
         this.to = to;

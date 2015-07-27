@@ -5,7 +5,6 @@ import voidchess.board.ChessGame;
 import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
 import voidchess.player.ki.*;
-import voidchess.player.ki.evaluation.Evaluated;
 import voidchess.player.ki.evaluation.EvaluatedMove;
 
 import java.util.Iterator;

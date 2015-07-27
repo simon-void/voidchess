@@ -1,5 +1,6 @@
 package voidchess.player.ki.openings;
 
+import voidchess.board.ChessGame;
 import voidchess.helper.Move;
 import voidchess.helper.ResourceFinder;
 import voidchess.helper.TreeNode;
@@ -7,6 +8,7 @@ import voidchess.helper.TreeNode;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,32 +75,52 @@ public class OpeningsLibrary {
         outerloop:
         for(String openingSequence: openingSequences) {
             TreeNode<String> currentNode = root;
-            String[] moves = openingSequence.split(",");
+            List<String> moves = splitAndCheckOpeningSequence(openingSequence);
             for(String move: moves) {
                 move = move.trim();
-                if(isValidMoveFormat(move)) {
-                    currentNode = currentNode.addChild(move);
-                }else{
-                    log("discarding sequence: "+openingSequence+"; illegal token: "+move);
-                    continue outerloop;
-                }
+                currentNode = currentNode.addChild(move);
             }
         }
         
         return root;
     }
 
-    private boolean isValidMoveFormat(String move) {
-        try{
-            Move.get(move);
-            return true;
-        }catch (Exception e) {
-            return false;
+    static List<String> splitAndCheckOpeningSequence(String openingSequence) {
+        openingSequence = openingSequence.trim();
+        if(openingSequence.isEmpty()) {
+            return Collections.EMPTY_LIST;
         }
-    }
+        final String SEPARATOR = ",";
+        if(openingSequence.startsWith(SEPARATOR)) {
+            throw new IllegalArgumentException("opening sequence starts with seperator: "+openingSequence);
+        }
+        if(openingSequence.endsWith(SEPARATOR)) {
+            throw new IllegalArgumentException("opening sequence ends with seperator: "+openingSequence);
+        }
 
-    //TODO proper logging
-    private static void log(String errorMsg) {
-        System.out.println(errorMsg);
+        String[] textMoves = openingSequence.split(SEPARATOR);
+        List<String> checkedMoves = new ArrayList<>(textMoves.length);
+
+        ChessGame game = new ChessGame();
+
+        for(String textMove: textMoves) {
+            textMove = textMove.trim();
+            if(!Move.isValid(textMove)) {
+                throw new IllegalArgumentException(
+                        "illegal move format'"+textMove+"' in opening sequence: "+openingSequence);
+            }
+            Move move = Move.get(textMove);
+            boolean isMoveExecutable = game.isMoveable(
+                    move.from, move.to, game.isWhiteTurn()
+            );
+            if(!isMoveExecutable) {
+                throw new IllegalArgumentException(
+                        "illegal move '"+textMove+"' in opening sequence: "+openingSequence);
+            }
+            game.move(move);
+
+            checkedMoves.add(textMove);
+        }
+        return checkedMoves;
     }
 }
