@@ -7,7 +7,6 @@
 /lib/*
 /test-output
 /out
-/META-INF
 
 *.iml
 *.log
