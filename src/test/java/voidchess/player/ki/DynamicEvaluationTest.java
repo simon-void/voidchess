@@ -4,15 +4,14 @@
 
 package voidchess.player.ki;
 
+import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.helper.Move;
-import org.testng.annotations.Test;
 import voidchess.player.ki.evaluation.Evaluated;
 import voidchess.player.ki.evaluation.EvaluatedAsValue;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 public class DynamicEvaluationTest {
     @Test
@@ -23,7 +22,7 @@ public class DynamicEvaluationTest {
         Move move = Move.get("a6-b6");
 
         dynamicEvaluation.evaluateMove(game, move);
-        //Invariante: evaluateMove darf game nicht ändern
+        //Invariante: evaluateMove darf game nicht ï¿½ndern
         assertEquals(des, game.toString());
     }
 
@@ -48,10 +47,10 @@ public class DynamicEvaluationTest {
 
         Evaluated value = dynamicEvaluation.evaluateMove(game, Move.get("g5-d8"));
 
-        //Schlagen der Königing ist der beste Zug
+        //Schlagen der KÃ¶niging ist der beste Zug
         //der Wert des Zuges sollte um 6 liegen,
-        //da ich eine Dame(9P) gegen einen Läufer(3P) getauscht habe
-        //+Weiß kann durch den Damenzug noch Raum gewinnen
+        //da ich eine Dame(9P) gegen einen LÃ¤ufer(3P) getauscht habe
+        //+Weiï¿½ kann durch den Damenzug noch Raum gewinnen
         assertTrue(
                 value.compareTo(new EvaluatedAsValue(5.5f)) > 0,
                 "Min-Max-Berechnung ist zu niedrig,Soll:~6.5,Ist:" + value);
@@ -80,7 +79,7 @@ public class DynamicEvaluationTest {
 
         try {
             dynamicEvaluation.evaluateMove(game, move);
-            //Invariante: evaluateMove darf game nicht ändern
+            //Invariante: evaluateMove darf game nicht ï¿½ndern
             String msg = "after Move:" + move.toString() + " History:" + game.getHistory();
             assertEquals(initDescription, game.toString(), msg);
         } catch (Exception e) {

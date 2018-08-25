@@ -24,7 +24,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private boolean isStandardGame = false;
 
     /**
-     * der normale Konstruktor, der von außerhalb verwendet werden sollte
+     * der normale Konstruktor, der von auï¿½erhalb verwendet werden sollte
      *
      * @param supervisor
      */
@@ -41,7 +41,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     /**
-     * für CopyConstructor
+     * fÃ¼r CopyConstructor
      */
     public ChessGame(ChessGame other, String desc) {
         hasHitFigure = other.hasHitFigure;
@@ -58,7 +58,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     /**
-     * für JUnit-TestKlassen
+     * fÃ¼r JUnit-TestKlassen
      *
      * @param game_description
      */
@@ -67,7 +67,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     /**
-     * für JUnit-TestKlassen
+     * fÃ¼r JUnit-TestKlassen
      *
      * @param initialPosition
      */
@@ -76,14 +76,14 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     /**
-     * für JUnit-TestKlassen: Standardaufstellung
+     * fÃ¼r JUnit-TestKlassen: Standardaufstellung
      */
     public ChessGame() {
         this(518);
     }
 
     /**
-     * wird nur implizit für JUnit-tests verwendet
+     * wird nur implizit fÃ¼r JUnit-tests verwendet
      *
      * @param supervisor
      * @param game_description
@@ -114,7 +114,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     /**
-     * wird nur implizit für JUnit-tests verwendet
+     * wird nur implizit fÃ¼r JUnit-tests verwendet
      *
      * @param supervisor
      * @param initialPosition
@@ -208,7 +208,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
         Rock rochadeRock = extractRochadeRock(move);
         //im Fall der Rochade wird der Zug jetzt so umgebogen,
-        //das move.to dem Zielfeld des Königs entspricht
+        //das move.to dem Zielfeld des KÃ¶nigs entspricht
         //und nicht dem Feld des Rochadeturms
         if (rochadeRock != null) {
             final int row = move.to.row;
@@ -230,7 +230,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     private Figure moveFigure(Move move) {
-        final boolean toEqualsFrom = move.to.equalsPosition(move.from);//für manche Schach960rochaden true
+        final boolean toEqualsFrom = move.to.equalsPosition(move.from);//fÃ¼r manche Schach960rochaden true
         hasHitFigure = !isFreeArea(move.to) && !toEqualsFrom;  //Enpasent wird nicht beachtet
         Figure fromFigure = getFigure(move.from);
 
@@ -264,7 +264,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         if (getFigure(move.from).isPawn()
                 && move.from.column != move.to.column
                 && isFreeArea(move.to)
-                ) {
+        ) {
             Position pawnToBeHit = Position.get(move.from.row, move.to.column);
             Pawn pawn = (Pawn) getFigure(pawnToBeHit);
             setFigure(pawnToBeHit, null);
@@ -445,7 +445,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     @Override
     public void initGame(int chess960) {
-        isStandardGame = chess960==518;
+        isStandardGame = chess960 == 518;
         whiteTurn = true;
         numberOfMovesWithoutHit = 0;
         figureCount = 32;
@@ -757,7 +757,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
             StringBuilder sb = new StringBuilder(24);
 
 //            for (int i = index - 1; i >= MIN_INDEX; i--) {
-            for (int i = MIN_INDEX; i<index; i++) {
+            for (int i = MIN_INDEX; i < index; i++) {
                 sb.append(extendedMoveArray[i].toString());
                 sb.append(",");
             }

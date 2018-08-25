@@ -96,7 +96,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
                                     otherFiguresPos,
                                     game,
                                     figuresHaveWhiteColor)
-                            ) {
+                    ) {
                         foundPositions.add(foundPos);
                         newSearchPositions.add(foundPos);
                     }

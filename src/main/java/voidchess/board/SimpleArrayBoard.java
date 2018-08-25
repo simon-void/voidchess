@@ -38,7 +38,7 @@ public class SimpleArrayBoard
         init();
     }
 
-    //für Testzwecke
+    //fÃ¼r Testzwecke
     public SimpleArrayBoard(String des, LastMoveProvider lastMoveProvider) {
         this(lastMoveProvider);
         init(des);
@@ -157,7 +157,7 @@ public class SimpleArrayBoard
         clear();
         Position pos;
 
-        //die Bauernpositionen verändern sich nicht
+        //die Bauernpositionen verï¿½ndern sich nicht
         for (int i = 0; i < 8; i++) {
             pos = Position.get(1, i);
             setFigure(pos, figureFactory.getPawn(pos, true));
@@ -165,7 +165,7 @@ public class SimpleArrayBoard
             setFigure(pos, figureFactory.getPawn(pos, false));
         }
 
-		/*erster Läufer*/
+        /*erster LÃ¤ufer*/
         int rest = chess960 % 4;
         int row = rest * 2 + 1;
         chess960 = chess960 / 4;
@@ -174,8 +174,8 @@ public class SimpleArrayBoard
         setFigure(pos, figureFactory.getBishop(pos, true));
         pos = Position.get(7, row);
         setFigure(pos, figureFactory.getBishop(pos, false));
-		
-		/*zweiter Läufer*/
+
+        /*zweiter LÃ¤ufer*/
         rest = chess960 % 4;
         row = rest * 2;
         chess960 = chess960 / 4;
@@ -184,8 +184,8 @@ public class SimpleArrayBoard
         setFigure(pos, figureFactory.getBishop(pos, true));
         pos = Position.get(7, row);
         setFigure(pos, figureFactory.getBishop(pos, false));
-		
-		/*zweiter Dame*/
+
+        /*zweiter Dame*/
         rest = chess960 % 6;
         row = getFreeRow(rest);
         chess960 = chess960 / 6;
@@ -219,34 +219,34 @@ public class SimpleArrayBoard
 
         switch (index) {
             case 0:
-                String[] out0 = {"Springer", "Springer", "Turm", "König", "Turm"};
+                String[] out0 = {"Springer", "Springer", "Turm", "KÃ¶nig", "Turm"};
                 return out0;
             case 1:
-                String[] out1 = {"Springer", "Turm", "Springer", "König", "Turm"};
+                String[] out1 = {"Springer", "Turm", "Springer", "KÃ¶nig", "Turm"};
                 return out1;
             case 2:
-                String[] out2 = {"Springer", "Turm", "König", "Springer", "Turm"};
+                String[] out2 = {"Springer", "Turm", "KÃ¶nig", "Springer", "Turm"};
                 return out2;
             case 3:
-                String[] out3 = {"Springer", "Turm", "König", "Turm", "Springer"};
+                String[] out3 = {"Springer", "Turm", "KÃ¶nig", "Turm", "Springer"};
                 return out3;
             case 4:
-                String[] out4 = {"Turm", "Springer", "Springer", "König", "Turm"};
+                String[] out4 = {"Turm", "Springer", "Springer", "KÃ¶nig", "Turm"};
                 return out4;
             case 5:
-                String[] out5 = {"Turm", "Springer", "König", "Springer", "Turm"};
+                String[] out5 = {"Turm", "Springer", "KÃ¶nig", "Springer", "Turm"};
                 return out5;
             case 6:
-                String[] out6 = {"Turm", "Springer", "König", "Turm", "Springer"};
+                String[] out6 = {"Turm", "Springer", "KÃ¶nig", "Turm", "Springer"};
                 return out6;
             case 7:
-                String[] out7 = {"Turm", "König", "Springer", "Springer", "Turm"};
+                String[] out7 = {"Turm", "KÃ¶nig", "Springer", "Springer", "Turm"};
                 return out7;
             case 8:
-                String[] out8 = {"Turm", "König", "Springer", "Turm", "Springer"};
+                String[] out8 = {"Turm", "KÃ¶nig", "Springer", "Turm", "Springer"};
                 return out8;
             case 9:
-                String[] out9 = {"Turm", "König", "Turm", "Springer", "Springer"};
+                String[] out9 = {"Turm", "KÃ¶nig", "Turm", "Springer", "Springer"};
                 return out9;
         }
         return null;
@@ -255,7 +255,7 @@ public class SimpleArrayBoard
     private Figure createFigure(String name, boolean isWhite, Position pos) {
         if (name.equals("Turm")) return figureFactory.getRock(pos, isWhite);
         if (name.equals("Springer")) return figureFactory.getKnight(pos, isWhite);
-        if (name.equals("König")) return figureFactory.getKing(pos, isWhite);
+        if (name.equals("KÃ¶nig")) return figureFactory.getKing(pos, isWhite);
 
         throw new IllegalStateException("unbekannte Figure:" + name);
     }
@@ -332,7 +332,7 @@ public class SimpleArrayBoard
                 }
             }
         }
-        //löscht das letzte space
+        //lï¿½scht das letzte space
         if (buffer.length() != 0) buffer.deleteCharAt(buffer.length() - 1);
 
         return buffer.toString();

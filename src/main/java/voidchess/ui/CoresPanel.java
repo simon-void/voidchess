@@ -17,7 +17,7 @@ public class CoresPanel extends JPanel implements ActionListener {
      * @return true if more than one core is available
      */
     public boolean hasOptions() {
-        return comboBox.getItemCount()>1;
+        return comboBox.getItemCount() > 1;
     }
 
     final private ComputerPlayer player;
@@ -38,10 +38,10 @@ public class CoresPanel extends JPanel implements ActionListener {
 //        setBorder(new LineBorder(Color.LIGHT_GRAY));
 
         final int numberOfCores = Runtime.getRuntime().availableProcessors();
-        if(numberOfCores==1) {
+        if (numberOfCores == 1) {
             comboBox.addItem("1");
-        }else{
-            comboBox.addItem(Integer.toString(numberOfCores-1));
+        } else {
+            comboBox.addItem(Integer.toString(numberOfCores - 1));
             comboBox.addItem(Integer.toString(numberOfCores));
         }
         comboBox.setEditable(false);
@@ -58,7 +58,7 @@ public class CoresPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         int numberOfCoresToUse = 1;
 //        try{
-            numberOfCoresToUse = Integer.parseInt(comboBox.getSelectedItem().toString());
+        numberOfCoresToUse = Integer.parseInt(comboBox.getSelectedItem().toString());
 //        }catch(NumberFormatException e){}
         player.setNumberOfCoresToUse(numberOfCoresToUse);
     }

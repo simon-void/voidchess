@@ -32,8 +32,8 @@ public class ChessGameUI extends JComponent {
         whiteView = true;
         setPreferredSize(new Dimension(2 * borderSize + 8 * areaSize, 2 * borderSize + 8 * areaSize));
         setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(Color.black),
-                        BorderFactory.createBevelBorder(0, Color.gray, Color.darkGray)
+                BorderFactory.createLineBorder(Color.black),
+                BorderFactory.createBevelBorder(0, Color.gray, Color.darkGray)
                 )
         );
         adapter = new ChessGameAdapter(this);
@@ -60,7 +60,7 @@ public class ChessGameUI extends JComponent {
         if (horizontal_dif == 1 && vertical_dif == 1) {                                //enpassant?
             repaintPositionAtOnce(Position.get(move.from.row, move.to.column));
             repaintPositionAtOnce(Position.get(move.to.row, move.from.column));
-        } else if (vertical_dif == 0 && (move.to.row == 0 || move.to.row == 7)) {            //Rochade?muss auch für Schach960 funktionieren
+        } else if (vertical_dif == 0 && (move.to.row == 0 || move.to.row == 7)) {            //Rochade?muss auch fÃ¼r Schach960 funktionieren
             repaintRowAtOnce(move.from.row);
         }
     }

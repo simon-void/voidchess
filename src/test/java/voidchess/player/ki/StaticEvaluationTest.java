@@ -1,7 +1,7 @@
 package voidchess.player.ki;
 
-import voidchess.board.ChessGame;
 import org.testng.annotations.Test;
+import voidchess.board.ChessGame;
 import voidchess.player.ki.evaluation.Evaluated;
 
 import static org.testng.Assert.assertTrue;

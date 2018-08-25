@@ -2,11 +2,13 @@
 /.idea
 /.settings
 /.classpath
+/.directory
 
 /bin
 /lib/*
 /test-output
 /out
+/target
 
 *.iml
 *.log

@@ -19,8 +19,11 @@ public interface ChessGameInterface extends BasicChessGameInterface {
     final public static int RESIGN = 6;
 
     public void initGame(int chess960);
-    /**returns true if this game was started with the standard distribution of figures
-     *  (chess960 code: 518)*/
+
+    /**
+     * returns true if this game was started with the standard distribution of figures
+     * (chess960 code: 518)
+     */
     public boolean isStandardGame();
 
     public List<ChessGameInterface> copyGame(int neededInstances);

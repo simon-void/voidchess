@@ -2,12 +2,6 @@ package voidchess.player.ki.evaluation;
 
 import org.testng.annotations.Test;
 
-import java.util.Iterator;
-import java.util.NavigableSet;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 

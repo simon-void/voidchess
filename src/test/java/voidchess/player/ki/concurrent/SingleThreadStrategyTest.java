@@ -1,6 +1,8 @@
 package voidchess.player.ki.concurrent;
 
-import org.testng.annotations.*;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
@@ -11,8 +13,9 @@ import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.SortedSet;
 
-import static org.testng.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Created by stephan on 17.07.2015.
@@ -33,10 +36,10 @@ public class SingleThreadStrategyTest {
         Iterator<EvaluatedMove> moves = evaluate(1, game).descendingIterator();
 
         EvaluatedMove betterMove = moves.next();
-        while(moves.hasNext()) {
+        while (moves.hasNext()) {
             EvaluatedMove worseMove = moves.next();
             assertTrue(
-                    betterMove.getValue().compareTo(worseMove.getValue())>=0,
+                    betterMove.getValue().compareTo(worseMove.getValue()) >= 0,
                     "earlier move should be at least as good"
             );
             betterMove = worseMove;
@@ -59,7 +62,7 @@ public class SingleThreadStrategyTest {
 
     @DataProvider(name = "bestMoveProvider")
     public Object[][] getBestMoveBoardsProvider() {
-        return new Object[][] {
+        return new Object[][]{
                 //best move with matt
                 new Object[]{
                         1,
@@ -89,7 +92,7 @@ public class SingleThreadStrategyTest {
 
     @DataProvider(name = "worstMoveProvider")
     public Object[][] getWorstMoveBoardsProvider() {
-        return new Object[][] {
+        return new Object[][]{
                 //worst move goes into matt
                 new Object[]{
                         1,

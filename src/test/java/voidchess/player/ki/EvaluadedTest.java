@@ -17,12 +17,12 @@ public class EvaluadedTest {
     @Test
     public void testChessvalueToString() {
         Evaluated value = new EvaluatedAsValue(-1);
-        assertEquals(value.toString(), "-1,00");
+        assertEquals(value.toString().replace('.', ','), "-1,00");
         value = new EvaluatedAsValue(5.49999999999f);
-        assertEquals(value.toString(), "5,50");
+        assertEquals(value.toString().replace('.', ','), "5,50");
 
         value = EvaluatedAsDraw.INSTANCE;
-        assertEquals(value.toString(), "0,00");
+        assertEquals(value.toString().replace('.', ','), "0,00");
 
         value = new EvaluatedAsMatt(2, false);
         assertEquals(value.toString(), "Ich bin matt in 2.");
@@ -126,7 +126,7 @@ public class EvaluadedTest {
 
     @Test(dataProvider = "mattEvaluatedProvider")
     public void assertIsEvaluatedAsMatt(Evaluated mattValue) {
-        assertTrue(mattValue.isMatt(), "this should be a matt evaluation:"+mattValue);
+        assertTrue(mattValue.isMatt(), "this should be a matt evaluation:" + mattValue);
     }
 
     @Test(dataProvider = "notMattEvaluatedProvider")
@@ -134,28 +134,28 @@ public class EvaluadedTest {
         assertFalse(notMattValue.isMatt(), "this shouldn't be a matt evaluation");
     }
 
-    @DataProvider(name="mattEvaluatedProvider")
+    @DataProvider(name = "mattEvaluatedProvider")
     public Object[][] getMattEvaluated() {
-        return new Object[][] {
-                new Object[] {new EvaluatedAsMatt(1, true)},
-                new Object[] {new EvaluatedAsMatt(20, true)},
-                new Object[] {new EvaluatedAsMatt(1, false)},
-                new Object[] {new EvaluatedAsMatt(20, false)},
+        return new Object[][]{
+                new Object[]{new EvaluatedAsMatt(1, true)},
+                new Object[]{new EvaluatedAsMatt(20, true)},
+                new Object[]{new EvaluatedAsMatt(1, false)},
+                new Object[]{new EvaluatedAsMatt(20, false)},
         };
     }
 
-    @DataProvider(name="notMattEvaluatedProvider")
+    @DataProvider(name = "notMattEvaluatedProvider")
     public Object[][] getNotMattEvaluated() {
-        return new Object[][] {
-                new Object[] {EvaluatedAsDraw.INSTANCE},
-                new Object[] {new EvaluatedAsValue(0f)},
-                new Object[] {new EvaluatedAsValue(1f)},
-                new Object[] {new EvaluatedAsValue(-1f)},
-                new Object[] {new EvaluatedAsValue(100f)},
-                new Object[] {new EvaluatedAsValue(-100f)},
+        return new Object[][]{
+                new Object[]{EvaluatedAsDraw.INSTANCE},
+                new Object[]{new EvaluatedAsValue(0f)},
+                new Object[]{new EvaluatedAsValue(1f)},
+                new Object[]{new EvaluatedAsValue(-1f)},
+                new Object[]{new EvaluatedAsValue(100f)},
+                new Object[]{new EvaluatedAsValue(-100f)},
                 //fromValue should safe-guard against too big values being interpreted as
-                new Object[] {new EvaluatedAsValue(1000000000f)},
-                new Object[] {new EvaluatedAsValue(-1000000000f)},
+                new Object[]{new EvaluatedAsValue(1000000000f)},
+                new Object[]{new EvaluatedAsValue(-1000000000f)},
         };
     }
 }

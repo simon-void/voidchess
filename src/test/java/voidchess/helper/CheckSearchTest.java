@@ -1,9 +1,9 @@
 package voidchess.helper;
 
+import org.testng.annotations.Test;
 import voidchess.board.LastMoveProvider;
 import voidchess.board.SimpleArrayBoard;
 import voidchess.figures.Pawn;
-import org.testng.annotations.Test;
 
 import java.util.List;
 

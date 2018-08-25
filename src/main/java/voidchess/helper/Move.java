@@ -37,7 +37,7 @@ public class Move {
     }
 
     public static boolean isValid(String code) {
-        if(code==null || code.length()!=5 || code.charAt(2)!='-') {
+        if (code == null || code.length() != 5 || code.charAt(2) != '-') {
             return false;
         }
 
@@ -46,14 +46,14 @@ public class Move {
         int tocolumn = (int) code.charAt(3) - 97;
         int torow = (int) code.charAt(4) - 49;
 
-        return  liesIn07Range(fromcolumn)&&
-                liesIn07Range(fromrow)&&
-                liesIn07Range(tocolumn)&&
+        return liesIn07Range(fromcolumn) &&
+                liesIn07Range(fromrow) &&
+                liesIn07Range(tocolumn) &&
                 liesIn07Range(torow);
     }
 
     private static boolean liesIn07Range(int number) {
-        return number>=0 && number<=7;
+        return number >= 0 && number <= 7;
     }
 
     protected Move(Position from, Position to) {

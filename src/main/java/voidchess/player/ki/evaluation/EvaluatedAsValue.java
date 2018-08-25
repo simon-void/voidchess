@@ -32,12 +32,12 @@ final public class EvaluatedAsValue implements Evaluated {
 
     @Override
     public boolean isCloseToByPrimary(Evaluated other) {
-        if(other.isValue()) {
+        if (other.isValue()) {
             float otherPrimaryEvaluation = ((EvaluatedAsValue) other).primaryEvaluation;
-            return isAbsEvaluationEqualOrLess(primaryEvaluation-otherPrimaryEvaluation, PRIMARY_EQUALITY_CUTOF_RADIUS);
-        }else if(other.isDraw()) {
+            return isAbsEvaluationEqualOrLess(primaryEvaluation - otherPrimaryEvaluation, PRIMARY_EQUALITY_CUTOF_RADIUS);
+        } else if (other.isDraw()) {
             return isAbsEvaluationEqualOrLess(primaryEvaluation, PRIMARY_EQUALITY_CUTOF_RADIUS);
-        }else {
+        } else {
             //EvaluateAsMatt
             return false;
         }
@@ -45,12 +45,12 @@ final public class EvaluatedAsValue implements Evaluated {
 
     @Override
     public boolean isCloseToByCombined(Evaluated other) {
-        if(other.isValue()) {
+        if (other.isValue()) {
             float otherCombinedEvaluation = ((EvaluatedAsValue) other).getCombinedEvaluation();
-            return isAbsEvaluationEqualOrLess(getCombinedEvaluation()-otherCombinedEvaluation, FINAL_EQUALITY_CUTOF_RADIUS);
-        }else if(other.isDraw()) {
+            return isAbsEvaluationEqualOrLess(getCombinedEvaluation() - otherCombinedEvaluation, FINAL_EQUALITY_CUTOF_RADIUS);
+        } else if (other.isDraw()) {
             return isAbsEvaluationEqualOrLess(getCombinedEvaluation(), FINAL_EQUALITY_CUTOF_RADIUS);
-        }else {
+        } else {
             //EvaluateAsMatt
             return false;
         }
@@ -58,16 +58,16 @@ final public class EvaluatedAsValue implements Evaluated {
 
     private boolean isAbsEvaluationEqualOrLess(float value, float okRadius) {
         value = Math.abs(value);
-        return value<=okRadius;
+        return value <= okRadius;
     }
 
     @Override
     public int compareTo(Evaluated other) {
-        if(other.isDraw()) {
+        if (other.isDraw()) {
             final float combinedEvaluation = getCombinedEvaluation();
-            return (int)Math.signum(combinedEvaluation);
-        } else if(other.isValue()){
-            return compareWith((EvaluatedAsValue)other);
+            return (int) Math.signum(combinedEvaluation);
+        } else if (other.isValue()) {
+            return compareWith((EvaluatedAsValue) other);
         } else {
             //EvaluateAsMatt
             return -other.compareTo(this);
@@ -75,8 +75,8 @@ final public class EvaluatedAsValue implements Evaluated {
     }
 
     private int compareWith(EvaluatedAsValue other) {
-        final float difference = getCombinedEvaluation()-other.getCombinedEvaluation();
-        return (int)Math.signum(difference);
+        final float difference = getCombinedEvaluation() - other.getCombinedEvaluation();
+        return (int) Math.signum(difference);
     }
 
     float getCombinedEvaluation() {
@@ -101,9 +101,9 @@ final public class EvaluatedAsValue implements Evaluated {
 
     @Override
     public boolean equals(Object other) {
-        if(other instanceof Evaluated) {
-            return compareTo((Evaluated)other)==0;
-        }else {
+        if (other instanceof Evaluated) {
+            return compareTo((Evaluated) other) == 0;
+        } else {
             return false;
         }
     }

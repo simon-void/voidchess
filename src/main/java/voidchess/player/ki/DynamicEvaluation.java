@@ -3,10 +3,10 @@ package voidchess.player.ki;
 import voidchess.board.ChessGameInterface;
 import voidchess.helper.ChessGameSupervisor;
 import voidchess.helper.Move;
+import voidchess.player.ki.evaluation.Evaluated;
 import voidchess.player.ki.evaluation.EvaluatedAsDraw;
 import voidchess.player.ki.evaluation.EvaluatedAsMatt;
 import voidchess.player.ki.evaluation.EvaluatedMove;
-import voidchess.player.ki.evaluation.Evaluated;
 
 import java.util.*;
 
@@ -53,11 +53,11 @@ public class DynamicEvaluation {
     }
 
     private Evaluated getMin(final ChessGameInterface game,
-                         final boolean forWhite,
-                         final int depth,
-                         final boolean lastMove_isChess,
-                         final boolean lastMove_hasHitFigure,
-                         final List<Move> minPossibleMovesBuffer) {
+                             final boolean forWhite,
+                             final int depth,
+                             final boolean lastMove_isChess,
+                             final boolean lastMove_hasHitFigure,
+                             final List<Move> minPossibleMovesBuffer) {
         boolean thisMove_hasHitFigure = game.hasHitFigure();
         boolean thisMove_isChess = game.isCheck(!forWhite);
 
@@ -108,15 +108,15 @@ public class DynamicEvaluation {
         SortedSet<Evaluated> combinedEvaluations = new TreeSet<>();
         final Evaluated minPrimary = primaryEvaluations.first().getValue();
 
-        for(EvaluatedMove evaluatedMove: primaryEvaluations) {
+        for (EvaluatedMove evaluatedMove : primaryEvaluations) {
             final Evaluated primaryEval = evaluatedMove.getValue();
-            if(primaryEval.isCloseToByPrimary(minPrimary)) {
+            if (primaryEval.isCloseToByPrimary(minPrimary)) {
                 game.move(evaluatedMove.getMove());
                 //add secondary Evaluation
                 strategy.addSecondaryEvaluation(game, forWhite, primaryEval);
                 combinedEvaluations.add(primaryEval);
                 game.undo();
-            }else{
+            } else {
                 //the set is sorted so once an element is to big, all the rest are
                 break;
             }
@@ -127,11 +127,11 @@ public class DynamicEvaluation {
     }
 
     private Evaluated getMax(final ChessGameInterface game,
-                         final boolean forWhite,
-                         int depth,
-                         final boolean lastMove_isChess,
-                         final boolean lastMove_hasHitFigure,
-                         final List<Move> maxPossibleMovesBuffer) {
+                             final boolean forWhite,
+                             int depth,
+                             final boolean lastMove_isChess,
+                             final boolean lastMove_hasHitFigure,
+                             final List<Move> maxPossibleMovesBuffer) {
         depth++;
 
         boolean thisMove_hasHitFigure = game.hasHitFigure();
@@ -185,15 +185,15 @@ public class DynamicEvaluation {
         SortedSet<Evaluated> combinedEvaluations = new TreeSet<>();
         final Evaluated maxPrimary = primaryEvaluations.last().getValue();
 
-        for(EvaluatedMove evaluatedMove: primaryEvaluations.descendingSet()) {
+        for (EvaluatedMove evaluatedMove : primaryEvaluations.descendingSet()) {
             final Evaluated primaryEval = evaluatedMove.getValue();
-            if(primaryEval.isCloseToByPrimary(maxPrimary)) {
+            if (primaryEval.isCloseToByPrimary(maxPrimary)) {
                 game.move(evaluatedMove.getMove());
                 //add secondary Evaluation
                 strategy.addSecondaryEvaluation(game, forWhite, primaryEval);
                 combinedEvaluations.add(primaryEval);
                 game.undo();
-            }else{
+            } else {
                 //the set is sorted in reverse so once an element is to small, all the rest are
                 break;
             }

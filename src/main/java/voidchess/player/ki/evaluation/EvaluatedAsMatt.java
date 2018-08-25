@@ -8,7 +8,7 @@ final public class EvaluatedAsMatt implements Evaluated {
     final private boolean isOtherMatt;
 
     public EvaluatedAsMatt(int depth, boolean isOtherMatt) {
-        assert depth>0;
+        assert depth > 0;
 
         this.depth = depth;
         this.isOtherMatt = isOtherMatt;
@@ -31,9 +31,9 @@ final public class EvaluatedAsMatt implements Evaluated {
 
     @Override
     public boolean isCloseToByPrimary(Evaluated other) {
-        if(other.isMatt()) {
+        if (other.isMatt()) {
             EvaluatedAsMatt otherMattValue = (EvaluatedAsMatt) other;
-            return depth==otherMattValue.depth && isOtherMatt==otherMattValue.isOtherMatt;
+            return depth == otherMattValue.depth && isOtherMatt == otherMattValue.isOtherMatt;
         }
         return false;
     }
@@ -45,10 +45,10 @@ final public class EvaluatedAsMatt implements Evaluated {
 
     @Override
     public int compareTo(Evaluated other) {
-        if(other.isMatt()) {
-            return compareWith((EvaluatedAsMatt)other);
-        }else{
-            if(isOtherMatt) {
+        if (other.isMatt()) {
+            return compareWith((EvaluatedAsMatt) other);
+        } else {
+            if (isOtherMatt) {
                 return 1;
             } else {
                 return -1;
@@ -57,19 +57,19 @@ final public class EvaluatedAsMatt implements Evaluated {
     }
 
     private int compareWith(EvaluatedAsMatt other) {
-        if(isOtherMatt!=other.isOtherMatt) {
-            if(isOtherMatt) {
+        if (isOtherMatt != other.isOtherMatt) {
+            if (isOtherMatt) {
                 return 1;
             } else {
                 return -1;
             }
         }
-        if(isOtherMatt) {
+        if (isOtherMatt) {
             //both are isOtherMatt=true
-            return other.depth-depth;
-        }else{
+            return other.depth - depth;
+        } else {
             //both are isOtherMatt=false
-            return depth-other.depth;
+            return depth - other.depth;
         }
     }
 
@@ -86,9 +86,9 @@ final public class EvaluatedAsMatt implements Evaluated {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(16);
-        if(isOtherMatt) {
+        if (isOtherMatt) {
             sb.append("Du bist ");
-        }else{
+        } else {
             sb.append("Ich bin ");
         }
         sb.append("matt in ").append(depth).append('.');
@@ -98,9 +98,9 @@ final public class EvaluatedAsMatt implements Evaluated {
 
     @Override
     public boolean equals(Object other) {
-        if(other instanceof Evaluated) {
-            return compareTo((Evaluated)other)==0;
-        }else {
+        if (other instanceof Evaluated) {
+            return compareTo((Evaluated) other) == 0;
+        } else {
             return false;
         }
     }

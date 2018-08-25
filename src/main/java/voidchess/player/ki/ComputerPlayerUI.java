@@ -153,7 +153,7 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
                 GLASS_DIAMETER,
                 GLASS_DIAMETER);
 
-        g.drawLine(FACE_MIDDLE - GLASS_DISTANCE / 2,                                        //BrillenBügel
+        g.drawLine(FACE_MIDDLE - GLASS_DISTANCE / 2,                                        //BrillenbÃ¼gel
                 EYE_HEIGHT,
                 FACE_MIDDLE + GLASS_DISTANCE / 2,
                 EYE_HEIGHT);
@@ -165,7 +165,7 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
 
     private void setSmileFactor(final Evaluated value) {
         final boolean valueNotInReferenceSet = !referenceSet.contains(value);
-        if(valueNotInReferenceSet) {
+        if (valueNotInReferenceSet) {
             referenceSet.add(value);
         }
 
@@ -186,7 +186,7 @@ public class ComputerPlayerUI extends AbstractComputerPlayerUI {
             smileFactor = BIG_GRIEF;
         }
 
-        if(valueNotInReferenceSet) {
+        if (valueNotInReferenceSet) {
             referenceSet.remove(value);
         }
     }

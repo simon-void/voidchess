@@ -1,6 +1,7 @@
 package voidchess.helper;
 
-import java.util.*;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 /**
@@ -9,7 +10,7 @@ import java.util.stream.Stream;
 public class TreeNode<T extends Comparable<T>> implements Comparable<TreeNode> {
 
     T data;
-    SortedMap<T,TreeNode<T>> childrenByData;
+    SortedMap<T, TreeNode<T>> childrenByData;
 
     public static <T extends Comparable<T>> TreeNode<T> getRoot(Class<T> dataClass) {
         return new TreeNode<>(null);
@@ -22,7 +23,7 @@ public class TreeNode<T extends Comparable<T>> implements Comparable<TreeNode> {
 
     public TreeNode<T> addChild(T data) {
         TreeNode<T> childNode = childrenByData.get(data);
-        if(childNode==null) {
+        if (childNode == null) {
             childNode = new TreeNode<>(data);
             childrenByData.put(data, childNode);
         }
@@ -39,7 +40,7 @@ public class TreeNode<T extends Comparable<T>> implements Comparable<TreeNode> {
 
     public Stream<T> getChildData() {
         return childrenByData.values().stream().map(
-                (TreeNode<T> node)->node.data
+                (TreeNode<T> node) -> node.data
         );
     }
 

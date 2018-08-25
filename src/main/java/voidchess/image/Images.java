@@ -4,7 +4,8 @@ import voidchess.helper.ResourceFinder;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class Images {
     private final static Image[] images = new Image[ImageType.values().length];
@@ -32,7 +33,7 @@ public class Images {
     }
 
     private static Image readFromImageDir(String fileName) {
-        final String relativePath = "image/"+fileName;
+        final String relativePath = "image/" + fileName;
         try {
             InputStream imageStream = ResourceFinder.getResourceStream(relativePath);
             final Image img = ImageIO.read(imageStream);

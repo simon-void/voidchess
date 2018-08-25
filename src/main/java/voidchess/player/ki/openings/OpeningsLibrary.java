@@ -28,7 +28,7 @@ public class OpeningsLibrary {
 
     public List<Move> nextMove(String history) {
         TreeNode<String> currentNode = openingsRootNode;
-        if(!history.equals("")) {
+        if (!history.equals("")) {
             String[] moves = history.split(",");
             for (String move : moves) {
                 move = move.trim();
@@ -47,7 +47,7 @@ public class OpeningsLibrary {
 //            movesFound.add(move);
 //        }
         List<Move> movesFound = moveDescriptionsFound.map(
-                (String moveDesc)->Move.get(moveDesc)
+                (String moveDesc) -> Move.get(moveDesc)
         ).collect(Collectors.toList());
         return movesFound;
     }
@@ -56,16 +56,17 @@ public class OpeningsLibrary {
         List<String> openingSequences = new LinkedList<>();
         try {
             InputStream fileStream = ResourceFinder.getResourceStream(relativePathToOpeningsFile);
-            try(BufferedReader br = new BufferedReader(new InputStreamReader(fileStream))) {
-                for(String line; (line = br.readLine()) != null; ) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(fileStream))) {
+                for (String line; (line = br.readLine()) != null; ) {
                     line = line.trim();
-                    if(line.length()==0 || line.startsWith("#")) {
+                    if (line.length() == 0 || line.startsWith("#")) {
                         continue;
                     }
                     openingSequences.add(line);
                 }
             }
-        }catch (Exception e) {}
+        } catch (Exception e) {
+        }
         return openingSequences;
     }
 
@@ -73,29 +74,29 @@ public class OpeningsLibrary {
         TreeNode<String> root = TreeNode.getRoot(String.class);
 
         outerloop:
-        for(String openingSequence: openingSequences) {
+        for (String openingSequence : openingSequences) {
             TreeNode<String> currentNode = root;
             List<String> moves = splitAndCheckOpeningSequence(openingSequence);
-            for(String move: moves) {
+            for (String move : moves) {
                 move = move.trim();
                 currentNode = currentNode.addChild(move);
             }
         }
-        
+
         return root;
     }
 
     static List<String> splitAndCheckOpeningSequence(String openingSequence) {
         openingSequence = openingSequence.trim();
-        if(openingSequence.isEmpty()) {
+        if (openingSequence.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
         final String SEPARATOR = ",";
-        if(openingSequence.startsWith(SEPARATOR)) {
-            throw new IllegalArgumentException("opening sequence starts with seperator: "+openingSequence);
+        if (openingSequence.startsWith(SEPARATOR)) {
+            throw new IllegalArgumentException("opening sequence starts with seperator: " + openingSequence);
         }
-        if(openingSequence.endsWith(SEPARATOR)) {
-            throw new IllegalArgumentException("opening sequence ends with seperator: "+openingSequence);
+        if (openingSequence.endsWith(SEPARATOR)) {
+            throw new IllegalArgumentException("opening sequence ends with seperator: " + openingSequence);
         }
 
         String[] textMoves = openingSequence.split(SEPARATOR);
@@ -103,19 +104,19 @@ public class OpeningsLibrary {
 
         ChessGame game = new ChessGame();
 
-        for(String textMove: textMoves) {
+        for (String textMove : textMoves) {
             textMove = textMove.trim();
-            if(!Move.isValid(textMove)) {
+            if (!Move.isValid(textMove)) {
                 throw new IllegalArgumentException(
-                        "illegal move format'"+textMove+"' in opening sequence: "+openingSequence);
+                        "illegal move format'" + textMove + "' in opening sequence: " + openingSequence);
             }
             Move move = Move.get(textMove);
             boolean isMoveExecutable = game.isMoveable(
                     move.from, move.to, game.isWhiteTurn()
             );
-            if(!isMoveExecutable) {
+            if (!isMoveExecutable) {
                 throw new IllegalArgumentException(
-                        "illegal move '"+textMove+"' in opening sequence: "+openingSequence);
+                        "illegal move '" + textMove + "' in opening sequence: " + openingSequence);
             }
             game.move(move);
 

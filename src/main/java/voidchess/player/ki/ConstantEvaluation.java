@@ -7,7 +7,7 @@ import voidchess.player.ki.evaluation.EvaluatedAsDraw;
 /**
  * usefull for Profile purposes (only DynamicEvaluation remains)
  *
- * @author Stephan Schröder
+ * @author Stephan SchrÃ¶der
  */
 
 public class ConstantEvaluation implements StaticEvaluationInterface {

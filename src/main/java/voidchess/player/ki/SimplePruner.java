@@ -7,7 +7,7 @@ public class SimplePruner implements SearchTreePruner {
     final private int NO_HIT_RADIUS, FIGURE_HIT_RADIUS, CHESS_RADIUS;
 
     SimplePruner() {
-        this(1, 2, 2);   //vergrößern dieser Variablen->bessere Ki,mehr Zeit ötig
+        this(1, 2, 2);   //vergrÃ¶ÃŸern dieser Variablen->bessere Ki,mehr Zeit ï¿½tig
     }
 
     public SimplePruner(int no_hit_radius, int figure_hit_radius, int chess_radius) {
@@ -44,12 +44,12 @@ public class SimplePruner implements SearchTreePruner {
                                             boolean lastMove_hasHitFigure) {
         if (depth < NO_HIT_RADIUS) return false;                                    //keine Verluste
         if (depth < FIGURE_HIT_RADIUS &&
-                (thisMove_hasHitFigure)//eine Figure wurde während des
-                )
+                (thisMove_hasHitFigure)//eine Figure wurde wÃ¤hrend des
+        )
             return false;                                                                                    //letzten Halbzuges geschlagen
         if (depth < CHESS_RADIUS &&
-                (thisMove_isChess || lastMove_isChess)                                //Schach gesetzt während des
-                )
+                (thisMove_isChess || lastMove_isChess)                                //Schach gesetzt wÃ¤hrend des
+        )
             return false;                                                                                    //letzten Halbzuges
 
         return true;

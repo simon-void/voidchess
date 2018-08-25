@@ -8,5 +8,6 @@ import voidchess.player.ki.evaluation.Evaluated;
  */
 public interface StaticEvaluationInterface {
     public abstract Evaluated getPrimaryEvaluation(ChessGameInterface game, boolean forWhite);
+
     public abstract void addSecondaryEvaluation(ChessGameInterface game, boolean forWhite, Evaluated withPrimaryEvaluation);
 }

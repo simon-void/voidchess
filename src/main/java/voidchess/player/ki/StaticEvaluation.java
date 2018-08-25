@@ -27,7 +27,7 @@ public class StaticEvaluation implements StaticEvaluationInterface {
 
     @Override
     public void addSecondaryEvaluation(ChessGameInterface game, boolean forWhite, Evaluated withPrimaryEvaluation) {
-        if(withPrimaryEvaluation.isValue() && withPrimaryEvaluation.needsSecondaryEvaluation()) {
+        if (withPrimaryEvaluation.isValue() && withPrimaryEvaluation.needsSecondaryEvaluation()) {
             float secondaryEvaluation = evaluateRuledArea(game, forWhite)
                     + evaluatePosition(game, forWhite);
             withPrimaryEvaluation.setSecondaryEvaluation(secondaryEvaluation);
@@ -170,7 +170,7 @@ public class StaticEvaluation implements StaticEvaluationInterface {
 
     final static float DEFENSE_VALUE = 0.10f;          //Bonuswert, wenn Bauer anderen Bauern deckt,bzw.gedeckt wird
     final static float NEXT_TO_VALUE = 0.06f;           //Bonuswert, wenn Bauer einen Nachbarn hat
-    final static float UNPROTECTED_BORDER_PAWN_VALUE = -0.2f; //Bestrafung für ungedeckte Bauern am Rand
+    final static float UNPROTECTED_BORDER_PAWN_VALUE = -0.2f; //Bestrafung fÃ¼r ungedeckte Bauern am Rand
 
     private float evaluatePawnDefense(ChessGameInterface game, Position pos) {
 

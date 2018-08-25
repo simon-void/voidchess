@@ -1,11 +1,10 @@
 package voidchess.player.ki.evaluation;
 
-import voidchess.helper.Move;
 import org.testng.annotations.Test;
+import voidchess.helper.Move;
 
 import java.util.Iterator;
 import java.util.NavigableSet;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static org.testng.Assert.assertEquals;
@@ -20,7 +19,7 @@ public class EvaluatedMoveTest {
         EvaluatedMove eMove = new EvaluatedMove(move, new EvaluatedAsValue(value));
 
         assertEquals(move, eMove.getMove());
-        assertEquals(value, ((EvaluatedAsValue)(eMove.getValue())).getCombinedEvaluation());
+        assertEquals(value, ((EvaluatedAsValue) (eMove.getValue())).getCombinedEvaluation());
     }
 
     @Test
@@ -30,10 +29,10 @@ public class EvaluatedMoveTest {
         EvaluatedMove e2 = new EvaluatedMove(Move.get("b2-b4"), new EvaluatedAsValue(-.1f));
         EvaluatedMove e3 = new EvaluatedMove(Move.get("f2-f4"), new EvaluatedAsValue(1.2f));
 
-        assertTrue(e1_1.compareTo(e1_1)==0);
-        assertTrue(e1_1.compareTo(e1_2)==0);
-        assertTrue(e1_1.compareTo(e2)>0);
-        assertTrue(e1_1.compareTo(e3)<0);
+        assertTrue(e1_1.compareTo(e1_1) == 0);
+        assertTrue(e1_1.compareTo(e1_2) == 0);
+        assertTrue(e1_1.compareTo(e2) > 0);
+        assertTrue(e1_1.compareTo(e3) < 0);
     }
 
     @Test

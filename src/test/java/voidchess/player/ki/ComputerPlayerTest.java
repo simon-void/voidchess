@@ -1,10 +1,10 @@
 package voidchess.player.ki;
 
+import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.helper.ChessGameSupervisorDummy;
 import voidchess.helper.Move;
 import voidchess.helper.RuntimeFacade;
-import org.testng.annotations.Test;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -139,7 +139,7 @@ public class ComputerPlayerTest {
 
         try {
             dynamicEvaluation.evaluateMove(game, move);
-            // Invariante: evaluateMove darf game nicht ändern
+            // Invariante: evaluateMove darf game nicht Ã¤ndern
             String msg = "after Move:" + move.toString() + " History:" + game.getHistory();
             assertEquals(msg, initDescription, game.toString());
         } catch (Exception e) {
@@ -189,7 +189,7 @@ public class ComputerPlayerTest {
                 + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
         // loadTest( des );
 
-        // Grundaufstellung mit Bauern vor König und ohne Läufer
+        // Grundaufstellung mit Bauern vor KÃ¶nig und ohne LÃ¤ufer
         des = "white 0 Rock-white-a1-0 Knight-white-b1 "
                 + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rock-white-h1-0 "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
@@ -197,7 +197,7 @@ public class ComputerPlayerTest {
                 + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rock-black-h8-0";
         // loadTest( des );
 
-        // Grundaufstellung mit Bauern vor König und ohne Königsläufer
+        // Grundaufstellung mit Bauern vor KÃ¶nig und ohne KÃ¶nigslÃ¤ufer
         des = "white 0 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "
                 + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rock-white-h1-0 "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
@@ -206,7 +206,7 @@ public class ComputerPlayerTest {
                 + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rock-black-h8-0";
         // loadTest( des );
 
-        // Grundaufstellung mit Bauern vor König
+        // Grundaufstellung mit Bauern vor KÃ¶nig
         des = "white 0 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "
                 + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
@@ -215,7 +215,7 @@ public class ComputerPlayerTest {
                 + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
         // loadTest( des );
 
-        // Grundaufstellung mit Bauern vor König und ohne Damen
+        // Grundaufstellung mit Bauern vor KÃ¶nig und ohne Damen
         des = "white 0 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "
                 + "King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
@@ -225,9 +225,9 @@ public class ComputerPlayerTest {
         // loadTest( des );
 
         // Zeit von
-        // Grundaufstellung mit Bauern vor König und ohne Königsläufer
-        // ist in etwa so groß wie
-        // Grundaufstellung mit Bauern vor König und ohne Dame!!! Warum?
+        // Grundaufstellung mit Bauern vor KÃ¶nig und ohne KÃ¶nigslÃ¤ufer
+        // ist in etwa so groÃŸ wie
+        // Grundaufstellung mit Bauern vor KÃ¶nig und ohne Dame!!! Warum?
         System.exit(0);
     }
 

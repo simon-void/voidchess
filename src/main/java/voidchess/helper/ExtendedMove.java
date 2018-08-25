@@ -5,8 +5,7 @@ import voidchess.figures.Figure;
 /**
  * @author stephan
  */
-final public class ExtendedMove extends Move
-{
+final public class ExtendedMove extends Move {
     final private Figure pawnHitByEnpassantOrRochadeRock;
     final private Figure hitFigure;
     final private boolean white;

@@ -5,7 +5,6 @@ import voidchess.player.ki.DynamicEvaluation;
 import voidchess.player.ki.evaluation.EvaluatedMove;
 
 import java.util.NavigableSet;
-import java.util.SortedSet;
 
 public interface ConcurrencyStrategy {
     /**

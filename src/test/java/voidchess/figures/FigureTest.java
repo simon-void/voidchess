@@ -1,11 +1,11 @@
 package voidchess.figures;
 
+import org.testng.annotations.Test;
 import voidchess.board.ChessGameInterface;
 import voidchess.board.LastMoveProvider;
 import voidchess.board.SimpleArrayBoard;
 import voidchess.helper.Move;
 import voidchess.helper.Position;
-import org.testng.annotations.Test;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -220,7 +220,7 @@ public class FigureTest {
         Byte kingByte = new Byte(king.getTypeInfo());
 
         List<Byte> figureByteList = new LinkedList<>();
-        //Die byte-Werte müssen paarweise disjunkt sein
+        //Die byte-Werte mÃ¼ssen paarweise disjunkt sein
         figureByteList.add(pawnByte);
         assertFalse(
                 figureByteList.contains(rockByte),

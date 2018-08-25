@@ -81,7 +81,7 @@ public class Pawn extends Figure {
                 if (!game.isFreeArea(leftPosition)
                         && game.getFigure(leftPosition).canBeHitByEnpasent()
                         && hasDifferentColor(game.getFigure(leftPosition))
-                        ) {
+                ) {
                     return true;
                 }
             }
@@ -97,7 +97,7 @@ public class Pawn extends Figure {
                 if (!game.isFreeArea(rightPosition)
                         && game.getFigure(rightPosition).canBeHitByEnpasent()
                         && hasDifferentColor(game.getFigure(rightPosition))
-                        ) {
+                ) {
                     return true;
                 }
             }

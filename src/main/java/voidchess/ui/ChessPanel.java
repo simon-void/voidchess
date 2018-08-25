@@ -90,7 +90,7 @@ public class ChessPanel
         difficultyPanel = new DifficultyPanel(computerPlayer);
         coresPanel = new CoresPanel(computerPlayer);
 
-        if(!coresPanel.hasOptions()) {
+        if (!coresPanel.hasOptions()) {
             return difficultyPanel;
         }
 

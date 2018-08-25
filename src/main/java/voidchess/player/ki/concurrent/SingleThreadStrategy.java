@@ -9,7 +9,6 @@ import voidchess.player.ki.evaluation.EvaluatedMove;
 
 import java.util.List;
 import java.util.NavigableSet;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 class SingleThreadStrategy extends AbstractConcurrencyStrategy {

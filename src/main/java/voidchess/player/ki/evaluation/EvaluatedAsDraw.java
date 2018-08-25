@@ -6,7 +6,8 @@ package voidchess.player.ki.evaluation;
 final public class EvaluatedAsDraw implements Evaluated {
     final public static Evaluated INSTANCE = new EvaluatedAsDraw();
 
-    private EvaluatedAsDraw() {}
+    private EvaluatedAsDraw() {
+    }
 
     @Override
     public boolean isMatt() {
@@ -35,7 +36,7 @@ final public class EvaluatedAsDraw implements Evaluated {
 
     @Override
     public boolean isCloseToByPrimary(Evaluated other) {
-        if(other.isDraw()) {
+        if (other.isDraw()) {
             return true;
         }
         return other.isCloseToByPrimary(this);
@@ -43,7 +44,7 @@ final public class EvaluatedAsDraw implements Evaluated {
 
     @Override
     public boolean isCloseToByCombined(Evaluated other) {
-        if(other.isDraw()) {
+        if (other.isDraw()) {
             return true;
         }
         return other.isCloseToByCombined(this);
@@ -51,9 +52,9 @@ final public class EvaluatedAsDraw implements Evaluated {
 
     @Override
     public int compareTo(Evaluated other) {
-        if(other.isDraw()) {
+        if (other.isDraw()) {
             return 0;
-        }else{
+        } else {
             return -other.compareTo(this);
         }
     }
@@ -65,9 +66,9 @@ final public class EvaluatedAsDraw implements Evaluated {
 
     @Override
     public boolean equals(Object other) {
-        if(other instanceof Evaluated) {
-            return compareTo((Evaluated)other)==0;
-        }else {
+        if (other instanceof Evaluated) {
+            return compareTo((Evaluated) other) == 0;
+        } else {
             return false;
         }
     }

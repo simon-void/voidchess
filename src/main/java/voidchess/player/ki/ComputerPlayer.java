@@ -4,15 +4,18 @@ import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
 import voidchess.helper.Position;
 import voidchess.helper.RuntimeFacade;
-import voidchess.player.ki.evaluation.Evaluated;
-import voidchess.player.ki.openings.OpeningsLibrary;
-import voidchess.ui.TableInterface;
 import voidchess.player.PlayerInterface;
 import voidchess.player.ki.concurrent.ConcurrencyStrategy;
 import voidchess.player.ki.concurrent.ConcurrencyStrategyFactory;
+import voidchess.player.ki.evaluation.Evaluated;
 import voidchess.player.ki.evaluation.EvaluatedMove;
+import voidchess.player.ki.openings.OpeningsLibrary;
+import voidchess.ui.TableInterface;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NavigableSet;
+import java.util.Random;
 
 /**
  * @author stephan
@@ -58,17 +61,17 @@ public class ComputerPlayer
         //lets see if the library contains a next move
         EvaluatedMove nextMove = lookUpNextMove();
         //we can always compute a next move
-        if(nextMove==null) {
+        if (nextMove == null) {
             nextMove = computeNextMove();
         }
         return nextMove;
     }
 
     private EvaluatedMove lookUpNextMove() {
-        if(useLibrary) {
+        if (useLibrary) {
             String history = game.getCompleteHistory();
             List<Move> possibleMoves = openingsLibrary.nextMove(history);
-            if(!possibleMoves.isEmpty()) {
+            if (!possibleMoves.isEmpty()) {
                 //display that the computer is working
                 ui.setProgress(0, 1);
                 //pick a random move
@@ -77,7 +80,7 @@ public class ComputerPlayer
                 boolean isWhitePlayer = game.isWhiteTurn();
                 game.move(randomMove);
                 Evaluated evaluation = standardEvaluation.getPrimaryEvaluation(game, isWhitePlayer);
-                standardEvaluation.addSecondaryEvaluation(game,isWhitePlayer,evaluation);
+                standardEvaluation.addSecondaryEvaluation(game, isWhitePlayer, evaluation);
                 game.undo();
 
                 //wait before playing so that the user can clearly see the computer's move
@@ -134,7 +137,7 @@ public class ComputerPlayer
         EvaluatedMove chosenMove = bestMove;
         while (evaluation.hasNext()) {
             if (Math.random() < 0.6) break;
-                EvaluatedMove tempMove = evaluation.next();
+            EvaluatedMove tempMove = evaluation.next();
             if (tempMove.getValue().isCloseToByCombined(bestMove.getValue())) {
                 chosenMove = tempMove;
             } else {
@@ -193,6 +196,7 @@ public class ComputerPlayer
     private void wait(final int milliseconds) {
         try {
             Thread.sleep(milliseconds);
-        }catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+        }
     }
 }

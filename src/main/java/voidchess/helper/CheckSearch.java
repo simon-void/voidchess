@@ -314,7 +314,7 @@ public class CheckSearch {
         if (isDoubleHorizontalCheckAfterPawnTransformation(game, kingPos, attackerPos, isWhite)) return true;
 
         //da die Bauerntransformation jetzt ausgeschlossen ist,
-        //darf nach dem Fund eines Angreifer aufgehört werden
+        //darf nach dem Fund eines Angreifer aufgehÃ¶rt werden
         for (int row = kingPos.row + 1; row < 8; row++) {                        //vertikale Reihe
             final Position pos = Position.get(row, kingPos.column);
             final Figure figure = game.getFigure(pos);

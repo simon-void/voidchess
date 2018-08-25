@@ -5,10 +5,16 @@ package voidchess.player.ki.evaluation;
  */
 public interface Evaluated extends Comparable<Evaluated> {
     boolean isMatt();
+
     boolean isDraw();
+
     boolean isValue();
+
     void setSecondaryEvaluation(float secondaryEvaluation);
+
     boolean needsSecondaryEvaluation();
+
     boolean isCloseToByPrimary(Evaluated other);
+
     boolean isCloseToByCombined(Evaluated other);
 }

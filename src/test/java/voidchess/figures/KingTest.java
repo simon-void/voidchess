@@ -1,11 +1,11 @@
 package voidchess.figures;
 
+import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.board.LastMoveProvider;
 import voidchess.board.SimpleArrayBoard;
 import voidchess.helper.Move;
 import voidchess.helper.Position;
-import org.testng.annotations.Test;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -4,11 +4,10 @@
 
 package voidchess.player.ki;
 
+import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.helper.Position;
-import org.testng.annotations.Test;
 import voidchess.player.ki.evaluation.Evaluated;
-import voidchess.player.ki.evaluation.EvaluatedAsValue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class StaticSpaceEvaluationTest {
         ChessGame game2 = new ChessGame(des);
 
         Evaluated evaluateForWhite2 = evaluation.getPrimaryEvaluation(game2, true);
-        assertTrue(evaluateForWhite2.compareTo(evaluateForWhite)<0);
+        assertTrue(evaluateForWhite2.compareTo(evaluateForWhite) < 0);
     }
 
     private float getCombinedEvaluation(Evaluated evaluated) {

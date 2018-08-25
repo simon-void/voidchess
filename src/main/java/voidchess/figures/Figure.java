@@ -70,7 +70,7 @@ public abstract class Figure {
         return (byte) (typeIndex + (isWhite ? 0 : colorvalue));
     }
 
-    //gibt nur den Name der Klasse zurück(ohne package-Namen)
+    //gibt nur den Name der Klasse zurï¿½ck(ohne package-Namen)
     abstract protected String getType();
 
     public String toString() {
@@ -97,7 +97,7 @@ public abstract class Figure {
 
     protected boolean isPassiveBound(Position to, SimpleChessBoardInterface game) {
         Position kingPos = game.getKingPosition(isWhite);
-        //falls diese Figur nicht mit dem König auf einer Vertikalen,Horizontalen oder
+        //falls diese Figur nicht mit dem KÃ¶nig auf einer Vertikalen,Horizontalen oder
         //Diagonalen steht, ist sie nicht gebunden
         if (!CheckSearch.areDiagonalPositions(position, kingPos)
                 && !CheckSearch.areStraightPositions(position, kingPos)) {
@@ -111,7 +111,7 @@ public abstract class Figure {
         int column = position.column + column_step;
         boolean isToPositionInBetweenKingAndAttacker = false;
 
-        //falls eine Figure zwischen König und dieser steht, ist diese nicht gebunden
+        //falls eine Figure zwischen KÃ¶nig und dieser steht, ist diese nicht gebunden
         while (row != kingPos.row || column != kingPos.column) {
             Position middlePos = Position.get(row, column);
             if (!game.isFreeArea(middlePos)) return false;
@@ -123,7 +123,7 @@ public abstract class Figure {
         row = position.row - row_step;
         column = position.column - column_step;
 
-        //nur falls in Verlängerung der Königslinie eine feindliche Figur steht(Dame,Läufer,Turm)
+        //nur falls in Verlï¿½ngerung der KÃ¶nigslinie eine feindliche Figur steht(Dame,LÃ¤ufer,Turm)
         //und das Ziel des Zuges nicht auf dieser Linie liegt, ist diese Figur gebunden
         while (row >= 0 && row < 8 && column >= 0 && column < 8) {
             Position middlePos = Position.get(row, column);

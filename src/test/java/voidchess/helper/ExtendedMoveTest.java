@@ -1,8 +1,8 @@
 package voidchess.helper;
 
-import voidchess.figures.Pawn;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import voidchess.figures.Pawn;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;

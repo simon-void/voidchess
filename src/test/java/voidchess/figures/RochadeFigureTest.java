@@ -1,8 +1,8 @@
 package voidchess.figures;
 
+import org.testng.annotations.Test;
 import voidchess.helper.Move;
 import voidchess.helper.Position;
-import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 

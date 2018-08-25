@@ -51,7 +51,7 @@ public class King extends RochadeFigure {
                         return false;
                     }
                 } else {
-                    //Die Felder bis zur g-Spalte müssen bis auf den Turm leer sein
+                    //Die Felder bis zur g-Spalte mÃ¼ssen bis auf den Turm leer sein
                     for (int column = position.column + 1; column < 7; column++) {
                         Position midlePosition = Position.get(ground_row, column);
                         if (!game.isFreeArea(midlePosition) &&
@@ -74,13 +74,13 @@ public class King extends RochadeFigure {
             Figure toFigure = game.getFigure(to);
 
             if (toFigure.canParticipateInRochade() && toFigure.isWhite == isWhite) {
-                //kommt der König auf die c-Linie?
-                if (position.column == 1) {        //auf der a-Linie kann der König nicht stehen, da dort Turm sein muß
+                //kommt der KÃ¶nig auf die c-Linie?
+                if (position.column == 1) {        //auf der a-Linie kann der KÃ¶nig nicht stehen, da dort Turm sein muï¿½
                     if (!game.isFreeArea(Position.get(ground_row, 2))) {
                         return false;
                     }
                 } else if (position.column > 2) {
-                    //Die Felder bis zur c-Spalte müssen bis auf den Turm leer sein
+                    //Die Felder bis zur c-Spalte mÃ¼ssen bis auf den Turm leer sein
                     for (int column = position.column - 1; column >= 2; column--) {
                         Position midlePosition = Position.get(ground_row, column);
                         if (!game.isFreeArea(midlePosition) &&
@@ -166,7 +166,7 @@ public class King extends RochadeFigure {
                 if (!checkPosition.equalsPosition(position) &&
                         (game.isFreeArea(checkPosition) ||
                                 game.getFigure(checkPosition).isWhite != isWhite)
-                        ) {
+                ) {
                     result.add(Move.get(position, checkPosition));
                 }
             }

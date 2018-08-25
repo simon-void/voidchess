@@ -93,7 +93,7 @@ public class HumanPlayer
     public void setIsPlaying(boolean isPlaying) {
         isMyTurn = isPlaying && isWhitePlayer;
 
-        if(!isPlaying) {
+        if (!isPlaying) {
             //removes selected fields even if game was aborted
             dropMarkedPositions();
         }

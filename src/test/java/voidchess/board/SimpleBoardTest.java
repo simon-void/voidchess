@@ -1,10 +1,10 @@
 package voidchess.board;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import voidchess.figures.Figure;
 import voidchess.helper.CheckStatus;
 import voidchess.helper.Position;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.List;
 

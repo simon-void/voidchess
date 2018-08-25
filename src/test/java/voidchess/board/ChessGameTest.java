@@ -1,5 +1,7 @@
 package voidchess.board;
 
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import voidchess.figures.Bishop;
 import voidchess.figures.Figure;
 import voidchess.figures.King;
@@ -7,8 +9,6 @@ import voidchess.helper.ChessGameSupervisorDummy;
 import voidchess.helper.ChessGameSupervisorMock;
 import voidchess.helper.Move;
 import voidchess.helper.Position;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -375,8 +375,8 @@ public class ChessGameTest {
 
     @Test
     public void testIsDrawBecauseOfThreeTimesSamePosition() {
-        //Ich gehe davon aus, daﬂ es ein Unterschied in der Stellung ist,
-        //ob der Kˆnig noch rockadef‰hig ist, oder nicht
+        //Ich gehe davon aus, da√ü es ein Unterschied in der Stellung ist,
+        //ob der K√∂nig noch rockadef√§hig ist, oder nicht
         String des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 "
                 + "Knight-white-c2 Knight-white-e7 King-black-e8-0";
         ChessGame game = new ChessGame(des);

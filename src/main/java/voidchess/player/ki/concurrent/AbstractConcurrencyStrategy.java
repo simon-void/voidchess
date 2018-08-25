@@ -9,7 +9,6 @@ import voidchess.player.ki.evaluation.EvaluatedMove;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableSet;
-import java.util.SortedSet;
 
 abstract class AbstractConcurrencyStrategy implements ConcurrencyStrategy {
     final private AbstractComputerPlayerUI ui;
