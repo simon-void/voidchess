@@ -10,13 +10,13 @@ import static org.testng.Assert.*;
 public class MoveTest {
     @Test
     public void testToString() {
-        Move move = Move.get(Position.get("a1"), Position.get("h8"));
+        Move move = Move.get(Position.Companion.get("a1"), Position.Companion.get("h8"));
         assertEquals(move.toString(), "a1-h8");
     }
 
     @Test
     public void testConstructors() {
-        Move.get(Position.get("b2"), Position.get("b3"));
+        Move.get(Position.Companion.get("b2"), Position.Companion.get("b3"));
         Move.get("b2-b3");
     }
 

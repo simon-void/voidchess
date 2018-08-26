@@ -118,18 +118,18 @@ public class StaticEvaluation implements StaticEvaluationInterface {
         final boolean isWhite = game.getFigure(pos).isWhite();
         final int startRow = isWhite ? 0 : 7;
 
-        if (pos.row == startRow &&
-                (pos.column == 2 || pos.column == 5)) {
+        if (pos.getRow() == startRow &&
+                (pos.getColumn() == 2 || pos.getColumn() == 5)) {
             return BISHOP_ON_STARTPOSITION_PUNISHMENT;
         }
 
 
         final int blockingRow = isWhite ? 2 : 5;
         final int blockedPawnRow = isWhite ? 1 : 6;
-        Position possiblePawn = Position.get(blockedPawnRow, pos.column);
+        Position possiblePawn = Position.Companion.get(blockedPawnRow, pos.getColumn());
 
-        if (pos.row == blockingRow &&
-                (pos.column == 3 || pos.column == 4) &&
+        if (pos.getRow() == blockingRow &&
+                (pos.getColumn() == 3 || pos.getColumn() == 4) &&
                 containsFigureOfColor(game, Pawn.class, possiblePawn, isWhite)) {
             return BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT;
         }
@@ -141,7 +141,7 @@ public class StaticEvaluation implements StaticEvaluationInterface {
 
     private float evaluateKnight(ChessGameInterface game, Position pos) {
 
-        if (pos.row == 0 || pos.row == 7 || pos.column == 0 || pos.column == 7) {
+        if (pos.getRow() == 0 || pos.getRow() == 7 || pos.getColumn() == 0 || pos.getColumn() == 7) {
             return BORDER_KNIGHT_PUNISHMENT;
         }
         return 0;
@@ -162,7 +162,7 @@ public class StaticEvaluation implements StaticEvaluationInterface {
 
         Figure pawn = game.getFigure(pos);
         int startRow = pawn.isWhite() ? 1 : 6;
-        int movesGone = Math.abs(pos.row - startRow);
+        int movesGone = Math.abs(pos.getRow() - startRow);
         additionalPawnValue += movesGone * MOVES_GONE_VALUE;
 
         return additionalPawnValue;
@@ -178,13 +178,13 @@ public class StaticEvaluation implements StaticEvaluationInterface {
         Figure pawn = game.getFigure(pos);
         final boolean isWhite = pawn.isWhite();
 
-        int forwardRow = isWhite ? pos.row + 1 : pos.row - 1;
-        int backwardRow = isWhite ? pos.row - 1 : pos.row + 1;
+        int forwardRow = isWhite ? pos.getRow() + 1 : pos.getRow() - 1;
+        int backwardRow = isWhite ? pos.getRow() - 1 : pos.getRow() + 1;
 
-        if (pos.column != 0) {
-            Position leftForwardPosition = Position.get(forwardRow, pos.column - 1);
-            Position leftBackwardPosition = Position.get(backwardRow, pos.column - 1);
-            Position leftPosition = Position.get(pos.row, pos.column - 1);
+        if (pos.getColumn() != 0) {
+            Position leftForwardPosition = Position.Companion.get(forwardRow, pos.getColumn() - 1);
+            Position leftBackwardPosition = Position.Companion.get(backwardRow, pos.getColumn() - 1);
+            Position leftPosition = Position.Companion.get(pos.getRow(), pos.getColumn() - 1);
             if (containsFigureOfColor(game, Pawn.class, leftForwardPosition, isWhite)) {
                 return DEFENSE_VALUE;
             }
@@ -195,9 +195,9 @@ public class StaticEvaluation implements StaticEvaluationInterface {
                 return NEXT_TO_VALUE;
             }
         } else {
-            Position rightPosition = Position.get(pos.row, 1);
-            Position rightForwardPosition = Position.get(forwardRow, 1);
-            Position rightBackwardPosition = Position.get(backwardRow, 1);
+            Position rightPosition = Position.Companion.get(pos.getRow(), 1);
+            Position rightForwardPosition = Position.Companion.get(forwardRow, 1);
+            Position rightBackwardPosition = Position.Companion.get(backwardRow, 1);
             if (!(containsFigureOfColor(game, Pawn.class, rightPosition, isWhite)
                     || containsFigureOfColor(game, Pawn.class, rightForwardPosition, isWhite)
                     || containsFigureOfColor(game, Pawn.class, rightBackwardPosition, isWhite)
@@ -206,10 +206,10 @@ public class StaticEvaluation implements StaticEvaluationInterface {
             }
         }
 
-        if (pos.column != 7) {
-            Position rightForwardPosition = Position.get(forwardRow, pos.column + 1);
-            Position rightBackwardPosition = Position.get(backwardRow, pos.column + 1);
-            Position rightPosition = Position.get(pos.row, pos.column + 1);
+        if (pos.getColumn() != 7) {
+            Position rightForwardPosition = Position.Companion.get(forwardRow, pos.getColumn() + 1);
+            Position rightBackwardPosition = Position.Companion.get(backwardRow, pos.getColumn() + 1);
+            Position rightPosition = Position.Companion.get(pos.getRow(), pos.getColumn() + 1);
             if (containsFigureOfColor(game, Pawn.class, rightForwardPosition, isWhite)) {
                 return DEFENSE_VALUE;
             }
@@ -220,9 +220,9 @@ public class StaticEvaluation implements StaticEvaluationInterface {
                 return NEXT_TO_VALUE;
             }
         } else {
-            Position leftPosition = Position.get(pos.row, 6);
-            Position leftForwardPosition = Position.get(forwardRow, 6);
-            Position leftBackwardPosition = Position.get(backwardRow, 6);
+            Position leftPosition = Position.Companion.get(pos.getRow(), 6);
+            Position leftForwardPosition = Position.Companion.get(forwardRow, 6);
+            Position leftBackwardPosition = Position.Companion.get(backwardRow, 6);
             if (!(containsFigureOfColor(game, Pawn.class, leftPosition, isWhite)
                     || containsFigureOfColor(game, Pawn.class, leftForwardPosition, isWhite)
                     || containsFigureOfColor(game, Pawn.class, leftBackwardPosition, isWhite)
@@ -272,11 +272,11 @@ public class StaticEvaluation implements StaticEvaluationInterface {
         int groundRow = isWhite ? 0 : 7;
         int secondRow = isWhite ? 1 : 6;
 
-        if (king.didRochade() && pos.row == groundRow) {
-            int minColumn = Math.max(0, pos.row - 1);
-            int maxColumn = Math.min(7, pos.row + 1);
+        if (king.didRochade() && pos.getRow() == groundRow) {
+            int minColumn = Math.max(0, pos.getRow() - 1);
+            int maxColumn = Math.min(7, pos.getRow() + 1);
             for (int column = minColumn; column <= maxColumn; column++) {
-                Position infrontOfKingPos = Position.get(secondRow, column);
+                Position infrontOfKingPos = Position.Companion.get(secondRow, column);
                 if (containsFigureOfColor(game, Pawn.class, infrontOfKingPos, isWhite)) {
                     if (gameStillContainsQueenOfColor(game, !isWhite)) {
                         value += BIG_KING_DEFENSE_VALUE;

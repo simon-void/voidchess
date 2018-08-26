@@ -86,7 +86,7 @@ public class SimpleArrayBoard
         StringTokenizer st = new StringTokenizer(figure_description, "-", false);
         st.nextToken();
         st.nextToken();
-        return Position.get(st.nextToken());
+        return Position.Companion.get(st.nextToken());
     }
 
     public void init() {
@@ -94,44 +94,44 @@ public class SimpleArrayBoard
         Position pos;
 
         for (int i = 0; i < 8; i++) {
-            pos = Position.get(1, i);
+            pos = Position.Companion.get(1, i);
             setFigure(pos, figureFactory.getPawn(pos, true));
-            pos = Position.get(6, i);
+            pos = Position.Companion.get(6, i);
             setFigure(pos, figureFactory.getPawn(pos, false));
         }
-        pos = Position.get("a1");
+        pos = Position.Companion.get("a1");
         setFigure(pos, figureFactory.getRock(pos, true));
-        pos = Position.get("h1");
+        pos = Position.Companion.get("h1");
         setFigure(pos, figureFactory.getRock(pos, true));
-        pos = Position.get("b1");
+        pos = Position.Companion.get("b1");
         setFigure(pos, figureFactory.getKnight(pos, true));
-        pos = Position.get("g1");
+        pos = Position.Companion.get("g1");
         setFigure(pos, figureFactory.getKnight(pos, true));
-        pos = Position.get("c1");
+        pos = Position.Companion.get("c1");
         setFigure(pos, figureFactory.getBishop(pos, true));
-        pos = Position.get("f1");
+        pos = Position.Companion.get("f1");
         setFigure(pos, figureFactory.getBishop(pos, true));
-        pos = Position.get("d1");
+        pos = Position.Companion.get("d1");
         setFigure(pos, figureFactory.getQueen(pos, true));
-        pos = Position.get("e1");
+        pos = Position.Companion.get("e1");
         setFigure(pos, figureFactory.getKing(pos, true));
         whiteKingPosition = pos;
 
-        pos = Position.get("a8");
+        pos = Position.Companion.get("a8");
         setFigure(pos, figureFactory.getRock(pos, false));
-        pos = Position.get("h8");
+        pos = Position.Companion.get("h8");
         setFigure(pos, figureFactory.getRock(pos, false));
-        pos = Position.get("b8");
+        pos = Position.Companion.get("b8");
         setFigure(pos, figureFactory.getKnight(pos, false));
-        pos = Position.get("g8");
+        pos = Position.Companion.get("g8");
         setFigure(pos, figureFactory.getKnight(pos, false));
-        pos = Position.get("c8");
+        pos = Position.Companion.get("c8");
         setFigure(pos, figureFactory.getBishop(pos, false));
-        pos = Position.get("f8");
+        pos = Position.Companion.get("f8");
         setFigure(pos, figureFactory.getBishop(pos, false));
-        pos = Position.get("d8");
+        pos = Position.Companion.get("d8");
         setFigure(pos, figureFactory.getQueen(pos, false));
-        pos = Position.get("e8");
+        pos = Position.Companion.get("e8");
         setFigure(pos, figureFactory.getKing(pos, false));
         blackKingPosition = pos;
     }
@@ -159,9 +159,9 @@ public class SimpleArrayBoard
 
         //die Bauernpositionen ver�ndern sich nicht
         for (int i = 0; i < 8; i++) {
-            pos = Position.get(1, i);
+            pos = Position.Companion.get(1, i);
             setFigure(pos, figureFactory.getPawn(pos, true));
-            pos = Position.get(6, i);
+            pos = Position.Companion.get(6, i);
             setFigure(pos, figureFactory.getPawn(pos, false));
         }
 
@@ -170,9 +170,9 @@ public class SimpleArrayBoard
         int row = rest * 2 + 1;
         chess960 = chess960 / 4;
 
-        pos = Position.get(0, row);
+        pos = Position.Companion.get(0, row);
         setFigure(pos, figureFactory.getBishop(pos, true));
-        pos = Position.get(7, row);
+        pos = Position.Companion.get(7, row);
         setFigure(pos, figureFactory.getBishop(pos, false));
 
         /*zweiter Läufer*/
@@ -180,9 +180,9 @@ public class SimpleArrayBoard
         row = rest * 2;
         chess960 = chess960 / 4;
 
-        pos = Position.get(0, row);
+        pos = Position.Companion.get(0, row);
         setFigure(pos, figureFactory.getBishop(pos, true));
-        pos = Position.get(7, row);
+        pos = Position.Companion.get(7, row);
         setFigure(pos, figureFactory.getBishop(pos, false));
 
         /*zweiter Dame*/
@@ -190,22 +190,22 @@ public class SimpleArrayBoard
         row = getFreeRow(rest);
         chess960 = chess960 / 6;
 
-        pos = Position.get(0, row);
+        pos = Position.Companion.get(0, row);
         setFigure(pos, figureFactory.getQueen(pos, true));
-        pos = Position.get(7, row);
+        pos = Position.Companion.get(7, row);
         setFigure(pos, figureFactory.getQueen(pos, false));
 
         String[] otherFigures = getFigureArray(chess960);
         for (int i = 0; i < 5; i++) {
             //immer die erste noch freie Spalte
             row = getFreeRow(0);
-            pos = Position.get(0, row);
+            pos = Position.Companion.get(0, row);
             Figure figure = createFigure(otherFigures[i], true, pos);
             setFigure(pos, figure);
             if (figure.isKing()) {
                 whiteKingPosition = pos;
             }
-            pos = Position.get(7, row);
+            pos = Position.Companion.get(7, row);
             figure = createFigure(otherFigures[i], false, pos);
             setFigure(pos, figure);
             if (figure.isKing()) {
@@ -265,7 +265,7 @@ public class SimpleArrayBoard
 
         int counter = 0;
         for (int row = 0; row < 8; row++) {
-            if (isFreeArea(Position.get(0, row))) {
+            if (isFreeArea(Position.Companion.get(0, row))) {
                 if (index == counter) return row;
                 else counter++;
             }
@@ -285,7 +285,7 @@ public class SimpleArrayBoard
     public void setFigure(Position pos, Figure figure) {
         clearCheckComputation();
 
-        game[pos.linearIndex] = figure;
+        game[pos.getIndex()] = figure;
         if (figure != null && figure.isKing()) {
             if (figure.isWhite()) whiteKingPosition = pos;
             else blackKingPosition = pos;
@@ -294,11 +294,11 @@ public class SimpleArrayBoard
     }
 
     public Figure getFigure(Position pos) {
-        return game[pos.linearIndex];
+        return game[pos.getIndex()];
     }
 
     public boolean isFreeArea(Position pos) {
-        return game[pos.linearIndex] == null;
+        return game[pos.getIndex()] == null;
     }
 
     public List<Figure> getFigures() {
@@ -321,7 +321,7 @@ public class SimpleArrayBoard
         StringBuilder buffer = new StringBuilder(512);
         for (int row = 0; row < 8; row++) {
             for (int column = 0; column < 8; column++) {
-                Position pos = Position.get(row, column);
+                Position pos = Position.Companion.get(row, column);
                 if (!isFreeArea(pos)) {
                     buffer.append(getFigure(pos).toString());
                     buffer.append(" ");

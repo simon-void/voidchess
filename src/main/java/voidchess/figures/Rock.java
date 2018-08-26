@@ -28,14 +28,14 @@ public class Rock extends RochadeFigure {
     }
 
     private boolean isHorizontalReachable(Position to, BasicChessGameInterface game) {
-        if (to.row != position.row) return false;
-        if (to.column == position.column) return false;
+        if (to.getRow() != position.getRow()) return false;
+        if (to.getColumn() == position.getColumn()) return false;
 
-        int minColumn = Math.min(to.column, position.column);
-        int maxColumn = Math.max(to.column, position.column);
+        int minColumn = Math.min(to.getColumn(), position.getColumn());
+        int maxColumn = Math.max(to.getColumn(), position.getColumn());
 
         for (int column = minColumn + 1; column < maxColumn; column++) {
-            Position middlePosition = Position.get(to.row, column);
+            Position middlePosition = Position.Companion.get(to.getRow(), column);
             if (!game.isFreeArea(middlePosition)) return false;
         }
 
@@ -43,14 +43,14 @@ public class Rock extends RochadeFigure {
     }
 
     private boolean isVerticalReachable(Position to, BasicChessGameInterface game) {
-        if (to.column != position.column) return false;
-        if (to.row == position.row) return false;
+        if (to.getColumn() != position.getColumn()) return false;
+        if (to.getRow() == position.getRow()) return false;
 
-        int minRow = Math.min(to.row, position.row);
-        int maxRow = Math.max(to.row, position.row);
+        int minRow = Math.min(to.getRow(), position.getRow());
+        int maxRow = Math.max(to.getRow(), position.getRow());
 
         for (int row = minRow + 1; row < maxRow; row++) {
-            Position middlePosition = Position.get(row, to.column);
+            Position middlePosition = Position.Companion.get(row, to.getColumn());
             if (!game.isFreeArea(middlePosition)) return false;
         }
 
@@ -58,12 +58,12 @@ public class Rock extends RochadeFigure {
     }
 
     private void getNorthIterator(BasicChessGameInterface game, List<Position> result) {
-        int row = position.row;
+        int row = position.getRow();
 
         while (true) {
             row++;
             if (row == 8) break;
-            Position checkPosition = Position.get(row, position.column);
+            Position checkPosition = Position.Companion.get(row, position.getColumn());
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
@@ -77,12 +77,12 @@ public class Rock extends RochadeFigure {
     }
 
     private void getSouthIterator(BasicChessGameInterface game, List<Position> result) {
-        int row = position.row;
+        int row = position.getRow();
 
         while (true) {
             row--;
             if (row < 0) break;
-            Position checkPosition = Position.get(row, position.column);
+            Position checkPosition = Position.Companion.get(row, position.getColumn());
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
@@ -96,12 +96,12 @@ public class Rock extends RochadeFigure {
     }
 
     private void getEastIterator(BasicChessGameInterface game, List<Position> result) {
-        int column = position.column;
+        int column = position.getColumn();
 
         while (true) {
             column++;
             if (column == 8) break;
-            Position checkPosition = Position.get(position.row, column);
+            Position checkPosition = Position.Companion.get(position.getRow(), column);
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
@@ -115,12 +115,12 @@ public class Rock extends RochadeFigure {
     }
 
     private void getWestIterator(BasicChessGameInterface game, List<Position> result) {
-        int column = position.column;
+        int column = position.getColumn();
 
         while (true) {
             column--;
             if (column < 0) break;
-            Position checkPosition = Position.get(position.row, column);
+            Position checkPosition = Position.Companion.get(position.getRow(), column);
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);

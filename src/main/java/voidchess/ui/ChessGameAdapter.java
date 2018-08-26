@@ -76,7 +76,7 @@ public class ChessGameAdapter implements MouseInputListener {
             x = 7 - x;
         }
 
-        return Position.get(y, x);
+        return Position.Companion.get(y, x);
     }
 
     void addPlayer(HumanPlayerInterface player) {

@@ -23,15 +23,15 @@ public class KingTest {
                 + "Rock-white-h1-0";
         ChessGame game = new ChessGame(des);
 
-        Position from = Position.get("e1");
-        Position to1 = Position.get("f1");
-        Position to2 = Position.get("g1");
-        Position to3 = Position.get("d1");
-        Position to4 = Position.get("c1");
-        Position to5 = Position.get("d2");
-        Position to6 = Position.get("e3");
-        Position to7 = Position.get("a1");
-        Position to8 = Position.get("h1");
+        Position from = Position.Companion.get("e1");
+        Position to1 = Position.Companion.get("f1");
+        Position to2 = Position.Companion.get("g1");
+        Position to3 = Position.Companion.get("d1");
+        Position to4 = Position.Companion.get("c1");
+        Position to5 = Position.Companion.get("d2");
+        Position to6 = Position.Companion.get("e3");
+        Position to7 = Position.Companion.get("a1");
+        Position to8 = Position.Companion.get("h1");
 
         King king = new King(true, from);
         assertTrue(king.isReachable(to1, game));
@@ -49,14 +49,14 @@ public class KingTest {
                 + "King-black-c8-0 Rock-black-h8-0";
         game = new ChessGame(des);
 
-        from = Position.get("c8");
-        to1 = Position.get("a8");
-        to2 = Position.get("d8");
-        to3 = Position.get("d7");
-        to4 = Position.get("b8");
-        to5 = Position.get("g8");
-        to6 = Position.get("e6");
-        to7 = Position.get("h8");
+        from = Position.Companion.get("c8");
+        to1 = Position.Companion.get("a8");
+        to2 = Position.Companion.get("d8");
+        to3 = Position.Companion.get("d7");
+        to4 = Position.Companion.get("b8");
+        to5 = Position.Companion.get("g8");
+        to6 = Position.Companion.get("e6");
+        to7 = Position.Companion.get("h8");
 
         king = new King(false, from);
         assertFalse(king.isReachable(to1, game));
@@ -70,8 +70,8 @@ public class KingTest {
 
 
         game = new ChessGame(621);
-        from = Position.get("e1");
-        to1 = Position.get("f1");
+        from = Position.Companion.get("e1");
+        to1 = Position.Companion.get("f1");
         king = new King(true, from);
         assertFalse(king.isReachable(to1, game));
     }
@@ -79,7 +79,7 @@ public class KingTest {
     @Test
     public void testGetReachableMoves() {
         ChessGame game = new ChessGame(621);
-        Position from = Position.get("e1");
+        Position from = Position.Companion.get("e1");
         Figure king = game.getFigure(from);
 
         List<Move> moveIter = new LinkedList<>();
@@ -93,11 +93,11 @@ public class KingTest {
                 + "King-black-e8-0 Rock-black-h8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Position from = Position.get("e8");
-        Position to1 = Position.get("c8");
-        Position to2 = Position.get("d7");
-        Position to3 = Position.get("g8");
-        Position to4 = Position.get("e7");
+        Position from = Position.Companion.get("e8");
+        Position to1 = Position.Companion.get("c8");
+        Position to2 = Position.Companion.get("d7");
+        Position to3 = Position.Companion.get("g8");
+        Position to4 = Position.Companion.get("e7");
 
         King king = new King(false, from);
 
@@ -109,11 +109,11 @@ public class KingTest {
         des = "black 0 Bishop-white-c6 Rock-black-a8-0 "
                 + "King-black-e8-0 Rock-black-h8-0";
         game.init(des);
-        from = Position.get("e8");
-        to1 = Position.get("a8");
-        to2 = Position.get("d7");
-        to3 = Position.get("h8");
-        to4 = Position.get("e7");
+        from = Position.Companion.get("e8");
+        to1 = Position.Companion.get("a8");
+        to2 = Position.Companion.get("d7");
+        to3 = Position.Companion.get("h8");
+        to4 = Position.Companion.get("e7");
 
         king = new King(false, from);
 
@@ -129,7 +129,7 @@ public class KingTest {
                 + "Rock-white-h1-0";
         SimpleArrayBoard board = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure king = board.getFigure(Position.get("f1"));
+        Figure king = board.getFigure(Position.Companion.get("f1"));
         List<Move> moveIter = new LinkedList<>();
         king.getPossibleMoves(board, moveIter);
         assertEquals(7, moveIter.size());
@@ -146,7 +146,7 @@ public class KingTest {
         game.move(Move.get("d1-c2"));
         game.move(Move.get("g8-c4"));
         game.move(Move.get("c2-h7"));
-        Position pos = Position.get("e8");
+        Position pos = Position.Companion.get("e8");
         List<Move> movesFrom = FigureTest.getPossibleMovesFrom(game, pos);
         assertEquals(1, movesFrom.size());
     }
@@ -157,7 +157,7 @@ public class KingTest {
                 + "King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
-        King king = (King) game.getFigure(Position.get("e1"));
+        King king = (King) game.getFigure(Position.Companion.get("e1"));
         assertFalse(king.didRochade());
         game.move(Move.get("e1-a1"));
         assertTrue(king.didRochade());
@@ -169,15 +169,15 @@ public class KingTest {
 
         //rock on a1, king on b1 so b1-a1 should be possible as a first move
         ChessGame game = new ChessGame(314);
-        Position c1 = Position.get("c1");
-        Position d1 = Position.get("d1");
+        Position c1 = Position.Companion.get("c1");
+        Position d1 = Position.Companion.get("d1");
         boolean isRochadePossible = game.isMoveable(d1, c1, true);
         assertTrue(isRochadePossible, "rochade should be possible");
 
         //rock on a1, king on b1 so b1-a1 should be be possible as a first move
         game = new ChessGame(759);
-        Position a1 = Position.get("a1");
-        Position b1 = Position.get("b1");
+        Position a1 = Position.Companion.get("a1");
+        Position b1 = Position.Companion.get("b1");
         isRochadePossible = game.isMoveable(b1, a1, true);
         assertFalse(isRochadePossible, "rochade should be impossible possible");
     }

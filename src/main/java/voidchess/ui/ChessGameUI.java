@@ -54,20 +54,20 @@ public class ChessGameUI extends JComponent {
         repaintPositionAtOnce(move.from);
         repaintPositionAtOnce(move.to);
 
-        int horizontal_dif = Math.abs(move.from.column - move.to.column);
-        int vertical_dif = Math.abs(move.from.row - move.to.row);
+        int horizontal_dif = Math.abs(move.from.getColumn() - move.to.getColumn());
+        int vertical_dif = Math.abs(move.from.getRow() - move.to.getRow());
 
         if (horizontal_dif == 1 && vertical_dif == 1) {                                //enpassant?
-            repaintPositionAtOnce(Position.get(move.from.row, move.to.column));
-            repaintPositionAtOnce(Position.get(move.to.row, move.from.column));
-        } else if (vertical_dif == 0 && (move.to.row == 0 || move.to.row == 7)) {            //Rochade?muss auch für Schach960 funktionieren
-            repaintRowAtOnce(move.from.row);
+            repaintPositionAtOnce(Position.Companion.get(move.from.getRow(), move.to.getColumn()));
+            repaintPositionAtOnce(Position.Companion.get(move.to.getRow(), move.from.getColumn()));
+        } else if (vertical_dif == 0 && (move.to.getRow() == 0 || move.to.getRow() == 7)) {            //Rochade?muss auch für Schach960 funktionieren
+            repaintRowAtOnce(move.from.getRow());
         }
     }
 
     private void repaintPositionAtOnce(Position pos) {
-        int x_pos = borderSize + areaSize * (whiteView ? pos.column : 7 - pos.column);
-        int y_pos = borderSize + areaSize * (whiteView ? 7 - pos.row : pos.row);
+        int x_pos = borderSize + areaSize * (whiteView ? pos.getColumn() : 7 - pos.getColumn());
+        int y_pos = borderSize + areaSize * (whiteView ? 7 - pos.getRow() : pos.getRow());
 
         int repaintSize = areaSize + 1;
         paintImmediately(x_pos, y_pos, repaintSize, repaintSize);
@@ -110,7 +110,7 @@ public class ChessGameUI extends JComponent {
     private void paintFigures(Graphics g) {
         for (int row = 0; row < 8; row++) {
             for (int column = 0; column < 8; column++) {
-                Position pos = Position.get(row, column);
+                Position pos = Position.Companion.get(row, column);
                 if (!game.isFreeArea(pos)) {
                     int x_pos = borderSize + areaSize * (whiteView ? column : 7 - column);
                     int y_pos = borderSize + areaSize * (whiteView ? 7 - row : row);
@@ -130,13 +130,13 @@ public class ChessGameUI extends JComponent {
     private void paintActivAreas(Graphics g) {
         g.setColor(Color.darkGray);
         if (from != null) {
-            int x_pos = borderSize + areaSize * (whiteView ? from.column : 7 - from.column);
-            int y_pos = borderSize + areaSize * (whiteView ? 7 - from.row : from.row);
+            int x_pos = borderSize + areaSize * (whiteView ? from.getColumn() : 7 - from.getColumn());
+            int y_pos = borderSize + areaSize * (whiteView ? 7 - from.getRow() : from.getRow());
             g.drawRect(x_pos, y_pos, areaSize, areaSize);
         }
         if (to != null) {
-            int x_pos = borderSize + areaSize * (whiteView ? to.column : 7 - to.column);
-            int y_pos = borderSize + areaSize * (whiteView ? 7 - to.row : to.row);
+            int x_pos = borderSize + areaSize * (whiteView ? to.getColumn() : 7 - to.getColumn());
+            int y_pos = borderSize + areaSize * (whiteView ? 7 - to.getRow() : to.getRow());
             g.drawRect(x_pos, y_pos, areaSize, areaSize);
         }
     }

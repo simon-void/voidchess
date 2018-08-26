@@ -34,7 +34,7 @@ public class Pawn extends Figure {
 
     public void figureMoved(Move move) {
         canBeHitByEnpasent = move.from.equalsPosition(position)
-                && Math.abs(move.from.row - move.to.row) == 2;
+                && Math.abs(move.from.getRow() - move.to.getRow()) == 2;
         super.figureMoved(move);
     }
 
@@ -48,16 +48,16 @@ public class Pawn extends Figure {
     }
 
     private boolean isStraightReachable(Position to, BasicChessGameInterface game) {
-        if (to.column == position.column) {
-            int oneForwardRow = isWhite() ? position.row + 1 : position.row - 1;
-            Position oneForwardPosition = Position.get(oneForwardRow, position.column);
+        if (to.getColumn() == position.getColumn()) {
+            int oneForwardRow = isWhite() ? position.getRow() + 1 : position.getRow() - 1;
+            Position oneForwardPosition = Position.Companion.get(oneForwardRow, position.getColumn());
             if (oneForwardPosition.equalsPosition(to)) {
                 return game.isFreeArea(to);
             }
             int pawnStartRow = isWhite() ? 1 : 6;
-            if (position.row == pawnStartRow) {
-                int twoForwardRow = isWhite() ? position.row + 2 : position.row - 2;
-                Position twoForwardPosition = Position.get(twoForwardRow, position.column);
+            if (position.getRow() == pawnStartRow) {
+                int twoForwardRow = isWhite() ? position.getRow() + 2 : position.getRow() - 2;
+                Position twoForwardPosition = Position.Companion.get(twoForwardRow, position.getColumn());
                 return to.equalsPosition(twoForwardPosition)
                         && game.isFreeArea(twoForwardPosition)
                         && game.isFreeArea(oneForwardPosition);
@@ -68,16 +68,16 @@ public class Pawn extends Figure {
     }
 
     private boolean isDiagonalReachable(Position to, BasicChessGameInterface game) {
-        int oneForwardRow = isWhite() ? position.row + 1 : position.row - 1;
+        int oneForwardRow = isWhite() ? position.getRow() + 1 : position.getRow() - 1;
 
-        if (position.column != 0) {
-            int leftColumn = position.column - 1;
-            Position leftForwardPosition = Position.get(oneForwardRow, leftColumn);
+        if (position.getColumn() != 0) {
+            int leftColumn = position.getColumn() - 1;
+            Position leftForwardPosition = Position.Companion.get(oneForwardRow, leftColumn);
             if (to.equalsPosition(leftForwardPosition)) {
                 if (!game.isFreeArea(to) && hasDifferentColor(game.getFigure(to))) {
                     return true;
                 }
-                Position leftPosition = Position.get(position.row, leftColumn);
+                Position leftPosition = Position.Companion.get(position.getRow(), leftColumn);
                 if (!game.isFreeArea(leftPosition)
                         && game.getFigure(leftPosition).canBeHitByEnpasent()
                         && hasDifferentColor(game.getFigure(leftPosition))
@@ -86,10 +86,10 @@ public class Pawn extends Figure {
                 }
             }
         }
-        if (position.column != 7) {
-            int rightColumn = position.column + 1;
-            Position rightForwardPosition = Position.get(oneForwardRow, rightColumn);
-            Position rightPosition = Position.get(position.row, rightColumn);
+        if (position.getColumn() != 7) {
+            int rightColumn = position.getColumn() + 1;
+            Position rightForwardPosition = Position.Companion.get(oneForwardRow, rightColumn);
+            Position rightPosition = Position.Companion.get(position.getRow(), rightColumn);
             if (to.equalsPosition(rightForwardPosition)) {
                 if (!game.isFreeArea(to) && hasDifferentColor(game.getFigure(to))) {
                     return true;
@@ -106,12 +106,12 @@ public class Pawn extends Figure {
     }
 
     public void getReachableMoves(BasicChessGameInterface game, List<Move> result) {
-        int minColumn = Math.max(position.column - 1, 0);
-        int maxColumn = Math.min(position.column + 1, 7);
-        int oneForwardRow = isWhite() ? position.row + 1 : position.row - 1;
+        int minColumn = Math.max(position.getColumn() - 1, 0);
+        int maxColumn = Math.min(position.getColumn() + 1, 7);
+        int oneForwardRow = isWhite() ? position.getRow() + 1 : position.getRow() - 1;
 
         for (int column = minColumn; column <= maxColumn; column++) {
-            Position checkPosition = Position.get(oneForwardRow, column);
+            Position checkPosition = Position.Companion.get(oneForwardRow, column);
             if (isReachable(checkPosition, game)) {
                 result.add(Move.get(position, checkPosition));
             }
@@ -120,8 +120,8 @@ public class Pawn extends Figure {
         int pawnStartRow = isWhite() ? 1 : 6;
         int twoForwardRow = isWhite() ? 3 : 4;
 
-        if (position.row == pawnStartRow) {
-            Position twoForwardPosition = Position.get(twoForwardRow, position.column);
+        if (position.getRow() == pawnStartRow) {
+            Position twoForwardPosition = Position.Companion.get(twoForwardRow, position.getColumn());
             if (isReachable(twoForwardPosition, game)) {
                 result.add(Move.get(position, twoForwardPosition));
             }
@@ -129,12 +129,12 @@ public class Pawn extends Figure {
     }
 
     public boolean isSelectable(SimpleChessBoardInterface game) {
-        int minColumn = Math.max(position.column - 1, 0);
-        int maxColumn = Math.min(position.column + 1, 7);
-        int oneForwardRow = isWhite() ? position.row + 1 : position.row - 1;
+        int minColumn = Math.max(position.getColumn() - 1, 0);
+        int maxColumn = Math.min(position.getColumn() + 1, 7);
+        int oneForwardRow = isWhite() ? position.getRow() + 1 : position.getRow() - 1;
 
         for (int column = minColumn; column <= maxColumn; column++) {
-            Position checkPosition = Position.get(oneForwardRow, column);
+            Position checkPosition = Position.Companion.get(oneForwardRow, column);
             if (isMoveable(checkPosition, game)) {
                 return true;
             }
@@ -143,8 +143,8 @@ public class Pawn extends Figure {
         int pawnStartRow = isWhite() ? 1 : 6;
         int twoForwardRow = isWhite() ? 3 : 4;
 
-        if (position.row == pawnStartRow) {
-            Position twoForwardPosition = Position.get(twoForwardRow, position.column);
+        if (position.getRow() == pawnStartRow) {
+            Position twoForwardPosition = Position.Companion.get(twoForwardRow, position.getColumn());
             if (isMoveable(twoForwardPosition, game)) {
                 return true;
             }
@@ -155,12 +155,12 @@ public class Pawn extends Figure {
 
     public int countReachableMoves(BasicChessGameInterface game) {
         int count = 0;
-        int minColumn = Math.max(position.column - 1, 0);
-        int maxColumn = Math.min(position.column + 1, 7);
-        int oneForwardRow = isWhite() ? position.row + 1 : position.row - 1;
+        int minColumn = Math.max(position.getColumn() - 1, 0);
+        int maxColumn = Math.min(position.getColumn() + 1, 7);
+        int oneForwardRow = isWhite() ? position.getRow() + 1 : position.getRow() - 1;
 
         for (int column = minColumn; column <= maxColumn; column++) {
-            Position checkPosition = Position.get(oneForwardRow, column);
+            Position checkPosition = Position.Companion.get(oneForwardRow, column);
             if (isReachable(checkPosition, game)) {
                 count++;
             }
@@ -169,8 +169,8 @@ public class Pawn extends Figure {
         int pawnStartRow = isWhite() ? 1 : 6;
         int twoForwardRow = isWhite() ? 3 : 4;
 
-        if (position.row == pawnStartRow) {
-            Position twoForwardPosition = Position.get(twoForwardRow, position.column);
+        if (position.getRow() == pawnStartRow) {
+            Position twoForwardPosition = Position.Companion.get(twoForwardRow, position.getColumn());
             if (isReachable(twoForwardPosition, game)) {
                 count++;
             }

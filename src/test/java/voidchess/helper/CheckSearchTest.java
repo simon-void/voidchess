@@ -24,9 +24,9 @@ public class CheckSearchTest {
 
     @Test
     public void testAreDiagonalPositions() {
-        Position pos1 = Position.get("a1");
-        Position pos2 = Position.get("a8");
-        Position pos3 = Position.get("h1");
+        Position pos1 = Position.Companion.get("a1");
+        Position pos2 = Position.Companion.get("a8");
+        Position pos3 = Position.Companion.get("h1");
 
         assertTrue(CheckSearch.areDiagonalPositions(pos2, pos3));
         assertTrue(CheckSearch.areDiagonalPositions(pos3, pos2));
@@ -36,9 +36,9 @@ public class CheckSearchTest {
 
     @Test
     public void testAreStraightPositions() {
-        Position pos1 = Position.get("a1");
-        Position pos2 = Position.get("a8");
-        Position pos3 = Position.get("h1");
+        Position pos1 = Position.Companion.get("a1");
+        Position pos2 = Position.Companion.get("a8");
+        Position pos3 = Position.Companion.get("h1");
 
         assertFalse(CheckSearch.areStraightPositions(pos2, pos3));
         assertFalse(CheckSearch.areStraightPositions(pos3, pos2));
@@ -56,7 +56,7 @@ public class CheckSearchTest {
         assertFalse(status.onlyKingCanMove());
         List<Position> possiblePositions = status.getCheckInterceptPositions();
         assertEquals(1, possiblePositions.size());
-        assertTrue(possiblePositions.get(0).equalsPosition(Position.get("e5")));
+        assertTrue(possiblePositions.get(0).equalsPosition(Position.Companion.get("e5")));
 
         des = "white 0 King-white-e4-4 King-black-e6-4";
         game.init(des);
@@ -80,8 +80,8 @@ public class CheckSearchTest {
         assertFalse(status.onlyKingCanMove());
         possiblePositions = status.getCheckInterceptPositions();
         assertEquals(2, possiblePositions.size());
-        assertTrue(possiblePositions.contains(Position.get("e6")));
-        assertTrue(possiblePositions.contains(Position.get("e7")));
+        assertTrue(possiblePositions.contains(Position.Companion.get("e6")));
+        assertTrue(possiblePositions.contains(Position.Companion.get("e7")));
 
         des = "white 0 King-white-e1-0 Rock-white-h2-1 Queen-black-h4";
         game.init(des);
@@ -91,9 +91,9 @@ public class CheckSearchTest {
         assertFalse(status.onlyKingCanMove());
         possiblePositions = status.getCheckInterceptPositions();
         assertEquals(3, possiblePositions.size());
-        assertTrue(possiblePositions.contains(Position.get("h4")));
-        assertTrue(possiblePositions.contains(Position.get("g3")));
-        assertTrue(possiblePositions.contains(Position.get("f2")));
+        assertTrue(possiblePositions.contains(Position.Companion.get("h4")));
+        assertTrue(possiblePositions.contains(Position.Companion.get("g3")));
+        assertTrue(possiblePositions.contains(Position.Companion.get("f2")));
     }
 
     @Test
@@ -148,8 +148,8 @@ public class CheckSearchTest {
     }
 
     private ExtendedMove getEnpassentMove(Move move) {
-        boolean isWhiteMove = move.to.row > move.from.row;
-        Pawn hitByEnpassant = new Pawn(!isWhiteMove, Position.get(move.from.row, move.to.column));
+        boolean isWhiteMove = move.to.getRow() > move.from.getRow();
+        Pawn hitByEnpassant = new Pawn(!isWhiteMove, Position.Companion.get(move.from.getRow(), move.to.getColumn()));
 
         ExtendedMove extendedMove = new ExtendedMove(move.from, move.to, null, hitByEnpassant, isWhiteMove, false, true, false);
 

@@ -28,18 +28,18 @@ public class ChessGameTest {
 
     @Test
     public void testIsFreeArea() {
-        assertTrue(game.isFreeArea(Position.get("a3")));
-        assertFalse(game.isFreeArea(Position.get("c1")));
-        assertFalse(game.isFreeArea(Position.get("d7")));
+        assertTrue(game.isFreeArea(Position.Companion.get("a3")));
+        assertFalse(game.isFreeArea(Position.Companion.get("c1")));
+        assertFalse(game.isFreeArea(Position.Companion.get("d7")));
     }
 
     @Test
     public void testGetFigure() {
-        assertTrue(game.getFigure(Position.get("e3")) == null);
-        Figure king = game.getFigure(Position.get("e1"));
+        assertTrue(game.getFigure(Position.Companion.get("e3")) == null);
+        Figure king = game.getFigure(Position.Companion.get("e1"));
         assertTrue(king instanceof King);
         assertTrue(king.isWhite());
-        Figure bishop = game.getFigure(Position.get("c8"));
+        Figure bishop = game.getFigure(Position.Companion.get("c8"));
         assertTrue(bishop instanceof Bishop);
         assertFalse(bishop.isWhite());
     }
@@ -114,7 +114,7 @@ public class ChessGameTest {
     public void testMove() {
         String des = "white 0 King-white-e1-0 Pawn-white-c2-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        Move move = Move.get(Position.get("c2"), Position.get("c4"));
+        Move move = Move.get(Position.Companion.get("c2"), Position.Companion.get("c4"));
         game.move(move);
         String new_des = "black 1 King-white-e1-0 Pawn-white-c4-true King-black-e8-0";
         assertEquals(new_des, game.toString());
@@ -124,8 +124,8 @@ public class ChessGameTest {
     public void testUndo() {
         String des = "white 0 King-white-e1-0 Rock-white-h1-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        Position pos1 = Position.get("e1");
-        Position pos2 = Position.get("h1");
+        Position pos1 = Position.Companion.get("e1");
+        Position pos2 = Position.Companion.get("h1");
         Move move = Move.get(pos1, pos2);
         game.move(move);
         String new_des = "black 1 Rock-white-f1-1 King-white-g1-1-true King-black-e8-0";
@@ -138,8 +138,8 @@ public class ChessGameTest {
 
         des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-f8-0";
         game = new ChessGame(des);
-        pos1 = Position.get("f8");
-        pos2 = Position.get("g8");
+        pos1 = Position.Companion.get("f8");
+        pos2 = Position.Companion.get("g8");
         move = Move.get(pos1, pos2);
         game.move(move);
         game.undo();
@@ -150,8 +150,8 @@ public class ChessGameTest {
 
         des = "white 0 King-white-e1-0 Pawn-white-b5-false Pawn-black-c5-true King-black-e8-0";
         game = new ChessGame(des);
-        pos1 = Position.get("b5");
-        pos2 = Position.get("c6");
+        pos1 = Position.Companion.get("b5");
+        pos2 = Position.Companion.get("c6");
         move = Move.get(pos1, pos2);
 
         assertTrue(game.isMoveable(pos1, pos2, true));
@@ -162,8 +162,8 @@ public class ChessGameTest {
 
         des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
         game = new ChessGame(des);
-        pos1 = Position.get("e8");
-        pos2 = Position.get("a8");
+        pos1 = Position.Companion.get("e8");
+        pos2 = Position.Companion.get("a8");
         move = Move.get(pos1, pos2);
 
         assertTrue(game.isMoveable(pos1, pos2, false));
@@ -191,8 +191,8 @@ public class ChessGameTest {
                 "Rock-black-a8-0 Queen-black-d8 King-black-e8-0 " +
                 "Rock-black-h8-0";
         game = new ChessGame(des);
-        pos1 = Position.get("e1");
-        pos2 = Position.get("a1");
+        pos1 = Position.Companion.get("e1");
+        pos2 = Position.Companion.get("a1");
         move = Move.get(pos1, pos2);
 
         assertTrue(game.isMoveable(pos1, pos2, true));
@@ -301,7 +301,7 @@ public class ChessGameTest {
         String des = "black 0 Pawn-white-c4-true Pawn-black-b4-false "
                 + "King-white-e1-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        Move move = Move.get(Position.get("b4"), Position.get("c3"));
+        Move move = Move.get(Position.Companion.get("b4"), Position.Companion.get("c3"));
         game.move(move);
         String new_des = "white 0 King-white-e1-0 Pawn-black-c3-false "
                 + "King-black-e8-0";
@@ -312,35 +312,35 @@ public class ChessGameTest {
     public void testHandleRochade() {
         String des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0 ";
         ChessGame game = new ChessGame(des);
-        Move move = Move.get(Position.get("e8"), Position.get("a8"));
+        Move move = Move.get(Position.Companion.get("e8"), Position.Companion.get("a8"));
         game.move(move);
         String new_des = "white 1 King-white-e1-0 King-black-c8-1-true Rock-black-d8-1";
         assertEquals(new_des, game.toString());
 
         des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-f8-0 ";
         game = new ChessGame(des);
-        move = Move.get(Position.get("f8"), Position.get("a8"));
+        move = Move.get(Position.Companion.get("f8"), Position.Companion.get("a8"));
         game.move(move);
         new_des = "white 1 King-white-e1-0 King-black-c8-1-true Rock-black-d8-1";
         assertEquals(new_des, game.toString());
 
         des = "white 0 King-white-e1-0 Rock-white-h1-0 King-black-e8-0 ";
         game = new ChessGame(des);
-        move = Move.get(Position.get("e1"), Position.get("h1"));
+        move = Move.get(Position.Companion.get("e1"), Position.Companion.get("h1"));
         game.move(move);
         new_des = "black 1 Rock-white-f1-1 King-white-g1-1-true King-black-e8-0";
         assertEquals(new_des, game.toString());
 
         des = "white 0 King-white-g1-0 Rock-white-h1-0 King-black-e8-0 ";
         game = new ChessGame(des);
-        move = Move.get(Position.get("g1"), Position.get("h1"));
+        move = Move.get(Position.Companion.get("g1"), Position.Companion.get("h1"));
         game.move(move);
         new_des = "black 1 Rock-white-f1-1 King-white-g1-1-true King-black-e8-0";
         assertEquals(new_des, game.toString());
 
         des = "white 0 King-white-f1-0 Rock-white-g1-0 King-black-e8-0 ";
         game = new ChessGame(des);
-        move = Move.get(Position.get("f1"), Position.get("g1"));
+        move = Move.get(Position.Companion.get("f1"), Position.Companion.get("g1"));
         game.move(move);
         new_des = "black 1 Rock-white-f1-1 King-white-g1-1-true King-black-e8-0";
         assertEquals(new_des, game.toString());
@@ -437,19 +437,19 @@ public class ChessGameTest {
         String des = "white 0 King-white-e1-0 Queen-black-g2 "
                 + "Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        assertFalse(game.isSelectable(Position.get("e1"), true));
-        assertTrue(game.isSelectable(Position.get("e6"), true));
-        assertFalse(game.isSelectable(Position.get("e6"), false));
+        assertFalse(game.isSelectable(Position.Companion.get("e1"), true));
+        assertTrue(game.isSelectable(Position.Companion.get("e6"), true));
+        assertFalse(game.isSelectable(Position.Companion.get("e6"), false));
 
         des = "black 0 King-white-e1-0 Queen-white-e2 "
                 + "Bishop-black-c8 King-black-e8-0";
         game = new ChessGame(des);
-        assertTrue(game.isSelectable(Position.get("c8"), false));
+        assertTrue(game.isSelectable(Position.Companion.get("c8"), false));
 
         des = "black 0 King-white-e1-0 Queen-white-e2 "
                 + "Rock-black-a6-1 King-black-e8-0";
         game = new ChessGame(des);
-        assertTrue(game.isSelectable(Position.get("a6"), false));
+        assertTrue(game.isSelectable(Position.Companion.get("a6"), false));
     }
 
     @Test
@@ -459,22 +459,22 @@ public class ChessGameTest {
         ChessGame game = new ChessGame(des);
 
 
-        assertTrue(game.isMoveable(Position.get("e6"), Position.get("e7"), true));
+        assertTrue(game.isMoveable(Position.Companion.get("e6"), Position.Companion.get("e7"), true));
 
         des = "black 0 King-white-e1-0 Pawn-black-a5-false "
                 + "King-black-g6-2 Rock-white-h6-1";
         game = new ChessGame(des);
-        assertFalse(game.isMoveable(Position.get("a5"), Position.get("a4"), false));
+        assertFalse(game.isMoveable(Position.Companion.get("a5"), Position.Companion.get("a4"), false));
 
         des = "black 0 King-white-g7-6 King-black-e8-0 Rock-black-h8-0";
         game = new ChessGame(des);
-        assertFalse(game.isMoveable(Position.get("e8"), Position.get("g8"), false));
+        assertFalse(game.isMoveable(Position.Companion.get("e8"), Position.Companion.get("g8"), false));
 
         game = new ChessGame(621);
         game.move(Move.get("f2-f3"));
         game.move(Move.get("a7-a6"));
-        Position from = Position.get("f1");
-        Position to = Position.get("f2");
+        Position from = Position.Companion.get("f1");
+        Position to = Position.Companion.get("f2");
         assertTrue(game.isMoveable(from, to, true));
         assertFalse(game.isFreeArea(from));
     }

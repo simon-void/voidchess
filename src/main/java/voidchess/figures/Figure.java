@@ -104,29 +104,29 @@ public abstract class Figure {
             return false;
         }
 
-        final int row_step = CheckSearch.signum(kingPos.row - position.row);
-        final int column_step = CheckSearch.signum(kingPos.column - position.column);
+        final int row_step = CheckSearch.signum(kingPos.getRow() - position.getRow());
+        final int column_step = CheckSearch.signum(kingPos.getColumn() - position.getColumn());
 
-        int row = position.row + row_step;
-        int column = position.column + column_step;
+        int row = position.getRow() + row_step;
+        int column = position.getColumn() + column_step;
         boolean isToPositionInBetweenKingAndAttacker = false;
 
         //falls eine Figure zwischen König und dieser steht, ist diese nicht gebunden
-        while (row != kingPos.row || column != kingPos.column) {
-            Position middlePos = Position.get(row, column);
+        while (row != kingPos.getRow() || column != kingPos.getColumn()) {
+            Position middlePos = Position.Companion.get(row, column);
             if (!game.isFreeArea(middlePos)) return false;
             if (middlePos.equalsPosition(to)) isToPositionInBetweenKingAndAttacker = true;
             row += row_step;
             column += column_step;
         }
 
-        row = position.row - row_step;
-        column = position.column - column_step;
+        row = position.getRow() - row_step;
+        column = position.getColumn() - column_step;
 
         //nur falls in Verl�ngerung der Königslinie eine feindliche Figur steht(Dame,Läufer,Turm)
         //und das Ziel des Zuges nicht auf dieser Linie liegt, ist diese Figur gebunden
         while (row >= 0 && row < 8 && column >= 0 && column < 8) {
-            Position middlePos = Position.get(row, column);
+            Position middlePos = Position.Companion.get(row, column);
             if (middlePos.equalsPosition(to)) isToPositionInBetweenKingAndAttacker = true;
             if (!game.isFreeArea(middlePos)) {
                 Figure figure = game.getFigure(middlePos);

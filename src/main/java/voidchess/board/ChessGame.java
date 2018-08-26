@@ -211,9 +211,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         //das move.to dem Zielfeld des Königs entspricht
         //und nicht dem Feld des Rochadeturms
         if (rochadeRock != null) {
-            final int row = move.to.row;
-            final int column = move.to.column - move.from.column > 0 ? 6 : 2;
-            move = Move.get(move.from, Position.get(row, column));
+            final int row = move.to.getRow();
+            final int column = move.to.getColumn() - move.from.getColumn() > 0 ? 6 : 2;
+            move = Move.get(move.from, Position.Companion.get(row, column));
         }
 
         Pawn hitPawn = handleEnpasent(move);
@@ -262,10 +262,10 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     private Pawn handleEnpasent(Move move) {
         if (getFigure(move.from).isPawn()
-                && move.from.column != move.to.column
+                && move.from.getColumn() != move.to.getColumn()
                 && isFreeArea(move.to)
         ) {
-            Position pawnToBeHit = Position.get(move.from.row, move.to.column);
+            Position pawnToBeHit = Position.Companion.get(move.from.getRow(), move.to.getColumn());
             Pawn pawn = (Pawn) getFigure(pawnToBeHit);
             setFigure(pawnToBeHit, null);
             figureCount--;
@@ -291,9 +291,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private void reinsertRochadeRock(Rock rochadeRock, Position moveTo) {
         if (rochadeRock != null) {
             Position rockFrom = rochadeRock.getPosition();
-            Position rockTo = moveTo.column == 6 ?
-                    Position.get(moveTo.row, 5) :
-                    Position.get(moveTo.row, 3);
+            Position rockTo = moveTo.getColumn() == 6 ?
+                    Position.Companion.get(moveTo.getRow(), 5) :
+                    Position.Companion.get(moveTo.getRow(), 3);
             rochadeRock.figureMoved(Move.get(rockFrom, rockTo));
             setFigure(rockTo, rochadeRock);
         }
@@ -301,9 +301,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     private boolean handlePawnTransformation(Move move) {
         if (getFigure(move.to).isPawn()) {
-            if (move.to.row == 0 || move.to.row == 7) {
+            if (move.to.getRow() == 0 || move.to.getRow() == 7) {
                 String figure = supervisor.askForPawnChange(move.to);
-                boolean isWhite = move.to.row == 7;
+                boolean isWhite = move.to.getRow() == 7;
                 Figure newFigure = null;
                 if (figure.equals("Queen")) {
                     newFigure = figureFactory.getQueen(move.to, isWhite);
@@ -389,7 +389,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     private void undoEnpassent(ExtendedMove lastMove) {
         Pawn hitPawn = (Pawn) lastMove.getEnpassentPawnOrRochadeRock();
-        Position pawnPos = Position.get(lastMove.from.row, lastMove.to.column);
+        Position pawnPos = Position.Companion.get(lastMove.from.getRow(), lastMove.to.getColumn());
         setFigure(pawnPos, hitPawn);
         hitPawn.setCanBeHitByEnpasent();
     }
@@ -406,7 +406,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         ExtendedMove newLatestMove = extendedMoveStack.topExtendedMove();
         Figure figure = getFigure(newLatestMove.to);
         if (figure.isPawn() &&
-                Math.abs(newLatestMove.from.row - newLatestMove.to.row) == 2) {
+                Math.abs(newLatestMove.from.getRow() - newLatestMove.to.getRow()) == 2) {
             ((Pawn) figure).setCanBeHitByEnpasent();
         }
     }
@@ -463,7 +463,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
         for (int row = 0; row < 8; row++) {
             for (int column = 0; column < 8; column++) {
-                Position pos = Position.get(row, column);
+                Position pos = Position.Companion.get(row, column);
                 if (isFreeArea(pos) != other.isFreeArea(pos)) return false;
                 if (!isFreeArea(pos)) {
                     Figure figure1 = getFigure(pos);
@@ -623,7 +623,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
             int count = 0;
             for (byte row = 0; row < eight; row++) {
                 for (byte column = 0; column < eight; column++) {
-                    Figure figure = game.getFigure(Position.get(row, column));
+                    Figure figure = game.getFigure(Position.Companion.get(row, column));
                     if (figure != null) {
                         board[row][column] = figure.getTypeInfo();
                         count++;

@@ -23,14 +23,14 @@ public class BishopTest {
                 + "Knight-black-b5";
         ChessGame game = new ChessGame(des);
 
-        Position from = Position.get("d3");
-        Position to1 = Position.get("b5");
-        Position to2 = Position.get("h7");
-        Position to3 = Position.get("f1");
-        Position to4 = Position.get("c2");
-        Position to5 = Position.get("a6");
-        Position to6 = Position.get("b1");
-        Position to7 = Position.get("d4");
+        Position from = Position.Companion.get("d3");
+        Position to1 = Position.Companion.get("b5");
+        Position to2 = Position.Companion.get("h7");
+        Position to3 = Position.Companion.get("f1");
+        Position to4 = Position.Companion.get("c2");
+        Position to5 = Position.Companion.get("a6");
+        Position to6 = Position.Companion.get("b1");
+        Position to7 = Position.Companion.get("d4");
 
         Bishop bishop = new Bishop(true, from);
         assertTrue(bishop.isReachable(to1, game));
@@ -49,7 +49,7 @@ public class BishopTest {
                 + "Knight-white-f7";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure bishop = game.getFigure(Position.get("b1"));
+        Figure bishop = game.getFigure(Position.Companion.get("b1"));
         List<Move> moveIter = new LinkedList<>();
         bishop.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 7);

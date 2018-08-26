@@ -77,7 +77,7 @@ public class CheckSearch {
         Position passiveAttacker = getPassiveAttacker(game, kingPos, lastMove.from);
         if (passiveAttacker == null) {
             //an attackpath may have opend over the diagonal of the removed pawn
-            Position removedPawnPos = Position.get(lastMove.from.row, lastMove.to.column);
+            Position removedPawnPos = Position.Companion.get(lastMove.from.getRow(), lastMove.to.getColumn());
             passiveAttacker = getPassiveAttacker(game, kingPos, removedPawnPos);
         }
 
@@ -128,9 +128,9 @@ public class CheckSearch {
     private static CheckStatus analyseCheckAfterRochade(SimpleChessBoardInterface game, boolean whiteInCheck, Move lastMove) {
         final Position kingPos = game.getKingPosition(whiteInCheck);
 
-        final int rock_row = lastMove.to.row;
-        final int rock_column = lastMove.to.column == 2 ? 3 : 5;
-        final Position rockPos = Position.get(rock_row, rock_column);
+        final int rock_row = lastMove.to.getRow();
+        final int rock_column = lastMove.to.getColumn() == 2 ? 3 : 5;
+        final Position rockPos = Position.Companion.get(rock_row, rock_column);
         final Figure rock = game.getFigure(rockPos);
 
         if (rock.isReachable(kingPos, game)) return getPossiblePositions(kingPos, rockPos);
@@ -165,15 +165,15 @@ public class CheckSearch {
 
     private static boolean isCheckByKing(
             final BasicChessGameInterface game, final Position kingPos, final List<Position> attackerPos) {
-        final int minRow = Math.max(0, kingPos.row - 1);
-        final int maxRow = Math.min(7, kingPos.row + 1);
-        final int minColumn = Math.max(0, kingPos.column - 1);
-        final int maxColumn = Math.min(7, kingPos.column + 1);
+        final int minRow = Math.max(0, kingPos.getRow() - 1);
+        final int maxRow = Math.min(7, kingPos.getRow() + 1);
+        final int minColumn = Math.max(0, kingPos.getColumn() - 1);
+        final int maxColumn = Math.min(7, kingPos.getColumn() + 1);
 
         for (int row = minRow; row <= maxRow; row++) {
             for (int column = minColumn; column <= maxColumn; column++) {
-                if (row != kingPos.row || column != kingPos.column) {
-                    final Position pos = Position.get(row, column);
+                if (row != kingPos.getRow() || column != kingPos.getColumn()) {
+                    final Position pos = Position.Companion.get(row, column);
                     final Figure figure = game.getFigure(pos);
                     if (figure != null && figure.isKing()) {
                         attackerPos.add(pos);
@@ -187,11 +187,11 @@ public class CheckSearch {
 
     private static boolean isCheckByPawn(
             final BasicChessGameInterface game, final Position kingPos, final List<Position> attackerPos, final boolean isWhite) {
-        final int possiblePawnRow = isWhite ? kingPos.row + 1 : kingPos.row - 1;
+        final int possiblePawnRow = isWhite ? kingPos.getRow() + 1 : kingPos.getRow() - 1;
 
         if (possiblePawnRow < 0 || possiblePawnRow > 7) return false;
-        if (kingPos.column != 0) {
-            final Position pos = Position.get(possiblePawnRow, kingPos.column - 1);
+        if (kingPos.getColumn() != 0) {
+            final Position pos = Position.Companion.get(possiblePawnRow, kingPos.getColumn() - 1);
             final Figure figure = game.getFigure(pos);
             if (figure != null && figure.isWhite() != isWhite && figure.isPawn()) {
                 attackerPos.add(pos);
@@ -199,8 +199,8 @@ public class CheckSearch {
             }
         }
 
-        if (kingPos.column != 7) {
-            final Position pos = Position.get(possiblePawnRow, kingPos.column + 1);
+        if (kingPos.getColumn() != 7) {
+            final Position pos = Position.Companion.get(possiblePawnRow, kingPos.getColumn() + 1);
             final Figure figure = game.getFigure(pos);
             if (figure != null && figure.isWhite() != isWhite && figure.isPawn()) {
                 attackerPos.add(pos);
@@ -213,17 +213,17 @@ public class CheckSearch {
 
     private static boolean isCheckByKnight(
             final BasicChessGameInterface game, final Position kingPos, final List<Position> attackerPos, final boolean isWhite) {
-        final int minRow = Math.max(0, kingPos.row - 2);
-        final int maxRow = Math.min(7, kingPos.row + 2);
-        final int minColumn = Math.max(0, kingPos.column - 2);
-        final int maxColumn = Math.min(7, kingPos.column + 2);
+        final int minRow = Math.max(0, kingPos.getRow() - 2);
+        final int maxRow = Math.min(7, kingPos.getRow() + 2);
+        final int minColumn = Math.max(0, kingPos.getColumn() - 2);
+        final int maxColumn = Math.min(7, kingPos.getColumn() + 2);
 
         for (int row = minRow; row <= maxRow; row++) {
             for (int column = minColumn; column <= maxColumn; column++) {
-                final int vertical_dif = Math.abs(kingPos.row - row);
-                final int horizontal_dif = Math.abs(kingPos.column - column);
+                final int vertical_dif = Math.abs(kingPos.getRow() - row);
+                final int horizontal_dif = Math.abs(kingPos.getColumn() - column);
                 if (vertical_dif + horizontal_dif == 3) {
-                    final Position pos = Position.get(row, column);
+                    final Position pos = Position.Companion.get(row, column);
                     final Figure figure = game.getFigure(pos);
                     if (figure != null && figure.isWhite() != isWhite && figure.isKnight()) {
                         attackerPos.add(pos);
@@ -239,10 +239,10 @@ public class CheckSearch {
             final BasicChessGameInterface game, final Position kingPos, final List<Position> attackerPos, final boolean isWhite) {
         int column, row;
 
-        column = kingPos.column + 1;
-        row = kingPos.row + 1;
+        column = kingPos.getColumn() + 1;
+        row = kingPos.getRow() + 1;
         while (column < 8 && row < 8) {
-            final Position pos = Position.get(row, column);
+            final Position pos = Position.Companion.get(row, column);
             row++;
             column++;
 
@@ -256,10 +256,10 @@ public class CheckSearch {
             break;
         }
 
-        column = kingPos.column - 1;
-        row = kingPos.row + 1;
+        column = kingPos.getColumn() - 1;
+        row = kingPos.getRow() + 1;
         while (column >= 0 && row < 8) {
-            final Position pos = Position.get(row, column);
+            final Position pos = Position.Companion.get(row, column);
             row++;
             column--;
 
@@ -273,10 +273,10 @@ public class CheckSearch {
             break;
         }
 
-        column = kingPos.column + 1;
-        row = kingPos.row - 1;
+        column = kingPos.getColumn() + 1;
+        row = kingPos.getRow() - 1;
         while (column < 8 && row >= 0) {
-            final Position pos = Position.get(row, column);
+            final Position pos = Position.Companion.get(row, column);
             row--;
             column++;
 
@@ -290,10 +290,10 @@ public class CheckSearch {
             break;
         }
 
-        column = kingPos.column - 1;
-        row = kingPos.row - 1;
+        column = kingPos.getColumn() - 1;
+        row = kingPos.getRow() - 1;
         while (column >= 0 && row >= 0) {
-            final Position pos = Position.get(row, column);
+            final Position pos = Position.Companion.get(row, column);
             row--;
             column--;
 
@@ -315,8 +315,8 @@ public class CheckSearch {
 
         //da die Bauerntransformation jetzt ausgeschlossen ist,
         //darf nach dem Fund eines Angreifer aufgehört werden
-        for (int row = kingPos.row + 1; row < 8; row++) {                        //vertikale Reihe
-            final Position pos = Position.get(row, kingPos.column);
+        for (int row = kingPos.getRow() + 1; row < 8; row++) {                        //vertikale Reihe
+            final Position pos = Position.Companion.get(row, kingPos.getColumn());
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
@@ -326,8 +326,8 @@ public class CheckSearch {
             }
             break;
         }
-        for (int row = kingPos.row - 1; row >= 0; row--) {                        //vertikale Reihe
-            final Position pos = Position.get(row, kingPos.column);
+        for (int row = kingPos.getRow() - 1; row >= 0; row--) {                        //vertikale Reihe
+            final Position pos = Position.Companion.get(row, kingPos.getColumn());
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
@@ -337,8 +337,8 @@ public class CheckSearch {
             }
             break;
         }
-        for (int column = kingPos.column + 1; column < 8; column++) {//horizontale Reihe
-            final Position pos = Position.get(kingPos.row, column);
+        for (int column = kingPos.getColumn() + 1; column < 8; column++) {//horizontale Reihe
+            final Position pos = Position.Companion.get(kingPos.getRow(), column);
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
@@ -348,8 +348,8 @@ public class CheckSearch {
             }
             break;
         }
-        for (int column = kingPos.column - 1; column >= 0; column--) {//horizontale Reihe
-            final Position pos = Position.get(kingPos.row, column);
+        for (int column = kingPos.getColumn() - 1; column >= 0; column--) {//horizontale Reihe
+            final Position pos = Position.Companion.get(kingPos.getRow(), column);
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
@@ -366,12 +366,12 @@ public class CheckSearch {
             final BasicChessGameInterface game, final Position kingPos, final List<Position> attackerPos, final boolean isWhite) {
         //only possible if the king stod in the columnshadow of a pawn which transformed in the last move to rock or queen
         final int groundRow = isWhite ? 0 : 7;
-        if (kingPos.row != groundRow) return false;
+        if (kingPos.getRow() != groundRow) return false;
 
         Position kingSideAttackerPos = null;
 
-        if (kingPos.column != 0) {
-            final Position leftKingPos = Position.get(groundRow, kingPos.column - 1);
+        if (kingPos.getColumn() != 0) {
+            final Position leftKingPos = Position.Companion.get(groundRow, kingPos.getColumn() - 1);
             final Figure leftFromKingFigure = game.getFigure(leftKingPos);
             if (leftFromKingFigure != null && leftFromKingFigure.isWhite() != isWhite &&
                     (leftFromKingFigure.isQueen() || leftFromKingFigure.isRock())) {
@@ -379,8 +379,8 @@ public class CheckSearch {
             }
         }
 
-        if (kingPos.column != 7 && kingSideAttackerPos == null) {
-            final Position rightKingPos = Position.get(groundRow, kingPos.column + 1);
+        if (kingPos.getColumn() != 7 && kingSideAttackerPos == null) {
+            final Position rightKingPos = Position.Companion.get(groundRow, kingPos.getColumn() + 1);
             final Figure rightFromKingFigure = game.getFigure(rightKingPos);
             if (rightFromKingFigure != null && rightFromKingFigure.isWhite() != isWhite &&
                     (rightFromKingFigure.isQueen() || rightFromKingFigure.isRock())) {
@@ -396,7 +396,7 @@ public class CheckSearch {
         int row = groundRow;
         do {
             row += rowStep;
-            final Position pos = Position.get(row, kingPos.column);
+            final Position pos = Position.Companion.get(row, kingPos.getColumn());
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             //either figure says 'chess' or king is not in danger
@@ -417,21 +417,21 @@ public class CheckSearch {
     }
 
     final public static boolean areStraightPositions(Position first, Position second) {
-        return (first.row - second.row) == 0 || (first.column - second.column) == 0;
+        return (first.getRow() - second.getRow()) == 0 || (first.getColumn() - second.getColumn()) == 0;
     }
 
     final public static boolean areDiagonalPositions(Position first, Position second) {
-        return Math.abs(first.row - second.row) == Math.abs(first.column - second.column);
+        return Math.abs(first.getRow() - second.getRow()) == Math.abs(first.getColumn() - second.getColumn());
     }
 
     final static public boolean areInBetweenPositionsFree(BasicChessGameInterface game, Position first, Position second) {
-        final int rowStep = signum(second.row - first.row);
-        final int columnStep = signum(second.column - first.column);
+        final int rowStep = signum(second.getRow() - first.getRow());
+        final int columnStep = signum(second.getColumn() - first.getColumn());
 
-        int row = first.row + rowStep;
-        int column = first.column + columnStep;
-        while (row != second.row || column != second.column) {
-            if (!game.isFreeArea(Position.get(row, column))) {
+        int row = first.getRow() + rowStep;
+        int column = first.getColumn() + columnStep;
+        while (row != second.getRow() || column != second.getColumn()) {
+            if (!game.isFreeArea(Position.Companion.get(row, column))) {
                 return false;
             }
             row += rowStep;
@@ -442,17 +442,17 @@ public class CheckSearch {
     }
 
     final static private List<Position> getInBetweenPositions(Position first, Position second) {
-        final int rowStep = signum(second.row - first.row);
-        final int columnStep = signum(second.column - first.column);
+        final int rowStep = signum(second.getRow() - first.getRow());
+        final int columnStep = signum(second.getColumn() - first.getColumn());
 
         //this list might be added another Position later
-        final int positionNumberPlusOne = Math.abs(second.row - first.row) + Math.abs(second.column - first.column);
+        final int positionNumberPlusOne = Math.abs(second.getRow() - first.getRow()) + Math.abs(second.getColumn() - first.getColumn());
 
-        int row = first.row + rowStep;
-        int column = first.column + columnStep;
+        int row = first.getRow() + rowStep;
+        int column = first.getColumn() + columnStep;
         final List<Position> middlePositions = new ArrayList<Position>(positionNumberPlusOne);
-        while (row != second.row || column != second.column) {
-            middlePositions.add(Position.get(row, column));
+        while (row != second.getRow() || column != second.getColumn()) {
+            middlePositions.add(Position.Companion.get(row, column));
             row += rowStep;
             column += columnStep;
         }
@@ -469,14 +469,14 @@ public class CheckSearch {
             return null;
         }
 
-        final int rowStep = signum(lastMovedFrom.row - kingPos.row);
-        final int columnStep = signum(lastMovedFrom.column - kingPos.column);
+        final int rowStep = signum(lastMovedFrom.getRow() - kingPos.getRow());
+        final int columnStep = signum(lastMovedFrom.getColumn() - kingPos.getColumn());
 
-        int row = lastMovedFrom.row + rowStep;
-        int column = lastMovedFrom.column + columnStep;
+        int row = lastMovedFrom.getRow() + rowStep;
+        int column = lastMovedFrom.getColumn() + columnStep;
 
         while (row >= 0 && column >= 0 && row < 8 && column < 8) {
-            final Position pos = Position.get(row, column);
+            final Position pos = Position.Companion.get(row, column);
             final Figure figure = game.getFigure(pos);
             if (figure != null) {
 

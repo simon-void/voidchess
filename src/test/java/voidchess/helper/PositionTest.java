@@ -1,5 +1,6 @@
 package voidchess.helper;
 
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -9,50 +10,59 @@ import static org.testng.Assert.*;
  */
 public class PositionTest {
     @Test
-    public void testConstructor() {
-        Position pos1 = Position.get(0, 7);
-        assertTrue(pos1.column == 7);
-        assertTrue(pos1.row == 0);
+    public void testGet() {
+        Position pos1 = Position.Companion.get(0, 7);
+        assertTrue(pos1.getRow() == 0);
+        assertTrue(pos1.getColumn() == 7);
 
-        try {
-            Position.get(-1, 0);
-            fail("invalid position");
-        } catch (AssertionError e) {
-        }
-        try {
-            Position.get(8, 0);
-            fail("invalid position");
-        } catch (AssertionError e) {
-        }
+        Position pos2 = Position.Companion.get("a8");
+        assertTrue(pos2.getColumn() == 0);
+        assertTrue(pos2.getRow() == 7);
+    }
 
-        Position pos2 = Position.get("a8");
-        assertTrue(pos2.column == 0);
-        assertTrue(pos2.row == 7);
+    @Test(dataProvider = "getInvalidGetRowColumnData")
+    public void testInvalidGetByIntsFails(int row, int column) {
+        try {
+            Position.Companion.get(row, column);
+            fail("test should have failed on row:" + row + ", column:" + column + " but didn't");
+        } catch (AssertionError | ArrayIndexOutOfBoundsException e) {
+            // expected to fail
+        }
+    }
+
+    @DataProvider
+    private Object[][] getInvalidGetRowColumnData() {
+        return new Object[][]{
+            new Object[] {-1, 0},
+            new Object[] {0, -1},
+            new Object[] {8, 0},
+            new Object[] {0, 8},
+        };
     }
 
     @Test
-    public void testLinearIndex() {
-        Position pos1 = Position.get("a1");
-        assertEquals(pos1.linearIndex, 0);
-        Position pos2 = Position.get("h8");
-        assertEquals(pos2.linearIndex, 63);
+    public void testIndex() {
+        Position pos1 = Position.Companion.get("a1");
+        assertEquals(pos1.getIndex(), 0);
+        Position pos2 = Position.Companion.get("h8");
+        assertEquals(pos2.getIndex(), 63);
     }
 
     @Test
     public void testToString() {
-        Position pos1 = Position.get(0, 0);
+        Position pos1 = Position.Companion.get(0, 0);
         assertEquals("a1", pos1.toString());
-        Position pos2 = Position.get(7, 0);
+        Position pos2 = Position.Companion.get(7, 0);
         assertEquals("a8", pos2.toString());
-        Position pos3 = Position.get(7, 7);
+        Position pos3 = Position.Companion.get(7, 7);
         assertEquals("h8", pos3.toString());
     }
 
     @Test
     public void testEquals() {
-        Position pos1 = Position.get("d4");
-        Position pos2 = Position.get("e6");
-        Position pos3 = Position.get("d4");
+        Position pos1 = Position.Companion.get("d4");
+        Position pos2 = Position.Companion.get("e6");
+        Position pos3 = Position.Companion.get("d4");
 
         assertFalse(pos1.equalsPosition(pos2));
         assertFalse(pos2.equalsPosition(pos3));
@@ -60,16 +70,16 @@ public class PositionTest {
     }
 
     @Test
-    public void testNotInBounds() {
-        assertTrue(Position.notInBounds(-1, 4));
-        assertTrue(Position.notInBounds(1, 8));
-        assertTrue(Position.notInBounds(8, 4));
-        assertTrue(Position.notInBounds(1, -1));
+    public void testInBounds() {
+        assertFalse(Position.Companion.inBounds(-1, 4));
+        assertFalse(Position.Companion.inBounds(1, 8));
+        assertFalse(Position.Companion.inBounds(8, 4));
+        assertFalse(Position.Companion.inBounds(1, -1));
 
-        assertFalse(Position.notInBounds(0, 7));
-        assertFalse(Position.notInBounds(7, 0));
-        assertFalse(Position.notInBounds(0, 0));
-        assertFalse(Position.notInBounds(7, 7));
-        assertFalse(Position.notInBounds(3, 4));
+        assertTrue(Position.Companion.inBounds(0, 0));
+        assertTrue(Position.Companion.inBounds(0, 7));
+        assertTrue(Position.Companion.inBounds(7, 0));
+        assertTrue(Position.Companion.inBounds(7, 7));
+        assertTrue(Position.Companion.inBounds(3, 4));
     }
 }

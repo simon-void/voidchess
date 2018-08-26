@@ -17,8 +17,8 @@ public class ExtendedMoveTest {
     protected void setUp() {
         extendedMove =
                 new ExtendedMove(
-                        Position.get("a1"),
-                        Position.get("d1"),
+                        Position.Companion.get("a1"),
+                        Position.Companion.get("d1"),
                         null,
                         null,
                         true,
@@ -29,12 +29,12 @@ public class ExtendedMoveTest {
 
     @Test
     public void testFrom() {
-        assertTrue(extendedMove.from.equalsPosition(Position.get("a1")));
+        assertTrue(extendedMove.from.equalsPosition(Position.Companion.get("a1")));
     }
 
     @Test
     public void testTo() {
-        assertTrue(extendedMove.to.equalsPosition(Position.get("d1")));
+        assertTrue(extendedMove.to.equalsPosition(Position.Companion.get("d1")));
     }
 
     @Test
@@ -62,10 +62,10 @@ public class ExtendedMoveTest {
         assertFalse(extendedMove.hasHitFigure());
         ExtendedMove hitPawn =
                 new ExtendedMove(
-                        Position.get("b5"),
-                        Position.get("a6"),
+                        Position.Companion.get("b5"),
+                        Position.Companion.get("a6"),
                         null,
-                        new Pawn(false, Position.get("a5"), true),
+                        new Pawn(false, Position.Companion.get("a5"), true),
                         true,
                         false,
                         true,
@@ -74,9 +74,9 @@ public class ExtendedMoveTest {
         assertTrue(hitPawn.hasHitFigure());
         ExtendedMove hitFigure =
                 new ExtendedMove(
-                        Position.get("b5"),
-                        Position.get("a6"),
-                        new Pawn(false, Position.get("a6"), false),
+                        Position.Companion.get("b5"),
+                        Position.Companion.get("a6"),
+                        new Pawn(false, Position.Companion.get("a6"), false),
                         null,
                         true,
                         false,

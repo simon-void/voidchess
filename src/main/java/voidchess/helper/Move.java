@@ -11,8 +11,8 @@ public class Move {
             for (int fromcolumn = 0; fromcolumn < 8; fromcolumn++) {
                 for (int torow = 0; torow < 8; torow++) {
                     for (int tocolumn = 0; tocolumn < 8; tocolumn++) {
-                        Position fromPos = Position.get(fromrow, fromcolumn);
-                        Position toPos = Position.get(torow, tocolumn);
+                        Position fromPos = Position.Companion.get(fromrow, fromcolumn);
+                        Position toPos = Position.Companion.get(torow, tocolumn);
                         moves[fromrow][fromcolumn][torow][tocolumn] = new Move(fromPos, toPos);
                     }
                 }
@@ -24,7 +24,7 @@ public class Move {
     final public Position to;
 
     public static Move get(Position from, Position to) {
-        return moves[from.row][from.column][to.row][to.column];
+        return moves[from.getRow()][from.getColumn()][to.getRow()][to.getColumn()];
     }
 
     public static Move get(String code) {

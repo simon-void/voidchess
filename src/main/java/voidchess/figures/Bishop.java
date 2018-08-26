@@ -23,8 +23,8 @@ public class Bishop extends Figure {
     }
 
     public boolean isReachable(Position to, BasicChessGameInterface game) {
-        final int row_difference = to.row - position.row;
-        final int column_difference = to.column - position.column;
+        final int row_difference = to.getRow() - position.getRow();
+        final int column_difference = to.getColumn() - position.getColumn();
 
         final int abs_row_difference = Math.abs(row_difference);
         final int abs_column_difference = Math.abs(column_difference);
@@ -36,11 +36,11 @@ public class Bishop extends Figure {
         final int row_step = signum(row_difference);
         final int column_step = signum(column_difference);
 
-        int row = position.row + row_step;
-        int column = position.column + column_step;
+        int row = position.getRow() + row_step;
+        int column = position.getColumn() + column_step;
 
-        while (row != to.row) {
-            final Position pos = Position.get(row, column);
+        while (row != to.getRow()) {
+            final Position pos = Position.Companion.get(row, column);
             if (!game.isFreeArea(pos)) {
                 return false;
             }
@@ -55,13 +55,13 @@ public class Bishop extends Figure {
     private void getNorthEastIterator(BasicChessGameInterface game, List<Position> result) {
         int row, column;
 
-        row = position.row;
-        column = position.column;
+        row = position.getRow();
+        column = position.getColumn();
         while (true) {
             row++;
             column++;
             if (row == 8 || column == 8) break;
-            Position checkPosition = Position.get(row, column);
+            Position checkPosition = Position.Companion.get(row, column);
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
@@ -77,13 +77,13 @@ public class Bishop extends Figure {
     private void getSouthEastIterator(BasicChessGameInterface game, List<Position> result) {
         int row, column;
 
-        row = position.row;
-        column = position.column;
+        row = position.getRow();
+        column = position.getColumn();
         while (true) {
             row--;
             column++;
             if (row < 0 || column == 8) break;
-            Position checkPosition = Position.get(row, column);
+            Position checkPosition = Position.Companion.get(row, column);
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
@@ -99,13 +99,13 @@ public class Bishop extends Figure {
     private void getNorthWestIterator(BasicChessGameInterface game, List<Position> result) {
         int row, column;
 
-        row = position.row;
-        column = position.column;
+        row = position.getRow();
+        column = position.getColumn();
         while (true) {
             row++;
             column--;
             if (row == 8 || column < 0) break;
-            Position checkPosition = Position.get(row, column);
+            Position checkPosition = Position.Companion.get(row, column);
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
@@ -121,13 +121,13 @@ public class Bishop extends Figure {
     private void getSouthWestIterator(BasicChessGameInterface game, List<Position> result) {
         int row, column;
 
-        row = position.row;
-        column = position.column;
+        row = position.getRow();
+        column = position.getColumn();
         while (true) {
             row--;
             column--;
             if (row < 0 || column < 0) break;
-            Position checkPosition = Position.get(row, column);
+            Position checkPosition = Position.Companion.get(row, column);
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);

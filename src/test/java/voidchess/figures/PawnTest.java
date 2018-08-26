@@ -19,8 +19,8 @@ import static org.testng.Assert.*;
 public class PawnTest {
     @Test
     public void testCanBeHitByEnpasent() {
-        Move move = Move.get(Position.get("e2"), Position.get("e4"));
-        Move other_move = Move.get(Position.get("d2"), Position.get("d4"));
+        Move move = Move.get(Position.Companion.get("e2"), Position.Companion.get("e4"));
+        Move other_move = Move.get(Position.Companion.get("d2"), Position.Companion.get("d4"));
 
 
         Pawn pawn = new Pawn(true, move.from);
@@ -36,11 +36,11 @@ public class PawnTest {
         String des = "white 0 Pawn-white-a2-false Pawn-white-b3-false";
         ChessGame game = new ChessGame(des);
 
-        Position from = Position.get("a2");
-        Position to1 = Position.get("a3");
-        Position to2 = Position.get("a4");
-        Position to3 = Position.get("b3");
-        Position to4 = Position.get("a1");
+        Position from = Position.Companion.get("a2");
+        Position to1 = Position.Companion.get("a3");
+        Position to2 = Position.Companion.get("a4");
+        Position to3 = Position.Companion.get("b3");
+        Position to4 = Position.Companion.get("a1");
 
         Figure pawn = game.getFigure(from);
         assertTrue(pawn.isReachable(to1, game));
@@ -53,11 +53,11 @@ public class PawnTest {
         des = "black 0 Pawn-white-e4-true Pawn-white-c3-false Pawn-black-d4-false";
         game = new ChessGame(des);
 
-        from = Position.get("d4");
-        to1 = Position.get("d3");
-        to2 = Position.get("e3");
-        to3 = Position.get("c3");
-        to4 = Position.get("d2");
+        from = Position.Companion.get("d4");
+        to1 = Position.Companion.get("d3");
+        to2 = Position.Companion.get("e3");
+        to3 = Position.Companion.get("c3");
+        to4 = Position.Companion.get("d2");
 
         pawn = game.getFigure(from);
         assertTrue(pawn.isReachable(to1, game));
@@ -72,12 +72,12 @@ public class PawnTest {
                 + "King-black-e8-0 Pawn-black-h7-false";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure pawn1 = game.getFigure(Position.get("b4"));
+        Figure pawn1 = game.getFigure(Position.Companion.get("b4"));
         List<Move> moveIter1 = new LinkedList<>();
         pawn1.getPossibleMoves(game, moveIter1);
         assertEquals(moveIter1.size(), 2);
 
-        Pawn pawn2 = new Pawn(false, Position.get("h7"));
+        Pawn pawn2 = new Pawn(false, Position.Companion.get("h7"));
         List<Move> moveIter2 = new LinkedList<>();
         pawn2.getPossibleMoves(game, moveIter2);
         assertEquals(moveIter2.size(), 2);

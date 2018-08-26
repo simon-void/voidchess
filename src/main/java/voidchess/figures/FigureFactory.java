@@ -48,7 +48,7 @@ final public class FigureFactory {
         StringTokenizer st = new StringTokenizer(description, "-", false);
         String type = st.nextToken();
         boolean isWhite = st.nextToken().equals("white");
-        Position pos = Position.get(st.nextToken());
+        Position pos = Position.Companion.get(st.nextToken());
 
         if (type.equals("Knight")) return getKnight(pos, isWhite);
         if (type.equals("Bishop")) return getBishop(pos, isWhite);
