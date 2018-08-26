@@ -187,7 +187,7 @@ public class ComputerPlayerTest {
                 + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 "
                 + "Rock-black-a8-0 Knight-black-b8 Bishop-black-c8 "
                 + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
-        // loadTest( des );
+        loadTest( des );
 
         // Grundaufstellung mit Bauern vor König und ohne Läufer
         des = "white 0 Rock-white-a1-0 Knight-white-b1 "
