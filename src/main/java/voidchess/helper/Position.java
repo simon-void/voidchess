@@ -4,19 +4,18 @@ package voidchess.helper;
  * @author stephan
  */
 final public class Position {
-    final private static Position[][] positions;
+    final private static Position[] positions = new Position[64];
 
     static {
-        positions = new Position[8][8];
         for (byte row = 0; row < 8; row++) {
             for (byte column = 0; column < 8; column++) {
-                positions[row][column] = new Position(row, column);
+                Position pos = new Position(row, column);
+                positions[pos.linearIndex] = pos;
             }
         }
     }
 
-    final public int row, column;
-    final private int hashcode;
+    final public int row, column, linearIndex;
 
     private Position(int row, int column) {
         assert !notInBounds(row, column)
@@ -24,7 +23,7 @@ final public class Position {
 
         this.row = row;
         this.column = column;
-        this.hashcode = row + column * 8;
+        this.linearIndex = row + (column << 3); // optimized from row + column * 8
     }
 
     public static boolean notInBounds(int row, int column) {
@@ -48,7 +47,7 @@ final public class Position {
         assert !notInBounds(row, column)
                 : "This is no position on a chessboard";
 
-        return positions[row][column];
+        return positions[row + (column << 3)];
     }
 
     public String toString() {
@@ -70,6 +69,6 @@ final public class Position {
 
     @Override
     public int hashCode() {
-        return hashcode;
+        return linearIndex;
     }
 }

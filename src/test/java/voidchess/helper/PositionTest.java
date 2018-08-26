@@ -31,6 +31,14 @@ public class PositionTest {
     }
 
     @Test
+    public void testLinearIndex() {
+        Position pos1 = Position.get("a1");
+        assertEquals(pos1.linearIndex, 0);
+        Position pos2 = Position.get("h8");
+        assertEquals(pos2.linearIndex, 63);
+    }
+
+    @Test
     public void testToString() {
         Position pos1 = Position.get(0, 0);
         assertEquals("a1", pos1.toString());

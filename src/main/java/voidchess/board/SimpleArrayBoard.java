@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
 
 public class SimpleArrayBoard
         implements SimpleChessBoardInterface {
-    final private Figure[][] game;
+    final private Figure[] game;
     final private LastMoveProvider lastMoveProvider;
     final private FigureFactory figureFactory;
 
@@ -33,7 +33,7 @@ public class SimpleArrayBoard
 
     SimpleArrayBoard(LastMoveProvider lastMoveProvider) {
         figureFactory = new FigureFactory();
-        game = new Figure[8][8];
+        game = new Figure[64];
         this.lastMoveProvider = lastMoveProvider;
         init();
     }
@@ -275,10 +275,8 @@ public class SimpleArrayBoard
 
     private void clear() {
         clearCheckComputation();
-        for (int row = 0; row < 8; row++) {
-            for (int column = 0; column < 8; column++) {
-                game[row][column] = null;
-            }
+        for (int linearIndex = 0; linearIndex < 64; linearIndex++) {
+            game[linearIndex] = null;
         }
         whiteKingPosition = null;
         blackKingPosition = null;
@@ -287,7 +285,7 @@ public class SimpleArrayBoard
     public void setFigure(Position pos, Figure figure) {
         clearCheckComputation();
 
-        game[pos.row][pos.column] = figure;
+        game[pos.linearIndex] = figure;
         if (figure != null && figure.isKing()) {
             if (figure.isWhite()) whiteKingPosition = pos;
             else blackKingPosition = pos;
@@ -296,21 +294,19 @@ public class SimpleArrayBoard
     }
 
     public Figure getFigure(Position pos) {
-        return game[pos.row][pos.column];
+        return game[pos.linearIndex];
     }
 
     public boolean isFreeArea(Position pos) {
-        return game[pos.row][pos.column] == null;
+        return game[pos.linearIndex] == null;
     }
 
     public List<Figure> getFigures() {
         List<Figure> figureIter = new ArrayList<Figure>(16);
 
-        for (int row = 0; row < 8; row++) {
-            for (int column = 0; column < 8; column++) {
-                if (game[row][column] != null) {
-                    figureIter.add(game[row][column]);
-                }
+        for (int linearIndex = 0; linearIndex < 64; linearIndex++) {
+            if (game[linearIndex] != null) {
+                figureIter.add(game[linearIndex]);
             }
         }
         return figureIter;
