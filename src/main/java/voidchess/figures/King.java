@@ -167,7 +167,7 @@ public class King extends RochadeFigure {
                         (game.isFreeArea(checkPosition) ||
                                 game.getFigure(checkPosition).isWhite != isWhite)
                 ) {
-                    result.add(Move.get(position, checkPosition));
+                    result.add(Move.Companion.get(position, checkPosition));
                 }
             }
         }
@@ -179,7 +179,7 @@ public class King extends RochadeFigure {
                     if (game.getFigure(pos).canParticipateInRochade() &&
                             isReachable(pos, game)) {
 
-                        result.add(Move.get(position, pos));
+                        result.add(Move.Companion.get(position, pos));
                     }
                     break;
                 }
@@ -190,7 +190,7 @@ public class King extends RochadeFigure {
                     if (game.getFigure(pos).canParticipateInRochade() &&
                             isReachable(pos, game)) {
 
-                        result.add(Move.get(position, pos));
+                        result.add(Move.Companion.get(position, pos));
                     }
                     break;
                 }

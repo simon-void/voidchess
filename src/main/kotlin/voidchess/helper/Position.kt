@@ -12,7 +12,7 @@ class Position private constructor(val row: Int, val column: Int) {
     override fun hashCode() = index
 
     companion object {
-        private val positions = Array(64) {
+        private val positions = Array(8*8) {
             val row = it % 8
             val column = it / 8
             return@Array Position(row,column)

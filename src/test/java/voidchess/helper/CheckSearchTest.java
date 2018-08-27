@@ -101,7 +101,7 @@ public class CheckSearchTest {
         // black moved f7-f5 to counter the check from the diagonal, white played e5-f6
         String des = "black 0 King-white-e1-0 Queen-white-g4 Pawn-white-f6-false King-black-d7-1";
 
-        ExtendedMove extendedMove = getEnpassentMove(Move.byCode("e5-f6"));
+        ExtendedMove extendedMove = getEnpassentMove(Move.Companion.byCode("e5-f6"));
         LastMoveProvider moveProvider = mock(LastMoveProvider.class);
         when(moveProvider.getLastMove()).thenReturn(extendedMove);
         SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
@@ -118,7 +118,7 @@ public class CheckSearchTest {
         // black moved f7-f5, white played e5-f6
         String des = "black 0 King-white-e1-0 Queen-white-e4 Pawn-white-f6-false King-black-e8-0";
 
-        ExtendedMove extendedMove = getEnpassentMove(Move.byCode("e5-f6"));
+        ExtendedMove extendedMove = getEnpassentMove(Move.Companion.byCode("e5-f6"));
         LastMoveProvider moveProvider = mock(LastMoveProvider.class);
         when(moveProvider.getLastMove()).thenReturn(extendedMove);
         SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
@@ -135,7 +135,7 @@ public class CheckSearchTest {
         // black moved f7-f5, white played e5-f6
         String des = "black 0 King-white-e1-0 Pawn-white-f6-false King-black-e7-1";
 
-        ExtendedMove extendedMove = getEnpassentMove(Move.byCode("e5-f6"));
+        ExtendedMove extendedMove = getEnpassentMove(Move.Companion.byCode("e5-f6"));
         LastMoveProvider moveProvider = mock(LastMoveProvider.class);
         when(moveProvider.getLastMove()).thenReturn(extendedMove);
         SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
@@ -148,10 +148,10 @@ public class CheckSearchTest {
     }
 
     private ExtendedMove getEnpassentMove(Move move) {
-        boolean isWhiteMove = move.to.getRow() > move.from.getRow();
-        Pawn hitByEnpassant = new Pawn(!isWhiteMove, Position.Companion.get(move.from.getRow(), move.to.getColumn()));
+        boolean isWhiteMove = move.getTo().getRow() > move.getFrom().getRow();
+        Pawn hitByEnpassant = new Pawn(!isWhiteMove, Position.Companion.get(move.getFrom().getRow(), move.getTo().getColumn()));
 
-        ExtendedMove extendedMove = new ExtendedMove(move.from, move.to, null, hitByEnpassant, isWhiteMove, false, true, false);
+        ExtendedMove extendedMove = new ExtendedMove(move, null, hitByEnpassant, isWhiteMove, false, true, false);
 
         return extendedMove;
     }

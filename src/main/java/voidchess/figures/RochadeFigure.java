@@ -34,7 +34,7 @@ abstract public class RochadeFigure extends Figure {
     }
 
     public void figureMoved(Move move) {
-        if (position.equalsPosition(move.from)) stepsTaken++;
+        if (position.equalsPosition(move.getFrom())) stepsTaken++;
         super.figureMoved(move);
     }
 

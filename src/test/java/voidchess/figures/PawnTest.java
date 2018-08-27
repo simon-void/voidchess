@@ -19,11 +19,11 @@ import static org.testng.Assert.*;
 public class PawnTest {
     @Test
     public void testCanBeHitByEnpasent() {
-        Move move = Move.get(Position.Companion.byCode("e2"), Position.Companion.byCode("e4"));
-        Move other_move = Move.get(Position.Companion.byCode("d2"), Position.Companion.byCode("d4"));
+        Move move = Move.Companion.get(Position.Companion.byCode("e2"), Position.Companion.byCode("e4"));
+        Move other_move = Move.Companion.get(Position.Companion.byCode("d2"), Position.Companion.byCode("d4"));
 
 
-        Pawn pawn = new Pawn(true, move.from);
+        Pawn pawn = new Pawn(true, move.getFrom());
         assertFalse(pawn.canBeHitByEnpasent());
         pawn.figureMoved(move);
         assertTrue(pawn.canBeHitByEnpasent());

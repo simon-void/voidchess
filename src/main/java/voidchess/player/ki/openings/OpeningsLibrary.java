@@ -47,7 +47,7 @@ public class OpeningsLibrary {
 //            movesFound.add(move);
 //        }
         List<Move> movesFound = moveDescriptionsFound.map(
-                (String moveDesc) -> Move.byCode(moveDesc)
+                (String moveDesc) -> Move.Companion.byCode(moveDesc)
         ).collect(Collectors.toList());
         return movesFound;
     }
@@ -106,13 +106,13 @@ public class OpeningsLibrary {
 
         for (String textMove : textMoves) {
             textMove = textMove.trim();
-            if (!Move.isValid(textMove)) {
+            if (!Move.Companion.isValid(textMove)) {
                 throw new IllegalArgumentException(
                         "illegal move format'" + textMove + "' in opening sequence: " + openingSequence);
             }
-            Move move = Move.byCode(textMove);
+            Move move = Move.Companion.byCode(textMove);
             boolean isMoveExecutable = game.isMoveable(
-                    move.from, move.to, game.isWhiteTurn()
+                    move.getFrom(), move.getTo(), game.isWhiteTurn()
             );
             if (!isMoveExecutable) {
                 throw new IllegalArgumentException(

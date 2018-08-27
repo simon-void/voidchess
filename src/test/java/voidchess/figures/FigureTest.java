@@ -81,9 +81,9 @@ public class FigureTest {
         Position thirdpos = Position.Companion.byCode("f5");
 
         Figure figure1 = new Bishop(true, from);
-        figure1.figureMoved(Move.get(from, to));
+        figure1.figureMoved(Move.Companion.get(from, to));
         assertEquals(figure1.toString(), "Bishop-white-g5");
-        figure1.figureMoved(Move.get(thirdpos, from));
+        figure1.figureMoved(Move.Companion.get(thirdpos, from));
         assertEquals(figure1.toString(), "Bishop-white-g5");
     }
 
@@ -91,7 +91,7 @@ public class FigureTest {
     public void testRochade() {
         Position from = Position.Companion.byCode("c1");
         Position to = Position.Companion.byCode("g5");
-        Move move = Move.get(from, to);
+        Move move = Move.Companion.get(from, to);
 
         assertFalse(new Pawn(true, from).canParticipateInRochade());
 
@@ -253,7 +253,7 @@ public class FigureTest {
         List<Move> allMoves = new LinkedList<>();
         game.getPossibleMoves(allMoves);
         for (Move move : allMoves) {
-            if (move.from.equalsPosition(from)) {
+            if (move.getFrom().equalsPosition(from)) {
                 moveIter.add(move);
             }
         }

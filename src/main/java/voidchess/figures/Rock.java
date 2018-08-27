@@ -141,7 +141,7 @@ public class Rock extends RochadeFigure {
         getWestIterator(game, positions);
 
         for (Position pos : positions) {
-            result.add(Move.get(position, pos));
+            result.add(Move.Companion.get(position, pos));
         }
     }
 

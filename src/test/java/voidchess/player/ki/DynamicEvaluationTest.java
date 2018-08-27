@@ -19,7 +19,7 @@ public class DynamicEvaluationTest {
         String des = "black 0 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false";
         ChessGame game = new ChessGame(des);
         DynamicEvaluation dynamicEvaluation = new DynamicEvaluation();
-        Move move = Move.byCode("a6-b6");
+        Move move = Move.Companion.byCode("a6-b6");
 
         dynamicEvaluation.evaluateMove(game, move);
         //Invariante: evaluateMove darf game nicht ändern
@@ -38,14 +38,14 @@ public class DynamicEvaluationTest {
                 "Queen-black-d8 King-black-e8-0 Bishop-black-c8 Knight-black-g8 Rock-black-h8-0";
 
         ChessGame game = new ChessGame(des);
-        game.move(Move.byCode("d2-d3"));
-        game.move(Move.byCode("d7-d6"));
-        game.move(Move.byCode("c1-g5"));
-        game.move(Move.byCode("e7-e6"));    //??Dame kann geschlagen werden
+        game.move(Move.Companion.byCode("d2-d3"));
+        game.move(Move.Companion.byCode("d7-d6"));
+        game.move(Move.Companion.byCode("c1-g5"));
+        game.move(Move.Companion.byCode("e7-e6"));    //??Dame kann geschlagen werden
 
         DynamicEvaluation dynamicEvaluation = new DynamicEvaluation();
 
-        Evaluated value = dynamicEvaluation.evaluateMove(game, Move.byCode("g5-d8"));
+        Evaluated value = dynamicEvaluation.evaluateMove(game, Move.Companion.byCode("g5-d8"));
 
         //Schlagen der Königing ist der beste Zug
         //der Wert des Zuges sollte um 6 liegen,
@@ -62,13 +62,13 @@ public class DynamicEvaluationTest {
     @Test
     public void testFailingPosition() {
         ChessGame game = new ChessGame(518);
-        game.move(Move.byCode("e2-e4"));
-        game.move(Move.byCode("d7-d5"));
-        game.move(Move.byCode("e4-e5"));
+        game.move(Move.Companion.byCode("e2-e4"));
+        game.move(Move.Companion.byCode("d7-d5"));
+        game.move(Move.Companion.byCode("e4-e5"));
 
         SearchTreePruner pruner = new SimplePruner(2, 4, 3);
         assertEquals(game.countFigures(), 32, "figureCount");
-        evaluateDynamic(game, Move.byCode("e8-d7"), pruner);
+        evaluateDynamic(game, Move.Companion.byCode("e8-d7"), pruner);
         assertEquals(game.countFigures(), 32, "figureCount");
     }
 

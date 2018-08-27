@@ -82,7 +82,7 @@ public abstract class Figure {
     }
 
     public void figureMoved(Move move) {
-        if (position.equalsPosition(move.from)) position = move.to;
+        if (position.equalsPosition(move.getFrom())) position = move.getTo();
     }
 
     public void undoMove(Position oldPosition) {
@@ -179,7 +179,7 @@ public abstract class Figure {
             List<Move> result) {
         for (Position to : restrictedPositions) {
             if (isReachable(to, game)) {
-                result.add(Move.get(position, to));
+                result.add(Move.Companion.get(position, to));
             }
         }
     }
@@ -190,7 +190,7 @@ public abstract class Figure {
         final CheckStatus checkStatus = game.getCheckStatus(isWhite);
 
         for (Move move : reachableMoves) {
-            Position checkPosition = move.to;
+            Position checkPosition = move.getTo();
             if (!isBound(checkPosition, game, checkStatus)) {
                 result.add(move);
             }

@@ -34,24 +34,25 @@ public class CheckSearch {
         }
     }
 
-    public static CheckStatus analyseCheck(SimpleChessBoardInterface game, boolean whiteInCheck, ExtendedMove lastMove) {
-        if (lastMove == null) {
+    public static CheckStatus analyseCheck(SimpleChessBoardInterface game, boolean whiteInCheck, ExtendedMove lastExtMove) {
+        if (lastExtMove == null) {
             return analyseCheck(game, whiteInCheck);
         }
 
-        if (lastMove.isEnpassent()) return analyseCheckAfterEnpassent(game, whiteInCheck, lastMove);
-        if (lastMove.isRochade()) return analyseCheckAfterRochade(game, whiteInCheck, lastMove);
-        if (lastMove.pawnTransformed()) return analyseCheckAfterPawnTransform(game, whiteInCheck, lastMove);
+        final Move lastMove = lastExtMove.getMove();
+        if (lastExtMove.isEnpassent()) return analyseCheckAfterEnpassent(game, whiteInCheck, lastMove);
+        if (lastExtMove.isRochade()) return analyseCheckAfterRochade(game, whiteInCheck, lastMove);
+        if (lastExtMove.isPawnTransformation()) return analyseCheckAfterPawnTransform(game, whiteInCheck, lastMove);
 
         final Position kingPos = game.getKingPosition(whiteInCheck);
-        final Figure movedFigure = game.getFigure(lastMove.to);
+        final Figure movedFigure = game.getFigure(lastMove.getTo());
         final List<Position> attackPositions = new ArrayList<Position>(2);
 
         if (movedFigure.isReachable(kingPos, game)) {
-            attackPositions.add(lastMove.to);
+            attackPositions.add(lastMove.getTo());
         }
 
-        Position passiveAttacker = getPassiveAttacker(game, kingPos, lastMove.from);
+        Position passiveAttacker = getPassiveAttacker(game, kingPos, lastMove.getFrom());
         if (passiveAttacker != null) {
             attackPositions.add(passiveAttacker);
         }
@@ -72,12 +73,12 @@ public class CheckSearch {
         final Position kingPos = game.getKingPosition(whiteInCheck);
 
         final List<Position> attackPositions = new ArrayList<Position>(2);
-        final Figure attackFigure = game.getFigure(lastMove.to);
+        final Figure attackFigure = game.getFigure(lastMove.getTo());
 
-        Position passiveAttacker = getPassiveAttacker(game, kingPos, lastMove.from);
+        Position passiveAttacker = getPassiveAttacker(game, kingPos, lastMove.getFrom());
         if (passiveAttacker == null) {
             //an attackpath may have opend over the diagonal of the removed pawn
-            Position removedPawnPos = Position.Companion.get(lastMove.from.getRow(), lastMove.to.getColumn());
+            Position removedPawnPos = Position.Companion.get(lastMove.getFrom().getRow(), lastMove.getTo().getColumn());
             passiveAttacker = getPassiveAttacker(game, kingPos, removedPawnPos);
         }
 
@@ -102,14 +103,14 @@ public class CheckSearch {
 
     private static CheckStatus analyseCheckAfterPawnTransform(SimpleChessBoardInterface game, boolean whiteInCheck, Move lastMove) {
         final Position kingPos = game.getKingPosition(whiteInCheck);
-        final Figure transformedPawn = game.getFigure(lastMove.to);
+        final Figure transformedPawn = game.getFigure(lastMove.getTo());
         final List<Position> attackPositions = new ArrayList<Position>(2);
-        final Position passiveAttacker = getPassiveAttacker(game, kingPos, lastMove.from);
+        final Position passiveAttacker = getPassiveAttacker(game, kingPos, lastMove.getFrom());
 
         if (transformedPawn.isReachable(kingPos, game)) {
-            attackPositions.add(lastMove.to);
+            attackPositions.add(lastMove.getTo());
         }
-        if (passiveAttacker != null && !passiveAttacker.equalsPosition(lastMove.to)) {
+        if (passiveAttacker != null && !passiveAttacker.equalsPosition(lastMove.getTo())) {
             attackPositions.add(passiveAttacker);
         }
 
@@ -128,8 +129,8 @@ public class CheckSearch {
     private static CheckStatus analyseCheckAfterRochade(SimpleChessBoardInterface game, boolean whiteInCheck, Move lastMove) {
         final Position kingPos = game.getKingPosition(whiteInCheck);
 
-        final int rock_row = lastMove.to.getRow();
-        final int rock_column = lastMove.to.getColumn() == 2 ? 3 : 5;
+        final int rock_row = lastMove.getTo().getRow();
+        final int rock_column = lastMove.getTo().getColumn() == 2 ? 3 : 5;
         final Position rockPos = Position.Companion.get(rock_row, rock_column);
         final Figure rock = game.getFigure(rockPos);
 

@@ -17,8 +17,10 @@ public class ExtendedMoveTest {
     protected void setUp() {
         extendedMove =
                 new ExtendedMove(
-                        Position.Companion.byCode("a1"),
-                        Position.Companion.byCode("d1"),
+                        Move.Companion.get(
+                                Position.Companion.byCode("a1"),
+                                Position.Companion.byCode("d1")
+                        ),
                         null,
                         null,
                         true,
@@ -29,12 +31,12 @@ public class ExtendedMoveTest {
 
     @Test
     public void testFrom() {
-        assertTrue(extendedMove.from.equalsPosition(Position.Companion.byCode("a1")));
+        assertTrue(extendedMove.getMove().getFrom().equalsPosition(Position.Companion.byCode("a1")));
     }
 
     @Test
     public void testTo() {
-        assertTrue(extendedMove.to.equalsPosition(Position.Companion.byCode("d1")));
+        assertTrue(extendedMove.getMove().getTo().equalsPosition(Position.Companion.byCode("d1")));
     }
 
     @Test
@@ -62,8 +64,10 @@ public class ExtendedMoveTest {
         assertFalse(extendedMove.hasHitFigure());
         ExtendedMove hitPawn =
                 new ExtendedMove(
-                        Position.Companion.byCode("b5"),
-                        Position.Companion.byCode("a6"),
+                        Move.Companion.get(
+                                Position.Companion.byCode("b5"),
+                                Position.Companion.byCode("a6")
+                        ),
                         null,
                         new Pawn(false, Position.Companion.byCode("a5"), true),
                         true,
@@ -74,8 +78,10 @@ public class ExtendedMoveTest {
         assertTrue(hitPawn.hasHitFigure());
         ExtendedMove hitFigure =
                 new ExtendedMove(
-                        Position.Companion.byCode("b5"),
-                        Position.Companion.byCode("a6"),
+                        Move.Companion.get(
+                                Position.Companion.byCode("b5"),
+                                Position.Companion.byCode("a6")
+                        ),
                         new Pawn(false, Position.Companion.byCode("a6"), false),
                         null,
                         true,

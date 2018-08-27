@@ -45,7 +45,7 @@ public class RockTest {
         Rock rock = (Rock) figureFactory.getRock(Position.Companion.byCode("a1"), false);
 
         assertTrue(rock.canParticipateInRochade());
-        rock.figureMoved(Move.byCode("a1-b1"));
+        rock.figureMoved(Move.Companion.byCode("a1-b1"));
         assertFalse(rock.canParticipateInRochade());
         rock.undoMove(Position.Companion.byCode("a1"));
         assertTrue(rock.canParticipateInRochade());

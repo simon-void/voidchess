@@ -54,7 +54,7 @@ public class Knight extends Figure {
         List<Position> posIter = getIterator(game);
         for (Position checkPosition : posIter) {
             if (isReachable(checkPosition, game)) {
-                result.add(Move.get(position, checkPosition));
+                result.add(Move.Companion.get(position, checkPosition));
             }
         }
     }

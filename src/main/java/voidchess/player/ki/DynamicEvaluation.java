@@ -77,9 +77,9 @@ public class DynamicEvaluation {
         for (Move move : minPossibleMovesBuffer) {
             Evaluated primaryEval;
 
-            assert (game.isFreeArea(move.to) || !game.getFigure(move.to).isKing())
+            assert (game.isFreeArea(move.getTo()) || !game.getFigure(move.getTo()).isKing())
                     : "getMin:" +
-                    game.getFigure(move.from).getClass().getName() +
+                    game.getFigure(move.getFrom()).getClass().getName() +
                     " hits King white Move " +
                     move.toString();
 
@@ -154,9 +154,9 @@ public class DynamicEvaluation {
         for (Move move : maxPossibleMovesBuffer) {
             Evaluated primaryEval;
 
-            assert (game.isFreeArea(move.to) || !game.getFigure(move.to).isKing())
+            assert (game.isFreeArea(move.getTo()) || !game.getFigure(move.getTo()).isKing())
                     : "getMax:" +
-                    game.getFigure(move.from).getClass().getName() +
+                    game.getFigure(move.getFrom()).getClass().getName() +
                     " hits King white Move " +
                     move.toString();
 

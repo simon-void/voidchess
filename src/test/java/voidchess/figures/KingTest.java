@@ -141,11 +141,11 @@ public class KingTest {
         assertEquals(0, moveIter.size());
 
         ChessGame game = new ChessGame(621);
-        game.move(Move.byCode("c2-c3"));
-        game.move(Move.byCode("f7-f6"));
-        game.move(Move.byCode("d1-c2"));
-        game.move(Move.byCode("g8-c4"));
-        game.move(Move.byCode("c2-h7"));
+        game.move(Move.Companion.byCode("c2-c3"));
+        game.move(Move.Companion.byCode("f7-f6"));
+        game.move(Move.Companion.byCode("d1-c2"));
+        game.move(Move.Companion.byCode("g8-c4"));
+        game.move(Move.Companion.byCode("c2-h7"));
         Position pos = Position.Companion.byCode("e8");
         List<Move> movesFrom = FigureTest.getPossibleMovesFrom(game, pos);
         assertEquals(1, movesFrom.size());
@@ -159,7 +159,7 @@ public class KingTest {
 
         King king = (King) game.getFigure(Position.Companion.byCode("e1"));
         assertFalse(king.didRochade());
-        game.move(Move.byCode("e1-a1"));
+        game.move(Move.Companion.byCode("e1-a1"));
         assertTrue(king.didRochade());
     }
 

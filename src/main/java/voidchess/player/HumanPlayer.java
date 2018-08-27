@@ -69,7 +69,7 @@ public class HumanPlayer
             }
         } else {
             if (game.isMoveable(from, pos, isWhitePlayer)) {
-                move(Move.get(from, pos));
+                move(Move.Companion.get(from, pos));
             }
         }
     }

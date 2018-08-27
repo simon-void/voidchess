@@ -33,8 +33,8 @@ public class Pawn extends Figure {
     }
 
     public void figureMoved(Move move) {
-        canBeHitByEnpasent = move.from.equalsPosition(position)
-                && Math.abs(move.from.getRow() - move.to.getRow()) == 2;
+        canBeHitByEnpasent = move.getFrom().equalsPosition(position)
+                && Math.abs(move.getFrom().getRow() - move.getTo().getRow()) == 2;
         super.figureMoved(move);
     }
 
@@ -113,7 +113,7 @@ public class Pawn extends Figure {
         for (int column = minColumn; column <= maxColumn; column++) {
             Position checkPosition = Position.Companion.get(oneForwardRow, column);
             if (isReachable(checkPosition, game)) {
-                result.add(Move.get(position, checkPosition));
+                result.add(Move.Companion.get(position, checkPosition));
             }
         }
 
@@ -123,7 +123,7 @@ public class Pawn extends Figure {
         if (position.getRow() == pawnStartRow) {
             Position twoForwardPosition = Position.Companion.get(twoForwardRow, position.getColumn());
             if (isReachable(twoForwardPosition, game)) {
-                result.add(Move.get(position, twoForwardPosition));
+                result.add(Move.Companion.get(position, twoForwardPosition));
             }
         }
     }

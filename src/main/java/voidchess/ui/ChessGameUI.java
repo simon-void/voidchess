@@ -51,17 +51,17 @@ public class ChessGameUI extends JComponent {
     }
 
     public void repaintAfterMove(Move move) {
-        repaintPositionAtOnce(move.from);
-        repaintPositionAtOnce(move.to);
+        repaintPositionAtOnce(move.getFrom());
+        repaintPositionAtOnce(move.getTo());
 
-        int horizontal_dif = Math.abs(move.from.getColumn() - move.to.getColumn());
-        int vertical_dif = Math.abs(move.from.getRow() - move.to.getRow());
+        int horizontal_dif = Math.abs(move.getFrom().getColumn() - move.getTo().getColumn());
+        int vertical_dif = Math.abs(move.getFrom().getRow() - move.getTo().getRow());
 
         if (horizontal_dif == 1 && vertical_dif == 1) {                                //enpassant?
-            repaintPositionAtOnce(Position.Companion.get(move.from.getRow(), move.to.getColumn()));
-            repaintPositionAtOnce(Position.Companion.get(move.to.getRow(), move.from.getColumn()));
-        } else if (vertical_dif == 0 && (move.to.getRow() == 0 || move.to.getRow() == 7)) {            //Rochade?muss auch für Schach960 funktionieren
-            repaintRowAtOnce(move.from.getRow());
+            repaintPositionAtOnce(Position.Companion.get(move.getFrom().getRow(), move.getTo().getColumn()));
+            repaintPositionAtOnce(Position.Companion.get(move.getTo().getRow(), move.getFrom().getColumn()));
+        } else if (vertical_dif == 0 && (move.getTo().getRow() == 0 || move.getTo().getRow() == 7)) {            //Rochade?muss auch für Schach960 funktionieren
+            repaintRowAtOnce(move.getFrom().getRow());
         }
     }
 
