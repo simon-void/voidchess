@@ -15,7 +15,7 @@ e2-e4,e7-e5,g1-f3,g8-f6,f3-e5,d7-d6
 ##Wiener Spiel
 #e2-e4,e7-e5,b1-c3
 
-##Läufer-Er�ffnung
+##Läufer-Eröffnung
 #e2-e4,e7-e5,f1-c4
 
 
@@ -50,7 +50,7 @@ e2-e4,c7-c5,b1-c3,e7-e6
 e2-e4,c7-c5,b1-c3,d7-d6
 
 
-##Franz�sisch
+##Französisch
 #Rubinstein Variation
 e2-e4,e7-e6,d2-d4,d7-d5,b1-c3,d5-e4,c3-e4
 #Winawer Variation
@@ -128,7 +128,7 @@ d2-d4,g8-f6,c2-c4,e7-e6,b1-c3,f8-b4
 ##Königs-indisch
 d2-d4,g8-f6,c2-c4,g7-g6,b1-c3,f8-g7
 
-##Gr�nfeld-Verteidigung
+##Grünfeld-Verteidigung
 d2-d4,g8-f6,c2-c4,g7-g6,b1-c3,d7-d5
 
 ##Königinen-indisch

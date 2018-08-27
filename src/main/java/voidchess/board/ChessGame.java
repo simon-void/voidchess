@@ -24,7 +24,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private boolean isStandardGame = false;
 
     /**
-     * der normale Konstruktor, der von au�erhalb verwendet werden sollte
+     * der normale Konstruktor, der von außerhalb verwendet werden sollte
      *
      * @param supervisor
      */

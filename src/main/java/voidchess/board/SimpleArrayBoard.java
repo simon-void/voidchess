@@ -157,7 +157,7 @@ public class SimpleArrayBoard
         clear();
         Position pos;
 
-        //die Bauernpositionen ver�ndern sich nicht
+        //die Bauernpositionen verändern sich nicht
         for (int i = 0; i < 8; i++) {
             pos = Position.Companion.get(1, i);
             setFigure(pos, figureFactory.getPawn(pos, true));
@@ -328,7 +328,7 @@ public class SimpleArrayBoard
                 }
             }
         }
-        //l�scht das letzte space
+        //löscht das letzte space
         if (buffer.length() != 0) buffer.deleteCharAt(buffer.length() - 1);
 
         return buffer.toString();

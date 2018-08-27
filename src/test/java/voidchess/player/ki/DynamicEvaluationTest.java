@@ -22,7 +22,7 @@ public class DynamicEvaluationTest {
         Move move = Move.get("a6-b6");
 
         dynamicEvaluation.evaluateMove(game, move);
-        //Invariante: evaluateMove darf game nicht �ndern
+        //Invariante: evaluateMove darf game nicht ändern
         assertEquals(des, game.toString());
     }
 
@@ -50,7 +50,7 @@ public class DynamicEvaluationTest {
         //Schlagen der Königing ist der beste Zug
         //der Wert des Zuges sollte um 6 liegen,
         //da ich eine Dame(9P) gegen einen Läufer(3P) getauscht habe
-        //+Wei� kann durch den Damenzug noch Raum gewinnen
+        //+Weiß kann durch den Damenzug noch Raum gewinnen
         assertTrue(
                 value.compareTo(new EvaluatedAsValue(5.5f)) > 0,
                 "Min-Max-Berechnung ist zu niedrig,Soll:~6.5,Ist:" + value);
@@ -79,7 +79,7 @@ public class DynamicEvaluationTest {
 
         try {
             dynamicEvaluation.evaluateMove(game, move);
-            //Invariante: evaluateMove darf game nicht �ndern
+            //Invariante: evaluateMove darf game nicht ändern
             String msg = "after Move:" + move.toString() + " History:" + game.getHistory();
             assertEquals(initDescription, game.toString(), msg);
         } catch (Exception e) {

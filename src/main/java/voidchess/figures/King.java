@@ -75,7 +75,7 @@ public class King extends RochadeFigure {
 
             if (toFigure.canParticipateInRochade() && toFigure.isWhite == isWhite) {
                 //kommt der König auf die c-Linie?
-                if (position.getColumn() == 1) {        //auf der a-Linie kann der König nicht stehen, da dort Turm sein mu�
+                if (position.getColumn() == 1) {        //auf der a-Linie kann der König nicht stehen, da dort Turm sein muß
                     if (!game.isFreeArea(Position.Companion.get(ground_row, 2))) {
                         return false;
                     }

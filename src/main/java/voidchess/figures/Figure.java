@@ -70,7 +70,7 @@ public abstract class Figure {
         return (byte) (typeIndex + (isWhite ? 0 : colorvalue));
     }
 
-    //gibt nur den Name der Klasse zur�ck(ohne package-Namen)
+    //gibt nur den Name der Klasse zurück(ohne package-Namen)
     abstract protected String getType();
 
     public String toString() {
@@ -123,7 +123,7 @@ public abstract class Figure {
         row = position.getRow() - row_step;
         column = position.getColumn() - column_step;
 
-        //nur falls in Verl�ngerung der Königslinie eine feindliche Figur steht(Dame,Läufer,Turm)
+        //nur falls in Verlängerung der Königslinie eine feindliche Figur steht(Dame,Läufer,Turm)
         //und das Ziel des Zuges nicht auf dieser Linie liegt, ist diese Figur gebunden
         while (row >= 0 && row < 8 && column >= 0 && column < 8) {
             Position middlePos = Position.Companion.get(row, column);
