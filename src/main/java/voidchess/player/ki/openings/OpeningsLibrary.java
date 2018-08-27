@@ -55,7 +55,7 @@ public class OpeningsLibrary {
     private List<String> loadOpeningSequencesFromFile(String relativePathToOpeningsFile) {
         List<String> openingSequences = new LinkedList<>();
         try {
-            InputStream fileStream = ResourceFinder.getResourceStream(relativePathToOpeningsFile);
+            InputStream fileStream = ResourceFinder.INSTANCE.getResourceStream(relativePathToOpeningsFile);
             try (BufferedReader br = new BufferedReader(new InputStreamReader(fileStream))) {
                 for (String line; (line = br.readLine()) != null; ) {
                     line = line.trim();

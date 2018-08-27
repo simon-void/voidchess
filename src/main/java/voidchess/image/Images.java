@@ -35,7 +35,7 @@ public class Images {
     private static Image readFromImageDir(String fileName) {
         final String relativePath = "image/" + fileName;
         try {
-            InputStream imageStream = ResourceFinder.getResourceStream(relativePath);
+            InputStream imageStream = ResourceFinder.INSTANCE.getResourceStream(relativePath);
             final Image img = ImageIO.read(imageStream);
             return img;
         } catch (Exception e) {
