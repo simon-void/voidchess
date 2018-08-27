@@ -86,7 +86,7 @@ public class SimpleArrayBoard
         StringTokenizer st = new StringTokenizer(figure_description, "-", false);
         st.nextToken();
         st.nextToken();
-        return Position.Companion.get(st.nextToken());
+        return Position.Companion.byCode(st.nextToken());
     }
 
     public void init() {
@@ -99,39 +99,39 @@ public class SimpleArrayBoard
             pos = Position.Companion.get(6, i);
             setFigure(pos, figureFactory.getPawn(pos, false));
         }
-        pos = Position.Companion.get("a1");
+        pos = Position.Companion.byCode("a1");
         setFigure(pos, figureFactory.getRock(pos, true));
-        pos = Position.Companion.get("h1");
+        pos = Position.Companion.byCode("h1");
         setFigure(pos, figureFactory.getRock(pos, true));
-        pos = Position.Companion.get("b1");
+        pos = Position.Companion.byCode("b1");
         setFigure(pos, figureFactory.getKnight(pos, true));
-        pos = Position.Companion.get("g1");
+        pos = Position.Companion.byCode("g1");
         setFigure(pos, figureFactory.getKnight(pos, true));
-        pos = Position.Companion.get("c1");
+        pos = Position.Companion.byCode("c1");
         setFigure(pos, figureFactory.getBishop(pos, true));
-        pos = Position.Companion.get("f1");
+        pos = Position.Companion.byCode("f1");
         setFigure(pos, figureFactory.getBishop(pos, true));
-        pos = Position.Companion.get("d1");
+        pos = Position.Companion.byCode("d1");
         setFigure(pos, figureFactory.getQueen(pos, true));
-        pos = Position.Companion.get("e1");
+        pos = Position.Companion.byCode("e1");
         setFigure(pos, figureFactory.getKing(pos, true));
         whiteKingPosition = pos;
 
-        pos = Position.Companion.get("a8");
+        pos = Position.Companion.byCode("a8");
         setFigure(pos, figureFactory.getRock(pos, false));
-        pos = Position.Companion.get("h8");
+        pos = Position.Companion.byCode("h8");
         setFigure(pos, figureFactory.getRock(pos, false));
-        pos = Position.Companion.get("b8");
+        pos = Position.Companion.byCode("b8");
         setFigure(pos, figureFactory.getKnight(pos, false));
-        pos = Position.Companion.get("g8");
+        pos = Position.Companion.byCode("g8");
         setFigure(pos, figureFactory.getKnight(pos, false));
-        pos = Position.Companion.get("c8");
+        pos = Position.Companion.byCode("c8");
         setFigure(pos, figureFactory.getBishop(pos, false));
-        pos = Position.Companion.get("f8");
+        pos = Position.Companion.byCode("f8");
         setFigure(pos, figureFactory.getBishop(pos, false));
-        pos = Position.Companion.get("d8");
+        pos = Position.Companion.byCode("d8");
         setFigure(pos, figureFactory.getQueen(pos, false));
-        pos = Position.Companion.get("e8");
+        pos = Position.Companion.byCode("e8");
         setFigure(pos, figureFactory.getKing(pos, false));
         blackKingPosition = pos;
     }

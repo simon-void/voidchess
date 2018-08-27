@@ -24,9 +24,9 @@ public class CheckSearchTest {
 
     @Test
     public void testAreDiagonalPositions() {
-        Position pos1 = Position.Companion.get("a1");
-        Position pos2 = Position.Companion.get("a8");
-        Position pos3 = Position.Companion.get("h1");
+        Position pos1 = Position.Companion.byCode("a1");
+        Position pos2 = Position.Companion.byCode("a8");
+        Position pos3 = Position.Companion.byCode("h1");
 
         assertTrue(CheckSearch.areDiagonalPositions(pos2, pos3));
         assertTrue(CheckSearch.areDiagonalPositions(pos3, pos2));
@@ -36,9 +36,9 @@ public class CheckSearchTest {
 
     @Test
     public void testAreStraightPositions() {
-        Position pos1 = Position.Companion.get("a1");
-        Position pos2 = Position.Companion.get("a8");
-        Position pos3 = Position.Companion.get("h1");
+        Position pos1 = Position.Companion.byCode("a1");
+        Position pos2 = Position.Companion.byCode("a8");
+        Position pos3 = Position.Companion.byCode("h1");
 
         assertFalse(CheckSearch.areStraightPositions(pos2, pos3));
         assertFalse(CheckSearch.areStraightPositions(pos3, pos2));
@@ -56,7 +56,7 @@ public class CheckSearchTest {
         assertFalse(status.onlyKingCanMove());
         List<Position> possiblePositions = status.getCheckInterceptPositions();
         assertEquals(1, possiblePositions.size());
-        assertTrue(possiblePositions.get(0).equalsPosition(Position.Companion.get("e5")));
+        assertTrue(possiblePositions.get(0).equalsPosition(Position.Companion.byCode("e5")));
 
         des = "white 0 King-white-e4-4 King-black-e6-4";
         game.init(des);
@@ -80,8 +80,8 @@ public class CheckSearchTest {
         assertFalse(status.onlyKingCanMove());
         possiblePositions = status.getCheckInterceptPositions();
         assertEquals(2, possiblePositions.size());
-        assertTrue(possiblePositions.contains(Position.Companion.get("e6")));
-        assertTrue(possiblePositions.contains(Position.Companion.get("e7")));
+        assertTrue(possiblePositions.contains(Position.Companion.byCode("e6")));
+        assertTrue(possiblePositions.contains(Position.Companion.byCode("e7")));
 
         des = "white 0 King-white-e1-0 Rock-white-h2-1 Queen-black-h4";
         game.init(des);
@@ -91,9 +91,9 @@ public class CheckSearchTest {
         assertFalse(status.onlyKingCanMove());
         possiblePositions = status.getCheckInterceptPositions();
         assertEquals(3, possiblePositions.size());
-        assertTrue(possiblePositions.contains(Position.Companion.get("h4")));
-        assertTrue(possiblePositions.contains(Position.Companion.get("g3")));
-        assertTrue(possiblePositions.contains(Position.Companion.get("f2")));
+        assertTrue(possiblePositions.contains(Position.Companion.byCode("h4")));
+        assertTrue(possiblePositions.contains(Position.Companion.byCode("g3")));
+        assertTrue(possiblePositions.contains(Position.Companion.byCode("f2")));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class CheckSearchTest {
         // black moved f7-f5 to counter the check from the diagonal, white played e5-f6
         String des = "black 0 King-white-e1-0 Queen-white-g4 Pawn-white-f6-false King-black-d7-1";
 
-        ExtendedMove extendedMove = getEnpassentMove(Move.get("e5-f6"));
+        ExtendedMove extendedMove = getEnpassentMove(Move.byCode("e5-f6"));
         LastMoveProvider moveProvider = mock(LastMoveProvider.class);
         when(moveProvider.getLastMove()).thenReturn(extendedMove);
         SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
@@ -118,7 +118,7 @@ public class CheckSearchTest {
         // black moved f7-f5, white played e5-f6
         String des = "black 0 King-white-e1-0 Queen-white-e4 Pawn-white-f6-false King-black-e8-0";
 
-        ExtendedMove extendedMove = getEnpassentMove(Move.get("e5-f6"));
+        ExtendedMove extendedMove = getEnpassentMove(Move.byCode("e5-f6"));
         LastMoveProvider moveProvider = mock(LastMoveProvider.class);
         when(moveProvider.getLastMove()).thenReturn(extendedMove);
         SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
@@ -135,7 +135,7 @@ public class CheckSearchTest {
         // black moved f7-f5, white played e5-f6
         String des = "black 0 King-white-e1-0 Pawn-white-f6-false King-black-e7-1";
 
-        ExtendedMove extendedMove = getEnpassentMove(Move.get("e5-f6"));
+        ExtendedMove extendedMove = getEnpassentMove(Move.byCode("e5-f6"));
         LastMoveProvider moveProvider = mock(LastMoveProvider.class);
         when(moveProvider.getLastMove()).thenReturn(extendedMove);
         SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);

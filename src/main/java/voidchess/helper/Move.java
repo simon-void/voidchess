@@ -4,19 +4,15 @@ package voidchess.helper;
  * @author stephan
  */
 public class Move {
-    final private static Move[][][][] moves = new Move[8][8][8][8];
+    final private static Move[] moves = new Move[64*64];
 
     static {
-        for (int fromrow = 0; fromrow < 8; fromrow++) {
-            for (int fromcolumn = 0; fromcolumn < 8; fromcolumn++) {
-                for (int torow = 0; torow < 8; torow++) {
-                    for (int tocolumn = 0; tocolumn < 8; tocolumn++) {
-                        Position fromPos = Position.Companion.get(fromrow, fromcolumn);
-                        Position toPos = Position.Companion.get(torow, tocolumn);
-                        moves[fromrow][fromcolumn][torow][tocolumn] = new Move(fromPos, toPos);
-                    }
-                }
-            }
+        for (int moveIndex = 0; moveIndex < moves.length; moveIndex++) {
+            int fromIndex = moveIndex % 64;
+            int toIndex = moveIndex / 64;
+            Position fromPos = Position.Companion.byIndex(fromIndex);
+            Position toPos = Position.Companion.byIndex(toIndex);
+            moves[moveIndex] = new Move(fromPos, toPos);
         }
     }
 
@@ -24,16 +20,19 @@ public class Move {
     final public Position to;
 
     public static Move get(Position from, Position to) {
-        return moves[from.getRow()][from.getColumn()][to.getRow()][to.getColumn()];
+        return moves[getMoveIndex(from.getIndex(), to.getIndex())];
     }
 
-    public static Move get(String code) {
-        int fromcolumn = (int) code.charAt(0) - 97;
-        int fromrow = (int) code.charAt(1) - 49;
-        int tocolumn = (int) code.charAt(3) - 97;
-        int torow = (int) code.charAt(4) - 49;
+    public static Move byCode(String code) {
+        int fromColumn = (int) code.charAt(0) - 97;
+        int fromRow = (int) code.charAt(1) - 49;
+        int toColumn = (int) code.charAt(3) - 97;
+        int toRow = (int) code.charAt(4) - 49;
 
-        return moves[fromrow][fromcolumn][torow][tocolumn];
+        return get(
+                Position.Companion.get(fromRow, fromColumn),
+                Position.Companion.get(toRow, toColumn)
+        );
     }
 
     public static boolean isValid(String code) {
@@ -41,19 +40,24 @@ public class Move {
             return false;
         }
 
-        int fromcolumn = (int) code.charAt(0) - 97;
-        int fromrow = (int) code.charAt(1) - 49;
-        int tocolumn = (int) code.charAt(3) - 97;
-        int torow = (int) code.charAt(4) - 49;
+        int fromColumn = (int) code.charAt(0) - 97;
+        int fromRow = (int) code.charAt(1) - 49;
+        int toColumn = (int) code.charAt(3) - 97;
+        int toRow = (int) code.charAt(4) - 49;
 
-        return liesIn07Range(fromcolumn) &&
-                liesIn07Range(fromrow) &&
-                liesIn07Range(tocolumn) &&
-                liesIn07Range(torow);
+        return liesIn07Range(fromColumn) &&
+                liesIn07Range(fromRow) &&
+                liesIn07Range(toColumn) &&
+                liesIn07Range(toRow);
     }
 
     private static boolean liesIn07Range(int number) {
         return number >= 0 && number <= 7;
+    }
+
+    // optimized from: fromIndex + toIndex * 64
+    private static int getMoveIndex(int fromIndex, int toIndex) {
+      return fromIndex + (toIndex<<6);
     }
 
     protected Move(Position from, Position to) {

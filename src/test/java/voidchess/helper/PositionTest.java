@@ -15,7 +15,7 @@ public class PositionTest {
         assertTrue(pos1.getRow() == 0);
         assertTrue(pos1.getColumn() == 7);
 
-        Position pos2 = Position.Companion.get("a8");
+        Position pos2 = Position.Companion.byCode("a8");
         assertTrue(pos2.getColumn() == 0);
         assertTrue(pos2.getRow() == 7);
     }
@@ -42,9 +42,9 @@ public class PositionTest {
 
     @Test
     public void testIndex() {
-        Position pos1 = Position.Companion.get("a1");
+        Position pos1 = Position.Companion.byCode("a1");
         assertEquals(pos1.getIndex(), 0);
-        Position pos2 = Position.Companion.get("h8");
+        Position pos2 = Position.Companion.byCode("h8");
         assertEquals(pos2.getIndex(), 63);
     }
 
@@ -60,9 +60,9 @@ public class PositionTest {
 
     @Test
     public void testEquals() {
-        Position pos1 = Position.Companion.get("d4");
-        Position pos2 = Position.Companion.get("e6");
-        Position pos3 = Position.Companion.get("d4");
+        Position pos1 = Position.Companion.byCode("d4");
+        Position pos2 = Position.Companion.byCode("e6");
+        Position pos3 = Position.Companion.byCode("d4");
 
         assertFalse(pos1.equalsPosition(pos2));
         assertFalse(pos2.equalsPosition(pos3));

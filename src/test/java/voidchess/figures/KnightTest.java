@@ -23,15 +23,15 @@ public class KnightTest {
                 + "Knight-black-f5";
         ChessGame game = new ChessGame(des);
 
-        Position from = Position.Companion.get("d4");
-        Position to1 = Position.Companion.get("b3");
-        Position to2 = Position.Companion.get("b5");
-        Position to3 = Position.Companion.get("c6");
-        Position to4 = Position.Companion.get("e6");
-        Position to5 = Position.Companion.get("c2");
-        Position to6 = Position.Companion.get("f3");
-        Position to7 = Position.Companion.get("d1");
-        Position to8 = Position.Companion.get("f5");
+        Position from = Position.Companion.byCode("d4");
+        Position to1 = Position.Companion.byCode("b3");
+        Position to2 = Position.Companion.byCode("b5");
+        Position to3 = Position.Companion.byCode("c6");
+        Position to4 = Position.Companion.byCode("e6");
+        Position to5 = Position.Companion.byCode("c2");
+        Position to6 = Position.Companion.byCode("f3");
+        Position to7 = Position.Companion.byCode("d1");
+        Position to8 = Position.Companion.byCode("f5");
 
         Knight knight = new Knight(false, from);
         assertTrue(knight.isReachable(to1, game));
@@ -51,11 +51,11 @@ public class KnightTest {
                 + "Knight-white-g6";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure knight1 = game.getFigure(Position.Companion.get("a1"));
+        Figure knight1 = game.getFigure(Position.Companion.byCode("a1"));
         List<Move> moveIter1 = new LinkedList<>();
         knight1.getPossibleMoves(game, moveIter1);
         assertEquals(moveIter1.size(), 2);
-        Figure knight2 = game.getFigure(Position.Companion.get("g6"));
+        Figure knight2 = game.getFigure(Position.Companion.byCode("g6"));
         List<Move> moveIter2 = new LinkedList<>();
         knight2.getPossibleMoves(game, moveIter2);
         assertEquals(moveIter2.size(), 6);

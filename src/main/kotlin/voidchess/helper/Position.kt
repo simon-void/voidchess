@@ -18,7 +18,7 @@ class Position private constructor(val row: Int, val column: Int) {
             return@Array Position(row,column)
         }
 
-        fun get(code: String): Position {
+        fun byCode(code: String): Position {
             assert(code.length == 2) { "argument is supposed to be something like \"a8\"" }
 
             val column = code[0].toInt() - 97
@@ -26,6 +26,8 @@ class Position private constructor(val row: Int, val column: Int) {
 
             return get(row, column)
         }
+
+        fun byIndex(index: Int) = positions[index]
 
         fun get(row: Int, column: Int): Position {
             assert(inBounds(row, column)) {

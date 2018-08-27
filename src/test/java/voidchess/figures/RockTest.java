@@ -23,12 +23,12 @@ public class RockTest {
                 + "Knight-black-g4";
         ChessGame game = new ChessGame(des);
 
-        Position from = Position.Companion.get("c4");
-        Position to1 = Position.Companion.get("c3");
-        Position to2 = Position.Companion.get("g4");
-        Position to3 = Position.Companion.get("c2");
-        Position to4 = Position.Companion.get("h4");
-        Position to5 = Position.Companion.get("d5");
+        Position from = Position.Companion.byCode("c4");
+        Position to1 = Position.Companion.byCode("c3");
+        Position to2 = Position.Companion.byCode("g4");
+        Position to3 = Position.Companion.byCode("c2");
+        Position to4 = Position.Companion.byCode("h4");
+        Position to5 = Position.Companion.byCode("d5");
 
         Rock rock = new Rock(true, from);
         assertTrue(rock.isReachable(to1, game));
@@ -42,12 +42,12 @@ public class RockTest {
     @Test
     public void testUndoMove() {
         FigureFactory figureFactory = new FigureFactory();
-        Rock rock = (Rock) figureFactory.getRock(Position.Companion.get("a1"), false);
+        Rock rock = (Rock) figureFactory.getRock(Position.Companion.byCode("a1"), false);
 
         assertTrue(rock.canParticipateInRochade());
-        rock.figureMoved(Move.get("a1-b1"));
+        rock.figureMoved(Move.byCode("a1-b1"));
         assertFalse(rock.canParticipateInRochade());
-        rock.undoMove(Position.Companion.get("a1"));
+        rock.undoMove(Position.Companion.byCode("a1"));
         assertTrue(rock.canParticipateInRochade());
     }
 
@@ -57,7 +57,7 @@ public class RockTest {
                 + "Rock-white-e4-2 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure rock = game.getFigure(Position.Companion.get("e4"));
+        Figure rock = game.getFigure(Position.Companion.byCode("e4"));
         List<Move> moveIter = new LinkedList<>();
         rock.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 11);

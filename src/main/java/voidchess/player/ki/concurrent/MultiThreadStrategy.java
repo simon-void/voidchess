@@ -34,7 +34,7 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy {
 
         NavigableSet<EvaluatedMove> result = Collections.emptyNavigableSet();
         try {
-            result = evaluate(movesToEvaluate);//resultFutures.get();
+            result = evaluate(movesToEvaluate);//resultFutures.byCode();
         } catch (Exception e) {
             e.printStackTrace();
         }

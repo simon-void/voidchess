@@ -45,7 +45,7 @@ public class FigureTest {
 
     @Test
     public void testToString() {
-        Position pos = Position.Companion.get("g4");
+        Position pos = Position.Companion.byCode("g4");
         Figure figure1 = new MockFigure(true, pos);
         assertEquals("MockFigure-white-g4", figure1.toString());
         Figure figure2 = new Bishop(false, pos);
@@ -54,7 +54,7 @@ public class FigureTest {
 
     @Test
     public void testSubtypes() {
-        Position pos = Position.Companion.get("g4");
+        Position pos = Position.Companion.byCode("g4");
         new Pawn(true, pos);
         new Rock(true, pos);
         new Knight(true, pos);
@@ -65,7 +65,7 @@ public class FigureTest {
 
     @Test
     public void testIsWhite() {
-        Position pos = Position.Companion.get("g4");
+        Position pos = Position.Companion.byCode("g4");
 
         Figure figure1 = new Rock(true, pos);
         assertTrue(figure1.isWhite());
@@ -76,9 +76,9 @@ public class FigureTest {
 
     @Test
     public void testFigureMoved() {
-        Position from = Position.Companion.get("c1");
-        Position to = Position.Companion.get("g5");
-        Position thirdpos = Position.Companion.get("f5");
+        Position from = Position.Companion.byCode("c1");
+        Position to = Position.Companion.byCode("g5");
+        Position thirdpos = Position.Companion.byCode("f5");
 
         Figure figure1 = new Bishop(true, from);
         figure1.figureMoved(Move.get(from, to));
@@ -89,8 +89,8 @@ public class FigureTest {
 
     @Test
     public void testRochade() {
-        Position from = Position.Companion.get("c1");
-        Position to = Position.Companion.get("g5");
+        Position from = Position.Companion.byCode("c1");
+        Position to = Position.Companion.byCode("g5");
         Move move = Move.get(from, to);
 
         assertFalse(new Pawn(true, from).canParticipateInRochade());
@@ -111,12 +111,12 @@ public class FigureTest {
         String des = "white 0 King-white-e1-0 Rock-white-e3-4 Queen-black-e5";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Position from = Position.Companion.get("e3");
-        Position to1 = Position.Companion.get("e2");
-        Position to2 = Position.Companion.get("e4");
-        Position to3 = Position.Companion.get("e5");
-        Position to4 = Position.Companion.get("e6");
-        Position to5 = Position.Companion.get("d3");
+        Position from = Position.Companion.byCode("e3");
+        Position to1 = Position.Companion.byCode("e2");
+        Position to2 = Position.Companion.byCode("e4");
+        Position to3 = Position.Companion.byCode("e5");
+        Position to4 = Position.Companion.byCode("e6");
+        Position to5 = Position.Companion.byCode("d3");
 
         Rock rock = new Rock(true, from);
 
@@ -132,15 +132,15 @@ public class FigureTest {
         String des = "white 0 King-white-e1-0 Rock-white-e3-4 Queen-black-e5";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Position from1 = Position.Companion.get("e3");
-        Position from2 = Position.Companion.get("e1");
-        Position to1 = Position.Companion.get("e2");
-        Position to2 = Position.Companion.get("e4");
-        Position to3 = Position.Companion.get("e5");
-        Position to4 = Position.Companion.get("e6");
-        Position to5 = Position.Companion.get("d3");
-        Position to6 = Position.Companion.get("d2");
-        Position to7 = Position.Companion.get("a1");
+        Position from1 = Position.Companion.byCode("e3");
+        Position from2 = Position.Companion.byCode("e1");
+        Position to1 = Position.Companion.byCode("e2");
+        Position to2 = Position.Companion.byCode("e4");
+        Position to3 = Position.Companion.byCode("e5");
+        Position to4 = Position.Companion.byCode("e6");
+        Position to5 = Position.Companion.byCode("d3");
+        Position to6 = Position.Companion.byCode("d2");
+        Position to7 = Position.Companion.byCode("a1");
 
         Rock rock = new Rock(true, from1);
         King king = new King(true, from2);
@@ -178,11 +178,11 @@ public class FigureTest {
         String des = "white 0 King-white-e1-0 Rock-white-h2-1 Queen-black-h4";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Position from = Position.Companion.get("h2");
-        Position to1 = Position.Companion.get("f2");
-        Position to2 = Position.Companion.get("h4");
-        Position to3 = Position.Companion.get("g3");
-        Position to4 = Position.Companion.get("e2");
+        Position from = Position.Companion.byCode("h2");
+        Position to1 = Position.Companion.byCode("f2");
+        Position to2 = Position.Companion.byCode("h4");
+        Position to3 = Position.Companion.byCode("g3");
+        Position to4 = Position.Companion.byCode("e2");
 
         Rock rock = new Rock(true, from);
 
@@ -194,8 +194,8 @@ public class FigureTest {
 
     @Test
     public void testGetTypeInfo() {
-        Position from1 = Position.Companion.get("e3");
-        Position from2 = Position.Companion.get("e1");
+        Position from1 = Position.Companion.byCode("e3");
+        Position from2 = Position.Companion.byCode("e1");
 
         Pawn pawn1 = new Pawn(true, from1);
         Pawn pawn2 = new Pawn(true, from1);

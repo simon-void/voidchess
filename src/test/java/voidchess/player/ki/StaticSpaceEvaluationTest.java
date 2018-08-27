@@ -44,8 +44,8 @@ public class StaticSpaceEvaluationTest {
 
     @Test
     public void testGetMaxFigureDistance() {
-        assertEquals(7, evaluation.getKingDistance(Position.Companion.get("e1"), Position.Companion.get("e8")));
-        assertEquals(4, evaluation.getKingDistance(Position.Companion.get("b7"), Position.Companion.get("e8")));
+        assertEquals(7, evaluation.getKingDistance(Position.Companion.byCode("e1"), Position.Companion.byCode("e8")));
+        assertEquals(4, evaluation.getKingDistance(Position.Companion.byCode("b7"), Position.Companion.byCode("e8")));
     }
 
     @Test
@@ -54,9 +54,9 @@ public class StaticSpaceEvaluationTest {
         ChessGame game = new ChessGame(des);
 
         List otherPositions = new LinkedList();
-        otherPositions.add(Position.Companion.get("e8"));
-        otherPositions.add(Position.Companion.get("a8"));
-        Position kingPos = Position.Companion.get("e1");
+        otherPositions.add(Position.Companion.byCode("e8"));
+        otherPositions.add(Position.Companion.byCode("a8"));
+        Position kingPos = Position.Companion.byCode("e1");
 
         assertEquals(48, evaluation.countRestSpace(game, kingPos, otherPositions));
 
@@ -64,8 +64,8 @@ public class StaticSpaceEvaluationTest {
         game = new ChessGame(des);
 
         otherPositions.clear();
-        otherPositions.add(Position.Companion.get("e8"));
-        otherPositions.add(Position.Companion.get("e7"));
+        otherPositions.add(Position.Companion.byCode("e8"));
+        otherPositions.add(Position.Companion.byCode("e7"));
 
         assertEquals(43, evaluation.countRestSpace(game, kingPos, otherPositions));
     }

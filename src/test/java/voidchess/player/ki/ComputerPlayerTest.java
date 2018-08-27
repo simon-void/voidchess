@@ -26,11 +26,11 @@ public class ComputerPlayerTest {
                 + "King-black-g8-2";
 
         ChessGame game = new ChessGame(des);
-        game.move(Move.get("e3-f2"));
+        game.move(Move.byCode("e3-f2"));
         testTermination(game);
 
         game = new ChessGame(ChessGameSupervisorDummy.INSTANCE);
-        game.move(Move.get("c2-c3"));
+        game.move(Move.byCode("c2-c3"));
         testTermination(game);
 
         des = "black 0 King-white-h1-3 Pawn-white-c7-false "
@@ -47,7 +47,7 @@ public class ComputerPlayerTest {
         testTermination(game);
 
         game = new ChessGame(621);
-        game.move(Move.get("f2-f3"));
+        game.move(Move.byCode("f2-f3"));
         testTermination(game);
 
         des = "black 0 Bishop-white-b1 King-white-h1-3 "
@@ -67,18 +67,18 @@ public class ComputerPlayerTest {
         testTermination(game);
 
         game = new ChessGame(621);
-        game.move(Move.get("g2-g3"));
-        game.move(Move.get("f7-f6"));
-        game.move(Move.get("c2-c3"));
-        game.move(Move.get("g8-b3"));
-        game.move(Move.get("d1-c2"));
+        game.move(Move.byCode("g2-g3"));
+        game.move(Move.byCode("f7-f6"));
+        game.move(Move.byCode("c2-c3"));
+        game.move(Move.byCode("g8-b3"));
+        game.move(Move.byCode("d1-c2"));
         testTermination(game);
 
         game = new ChessGame(707);
-        game.move(Move.get("e1-f3"));
-        game.move(Move.get("b7-b6"));
-        game.move(Move.get("f1-e3"));
-        game.move(Move.get("g7-g6"));
+        game.move(Move.byCode("e1-f3"));
+        game.move(Move.byCode("b7-b6"));
+        game.move(Move.byCode("f1-e3"));
+        game.move(Move.byCode("g7-g6"));
         testTermination(game);
     }
 
@@ -88,7 +88,7 @@ public class ComputerPlayerTest {
                 + "Pawn-black-b7-false King-black-e8-0 Rock-black-h8-3";
 
         ChessGame game = new ChessGame(des);
-        game.move(Move.get("b7-b5"));
+        game.move(Move.byCode("b7-b5"));
         testTermination(game);
         String newDes = "white 1 Rock-white-a1-0 King-white-e1-0 Pawn-white-a5-false "
                 + "Pawn-black-b5-true King-black-e8-0 Rock-black-h8-3";
@@ -163,16 +163,16 @@ public class ComputerPlayerTest {
 
     private static void benchmark() {
         ChessGame game = new ChessGame();
-        game.move(Move.get("e2-e4"));
-        game.move(Move.get("e7-e5"));
-        game.move(Move.get("g1-f3"));
-        game.move(Move.get("b8-c6"));
-        game.move(Move.get("f1-b5"));
-        game.move(Move.get("f8-c5"));
-//    game.move(Move.get("d2-d3"));
-//    game.move(Move.get("d7-d6"));
-//    game.move(Move.get("b1-c3"));
-//    game.move(Move.get("c8-g4"));
+        game.move(Move.byCode("e2-e4"));
+        game.move(Move.byCode("e7-e5"));
+        game.move(Move.byCode("g1-f3"));
+        game.move(Move.byCode("b8-c6"));
+        game.move(Move.byCode("f1-b5"));
+        game.move(Move.byCode("f8-c5"));
+//    game.move(Move.byCode("d2-d3"));
+//    game.move(Move.byCode("d7-d6"));
+//    game.move(Move.byCode("b1-c3"));
+//    game.move(Move.byCode("c8-g4"));
         SearchTreePruner pruner = new SimplePruner(2, 3, 2);
         StaticEvaluationInterface staticEvaluation = new StaticEvaluation();//new ConstantEvaluation();//
         loadTest(game, pruner, staticEvaluation, "Benchmark");

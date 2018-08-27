@@ -22,10 +22,10 @@ public class QueenTest {
         String des = "white 0 Queen-white-e2";
         ChessGame game = new ChessGame(des);
 
-        Position from = Position.Companion.get("e2");
-        Position to1 = Position.Companion.get("e5");
-        Position to2 = Position.Companion.get("c4");
-        Position to3 = Position.Companion.get("d4");
+        Position from = Position.Companion.byCode("e2");
+        Position to1 = Position.Companion.byCode("e5");
+        Position to2 = Position.Companion.byCode("c4");
+        Position to3 = Position.Companion.byCode("d4");
 
         Queen queen = new Queen(true, from);
         assertTrue(queen.isReachable(to1, game));
@@ -39,7 +39,7 @@ public class QueenTest {
         String des = "white 0 Queen-white-d1 King-white-e1-0 ";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure queen = game.getFigure(Position.Companion.get("d1"));
+        Figure queen = game.getFigure(Position.Companion.byCode("d1"));
         List<Move> moveIter = new LinkedList<>();
         queen.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 17);

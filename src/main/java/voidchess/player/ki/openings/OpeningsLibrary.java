@@ -43,11 +43,11 @@ public class OpeningsLibrary {
 //        List<Move> movesFound = new LinkedList<>();
 //        List<String> moveDescriptionsFound1 = moveDescriptionsFound.collect(Collectors.toList());
 //        for(String moveDesc: moveDescriptionsFound1) {
-//            Move move = Move.get(moveDesc);
+//            Move move = Move.byCode(moveDesc);
 //            movesFound.add(move);
 //        }
         List<Move> movesFound = moveDescriptionsFound.map(
-                (String moveDesc) -> Move.get(moveDesc)
+                (String moveDesc) -> Move.byCode(moveDesc)
         ).collect(Collectors.toList());
         return movesFound;
     }
@@ -110,7 +110,7 @@ public class OpeningsLibrary {
                 throw new IllegalArgumentException(
                         "illegal move format'" + textMove + "' in opening sequence: " + openingSequence);
             }
-            Move move = Move.get(textMove);
+            Move move = Move.byCode(textMove);
             boolean isMoveExecutable = game.isMoveable(
                     move.from, move.to, game.isWhiteTurn()
             );

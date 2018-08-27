@@ -32,15 +32,15 @@ public class SimpleBoardTest {
 
     @Test
     public void testInit() {
-        Figure figure = board.getFigure(Position.Companion.get("a1"));
+        Figure figure = board.getFigure(Position.Companion.byCode("a1"));
         assertTrue(figure.isRock());
         assertTrue(figure.isWhite());
 
-        figure = board.getFigure(Position.Companion.get("e8"));
+        figure = board.getFigure(Position.Companion.byCode("e8"));
         assertTrue(figure.isKing());
         assertFalse(figure.isWhite());
 
-        figure = board.getFigure(Position.Companion.get("e3"));
+        figure = board.getFigure(Position.Companion.byCode("e3"));
         assertNull(figure);
     }
 
@@ -66,21 +66,21 @@ public class SimpleBoardTest {
 
     @Test
     public void testIsFreeArea() {
-        assertTrue(board.isFreeArea(Position.Companion.get("a3")));
-        assertFalse(board.isFreeArea(Position.Companion.get("a2")));
+        assertTrue(board.isFreeArea(Position.Companion.byCode("a3")));
+        assertFalse(board.isFreeArea(Position.Companion.byCode("a2")));
     }
 
     @Test
     public void testSetFigure() {
-        Figure figure = board.getFigure(Position.Companion.get("b1"));
-        Position to = Position.Companion.get("e4");
+        Figure figure = board.getFigure(Position.Companion.byCode("b1"));
+        Position to = Position.Companion.byCode("e4");
         board.setFigure(to, figure);
         assertTrue(board.getFigure(to).isKnight());
     }
 
     @Test
     public void testGetFigures() {
-        board.setFigure(Position.Companion.get("c2"), null);
+        board.setFigure(Position.Companion.byCode("c2"), null);
         List<Figure> figures = board.getFigures();
         assertEquals(31, figures.size());
     }

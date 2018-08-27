@@ -104,7 +104,7 @@ public class DynamicEvaluation {
             game.undo();
         }
 
-        //now get a secondaryEvaluation for the Moves with the smallest primary Evaluation
+        //now byCode a secondaryEvaluation for the Moves with the smallest primary Evaluation
         SortedSet<Evaluated> combinedEvaluations = new TreeSet<>();
         final Evaluated minPrimary = primaryEvaluations.first().getValue();
 
@@ -181,7 +181,7 @@ public class DynamicEvaluation {
             game.undo();
         }
 
-        //now get a secondaryEvaluation for the Moves with the smallest primary Evaluation
+        //now byCode a secondaryEvaluation for the Moves with the smallest primary Evaluation
         SortedSet<Evaluated> combinedEvaluations = new TreeSet<>();
         final Evaluated maxPrimary = primaryEvaluations.last().getValue();
 
