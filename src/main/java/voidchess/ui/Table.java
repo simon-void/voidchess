@@ -35,7 +35,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
         int endoption;
         synchronized (this) {
             if (resign) {
-                stopGame(ChessGameInterface.RESIGN);
+                stopGame(ChessGameInterface.Companion.getRESIGN());
                 return;
             }
             endoption = game.move(move);
@@ -43,7 +43,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
 
             whitePlayersTurn = !whitePlayersTurn;
         }
-        if (endoption == ChessGameInterface.NO_END) {
+        if (endoption == ChessGameInterface.Companion.getNO_END()) {
             if (whitePlayersTurn) {
                 whitePlayer.play();
             } else {
@@ -83,7 +83,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
 
     synchronized void resignGame() {
         if (whitePlayersTurn == whitePlayer instanceof HumanPlayerInterface) {
-            stopGame(ChessGameInterface.RESIGN);
+            stopGame(ChessGameInterface.Companion.getRESIGN());
         } else {
             resign = true;
         }

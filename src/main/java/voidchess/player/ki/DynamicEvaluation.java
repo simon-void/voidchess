@@ -38,10 +38,10 @@ public class DynamicEvaluation {
         int endoption = game.move(move);
 
         Evaluated result;
-        if (endoption == ChessGameInterface.NO_END) {
+        if (endoption == ChessGameInterface.Companion.getNO_END()) {
             final List<Move> minPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
             result = getMin(game, forWhite, depth, thisMove_isChess, thisMove_hasHitFigure, minPossibleMovesBuffer);
-        } else if (endoption == ChessGameInterface.MATT) {
+        } else if (endoption == ChessGameInterface.Companion.getMATT()) {
             result = new EvaluatedAsMatt(depth + 1, true);
         } else {
             result = EvaluatedAsDraw.INSTANCE;
@@ -85,14 +85,14 @@ public class DynamicEvaluation {
 
             int endoption = game.move(move);
 
-            if (endoption == ChessGameInterface.NO_END) {
+            if (endoption == ChessGameInterface.Companion.getNO_END()) {
                 primaryEval = getMax(game,
                         forWhite,
                         depth,
                         thisMove_isChess,
                         thisMove_hasHitFigure,
                         maxPossibleMovesBuffer);
-            } else if (endoption == ChessGameInterface.MATT) {
+            } else if (endoption == ChessGameInterface.Companion.getMATT()) {
                 game.undo();
                 return new EvaluatedAsMatt(depth + 1, false);
             } else {
@@ -162,14 +162,14 @@ public class DynamicEvaluation {
 
             int endoption = game.move(move);
 
-            if (endoption == ChessGameInterface.NO_END) {
+            if (endoption == ChessGameInterface.Companion.getNO_END()) {
                 primaryEval = getMin(game,
                         forWhite,
                         depth,
                         thisMove_isChess,
                         thisMove_hasHitFigure,
                         minPossibleMovesBuffer);
-            } else if (endoption == ChessGameInterface.MATT) {
+            } else if (endoption == ChessGameInterface.Companion.getMATT()) {
                 game.undo();
                 return new EvaluatedAsMatt(depth + 1, true);
             } else {

@@ -121,7 +121,7 @@ public class ChessPanel
         } else if (com.equals(switchString)) {
             switchPlayer();
         } else if (com.equals(resignString)) {
-            stop(ChessGameInterface.RESIGN);
+            stop(ChessGameInterface.Companion.getRESIGN());
         }
     }
 
@@ -140,22 +140,22 @@ public class ChessPanel
 
     void gameover(int endoption) {
         switch (endoption) {
-            case ChessGameInterface.DRAW:
+            case ChessGameInterface.Companion.getDRAW():
                 JOptionPane.showMessageDialog(this, "Unentschieden");
                 break;
-            case ChessGameInterface.PATT:
+            case ChessGameInterface.Companion.getPATT():
                 JOptionPane.showMessageDialog(this, "Patt");
                 break;
-            case ChessGameInterface.MATT:
+            case ChessGameInterface.Companion.getMATT():
                 JOptionPane.showMessageDialog(this, "Matt");
                 break;
-            case ChessGameInterface.THREE_TIMES_SAME_POSITION:
+            case ChessGameInterface.Companion.getTHREE_TIMES_SAME_POSITION():
                 JOptionPane.showMessageDialog(this, "Unentschieden wegen \ndreimaliger Stellungswiederholung");
                 break;
-            case ChessGameInterface.FIFTY_MOVES_NO_HIT:
+            case ChessGameInterface.Companion.getFIFTY_MOVES_NO_HIT():
                 JOptionPane.showMessageDialog(this, "Unentschieden,\nda 50 Z\u00FCge keine Figure geschlagen wurde");
                 break;
-            case ChessGameInterface.RESIGN:
+            case ChessGameInterface.Companion.getRESIGN():
                 JOptionPane.showMessageDialog(this, "Spieler hat aufgegeben");
                 break;
         }

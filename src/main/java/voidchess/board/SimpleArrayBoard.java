@@ -6,10 +6,7 @@ package voidchess.board;
 
 import voidchess.figures.Figure;
 import voidchess.figures.FigureFactory;
-import voidchess.helper.CheckSearch;
-import voidchess.helper.CheckStatus;
-import voidchess.helper.ExtendedMove;
-import voidchess.helper.Position;
+import voidchess.helper.*;
 
 import java.util.ArrayList;
 import java.util.List;

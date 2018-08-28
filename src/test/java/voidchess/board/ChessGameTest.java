@@ -99,7 +99,7 @@ public class ChessGameTest {
         ChessGameInterface copy = game.copyGame(3).get(1);
         int gameState = copy.move(blackReturn);
 
-        assertEquals(gameState, ChessGameInterface.THREE_TIMES_SAME_POSITION, "game state");
+        assertEquals(gameState, ChessGameInterface.Companion.getTHREE_TIMES_SAME_POSITION(), "game state");
     }
 
     @Test
@@ -352,7 +352,7 @@ public class ChessGameTest {
                 + "Pawn-black-f3-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
         int endoption = game.move(Move.Companion.byCode("h2-e2"));
-        assertTrue(endoption == ChessGameInterface.MATT);
+        assertTrue(endoption == ChessGameInterface.Companion.getMATT());
     }
 
     @Test
@@ -361,7 +361,7 @@ public class ChessGameTest {
                 + "Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
         int endoption = game.move(Move.Companion.byCode("h2-g2"));
-        assertTrue(endoption == ChessGameInterface.PATT);
+        assertTrue(endoption == ChessGameInterface.Companion.getPATT());
     }
 
     @Test
@@ -370,7 +370,7 @@ public class ChessGameTest {
                 + "Knight-white-c2 Knight-white-e7 King-black-e8-0";
         ChessGame game = new ChessGame(des);
         int endoption = game.move(Move.Companion.byCode("e1-f2"));
-        assertTrue(endoption == ChessGameInterface.DRAW);
+        assertTrue(endoption == ChessGameInterface.Companion.getDRAW());
     }
 
     @Test
@@ -394,9 +394,9 @@ public class ChessGameTest {
         game.move(blackMove);
         int endoption;
         endoption = game.move(whiteReturn);
-        assertFalse(endoption == ChessGameInterface.THREE_TIMES_SAME_POSITION);
+        assertFalse(endoption == ChessGameInterface.Companion.getTHREE_TIMES_SAME_POSITION());
         endoption = game.move(blackReturn);
-        assertTrue(endoption == ChessGameInterface.THREE_TIMES_SAME_POSITION);
+        assertTrue(endoption == ChessGameInterface.Companion.getTHREE_TIMES_SAME_POSITION());
     }
 
     @Test
@@ -406,17 +406,17 @@ public class ChessGameTest {
         ChessGame game = new ChessGame(des);
         int endoption;
         endoption = game.move(Move.Companion.byCode("a2-a4"));
-        assertFalse(endoption == ChessGameInterface.FIFTY_MOVES_NO_HIT);
+        assertFalse(endoption == ChessGameInterface.Companion.getFIFTY_MOVES_NO_HIT());
         endoption = game.move(Move.Companion.byCode("b4-a3"));
-        assertFalse(endoption == ChessGameInterface.FIFTY_MOVES_NO_HIT);
+        assertFalse(endoption == ChessGameInterface.Companion.getFIFTY_MOVES_NO_HIT());
 
         des = "white 98 King-white-e1-0 Pawn-white-a2-false "
                 + "Pawn-black-b4-false King-black-e8-0";
         game = new ChessGame(des);
         endoption = game.move(Move.Companion.byCode("a2-a4"));
-        assertFalse(endoption == ChessGameInterface.FIFTY_MOVES_NO_HIT);
+        assertFalse(endoption == ChessGameInterface.Companion.getFIFTY_MOVES_NO_HIT());
         endoption = game.move(Move.Companion.byCode("b4-b3"));
-        assertTrue(endoption == ChessGameInterface.FIFTY_MOVES_NO_HIT);
+        assertTrue(endoption == ChessGameInterface.Companion.getFIFTY_MOVES_NO_HIT());
     }
 
     @Test

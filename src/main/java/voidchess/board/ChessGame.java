@@ -319,21 +319,21 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private int isEnd() {
         if (noMovesLeft(whiteTurn)) {
             if (isCheck(whiteTurn)) {
-                return MATT;
+                return Companion.getMATT();
             } else {
-                return PATT;
+                return Companion.getPATT();
             }
         }
         if (isDrawBecauseOfLowMaterial()) {
-            return DRAW;
+            return Companion.getDRAW();
         }
         if (isDrawBecauseOfThreeTimesSamePosition()) {
-            return THREE_TIMES_SAME_POSITION;
+            return Companion.getTHREE_TIMES_SAME_POSITION();
         }
         if (numberOfMovesWithoutHit == 100) {
-            return FIFTY_MOVES_NO_HIT;
+            return Companion.getFIFTY_MOVES_NO_HIT();
         }
-        return NO_END;
+        return Companion.getNO_END();
     }
 
     private void informFiguresOfMove(Move move) {
