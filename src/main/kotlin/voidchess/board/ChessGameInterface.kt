@@ -27,21 +27,10 @@ interface ChessGameInterface : BasicChessGameInterface {
     fun isCheck(isWhite: Boolean): Boolean
     fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean
     fun isMoveable(from: Position, to: Position, whitePlayer: Boolean): Boolean
-    fun move(move: Move): Int
+    fun move(move: Move): MoveResult
     fun getPossibleMoves(possibleMoves: List<Move>)
     fun countReachableMoves(isWhite: Boolean): Int
     fun suspendInteractiveSupervisor(): ChessGameSupervisor
     fun useSupervisor(supervisor: ChessGameSupervisor)
     fun undo()
-
-    // TODO verify if this optimization is faster than an enum
-    companion object {
-        val NO_END = 0
-        val MATT = 1
-        val PATT = 2
-        val DRAW = 3
-        val THREE_TIMES_SAME_POSITION = 4
-        val FIFTY_MOVES_NO_HIT = 5
-        val RESIGN = 6
-    }
 }

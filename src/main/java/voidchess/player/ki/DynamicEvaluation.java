@@ -1,6 +1,7 @@
 package voidchess.player.ki;
 
 import voidchess.board.ChessGameInterface;
+import voidchess.board.MoveResult;
 import voidchess.helper.ChessGameSupervisor;
 import voidchess.helper.Move;
 import voidchess.player.ki.evaluation.Evaluated;
@@ -35,13 +36,13 @@ public class DynamicEvaluation {
         boolean thisMove_isChess = game.isCheck(!forWhite);
 
         final ChessGameSupervisor interactiveSupervisor = game.suspendInteractiveSupervisor();
-        int endoption = game.move(move);
+        MoveResult endoption = game.move(move);
 
         Evaluated result;
-        if (endoption == ChessGameInterface.Companion.getNO_END()) {
+        if (endoption == MoveResult.NO_END) {
             final List<Move> minPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
             result = getMin(game, forWhite, depth, thisMove_isChess, thisMove_hasHitFigure, minPossibleMovesBuffer);
-        } else if (endoption == ChessGameInterface.Companion.getMATT()) {
+        } else if (endoption == MoveResult.MATT) {
             result = new EvaluatedAsMatt(depth + 1, true);
         } else {
             result = EvaluatedAsDraw.INSTANCE;
@@ -83,16 +84,16 @@ public class DynamicEvaluation {
                     " hits King white Move " +
                     move.toString();
 
-            int endoption = game.move(move);
+            MoveResult endoption = game.move(move);
 
-            if (endoption == ChessGameInterface.Companion.getNO_END()) {
+            if (endoption == MoveResult.NO_END) {
                 primaryEval = getMax(game,
                         forWhite,
                         depth,
                         thisMove_isChess,
                         thisMove_hasHitFigure,
                         maxPossibleMovesBuffer);
-            } else if (endoption == ChessGameInterface.Companion.getMATT()) {
+            } else if (endoption == MoveResult.MATT) {
                 game.undo();
                 return new EvaluatedAsMatt(depth + 1, false);
             } else {
@@ -160,16 +161,16 @@ public class DynamicEvaluation {
                     " hits King white Move " +
                     move.toString();
 
-            int endoption = game.move(move);
+            MoveResult endoption = game.move(move);
 
-            if (endoption == ChessGameInterface.Companion.getNO_END()) {
+            if (endoption == MoveResult.NO_END) {
                 primaryEval = getMin(game,
                         forWhite,
                         depth,
                         thisMove_isChess,
                         thisMove_hasHitFigure,
                         minPossibleMovesBuffer);
-            } else if (endoption == ChessGameInterface.Companion.getMATT()) {
+            } else if (endoption == MoveResult.MATT) {
                 game.undo();
                 return new EvaluatedAsMatt(depth + 1, true);
             } else {

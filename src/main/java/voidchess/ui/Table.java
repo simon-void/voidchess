@@ -1,6 +1,7 @@
 package voidchess.ui;
 
 import voidchess.board.ChessGameInterface;
+import voidchess.board.MoveResult;
 import voidchess.helper.ChessGameSupervisor;
 import voidchess.helper.Move;
 import voidchess.helper.Position;
@@ -32,10 +33,10 @@ public class Table implements ChessGameSupervisor, TableInterface {
     }
 
     public void move(Move move) {
-        int endoption;
+        MoveResult endoption;
         synchronized (this) {
             if (resign) {
-                stopGame(ChessGameInterface.Companion.getRESIGN());
+                stopGame(MoveResult.RESIGN);
                 return;
             }
             endoption = game.move(move);
@@ -43,7 +44,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
 
             whitePlayersTurn = !whitePlayersTurn;
         }
-        if (endoption == ChessGameInterface.Companion.getNO_END()) {
+        if (endoption == MoveResult.NO_END) {
             if (whitePlayersTurn) {
                 whitePlayer.play();
             } else {
@@ -75,7 +76,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
         whitePlayer.play();
     }
 
-    public void stopGame(int endoption) {
+    public void stopGame(MoveResult endoption) {
         whitePlayer.setIsPlaying(false);
         blackPlayer.setIsPlaying(false);
         parent.gameover(endoption);
@@ -83,7 +84,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
 
     synchronized void resignGame() {
         if (whitePlayersTurn == whitePlayer instanceof HumanPlayerInterface) {
-            stopGame(ChessGameInterface.Companion.getRESIGN());
+            stopGame(MoveResult.RESIGN);
         } else {
             resign = true;
         }

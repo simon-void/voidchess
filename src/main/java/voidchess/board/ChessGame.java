@@ -188,7 +188,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     @Override
-    public int move(Move move) {
+    public MoveResult move(Move move) {
         assert !isFreeArea(move.getFrom())
                 : "the move moves a null value:" + move.toString();
         assert (getFigure(move.getFrom()).isWhite() == whiteTurn)
@@ -316,24 +316,24 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         return false;
     }
 
-    private int isEnd() {
+    private MoveResult isEnd() {
         if (noMovesLeft(whiteTurn)) {
             if (isCheck(whiteTurn)) {
-                return Companion.getMATT();
+                return MoveResult.MATT;
             } else {
-                return Companion.getPATT();
+                return MoveResult.PATT;
             }
         }
         if (isDrawBecauseOfLowMaterial()) {
-            return Companion.getDRAW();
+            return MoveResult.DRAW;
         }
         if (isDrawBecauseOfThreeTimesSamePosition()) {
-            return Companion.getTHREE_TIMES_SAME_POSITION();
+            return MoveResult.THREE_TIMES_SAME_POSITION;
         }
         if (numberOfMovesWithoutHit == 100) {
-            return Companion.getFIFTY_MOVES_NO_HIT();
+            return MoveResult.FIFTY_MOVES_NO_HIT;
         }
-        return Companion.getNO_END();
+        return MoveResult.NO_END;
     }
 
     private void informFiguresOfMove(Move move) {
