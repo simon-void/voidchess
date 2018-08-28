@@ -9,11 +9,11 @@ import java.util.List;
  * @author stephan
  */
 public interface BasicChessGameInterface {
-    public boolean isFreeArea(Position pos);
+    boolean isFreeArea(Position pos);
 
-    public Figure getFigure(Position pos);
+    Figure getFigure(Position pos);
 
-    public Position getKingPosition(boolean whiteKing);
+    Position getKingPosition(boolean whiteKing);
 
-    public List<Figure> getFigures();
+    List<Figure> getFigures();
 }

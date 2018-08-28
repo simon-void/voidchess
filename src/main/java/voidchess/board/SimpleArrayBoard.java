@@ -219,37 +219,28 @@ public class SimpleArrayBoard
 
         switch (index) {
             case 0:
-                String[] out0 = {"Springer", "Springer", "Turm", "König", "Turm"};
-                return out0;
+                return new String[]{"Springer", "Springer", "Turm", "König", "Turm"};
             case 1:
-                String[] out1 = {"Springer", "Turm", "Springer", "König", "Turm"};
-                return out1;
+                return new String[]{"Springer", "Turm", "Springer", "König", "Turm"};
             case 2:
-                String[] out2 = {"Springer", "Turm", "König", "Springer", "Turm"};
-                return out2;
+                return new String[]{"Springer", "Turm", "König", "Springer", "Turm"};
             case 3:
-                String[] out3 = {"Springer", "Turm", "König", "Turm", "Springer"};
-                return out3;
+                return new String[]{"Springer", "Turm", "König", "Turm", "Springer"};
             case 4:
-                String[] out4 = {"Turm", "Springer", "Springer", "König", "Turm"};
-                return out4;
+                return new String[]{"Turm", "Springer", "Springer", "König", "Turm"};
             case 5:
-                String[] out5 = {"Turm", "Springer", "König", "Springer", "Turm"};
-                return out5;
+                return new String[]{"Turm", "Springer", "König", "Springer", "Turm"};
             case 6:
-                String[] out6 = {"Turm", "Springer", "König", "Turm", "Springer"};
-                return out6;
+                return new String[]{"Turm", "Springer", "König", "Turm", "Springer"};
             case 7:
-                String[] out7 = {"Turm", "König", "Springer", "Springer", "Turm"};
-                return out7;
+                return new String[]{"Turm", "König", "Springer", "Springer", "Turm"};
             case 8:
-                String[] out8 = {"Turm", "König", "Springer", "Turm", "Springer"};
-                return out8;
+                return new String[]{"Turm", "König", "Springer", "Turm", "Springer"};
             case 9:
-                String[] out9 = {"Turm", "König", "Turm", "Springer", "Springer"};
-                return out9;
+                return new String[]{"Turm", "König", "Turm", "Springer", "Springer"};
+            default:
+                throw new IllegalArgumentException("index should be between [0-9] but is "+ index);
         }
-        return null;
     }
 
     private Figure createFigure(String name, boolean isWhite, Position pos) {
@@ -302,7 +293,7 @@ public class SimpleArrayBoard
     }
 
     public List<Figure> getFigures() {
-        List<Figure> figureIter = new ArrayList<Figure>(16);
+        List<Figure> figureIter = new ArrayList<>(16);
 
         for (int linearIndex = 0; linearIndex < 64; linearIndex++) {
             if (game[linearIndex] != null) {

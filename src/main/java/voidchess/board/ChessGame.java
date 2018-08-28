@@ -25,8 +25,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * der normale Konstruktor, der von außerhalb verwendet werden sollte
-     *
-     * @param supervisor
      */
     public ChessGame(ChessGameSupervisor supervisor) {
         hasHitFigure = false;
@@ -59,8 +57,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * für JUnit-TestKlassen
-     *
-     * @param game_description
      */
     public ChessGame(String game_description) {
         this(ChessGameSupervisorDummy.INSTANCE, game_description);
@@ -68,8 +64,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * für JUnit-TestKlassen
-     *
-     * @param initialPosition
      */
     public ChessGame(int initialPosition) {
         this(ChessGameSupervisorDummy.INSTANCE, initialPosition);
@@ -84,9 +78,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * wird nur implizit für JUnit-tests verwendet
-     *
-     * @param supervisor
-     * @param game_description
      */
     private ChessGame(ChessGameSupervisor supervisor, String game_description) {
         this.supervisor = supervisor;
@@ -115,9 +106,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * wird nur implizit für JUnit-tests verwendet
-     *
-     * @param supervisor
-     * @param initialPosition
      */
     private ChessGame(ChessGameSupervisor supervisor,
                       int initialPosition) {
@@ -304,17 +292,22 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
             if (move.getTo().getRow() == 0 || move.getTo().getRow() == 7) {
                 String figure = supervisor.askForPawnChange(move.getTo());
                 boolean isWhite = move.getTo().getRow() == 7;
-                Figure newFigure = null;
-                if (figure.equals("Queen")) {
-                    newFigure = figureFactory.getQueen(move.getTo(), isWhite);
-                } else if (figure.equals("Rock")) {
-                    newFigure = figureFactory.getRock(move.getTo(), isWhite);
-                } else if (figure.equals("Knight")) {
-                    newFigure = figureFactory.getKnight(move.getTo(), isWhite);
-                } else if (figure.equals("Bishop")) {
-                    newFigure = figureFactory.getBishop(move.getTo(), isWhite);
-                } else {
-                    throw new NullPointerException("invalide pawn-transformation-string:" + figure);
+                Figure newFigure;
+                switch (figure) {
+                    case "Queen":
+                        newFigure = figureFactory.getQueen(move.getTo(), isWhite);
+                        break;
+                    case "Rock":
+                        newFigure = figureFactory.getRock(move.getTo(), isWhite);
+                        break;
+                    case "Knight":
+                        newFigure = figureFactory.getKnight(move.getTo(), isWhite);
+                        break;
+                    case "Bishop":
+                        newFigure = figureFactory.getBishop(move.getTo(), isWhite);
+                        break;
+                    default:
+                        throw new NullPointerException("invalide pawn-transformation-string:" + figure);
                 }
                 setFigure(move.getTo(), newFigure);
                 return true;

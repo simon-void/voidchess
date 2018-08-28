@@ -23,14 +23,9 @@ public class RuntimeFacade {
         long free = runtime.freeMemory();
         long used = total - free;
 
-        StringBuilder sb = new StringBuilder(32);
-        sb.append(mark);
-        sb.append(": ");
-        sb.append(numberFormat.format(used / (double) total));
-        sb.append(" of ");
-        sb.append((total / 1000000));
-        sb.append("MB");
-        System.out.println(sb.toString());
+        String sb = mark + ": " + numberFormat.format(used / (double) total) +
+                " of " + (total / 1000000) + "MB";
+        System.out.println(sb);
     }
 
     public static void assertJavaVersion() {

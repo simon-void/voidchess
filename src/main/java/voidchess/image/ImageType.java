@@ -17,7 +17,7 @@ public enum ImageType {
 
     final public boolean isFigure;
 
-    private ImageType(boolean isFigure) {
+    ImageType(boolean isFigure) {
         this.isFigure = isFigure;
     }
 

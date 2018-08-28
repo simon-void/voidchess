@@ -6,11 +6,11 @@ import voidchess.helper.Position;
  * @author stephan
  */
 public interface PlayerInterface {
-    public void setIsPlaying(boolean isPlaying);
+    void setIsPlaying(boolean isPlaying);
 
-    public void play();
+    void play();
 
-    public String askForPawnChange(Position pawnPosition);
+    String askForPawnChange(Position pawnPosition);
 
-    public void setColor(boolean isWhite);
+    void setColor(boolean isWhite);
 }
