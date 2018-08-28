@@ -290,20 +290,20 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private boolean handlePawnTransformation(Move move) {
         if (getFigure(move.getTo()).isPawn()) {
             if (move.getTo().getRow() == 0 || move.getTo().getRow() == 7) {
-                String figure = supervisor.askForPawnChange(move.getTo());
+                PawnPromotion figure = supervisor.askForPawnChange(move.getTo());
                 boolean isWhite = move.getTo().getRow() == 7;
                 Figure newFigure;
                 switch (figure) {
-                    case "Queen":
+                    case QUEEN:
                         newFigure = figureFactory.getQueen(move.getTo(), isWhite);
                         break;
-                    case "Rock":
+                    case ROCK:
                         newFigure = figureFactory.getRock(move.getTo(), isWhite);
                         break;
-                    case "Knight":
+                    case KNIGHT:
                         newFigure = figureFactory.getKnight(move.getTo(), isWhite);
                         break;
-                    case "Bishop":
+                    case BISHOP:
                         newFigure = figureFactory.getBishop(move.getTo(), isWhite);
                         break;
                     default:

@@ -2,6 +2,7 @@ package voidchess.player;
 
 import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
+import voidchess.helper.PawnPromotion;
 import voidchess.helper.Position;
 import voidchess.ui.ChessGameUI;
 import voidchess.ui.TableInterface;
@@ -74,7 +75,7 @@ public class HumanPlayer
         }
     }
 
-    public String askForPawnChange(Position pawnPosition) {
+    public PawnPromotion askForPawnChange(Position pawnPosition) {
         String[] figs = {"Dame", "Turm", "L\u00E4ufer", "Springer"};
         String out = (String) JOptionPane.showInputDialog(null,
                 "W\u00E4hle eine Figur",
@@ -84,10 +85,16 @@ public class HumanPlayer
                 figs,
                 "Dame");
 
-        if (out.equals("Dame")) return "Queen";
-        if (out.equals("Turm")) return "Rock";
-        if (out.equals("L\u00E4ufer")) return "Bishop";
-        return "Knight";
+        switch (out) {
+            case "Dame":
+                return PawnPromotion.QUEEN;
+            case "Turm":
+                return PawnPromotion.ROCK;
+            case "Springer":
+                return PawnPromotion.KNIGHT;
+            default:
+                return PawnPromotion.BISHOP;
+        }
     }
 
     public void setIsPlaying(boolean isPlaying) {

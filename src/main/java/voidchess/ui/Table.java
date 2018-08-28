@@ -4,6 +4,7 @@ import voidchess.board.ChessGameInterface;
 import voidchess.board.MoveResult;
 import voidchess.helper.ChessGameSupervisor;
 import voidchess.helper.Move;
+import voidchess.helper.PawnPromotion;
 import voidchess.helper.Position;
 import voidchess.player.HumanPlayerInterface;
 import voidchess.player.PlayerInterface;
@@ -27,7 +28,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
         this.panel960 = panel960;
     }
 
-    public String askForPawnChange(Position pawnPosition) {
+    public PawnPromotion askForPawnChange(Position pawnPosition) {
         if (whitePlayersTurn) return whitePlayer.askForPawnChange(pawnPosition);
         else return blackPlayer.askForPawnChange(pawnPosition);
     }

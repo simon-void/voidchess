@@ -1,5 +1,6 @@
 package voidchess.player;
 
+import voidchess.helper.PawnPromotion;
 import voidchess.helper.Position;
 
 /**
@@ -10,7 +11,7 @@ public interface PlayerInterface {
 
     void play();
 
-    String askForPawnChange(Position pawnPosition);
+    PawnPromotion askForPawnChange(Position pawnPosition);
 
     void setColor(boolean isWhite);
 }

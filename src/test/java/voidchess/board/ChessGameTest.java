@@ -5,10 +5,7 @@ import org.testng.annotations.Test;
 import voidchess.figures.Bishop;
 import voidchess.figures.Figure;
 import voidchess.figures.King;
-import voidchess.helper.ChessGameSupervisorDummy;
-import voidchess.helper.ChessGameSupervisorMock;
-import voidchess.helper.Move;
-import voidchess.helper.Position;
+import voidchess.helper.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -421,7 +418,7 @@ public class ChessGameTest {
 
     @Test
     public void testHandleTrasformPawn() {
-        ChessGameSupervisorMock mock = new ChessGameSupervisorMock("Knight");
+        ChessGameSupervisorMock mock = new ChessGameSupervisorMock(PawnPromotion.KNIGHT);
         String des = "black 0 King-white-e1-0 Pawn-black-g2-false "
                 + "King-black-e8-0";
         ChessGame game = new ChessGame(des);

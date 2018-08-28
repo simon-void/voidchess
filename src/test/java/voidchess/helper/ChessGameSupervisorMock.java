@@ -4,18 +4,13 @@ package voidchess.helper;
  * @author stephan
  */
 public class ChessGameSupervisorMock implements ChessGameSupervisor {
-    private boolean allOK = false;
-    private String defaultPawnTransform = "nofigure";
+    private PawnPromotion defaultPawnTransform = PawnPromotion.QUEEN;
 
-    public ChessGameSupervisorMock(String defaultPawnTransform) {
+    public ChessGameSupervisorMock(PawnPromotion defaultPawnTransform) {
         this.defaultPawnTransform = defaultPawnTransform;
     }
 
-    public String askForPawnChange(Position pawnPosition) {
+    public PawnPromotion askForPawnChange(Position pawnPosition) {
         return defaultPawnTransform;
-    }
-
-    public boolean everythingWentAsExpected() {
-        return allOK;
     }
 }

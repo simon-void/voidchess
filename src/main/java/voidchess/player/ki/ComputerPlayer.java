@@ -2,6 +2,7 @@ package voidchess.player.ki;
 
 import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
+import voidchess.helper.PawnPromotion;
 import voidchess.helper.Position;
 import voidchess.helper.RuntimeFacade;
 import voidchess.player.PlayerInterface;
@@ -162,8 +163,8 @@ public class ComputerPlayer
         }
     }
 
-    public String askForPawnChange(Position pawnPosition) {
-        return "Queen";
+    public PawnPromotion askForPawnChange(Position pawnPosition) {
+        return PawnPromotion.QUEEN;
     }
 
     //am Anfang jedes Spiels wird die EvaluationStrategie zurückgesetzt vom potentiel StaticSpaceEvaluation
