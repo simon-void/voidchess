@@ -1,18 +1,15 @@
 package voidchess.image;
 
-import voidchess.helper.ResourceFinder;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
 import java.io.InputStream;
+
+import static voidchess.helper.ResourceFinderKt.getResourceStream;
 
 public class Images {
     private final static Image[] images = new Image[ImageType.values().length];
 
-    public static void loadImageResources()
-            throws IOException {
-        final ClassLoader cl = Images.class.getClassLoader();
+    public static void loadImageResources() {
         for (ImageType imageType : ImageType.values()) {
             images[imageType.ordinal()] = readFromImageDir(imageType.getFileName());
         }
@@ -35,7 +32,7 @@ public class Images {
     private static Image readFromImageDir(String fileName) {
         final String relativePath = "image/" + fileName;
         try {
-            InputStream imageStream = ResourceFinder.INSTANCE.getResourceStream(relativePath);
+            InputStream imageStream = getResourceStream(relativePath);
             final Image img = ImageIO.read(imageStream);
             return img;
         } catch (Exception e) {

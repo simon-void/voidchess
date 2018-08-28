@@ -8,31 +8,25 @@ import voidchess.image.Images;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
-public class ChessApplet
-        extends JApplet {
+public class ChessApplet extends JApplet {
     final public static int APPLET_STOPPED = -100;
     private ChessPanel chessPanel;
 
     public void init() {
-        try {
-            Images.loadImageResources();
-            chessPanel = new ChessPanel();
-            chessPanel.setBackground(Color.white);
-            chessPanel.setBorder(
-                    BorderFactory.createTitledBorder(
-                            BorderFactory.createLineBorder(
-                                    Color.black
-                            ),
-                            "VoidSchach960 Applet"
-                    )
-            );
-            setContentPane(chessPanel);
-            setSize(getPreferredSize());
-        } catch (IOException e) {
-            displayException(e);
-        }
+        Images.loadImageResources();
+        chessPanel = new ChessPanel();
+        chessPanel.setBackground(Color.white);
+        chessPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(
+                                Color.black
+                        ),
+                        "VoidSchach960 Applet"
+                )
+        );
+        setContentPane(chessPanel);
+        setSize(getPreferredSize());
     }
 
     public void start() {
