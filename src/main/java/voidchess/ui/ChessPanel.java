@@ -158,8 +158,6 @@ public class ChessPanel
             case ChessGameInterface.RESIGN:
                 JOptionPane.showMessageDialog(this, "Spieler hat aufgegeben");
                 break;
-            case ChessApplet.APPLET_STOPPED:
-                break;
         }
         startButton.setText(startString);
         switchButton.setEnabled(true);
