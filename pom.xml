@@ -113,6 +113,10 @@
                         <manifest>
                             <mainClass>voidchess.ui.ChessFrame</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Built-By>Stephan Schroeder</Built-By>
+                            <Implementation-Version>2.6.0</Implementation-Version>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>

@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Created-By: Stephan Schroeder (simon.void at gmx.de)
-Main-Class: voidchess.ui.ChessFrame
-Implementation-Version: 2.5.1
