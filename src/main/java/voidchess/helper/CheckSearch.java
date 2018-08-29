@@ -24,11 +24,11 @@ public class CheckSearch {
 
         switch (attackPositions.size()) {
             case 0:
-                return CheckStatus.NO_CHECK;
+                return CheckStatus.Companion.getNO_CHECK();
             case 1:
                 return getPossiblePositions(kingPos, attackPositions.get(0));
             case 2:
-                return CheckStatus.DOUBLE_CHECK;
+                return CheckStatus.Companion.getDOUBLE_CHECK();
             default:
                 throw new IllegalStateException("more than 2 attackers are impossible " + attackPositions.size());
         }
@@ -59,11 +59,11 @@ public class CheckSearch {
 
         switch (attackPositions.size()) {
             case 0:
-                return CheckStatus.NO_CHECK;
+                return CheckStatus.Companion.getNO_CHECK();
             case 1:
                 return getPossiblePositions(kingPos, attackPositions.get(0));
             case 2:
-                return CheckStatus.DOUBLE_CHECK;
+                return CheckStatus.Companion.getDOUBLE_CHECK();
             default:
                 throw new IllegalStateException("more than 2 attackers are impossible " + attackPositions.size());
         }
@@ -91,11 +91,11 @@ public class CheckSearch {
 
         switch (attackPositions.size()) {
             case 0:
-                return CheckStatus.NO_CHECK;
+                return CheckStatus.Companion.getNO_CHECK();
             case 1:
                 return getPossiblePositions(kingPos, attackPositions.get(0));
             case 2:
-                return CheckStatus.DOUBLE_CHECK;
+                return CheckStatus.Companion.getDOUBLE_CHECK();
             default:
                 throw new IllegalStateException("more than 2 attackers are impossible " + attackPositions.size());
         }
@@ -116,11 +116,11 @@ public class CheckSearch {
 
         switch (attackPositions.size()) {
             case 0:
-                return CheckStatus.NO_CHECK;
+                return CheckStatus.Companion.getNO_CHECK();
             case 1:
                 return getPossiblePositions(kingPos, attackPositions.get(0));
             case 2:
-                return CheckStatus.DOUBLE_CHECK;
+                return CheckStatus.Companion.getDOUBLE_CHECK();
             default:
                 throw new IllegalStateException("more than 2 attackers are impossible " + attackPositions.size());
         }
@@ -135,7 +135,7 @@ public class CheckSearch {
         final Figure rock = game.getFigure(rockPos);
 
         if (rock.isReachable(kingPos, game)) return getPossiblePositions(kingPos, rockPos);
-        return CheckStatus.NO_CHECK;
+        return CheckStatus.Companion.getNO_CHECK();
     }
 
     private static CheckStatus getPossiblePositions(Position kingPos, Position attackerPos) {
