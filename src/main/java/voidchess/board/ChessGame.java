@@ -615,19 +615,15 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         final private int figureCount;
         final private boolean isWhite;
         final private int[][] board = new int[8][8];
-        final private static byte eight = 8;
 
         private Memento(BasicChessGameInterface game, boolean isWhite) {
-            final byte nullbyte = 0;
             int count = 0;
-            for (byte row = 0; row < eight; row++) {
-                for (byte column = 0; column < eight; column++) {
+            for (int row = 0; row < 8; row++) {
+                for (int column = 0; column < 8; column++) {
                     Figure figure = game.getFigure(Position.Companion.get(row, column));
                     if (figure != null) {
                         board[row][column] = figure.getTypeInfo();
                         count++;
-                    } else {
-                        board[row][column] = nullbyte;
                     }
                 }
             }
@@ -640,8 +636,8 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         }
 
         private boolean equals(Memento other) {
-            for (byte row = 0; row < eight; row++) {
-                for (byte column = 0; column < eight; column++) {
+            for (int row = 0; row < 8; row++) {
+                for (int column = 0; column < 8; column++) {
                     if (board[row][column] != other.board[row][column]) {
                         return false;
                     }
