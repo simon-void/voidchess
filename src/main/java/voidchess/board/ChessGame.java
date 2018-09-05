@@ -159,6 +159,11 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         return game.getFigure(pos);
     }
 
+    @Override
+    public BoardContent getContent(Position pos) {
+        return BoardContent.Companion.get(game.getFigure(pos));
+    }
+
     private void setFigure(Position pos, Figure figure) {
         game.setFigure(pos, figure);
     }
@@ -179,7 +184,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     public boolean isMoveable(Position from, Position to, boolean whitePlayer) {
         if (isFreeArea(from)) return false;
         Figure figure = getFigure(from);
-        return figure.isWhite() == whitePlayer && figure.isMoveable(to, game);
+        return figure.isWhite() == whitePlayer && figure.isMovable(to, game);
     }
 
     @Override
@@ -265,7 +270,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     private Rock extractRochadeRock(Move move) {
         final Figure movingFigure = getFigure(move.getFrom());
-        if (!movingFigure.isKing()) return null;
+        if (!(movingFigure.isKing())) return null;
 
         final Figure rochadeRock = getFigure(move.getTo());
         if (rochadeRock != null && rochadeRock.isWhite() == movingFigure.isWhite()) {
@@ -544,7 +549,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
         final List<Figure> figures = game.getFigures();
         for (Figure figure : figures) {
-            if (figure.isWhite() == whiteTurn && !figure.isKing()) {
+            if (figure.isWhite() == whiteTurn && !(figure.isKing())) {
                 figure.getPossibleMoves(game, possibleMoves);
             }
         }
@@ -609,7 +614,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private class Memento {
         final private int figureCount;
         final private boolean isWhite;
-        final private byte[][] board = new byte[8][8];
+        final private int[][] board = new int[8][8];
         final private static byte eight = 8;
 
         private Memento(BasicChessGameInterface game, boolean isWhite) {

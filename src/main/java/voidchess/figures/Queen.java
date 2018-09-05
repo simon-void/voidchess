@@ -16,7 +16,7 @@ public class Queen extends Figure {
     private Rock rock;
 
     public Queen(boolean isWhite, Position startPosition) {
-        super(isWhite, startPosition, (byte) 5);
+        super(isWhite, startPosition, FigureType.QUEEN);
         bishop = new Bishop(isWhite, startPosition);
         rock = new Rock(isWhite, startPosition);
     }
@@ -48,21 +48,5 @@ public class Queen extends Figure {
 
     public int countReachableMoves(BasicChessGameInterface game) {
         return rock.countReachableMoves(game) + bishop.countReachableMoves(game);
-    }
-
-    public boolean isQueen() {
-        return true;
-    }
-
-    protected String getType() {
-        return "Queen";
-    }
-
-    public ImageType getImageType() {
-        if (isWhite) {
-            return ImageType.W_QUEEN;
-        } else {
-            return ImageType.B_QUEEN;
-        }
     }
 }

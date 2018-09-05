@@ -11,5 +11,6 @@ interface BasicChessGameInterface {
     fun getFigures(): List<Figure>
     fun isFreeArea(pos: Position): Boolean
     fun getFigure(pos: Position): Figure?
+    fun getContent(pos: Position): BoardContent
     fun getKingPosition(whiteKing: Boolean): Position
 }

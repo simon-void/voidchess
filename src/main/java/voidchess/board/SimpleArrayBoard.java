@@ -48,6 +48,7 @@ public class SimpleArrayBoard
         blackCheckStatus = null;
     }
 
+    @Override
     public boolean isCheck(boolean isWhite) {
         if (isWhite) {
             if (!calculatedWhiteCheck) {
@@ -64,6 +65,7 @@ public class SimpleArrayBoard
         }
     }
 
+    @Override
     public CheckStatus getCheckStatus(boolean isWhite) {
         final ExtendedMove lastMove = lastMoveProvider.getLastMove();
         if (isWhite) {
@@ -86,6 +88,7 @@ public class SimpleArrayBoard
         return Position.Companion.byCode(st.nextToken());
     }
 
+    @Override
     public void init() {
         clear();
         Position pos;
@@ -133,6 +136,7 @@ public class SimpleArrayBoard
         blackKingPosition = pos;
     }
 
+    @Override
     public void init(String des) {
         clear();
 
@@ -148,6 +152,7 @@ public class SimpleArrayBoard
         }
     }
 
+    @Override
     public void init(int chess960) {
         assert (chess960 >= 0 && chess960 < 960) : "chess960 out of bounds";
 
@@ -281,14 +286,22 @@ public class SimpleArrayBoard
 
     }
 
+    @Override
     public Figure getFigure(Position pos) {
         return game[pos.getIndex()];
     }
 
+    @Override
     public boolean isFreeArea(Position pos) {
         return game[pos.getIndex()] == null;
     }
 
+    @Override
+    public BoardContent getContent(Position pos) {
+        return BoardContent.Companion.get(game[pos.getIndex()]);
+    }
+
+    @Override
     public List<Figure> getFigures() {
         List<Figure> figureIter = new ArrayList<>(16);
 
@@ -300,6 +313,7 @@ public class SimpleArrayBoard
         return figureIter;
     }
 
+    @Override
     public Position getKingPosition(boolean whiteKing) {
         if (whiteKing) return whiteKingPosition;
         else return blackKingPosition;

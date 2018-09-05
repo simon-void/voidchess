@@ -13,14 +13,14 @@ import java.util.List;
  * @author stephan
  */
 public class Rock extends RochadeFigure {
-    private List<Position> positions = new ArrayList<Position>(8);
+    private List<Position> positions = new ArrayList<Position>(14);
 
     public Rock(boolean isWhite, Position startPosition) {
-        super(isWhite, startPosition, (byte) 2);
+        super(isWhite, startPosition, FigureType.ROCK);
     }
 
     public Rock(boolean isWhite, Position startPosition, int stepsTaken) {
-        super(isWhite, startPosition, stepsTaken, (byte) 2);
+        super(isWhite, startPosition, stepsTaken, FigureType.ROCK);
     }
 
     public boolean isReachable(Position to, BasicChessGameInterface game) {
@@ -28,11 +28,11 @@ public class Rock extends RochadeFigure {
     }
 
     private boolean isHorizontalReachable(Position to, BasicChessGameInterface game) {
-        if (to.getRow() != position.getRow()) return false;
-        if (to.getColumn() == position.getColumn()) return false;
+        if (to.getRow() != getPosition().getRow()) return false;
+        if (to.getColumn() == getPosition().getColumn()) return false;
 
-        int minColumn = Math.min(to.getColumn(), position.getColumn());
-        int maxColumn = Math.max(to.getColumn(), position.getColumn());
+        int minColumn = Math.min(to.getColumn(), getPosition().getColumn());
+        int maxColumn = Math.max(to.getColumn(), getPosition().getColumn());
 
         for (int column = minColumn + 1; column < maxColumn; column++) {
             Position middlePosition = Position.Companion.get(to.getRow(), column);
@@ -43,11 +43,11 @@ public class Rock extends RochadeFigure {
     }
 
     private boolean isVerticalReachable(Position to, BasicChessGameInterface game) {
-        if (to.getColumn() != position.getColumn()) return false;
-        if (to.getRow() == position.getRow()) return false;
+        if (to.getColumn() != getPosition().getColumn()) return false;
+        if (to.getRow() == getPosition().getRow()) return false;
 
-        int minRow = Math.min(to.getRow(), position.getRow());
-        int maxRow = Math.max(to.getRow(), position.getRow());
+        int minRow = Math.min(to.getRow(), getPosition().getRow());
+        int maxRow = Math.max(to.getRow(), getPosition().getRow());
 
         for (int row = minRow + 1; row < maxRow; row++) {
             Position middlePosition = Position.Companion.get(row, to.getColumn());
@@ -58,17 +58,17 @@ public class Rock extends RochadeFigure {
     }
 
     private void getNorthIterator(BasicChessGameInterface game, List<Position> result) {
-        int row = position.getRow();
+        int row = getPosition().getRow();
 
         while (true) {
             row++;
             if (row == 8) break;
-            Position checkPosition = Position.Companion.get(row, position.getColumn());
+            Position checkPosition = Position.Companion.get(row, getPosition().getColumn());
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
             } else {
-                if (isWhite != figure.isWhite) {
+                if (isWhite() != figure.isWhite()) {
                     result.add(checkPosition);
                 }
                 break;
@@ -77,17 +77,17 @@ public class Rock extends RochadeFigure {
     }
 
     private void getSouthIterator(BasicChessGameInterface game, List<Position> result) {
-        int row = position.getRow();
+        int row = getPosition().getRow();
 
         while (true) {
             row--;
             if (row < 0) break;
-            Position checkPosition = Position.Companion.get(row, position.getColumn());
+            Position checkPosition = Position.Companion.get(row, getPosition().getColumn());
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
             } else {
-                if (isWhite != figure.isWhite) {
+                if (isWhite() != figure.isWhite()) {
                     result.add(checkPosition);
                 }
                 break;
@@ -96,17 +96,17 @@ public class Rock extends RochadeFigure {
     }
 
     private void getEastIterator(BasicChessGameInterface game, List<Position> result) {
-        int column = position.getColumn();
+        int column = getPosition().getColumn();
 
         while (true) {
             column++;
             if (column == 8) break;
-            Position checkPosition = Position.Companion.get(position.getRow(), column);
+            Position checkPosition = Position.Companion.get(getPosition().getRow(), column);
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
             } else {
-                if (isWhite != figure.isWhite) {
+                if (isWhite() != figure.isWhite()) {
                     result.add(checkPosition);
                 }
                 break;
@@ -115,17 +115,17 @@ public class Rock extends RochadeFigure {
     }
 
     private void getWestIterator(BasicChessGameInterface game, List<Position> result) {
-        int column = position.getColumn();
+        int column = getPosition().getColumn();
 
         while (true) {
             column--;
             if (column < 0) break;
-            Position checkPosition = Position.Companion.get(position.getRow(), column);
+            Position checkPosition = Position.Companion.get(getPosition().getRow(), column);
             Figure figure = game.getFigure(checkPosition);
             if (figure == null) {
                 result.add(checkPosition);
             } else {
-                if (isWhite != figure.isWhite) {
+                if (isWhite() != figure.isWhite()) {
                     result.add(checkPosition);
                 }
                 break;
@@ -141,7 +141,7 @@ public class Rock extends RochadeFigure {
         getWestIterator(game, positions);
 
         for (Position pos : positions) {
-            result.add(Move.Companion.get(position, pos));
+            result.add(Move.Companion.get(getPosition(), pos));
         }
     }
 
@@ -189,21 +189,5 @@ public class Rock extends RochadeFigure {
         getEastIterator(game, positions);
         getWestIterator(game, positions);
         return positions.size();
-    }
-
-    public boolean isRock() {
-        return true;
-    }
-
-    protected String getType() {
-        return "Rock";
-    }
-
-    public ImageType getImageType() {
-        if (isWhite) {
-            return ImageType.W_ROCK;
-        } else {
-            return ImageType.B_ROCK;
-        }
     }
 }
