@@ -65,7 +65,11 @@ public class DifficultyPanel
         }
     }
 
-    JLabel getLabel() {
-        return new JLabel("difficulty:");
+    JPanel getLabel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panel.setBackground(Color.WHITE);
+        JLabel label = new JLabel("difficulty:");
+        panel.add(label);
+        return panel;
     }
 }
