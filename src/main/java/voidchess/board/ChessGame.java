@@ -4,6 +4,7 @@ import voidchess.figures.*;
 import voidchess.helper.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -614,19 +615,31 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private class Memento {
         final private int figureCount;
         final private boolean isWhite;
-        final private int[][] board = new int[8][8];
+        final private int[] compressedBoard = new int[10];
 
         private Memento(BasicChessGameInterface game, boolean isWhite) {
             int count = 0;
-            for (int row = 0; row < 8; row++) {
-                for (int column = 0; column < 8; column++) {
-                    Figure figure = game.getFigure(Position.Companion.get(row, column));
-                    if (figure != null) {
-                        board[row][column] = figure.getTypeInfo();
-                        count++;
-                    }
+            int[] board = new int[64];
+            for (int index = 0; index < 64; index++) {
+                Figure figure = game.getFigure(Position.Companion.byIndex(index));
+                if (figure != null) {
+                    board[index] = figure.getTypeInfo();
+                    count++;
                 }
             }
+
+            // compress the board by exploiting that typeInfo is smaller than 16
+            // and therefore only 4 bits are needed -> pack 7 typeInfos into 1 int
+            final int step = 7;
+            int startIndex = 0;
+            int endIndex = 7;
+            for(int i=0; i<9; i++) {
+                compressedBoard[i] = compressBoardSlices(board, startIndex, endIndex);
+                startIndex+=step;
+                endIndex+=step;
+            }
+            compressedBoard[9] = board[63];
+
             this.isWhite = isWhite;
             figureCount = count;
         }
@@ -636,14 +649,20 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         }
 
         private boolean equals(Memento other) {
-            for (int row = 0; row < 8; row++) {
-                for (int column = 0; column < 8; column++) {
-                    if (board[row][column] != other.board[row][column]) {
-                        return false;
-                    }
-                }
+            return isWhite == other.isWhite && Arrays.equals(compressedBoard, other.compressedBoard);
+        }
+
+        private int compressBoardSlices(int[] board, int startIndex, int endIndex) {
+            assert endIndex-startIndex < 8;
+
+            final int endIndexMinusOne = endIndex-1;
+            int compressedValue = 0;
+            for(int i=startIndex; i<endIndexMinusOne; i++ ) {
+                compressedValue+=board[i];
+                compressedValue <<=4;
             }
-            return isWhite == other.isWhite;
+            compressedValue+=board[endIndexMinusOne];
+            return compressedValue;
         }
     }
 
