@@ -141,11 +141,11 @@ public class ComputerPlayerTest {
             dynamicEvaluation.evaluateMove(game, move);
             // Invariante: evaluateMove darf game nicht ändern
             String msg = "after Move:" + move.toString() + " History:" + game.getHistory();
-            assertEquals(msg, initDescription, game.toString());
+            assertEquals(game.toString(), initDescription, msg);
         } catch (Exception e) {
-            String gamestring = game.toString();
+            String gameToString = game.toString();
             throw new RuntimeException(e.toString() + "-after Moves:" + game.getHistory() + " -leading to position:"
-                    + gamestring);
+                    + gameToString);
         } catch (AssertionError e) {
             AssertionError extendedE = new AssertionError(e.getMessage() + " History:" + game.getHistory());
             extendedE.setStackTrace(e.getStackTrace());

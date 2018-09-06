@@ -47,7 +47,7 @@ public class SimpleBoardTest {
     @Test
     public void testInit960() {
         board.init(518);
-        assertEquals(initial, board.toString());
+        assertEquals(board.toString(), initial);
 
         board.init(0);
         board.init(314);
@@ -82,7 +82,7 @@ public class SimpleBoardTest {
     public void testGetFigures() {
         board.setFigure(Position.Companion.byCode("c2"), null);
         List<Figure> figures = board.getFigures();
-        assertEquals(31, figures.size());
+        assertEquals(figures.size(), 31);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class SimpleBoardTest {
         status = board.getCheckStatus(true);
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
-        assertEquals(3, status.getCheckInterceptPositions().size());
+        assertEquals(status.getCheckInterceptPositions().size(), 3);
 
         des = "white 0 King-white-e2-3 Knight-black-g1 "
                 + "Knight-white-f3 Rock-black-h2-12 King-black-g7-3";
@@ -107,6 +107,6 @@ public class SimpleBoardTest {
 
     @Test
     public void testToString() {
-        assertEquals(initial, board.toString());
+        assertEquals(board.toString(), initial);
     }
 }

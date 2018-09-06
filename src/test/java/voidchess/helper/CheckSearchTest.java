@@ -17,9 +17,9 @@ import static org.testng.Assert.*;
 public class CheckSearchTest {
     @Test
     public void testSignum() {
-        assertEquals(1, CheckSearch.signum(4));
-        assertEquals(0, CheckSearch.signum(0));
-        assertEquals(-1, CheckSearch.signum(-34));
+        assertEquals(CheckSearch.signum(4), 1);
+        assertEquals(CheckSearch.signum(0), 0);
+        assertEquals(CheckSearch.signum(-34), -1);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class CheckSearchTest {
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
         List<Position> possiblePositions = status.getCheckInterceptPositions();
-        assertEquals(1, possiblePositions.size());
+        assertEquals(possiblePositions.size(), 1);
         assertTrue(possiblePositions.get(0).equalsPosition(Position.Companion.byCode("e5")));
 
         des = "white 0 King-white-e4-4 King-black-e6-4";
@@ -55,7 +55,7 @@ public class CheckSearchTest {
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
         possiblePositions = status.getCheckInterceptPositions();
-        assertEquals(2, possiblePositions.size());
+        assertEquals(possiblePositions.size(), 2);
         assertTrue(possiblePositions.contains(Position.Companion.byCode("e6")));
         assertTrue(possiblePositions.contains(Position.Companion.byCode("e7")));
 
@@ -66,7 +66,7 @@ public class CheckSearchTest {
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
         possiblePositions = status.getCheckInterceptPositions();
-        assertEquals(3, possiblePositions.size());
+        assertEquals(possiblePositions.size(), 3);
         assertTrue(possiblePositions.contains(Position.Companion.byCode("h4")));
         assertTrue(possiblePositions.contains(Position.Companion.byCode("g3")));
         assertTrue(possiblePositions.contains(Position.Companion.byCode("f2")));

@@ -51,11 +51,11 @@ public class PositionTest {
     @Test
     public void testToString() {
         Position pos1 = Position.Companion.get(0, 0);
-        assertEquals("a1", pos1.toString());
+        assertEquals(pos1.toString(), "a1");
         Position pos2 = Position.Companion.get(7, 0);
-        assertEquals("a8", pos2.toString());
+        assertEquals(pos2.toString(), "a8");
         Position pos3 = Position.Companion.get(7, 7);
-        assertEquals("h8", pos3.toString());
+        assertEquals(pos3.toString(), "h8");
     }
 
     @Test

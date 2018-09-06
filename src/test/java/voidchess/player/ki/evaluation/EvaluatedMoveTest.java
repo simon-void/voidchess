@@ -18,8 +18,8 @@ public class EvaluatedMoveTest {
 
         EvaluatedMove eMove = new EvaluatedMove(move, new EvaluatedAsValue(value));
 
-        assertEquals(move, eMove.getMove());
-        assertEquals(value, ((EvaluatedAsValue) (eMove.getValue())).getCombinedEvaluation());
+        assertEquals(eMove.getMove(), move);
+        assertEquals(((EvaluatedAsValue) (eMove.getValue())).getCombinedEvaluation(), value);
     }
 
     @Test
