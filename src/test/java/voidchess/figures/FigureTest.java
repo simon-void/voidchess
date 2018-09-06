@@ -186,10 +186,10 @@ public class FigureTest {
 
         Rock rock = new Rock(true, from);
 
-        assertTrue(rock.isMoveable(to1, game));
-        assertTrue(rock.isMoveable(to2, game));
-        assertFalse(rock.isMoveable(to3, game));
-        assertFalse(rock.isMoveable(to4, game));
+        assertTrue(rock.isMovable(to1, game));
+        assertTrue(rock.isMovable(to2, game));
+        assertFalse(rock.isMovable(to3, game));
+        assertFalse(rock.isMovable(to4, game));
     }
 
     @Test
@@ -212,14 +212,14 @@ public class FigureTest {
         Queen queen = new Queen(true, from1);
         King king = new King(true, from2);
 
-        Byte pawnByte = new Byte(pawn1.getTypeInfo());
-        Byte rockByte = new Byte(rock.getTypeInfo());
-        Byte knightByte = new Byte(knight.getTypeInfo());
-        Byte bishopByte = new Byte(bishop.getTypeInfo());
-        Byte queenByte = new Byte(queen.getTypeInfo());
-        Byte kingByte = new Byte(king.getTypeInfo());
+        Integer pawnByte = pawn1.getTypeInfo();
+        Integer rockByte = rock.getTypeInfo();
+        Integer knightByte = knight.getTypeInfo();
+        Integer bishopByte = bishop.getTypeInfo();
+        Integer queenByte = queen.getTypeInfo();
+        Integer kingByte = king.getTypeInfo();
 
-        List<Byte> figureByteList = new LinkedList<>();
+        List<Integer> figureByteList = new LinkedList<>();
         //Die byte-Werte müssen paarweise disjunkt sein
         figureByteList.add(pawnByte);
         assertFalse(

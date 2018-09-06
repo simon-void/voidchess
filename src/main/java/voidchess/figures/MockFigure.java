@@ -13,7 +13,7 @@ import java.util.List;
  */
 class MockFigure extends Figure {
     MockFigure(boolean isWhite, Position position) {
-        super(isWhite, position, (byte) 7);
+        super(isWhite, position, FigureType.MOCK);
     }
 
     public boolean isReachable(Position to, BasicChessGameInterface game) {
@@ -29,13 +29,5 @@ class MockFigure extends Figure {
 
     public int countReachableMoves(BasicChessGameInterface game) {
         return 0;
-    }
-
-    protected String getType() {
-        return "MockFigure";
-    }
-
-    public ImageType getImageType() {
-        throw new IllegalStateException("MockFigure has no Image(Type)");
     }
 }

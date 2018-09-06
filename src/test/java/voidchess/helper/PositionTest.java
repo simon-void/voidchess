@@ -82,4 +82,80 @@ public class PositionTest {
         assertTrue(Position.Companion.inBounds(7, 7));
         assertTrue(Position.Companion.inBounds(3, 4));
     }
+
+    @Test
+    public void testIsDiagonalTo() {
+        Position pos1 = Position.Companion.byCode("a1");
+        Position pos2 = Position.Companion.byCode("a8");
+        Position pos3 = Position.Companion.byCode("h1");
+        Position pos4 = Position.Companion.byCode("h8");
+
+        assertTrue(pos1.isDiagonalTo(pos4));
+        assertTrue(pos4.isDiagonalTo(pos1));
+        assertTrue(pos2.isDiagonalTo(pos3));
+        assertTrue(pos3.isDiagonalTo(pos2));
+
+        assertFalse(pos1.isDiagonalTo(pos2));
+        assertFalse(pos1.isDiagonalTo(pos3));
+        assertFalse(pos2.isDiagonalTo(pos1));
+        assertFalse(pos2.isDiagonalTo(pos4));
+        assertFalse(pos3.isDiagonalTo(pos1));
+        assertFalse(pos3.isDiagonalTo(pos4));
+        assertFalse(pos4.isDiagonalTo(pos2));
+        assertFalse(pos4.isDiagonalTo(pos3));
+    }
+
+    @Test
+    public void testIsStraightTo() {
+        Position pos1 = Position.Companion.byCode("a1");
+        Position pos2 = Position.Companion.byCode("a8");
+        Position pos3 = Position.Companion.byCode("h1");
+        Position pos4 = Position.Companion.byCode("h8");
+
+        assertTrue(pos1.isStraightTo(pos2));
+        assertTrue(pos1.isStraightTo(pos3));
+        assertTrue(pos2.isStraightTo(pos1));
+        assertTrue(pos2.isStraightTo(pos4));
+        assertTrue(pos3.isStraightTo(pos1));
+        assertTrue(pos3.isStraightTo(pos4));
+        assertTrue(pos4.isStraightTo(pos2));
+        assertTrue(pos4.isStraightTo(pos3));
+
+        assertFalse(pos1.isStraightTo(pos4));
+        assertFalse(pos2.isStraightTo(pos3));
+        assertFalse(pos3.isStraightTo(pos2));
+        assertFalse(pos4.isStraightTo(pos1));
+    }
+
+    @Test
+    public void testIsStraightOrDiagonalTo() {
+        Position pos1 = Position.Companion.byCode("a1");
+        Position pos2 = Position.Companion.byCode("a8");
+        Position pos3 = Position.Companion.byCode("h1");
+        Position pos4 = Position.Companion.byCode("h8");
+
+        Position pos5 = Position.Companion.byCode("b3");
+
+        assertTrue(pos1.isStraightOrDiagonalTo(pos2));
+        assertTrue(pos1.isStraightOrDiagonalTo(pos3));
+        assertTrue(pos1.isStraightOrDiagonalTo(pos4));
+        assertTrue(pos2.isStraightOrDiagonalTo(pos1));
+        assertTrue(pos2.isStraightOrDiagonalTo(pos3));
+        assertTrue(pos2.isStraightOrDiagonalTo(pos4));
+        assertTrue(pos3.isStraightOrDiagonalTo(pos1));
+        assertTrue(pos3.isStraightOrDiagonalTo(pos2));
+        assertTrue(pos3.isStraightOrDiagonalTo(pos4));
+        assertTrue(pos4.isStraightOrDiagonalTo(pos1));
+        assertTrue(pos4.isStraightOrDiagonalTo(pos2));
+        assertTrue(pos4.isStraightOrDiagonalTo(pos3));
+
+        assertFalse(pos1.isStraightOrDiagonalTo(pos5));
+        assertFalse(pos2.isStraightOrDiagonalTo(pos5));
+        assertFalse(pos3.isStraightOrDiagonalTo(pos5));
+        assertFalse(pos4.isStraightOrDiagonalTo(pos5));
+        assertFalse(pos5.isStraightOrDiagonalTo(pos1));
+        assertFalse(pos5.isStraightOrDiagonalTo(pos2));
+        assertFalse(pos5.isStraightOrDiagonalTo(pos3));
+        assertFalse(pos5.isStraightOrDiagonalTo(pos4));
+    }
 }

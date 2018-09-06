@@ -23,30 +23,6 @@ public class CheckSearchTest {
     }
 
     @Test
-    public void testAreDiagonalPositions() {
-        Position pos1 = Position.Companion.byCode("a1");
-        Position pos2 = Position.Companion.byCode("a8");
-        Position pos3 = Position.Companion.byCode("h1");
-
-        assertTrue(CheckSearch.areDiagonalPositions(pos2, pos3));
-        assertTrue(CheckSearch.areDiagonalPositions(pos3, pos2));
-        assertFalse(CheckSearch.areDiagonalPositions(pos1, pos2));
-        assertFalse(CheckSearch.areDiagonalPositions(pos1, pos3));
-    }
-
-    @Test
-    public void testAreStraightPositions() {
-        Position pos1 = Position.Companion.byCode("a1");
-        Position pos2 = Position.Companion.byCode("a8");
-        Position pos3 = Position.Companion.byCode("h1");
-
-        assertFalse(CheckSearch.areStraightPositions(pos2, pos3));
-        assertFalse(CheckSearch.areStraightPositions(pos3, pos2));
-        assertTrue(CheckSearch.areStraightPositions(pos1, pos2));
-        assertTrue(CheckSearch.areStraightPositions(pos1, pos3));
-    }
-
-    @Test
     public void testAnalyseCheck() {
         String des = "white 0 King-white-e4-4 King-black-e5-4";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));

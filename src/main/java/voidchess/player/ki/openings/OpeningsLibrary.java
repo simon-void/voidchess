@@ -35,21 +35,20 @@ public class OpeningsLibrary {
                 move = move.trim();
                 currentNode = currentNode.getChild(move);
                 if (currentNode == null) {
-                    return Collections.EMPTY_LIST;
+                    return Collections.emptyList();
                 }
             }
         }
         Stream<String> moveDescriptionsFound = currentNode.getChildData();
         List<Move> movesFound = moveDescriptionsFound.map(
-                (String moveDesc) -> Move.Companion.byCode(moveDesc)
+                Move.Companion::byCode
         ).collect(Collectors.toList());
         return movesFound;
     }
 
     private List<String> loadOpeningSequencesFromFile(String relativePathToOpeningsFile) {
-        List<String> openingSequences = new LinkedList<>();
-        try {
-            InputStream fileStream = getResourceStream(relativePathToOpeningsFile);
+        try (InputStream fileStream = getResourceStream(relativePathToOpeningsFile)) {
+            List<String> openingSequences = new LinkedList<>();
             try (BufferedReader br = new BufferedReader(new InputStreamReader(fileStream))) {
                 for (String line; (line = br.readLine()) != null; ) {
                     line = line.trim();
@@ -59,15 +58,14 @@ public class OpeningsLibrary {
                     openingSequences.add(line);
                 }
             }
+            return openingSequences;
         } catch (Exception e) {
+            return Collections.emptyList();
         }
-        return openingSequences;
     }
 
     private TreeNode<String> parseOpenings(List<String> openingSequences) {
         TreeNode<String> root = TreeNode.getRoot(String.class);
-
-        outerloop:
         for (String openingSequence : openingSequences) {
             TreeNode<String> currentNode = root;
             List<String> moves = splitAndCheckOpeningSequence(openingSequence);
@@ -83,7 +81,7 @@ public class OpeningsLibrary {
     static List<String> splitAndCheckOpeningSequence(String openingSequence) {
         openingSequence = openingSequence.trim();
         if (openingSequence.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         final String SEPARATOR = ",";
         if (openingSequence.startsWith(SEPARATOR)) {

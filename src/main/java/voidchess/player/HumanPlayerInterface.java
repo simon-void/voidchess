@@ -7,7 +7,7 @@ import voidchess.helper.Position;
  */
 public interface HumanPlayerInterface
         extends PlayerInterface {
-    public void mouseMovedOver(Position pos);
+    void mouseMovedOver(Position pos);
 
-    public void mouseClickedOn(Position pos);
+    void mouseClickedOn(Position pos);
 }

@@ -8,14 +8,18 @@ class Position private constructor(val row: Int, val column: Int) {
 
     fun equalsPosition(pos: Position) = index == pos.index
     override fun equals(other: Any?) = other is Position && index == other.index
-    override fun toString() = "${(column + 97).toChar()}${row+1}"
+    override fun toString() = "${(column + 97).toChar()}${row + 1}"
     override fun hashCode() = index
 
+    fun isStraightTo(pos: Position) = row == pos.row || column == pos.column
+    fun isDiagonalTo(pos: Position) = Math.abs(row - pos.row) == Math.abs(column - pos.column)
+    fun isStraightOrDiagonalTo(pos: Position) = isStraightTo(pos) || isDiagonalTo(pos)
+
     companion object {
-        private val positions = Array(8*8) {
+        private val positions = Array(8 * 8) {
             val row = it % 8
             val column = it / 8
-            return@Array Position(row,column)
+            return@Array Position(row, column)
         }
 
         fun byCode(code: String): Position {

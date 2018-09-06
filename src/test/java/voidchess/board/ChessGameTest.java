@@ -5,10 +5,7 @@ import org.testng.annotations.Test;
 import voidchess.figures.Bishop;
 import voidchess.figures.Figure;
 import voidchess.figures.King;
-import voidchess.helper.ChessGameSupervisorDummy;
-import voidchess.helper.ChessGameSupervisorMock;
-import voidchess.helper.Move;
-import voidchess.helper.Position;
+import voidchess.helper.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -97,9 +94,9 @@ public class ChessGameTest {
         game.move(whiteReturn);
 
         ChessGameInterface copy = game.copyGame(3).get(1);
-        int gameState = copy.move(blackReturn);
+        MoveResult gameState = copy.move(blackReturn);
 
-        assertEquals(gameState, ChessGameInterface.THREE_TIMES_SAME_POSITION, "game state");
+        assertEquals(gameState, MoveResult.THREE_TIMES_SAME_POSITION, "game state");
     }
 
     @Test
@@ -351,8 +348,8 @@ public class ChessGameTest {
         String des = "black 0 King-white-e1-0 Queen-black-h2 "
                 + "Pawn-black-f3-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        int endoption = game.move(Move.Companion.byCode("h2-e2"));
-        assertTrue(endoption == ChessGameInterface.MATT);
+        MoveResult endoption = game.move(Move.Companion.byCode("h2-e2"));
+        assertTrue(endoption == MoveResult.MATT);
     }
 
     @Test
@@ -360,8 +357,8 @@ public class ChessGameTest {
         String des = "black 0 King-white-e1-0 Queen-black-h2 "
                 + "Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        int endoption = game.move(Move.Companion.byCode("h2-g2"));
-        assertTrue(endoption == ChessGameInterface.PATT);
+        MoveResult endoption = game.move(Move.Companion.byCode("h2-g2"));
+        assertTrue(endoption == MoveResult.PATT);
     }
 
     @Test
@@ -369,8 +366,8 @@ public class ChessGameTest {
         String des = "white 0 King-white-e1-0 Bishop-black-g2 "
                 + "Knight-white-c2 Knight-white-e7 King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        int endoption = game.move(Move.Companion.byCode("e1-f2"));
-        assertTrue(endoption == ChessGameInterface.DRAW);
+        MoveResult endoption = game.move(Move.Companion.byCode("e1-f2"));
+        assertTrue(endoption == MoveResult.DRAW);
     }
 
     @Test
@@ -392,11 +389,11 @@ public class ChessGameTest {
 
         game.move(whiteMove);
         game.move(blackMove);
-        int endoption;
+        MoveResult endoption;
         endoption = game.move(whiteReturn);
-        assertFalse(endoption == ChessGameInterface.THREE_TIMES_SAME_POSITION);
+        assertFalse(endoption == MoveResult.THREE_TIMES_SAME_POSITION);
         endoption = game.move(blackReturn);
-        assertTrue(endoption == ChessGameInterface.THREE_TIMES_SAME_POSITION);
+        assertTrue(endoption == MoveResult.THREE_TIMES_SAME_POSITION);
     }
 
     @Test
@@ -404,24 +401,24 @@ public class ChessGameTest {
         String des = "white 98 King-white-e1-0 Pawn-white-a2-false "
                 + "Pawn-black-b4-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        int endoption;
+        MoveResult endoption;
         endoption = game.move(Move.Companion.byCode("a2-a4"));
-        assertFalse(endoption == ChessGameInterface.FIFTY_MOVES_NO_HIT);
+        assertFalse(endoption == MoveResult.FIFTY_MOVES_NO_HIT);
         endoption = game.move(Move.Companion.byCode("b4-a3"));
-        assertFalse(endoption == ChessGameInterface.FIFTY_MOVES_NO_HIT);
+        assertFalse(endoption == MoveResult.FIFTY_MOVES_NO_HIT);
 
         des = "white 98 King-white-e1-0 Pawn-white-a2-false "
                 + "Pawn-black-b4-false King-black-e8-0";
         game = new ChessGame(des);
         endoption = game.move(Move.Companion.byCode("a2-a4"));
-        assertFalse(endoption == ChessGameInterface.FIFTY_MOVES_NO_HIT);
+        assertFalse(endoption == MoveResult.FIFTY_MOVES_NO_HIT);
         endoption = game.move(Move.Companion.byCode("b4-b3"));
-        assertTrue(endoption == ChessGameInterface.FIFTY_MOVES_NO_HIT);
+        assertTrue(endoption == MoveResult.FIFTY_MOVES_NO_HIT);
     }
 
     @Test
     public void testHandleTrasformPawn() {
-        ChessGameSupervisorMock mock = new ChessGameSupervisorMock("Knight");
+        ChessGameSupervisorMock mock = new ChessGameSupervisorMock(PawnPromotion.KNIGHT);
         String des = "black 0 King-white-e1-0 Pawn-black-g2-false "
                 + "King-black-e8-0";
         ChessGame game = new ChessGame(des);

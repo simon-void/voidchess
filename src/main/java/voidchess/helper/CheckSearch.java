@@ -24,11 +24,11 @@ public class CheckSearch {
 
         switch (attackPositions.size()) {
             case 0:
-                return CheckStatus.NO_CHECK;
+                return CheckStatus.Companion.getNO_CHECK();
             case 1:
                 return getPossiblePositions(kingPos, attackPositions.get(0));
             case 2:
-                return CheckStatus.DOUBLE_CHECK;
+                return CheckStatus.Companion.getDOUBLE_CHECK();
             default:
                 throw new IllegalStateException("more than 2 attackers are impossible " + attackPositions.size());
         }
@@ -59,11 +59,11 @@ public class CheckSearch {
 
         switch (attackPositions.size()) {
             case 0:
-                return CheckStatus.NO_CHECK;
+                return CheckStatus.Companion.getNO_CHECK();
             case 1:
                 return getPossiblePositions(kingPos, attackPositions.get(0));
             case 2:
-                return CheckStatus.DOUBLE_CHECK;
+                return CheckStatus.Companion.getDOUBLE_CHECK();
             default:
                 throw new IllegalStateException("more than 2 attackers are impossible " + attackPositions.size());
         }
@@ -91,11 +91,11 @@ public class CheckSearch {
 
         switch (attackPositions.size()) {
             case 0:
-                return CheckStatus.NO_CHECK;
+                return CheckStatus.Companion.getNO_CHECK();
             case 1:
                 return getPossiblePositions(kingPos, attackPositions.get(0));
             case 2:
-                return CheckStatus.DOUBLE_CHECK;
+                return CheckStatus.Companion.getDOUBLE_CHECK();
             default:
                 throw new IllegalStateException("more than 2 attackers are impossible " + attackPositions.size());
         }
@@ -116,11 +116,11 @@ public class CheckSearch {
 
         switch (attackPositions.size()) {
             case 0:
-                return CheckStatus.NO_CHECK;
+                return CheckStatus.Companion.getNO_CHECK();
             case 1:
                 return getPossiblePositions(kingPos, attackPositions.get(0));
             case 2:
-                return CheckStatus.DOUBLE_CHECK;
+                return CheckStatus.Companion.getDOUBLE_CHECK();
             default:
                 throw new IllegalStateException("more than 2 attackers are impossible " + attackPositions.size());
         }
@@ -135,18 +135,18 @@ public class CheckSearch {
         final Figure rock = game.getFigure(rockPos);
 
         if (rock.isReachable(kingPos, game)) return getPossiblePositions(kingPos, rockPos);
-        return CheckStatus.NO_CHECK;
+        return CheckStatus.Companion.getNO_CHECK();
     }
 
     private static CheckStatus getPossiblePositions(Position kingPos, Position attackerPos) {
         List<Position> result;
-        if (!areStraightPositions(kingPos, attackerPos) && !areDiagonalPositions(kingPos, attackerPos)) {
-            //Knight attacks
-            result = new ArrayList<Position>(1);
-            result.add(attackerPos);
-        } else {
+        if (kingPos.isStraightOrDiagonalTo(attackerPos)) {
             //diagonal or straight attack
             result = getInBetweenPositions(attackerPos, kingPos);
+            result.add(attackerPos);
+        } else {
+            //Knight attacks
+            result = new ArrayList<Position>(1);
             result.add(attackerPos);
         }
         return new CheckStatus(result);
@@ -160,8 +160,7 @@ public class CheckSearch {
         if (isCheckByRockOrQueen(game, kingPos, attackPositions, isWhite)) return true;
         if (isCheckByKnight(game, kingPos, attackPositions, isWhite)) return true;
         if (isCheckByKing(game, kingPos, attackPositions)) return true;
-        if (isCheckByPawn(game, kingPos, attackPositions, isWhite)) return true;
-        return false;
+        return isCheckByPawn(game, kingPos, attackPositions, isWhite);
     }
 
     private static boolean isCheckByKing(
@@ -411,38 +410,11 @@ public class CheckSearch {
         return false;
     }
 
-    final public static int signum(int number) {
-        if (number > 0) return 1;
-        if (number < 0) return -1;
-        return 0;
+    public static int signum(int number) {
+        return Integer.compare(number, 0);
     }
 
-    final public static boolean areStraightPositions(Position first, Position second) {
-        return (first.getRow() - second.getRow()) == 0 || (first.getColumn() - second.getColumn()) == 0;
-    }
-
-    final public static boolean areDiagonalPositions(Position first, Position second) {
-        return Math.abs(first.getRow() - second.getRow()) == Math.abs(first.getColumn() - second.getColumn());
-    }
-
-    final static public boolean areInBetweenPositionsFree(BasicChessGameInterface game, Position first, Position second) {
-        final int rowStep = signum(second.getRow() - first.getRow());
-        final int columnStep = signum(second.getColumn() - first.getColumn());
-
-        int row = first.getRow() + rowStep;
-        int column = first.getColumn() + columnStep;
-        while (row != second.getRow() || column != second.getColumn()) {
-            if (!game.isFreeArea(Position.Companion.get(row, column))) {
-                return false;
-            }
-            row += rowStep;
-            column += columnStep;
-        }
-
-        return true;
-    }
-
-    final static private List<Position> getInBetweenPositions(Position first, Position second) {
+    static private List<Position> getInBetweenPositions(Position first, Position second) {
         final int rowStep = signum(second.getRow() - first.getRow());
         final int columnStep = signum(second.getColumn() - first.getColumn());
 
@@ -461,11 +433,11 @@ public class CheckSearch {
         return middlePositions;
     }
 
-    final static private Position getPassiveAttacker(BasicChessGameInterface game,
+    static private Position getPassiveAttacker(BasicChessGameInterface game,
                                                      Position kingPos,
                                                      Position lastMovedFrom) {
-        final boolean straightAttack = areStraightPositions(kingPos, lastMovedFrom);
-        final boolean diagonalAttack = areDiagonalPositions(kingPos, lastMovedFrom);
+        final boolean straightAttack = kingPos.isStraightTo(lastMovedFrom);
+        final boolean diagonalAttack = kingPos.isDiagonalTo(lastMovedFrom);
         if (!straightAttack && !diagonalAttack) {
             return null;
         }

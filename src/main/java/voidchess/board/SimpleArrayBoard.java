@@ -6,10 +6,7 @@ package voidchess.board;
 
 import voidchess.figures.Figure;
 import voidchess.figures.FigureFactory;
-import voidchess.helper.CheckSearch;
-import voidchess.helper.CheckStatus;
-import voidchess.helper.ExtendedMove;
-import voidchess.helper.Position;
+import voidchess.helper.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +48,7 @@ public class SimpleArrayBoard
         blackCheckStatus = null;
     }
 
+    @Override
     public boolean isCheck(boolean isWhite) {
         if (isWhite) {
             if (!calculatedWhiteCheck) {
@@ -67,6 +65,7 @@ public class SimpleArrayBoard
         }
     }
 
+    @Override
     public CheckStatus getCheckStatus(boolean isWhite) {
         final ExtendedMove lastMove = lastMoveProvider.getLastMove();
         if (isWhite) {
@@ -89,6 +88,7 @@ public class SimpleArrayBoard
         return Position.Companion.byCode(st.nextToken());
     }
 
+    @Override
     public void init() {
         clear();
         Position pos;
@@ -136,6 +136,7 @@ public class SimpleArrayBoard
         blackKingPosition = pos;
     }
 
+    @Override
     public void init(String des) {
         clear();
 
@@ -151,6 +152,7 @@ public class SimpleArrayBoard
         }
     }
 
+    @Override
     public void init(int chess960) {
         assert (chess960 >= 0 && chess960 < 960) : "chess960 out of bounds";
 
@@ -219,37 +221,28 @@ public class SimpleArrayBoard
 
         switch (index) {
             case 0:
-                String[] out0 = {"Springer", "Springer", "Turm", "König", "Turm"};
-                return out0;
+                return new String[]{"Springer", "Springer", "Turm", "König", "Turm"};
             case 1:
-                String[] out1 = {"Springer", "Turm", "Springer", "König", "Turm"};
-                return out1;
+                return new String[]{"Springer", "Turm", "Springer", "König", "Turm"};
             case 2:
-                String[] out2 = {"Springer", "Turm", "König", "Springer", "Turm"};
-                return out2;
+                return new String[]{"Springer", "Turm", "König", "Springer", "Turm"};
             case 3:
-                String[] out3 = {"Springer", "Turm", "König", "Turm", "Springer"};
-                return out3;
+                return new String[]{"Springer", "Turm", "König", "Turm", "Springer"};
             case 4:
-                String[] out4 = {"Turm", "Springer", "Springer", "König", "Turm"};
-                return out4;
+                return new String[]{"Turm", "Springer", "Springer", "König", "Turm"};
             case 5:
-                String[] out5 = {"Turm", "Springer", "König", "Springer", "Turm"};
-                return out5;
+                return new String[]{"Turm", "Springer", "König", "Springer", "Turm"};
             case 6:
-                String[] out6 = {"Turm", "Springer", "König", "Turm", "Springer"};
-                return out6;
+                return new String[]{"Turm", "Springer", "König", "Turm", "Springer"};
             case 7:
-                String[] out7 = {"Turm", "König", "Springer", "Springer", "Turm"};
-                return out7;
+                return new String[]{"Turm", "König", "Springer", "Springer", "Turm"};
             case 8:
-                String[] out8 = {"Turm", "König", "Springer", "Turm", "Springer"};
-                return out8;
+                return new String[]{"Turm", "König", "Springer", "Turm", "Springer"};
             case 9:
-                String[] out9 = {"Turm", "König", "Turm", "Springer", "Springer"};
-                return out9;
+                return new String[]{"Turm", "König", "Turm", "Springer", "Springer"};
+            default:
+                throw new IllegalArgumentException("index should be between [0-9] but is "+ index);
         }
-        return null;
     }
 
     private Figure createFigure(String name, boolean isWhite, Position pos) {
@@ -293,16 +286,24 @@ public class SimpleArrayBoard
 
     }
 
+    @Override
     public Figure getFigure(Position pos) {
         return game[pos.getIndex()];
     }
 
+    @Override
     public boolean isFreeArea(Position pos) {
         return game[pos.getIndex()] == null;
     }
 
+    @Override
+    public BoardContent getContent(Position pos) {
+        return BoardContent.Companion.get(game[pos.getIndex()]);
+    }
+
+    @Override
     public List<Figure> getFigures() {
-        List<Figure> figureIter = new ArrayList<Figure>(16);
+        List<Figure> figureIter = new ArrayList<>(16);
 
         for (int linearIndex = 0; linearIndex < 64; linearIndex++) {
             if (game[linearIndex] != null) {
@@ -312,6 +313,7 @@ public class SimpleArrayBoard
         return figureIter;
     }
 
+    @Override
     public Position getKingPosition(boolean whiteKing) {
         if (whiteKing) return whiteKingPosition;
         else return blackKingPosition;

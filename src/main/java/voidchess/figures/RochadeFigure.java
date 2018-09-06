@@ -10,12 +10,12 @@ abstract public class RochadeFigure extends Figure {
     protected int stepsTaken;
     final private Position initialPos;
 
-    public RochadeFigure(boolean isWhite, Position startPosition, byte typeIndex) {
-        this(isWhite, startPosition, 0, typeIndex);
+    public RochadeFigure(boolean isWhite, Position startPosition, FigureType type) {
+        this(isWhite, startPosition, 0, type);
     }
 
-    public RochadeFigure(boolean isWhite, Position startPosition, int stepsTaken, byte typeIndex) {
-        super(isWhite, startPosition, typeIndex);
+    public RochadeFigure(boolean isWhite, Position startPosition, int stepsTaken, FigureType type) {
+        super(isWhite, startPosition, type);
         initialPos = startPosition;
         this.stepsTaken = stepsTaken;
     }
@@ -34,7 +34,7 @@ abstract public class RochadeFigure extends Figure {
     }
 
     public void figureMoved(Move move) {
-        if (position.equalsPosition(move.getFrom())) stepsTaken++;
+        if (getPosition().equalsPosition(move.getFrom())) stepsTaken++;
         super.figureMoved(move);
     }
 

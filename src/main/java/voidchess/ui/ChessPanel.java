@@ -6,6 +6,7 @@ package voidchess.ui;
 
 import voidchess.board.ChessGame;
 import voidchess.board.ChessGameInterface;
+import voidchess.board.MoveResult;
 import voidchess.helper.ChessGameSupervisorDummy;
 import voidchess.player.HumanPlayer;
 import voidchess.player.PlayerInterface;
@@ -116,12 +117,16 @@ public class ChessPanel
 
     public void actionPerformed(ActionEvent e) {
         String com = e.getActionCommand();
-        if (com.equals(startString)) {
-            start();
-        } else if (com.equals(switchString)) {
-            switchPlayer();
-        } else if (com.equals(resignString)) {
-            stop(ChessGameInterface.RESIGN);
+        switch (com) {
+            case startString:
+                start();
+                break;
+            case switchString:
+                switchPlayer();
+                break;
+            case resignString:
+                stop(MoveResult.RESIGN);
+                break;
         }
     }
 
@@ -134,31 +139,29 @@ public class ChessPanel
         table.startGame();
     }
 
-    void stop(int endoption) {
+    void stop(MoveResult endoption) {
         table.stopGame(endoption);
     }
 
-    void gameover(int endoption) {
+    void gameover(MoveResult endoption) {
         switch (endoption) {
-            case ChessGameInterface.DRAW:
+            case DRAW:
                 JOptionPane.showMessageDialog(this, "Unentschieden");
                 break;
-            case ChessGameInterface.PATT:
+            case PATT:
                 JOptionPane.showMessageDialog(this, "Patt");
                 break;
-            case ChessGameInterface.MATT:
+            case MATT:
                 JOptionPane.showMessageDialog(this, "Matt");
                 break;
-            case ChessGameInterface.THREE_TIMES_SAME_POSITION:
+            case THREE_TIMES_SAME_POSITION:
                 JOptionPane.showMessageDialog(this, "Unentschieden wegen \ndreimaliger Stellungswiederholung");
                 break;
-            case ChessGameInterface.FIFTY_MOVES_NO_HIT:
+            case FIFTY_MOVES_NO_HIT:
                 JOptionPane.showMessageDialog(this, "Unentschieden,\nda 50 Z\u00FCge keine Figure geschlagen wurde");
                 break;
-            case ChessGameInterface.RESIGN:
+            case RESIGN:
                 JOptionPane.showMessageDialog(this, "Spieler hat aufgegeben");
-                break;
-            case ChessApplet.APPLET_STOPPED:
                 break;
         }
         startButton.setText(startString);

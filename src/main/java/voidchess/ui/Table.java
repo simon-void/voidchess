@@ -1,8 +1,10 @@
 package voidchess.ui;
 
 import voidchess.board.ChessGameInterface;
+import voidchess.board.MoveResult;
 import voidchess.helper.ChessGameSupervisor;
 import voidchess.helper.Move;
+import voidchess.helper.PawnPromotion;
 import voidchess.helper.Position;
 import voidchess.player.HumanPlayerInterface;
 import voidchess.player.PlayerInterface;
@@ -26,16 +28,16 @@ public class Table implements ChessGameSupervisor, TableInterface {
         this.panel960 = panel960;
     }
 
-    public String askForPawnChange(Position pawnPosition) {
+    public PawnPromotion askForPawnChange(Position pawnPosition) {
         if (whitePlayersTurn) return whitePlayer.askForPawnChange(pawnPosition);
         else return blackPlayer.askForPawnChange(pawnPosition);
     }
 
     public void move(Move move) {
-        int endoption;
+        MoveResult endoption;
         synchronized (this) {
             if (resign) {
-                stopGame(ChessGameInterface.RESIGN);
+                stopGame(MoveResult.RESIGN);
                 return;
             }
             endoption = game.move(move);
@@ -43,7 +45,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
 
             whitePlayersTurn = !whitePlayersTurn;
         }
-        if (endoption == ChessGameInterface.NO_END) {
+        if (endoption == MoveResult.NO_END) {
             if (whitePlayersTurn) {
                 whitePlayer.play();
             } else {
@@ -75,7 +77,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
         whitePlayer.play();
     }
 
-    public void stopGame(int endoption) {
+    public void stopGame(MoveResult endoption) {
         whitePlayer.setIsPlaying(false);
         blackPlayer.setIsPlaying(false);
         parent.gameover(endoption);
@@ -83,7 +85,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
 
     synchronized void resignGame() {
         if (whitePlayersTurn == whitePlayer instanceof HumanPlayerInterface) {
-            stopGame(ChessGameInterface.RESIGN);
+            stopGame(MoveResult.RESIGN);
         } else {
             resign = true;
         }

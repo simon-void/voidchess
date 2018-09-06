@@ -1,9 +1,20 @@
 package voidchess.board;
 
-import voidchess.figures.*;
-import voidchess.helper.*;
+import voidchess.figures.Figure;
+import voidchess.figures.FigureFactory;
+import voidchess.figures.King;
+import voidchess.figures.Pawn;
+import voidchess.figures.Rock;
+import voidchess.helper.CheckSearch;
+import voidchess.helper.ChessGameSupervisor;
+import voidchess.helper.ChessGameSupervisorDummy;
+import voidchess.helper.ExtendedMove;
+import voidchess.helper.Move;
+import voidchess.helper.PawnPromotion;
+import voidchess.helper.Position;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -25,8 +36,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * der normale Konstruktor, der von außerhalb verwendet werden sollte
-     *
-     * @param supervisor
      */
     public ChessGame(ChessGameSupervisor supervisor) {
         hasHitFigure = false;
@@ -59,8 +68,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * für JUnit-TestKlassen
-     *
-     * @param game_description
      */
     public ChessGame(String game_description) {
         this(ChessGameSupervisorDummy.INSTANCE, game_description);
@@ -68,8 +75,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * für JUnit-TestKlassen
-     *
-     * @param initialPosition
      */
     public ChessGame(int initialPosition) {
         this(ChessGameSupervisorDummy.INSTANCE, initialPosition);
@@ -84,9 +89,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * wird nur implizit für JUnit-tests verwendet
-     *
-     * @param supervisor
-     * @param game_description
      */
     private ChessGame(ChessGameSupervisor supervisor, String game_description) {
         this.supervisor = supervisor;
@@ -115,9 +117,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     /**
      * wird nur implizit für JUnit-tests verwendet
-     *
-     * @param supervisor
-     * @param initialPosition
      */
     private ChessGame(ChessGameSupervisor supervisor,
                       int initialPosition) {
@@ -171,6 +170,11 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         return game.getFigure(pos);
     }
 
+    @Override
+    public BoardContent getContent(Position pos) {
+        return BoardContent.Companion.get(game.getFigure(pos));
+    }
+
     private void setFigure(Position pos, Figure figure) {
         game.setFigure(pos, figure);
     }
@@ -191,7 +195,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     public boolean isMoveable(Position from, Position to, boolean whitePlayer) {
         if (isFreeArea(from)) return false;
         Figure figure = getFigure(from);
-        return figure.isWhite() == whitePlayer && figure.isMoveable(to, game);
+        return figure.isWhite() == whitePlayer && figure.isMovable(to, game);
     }
 
     @Override
@@ -200,7 +204,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     @Override
-    public int move(Move move) {
+    public MoveResult move(Move move) {
         assert !isFreeArea(move.getFrom())
                 : "the move moves a null value:" + move.toString();
         assert (getFigure(move.getFrom()).isWhite() == whiteTurn)
@@ -277,7 +281,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     private Rock extractRochadeRock(Move move) {
         final Figure movingFigure = getFigure(move.getFrom());
-        if (!movingFigure.isKing()) return null;
+        if (!(movingFigure.isKing())) return null;
 
         final Figure rochadeRock = getFigure(move.getTo());
         if (rochadeRock != null && rochadeRock.isWhite() == movingFigure.isWhite()) {
@@ -302,19 +306,24 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private boolean handlePawnTransformation(Move move) {
         if (getFigure(move.getTo()).isPawn()) {
             if (move.getTo().getRow() == 0 || move.getTo().getRow() == 7) {
-                String figure = supervisor.askForPawnChange(move.getTo());
+                PawnPromotion figure = supervisor.askForPawnChange(move.getTo());
                 boolean isWhite = move.getTo().getRow() == 7;
-                Figure newFigure = null;
-                if (figure.equals("Queen")) {
-                    newFigure = figureFactory.getQueen(move.getTo(), isWhite);
-                } else if (figure.equals("Rock")) {
-                    newFigure = figureFactory.getRock(move.getTo(), isWhite);
-                } else if (figure.equals("Knight")) {
-                    newFigure = figureFactory.getKnight(move.getTo(), isWhite);
-                } else if (figure.equals("Bishop")) {
-                    newFigure = figureFactory.getBishop(move.getTo(), isWhite);
-                } else {
-                    throw new NullPointerException("invalide pawn-transformation-string:" + figure);
+                Figure newFigure;
+                switch (figure) {
+                    case QUEEN:
+                        newFigure = figureFactory.getQueen(move.getTo(), isWhite);
+                        break;
+                    case ROCK:
+                        newFigure = figureFactory.getRock(move.getTo(), isWhite);
+                        break;
+                    case KNIGHT:
+                        newFigure = figureFactory.getKnight(move.getTo(), isWhite);
+                        break;
+                    case BISHOP:
+                        newFigure = figureFactory.getBishop(move.getTo(), isWhite);
+                        break;
+                    default:
+                        throw new NullPointerException("invalide pawn-transformation-string:" + figure);
                 }
                 setFigure(move.getTo(), newFigure);
                 return true;
@@ -323,24 +332,24 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         return false;
     }
 
-    private int isEnd() {
+    private MoveResult isEnd() {
         if (noMovesLeft(whiteTurn)) {
             if (isCheck(whiteTurn)) {
-                return MATT;
+                return MoveResult.MATT;
             } else {
-                return PATT;
+                return MoveResult.PATT;
             }
         }
         if (isDrawBecauseOfLowMaterial()) {
-            return DRAW;
+            return MoveResult.DRAW;
         }
         if (isDrawBecauseOfThreeTimesSamePosition()) {
-            return THREE_TIMES_SAME_POSITION;
+            return MoveResult.THREE_TIMES_SAME_POSITION;
         }
         if (numberOfMovesWithoutHit == 100) {
-            return FIFTY_MOVES_NO_HIT;
+            return MoveResult.FIFTY_MOVES_NO_HIT;
         }
-        return NO_END;
+        return MoveResult.NO_END;
     }
 
     private void informFiguresOfMove(Move move) {
@@ -551,7 +560,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
         final List<Figure> figures = game.getFigures();
         for (Figure figure : figures) {
-            if (figure.isWhite() == whiteTurn && !figure.isKing()) {
+            if (figure.isWhite() == whiteTurn && !(figure.isKing())) {
                 figure.getPossibleMoves(game, possibleMoves);
             }
         }
@@ -616,23 +625,29 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private class Memento {
         final private int figureCount;
         final private boolean isWhite;
-        final private byte[][] board = new byte[8][8];
-        final private static byte eight = 8;
+        final private long[] compressedBoard;
 
         private Memento(BasicChessGameInterface game, boolean isWhite) {
-            final byte nullbyte = 0;
             int count = 0;
-            for (byte row = 0; row < eight; row++) {
-                for (byte column = 0; column < eight; column++) {
-                    Figure figure = game.getFigure(Position.Companion.get(row, column));
-                    if (figure != null) {
-                        board[row][column] = figure.getTypeInfo();
-                        count++;
-                    } else {
-                        board[row][column] = nullbyte;
-                    }
+            int[] board = new int[64];
+            for (int index = 0; index < 64; index++) {
+                Figure figure = game.getFigure(Position.Companion.byIndex(index));
+                if (figure != null) {
+                    board[index] = figure.getTypeInfo();
+                    count++;
                 }
             }
+
+            // compress the board by exploiting that typeInfo is smaller than 16
+            // and therefore only 4 bits are needed -> pack 15 typeInfos into 1 long
+            compressedBoard = new long[]{
+                    compressBoardSlicesToLong(board, 0, 15),
+                    compressBoardSlicesToLong(board, 15, 30),
+                    compressBoardSlicesToLong(board, 30, 45),
+                    compressBoardSlicesToLong(board, 45, 60),
+                    compressBoardSlicesToLong(board, 60, 64)
+            };
+
             this.isWhite = isWhite;
             figureCount = count;
         }
@@ -642,14 +657,20 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         }
 
         private boolean equals(Memento other) {
-            for (byte row = 0; row < eight; row++) {
-                for (byte column = 0; column < eight; column++) {
-                    if (board[row][column] != other.board[row][column]) {
-                        return false;
-                    }
-                }
+            return isWhite == other.isWhite && Arrays.equals(compressedBoard, other.compressedBoard);
+        }
+
+        private long compressBoardSlicesToLong(int[] board, int startIndex, int endIndex) {
+            assert endIndex-startIndex < 16;
+
+            final int endIndexMinusOne = endIndex-1;
+            long compressedValue = 0;
+            for(int i=startIndex; i<endIndexMinusOne; i++ ) {
+                compressedValue+=board[i];
+                compressedValue <<=4;
             }
-            return isWhite == other.isWhite;
+            compressedValue+=board[endIndexMinusOne];
+            return compressedValue;
         }
     }
 
