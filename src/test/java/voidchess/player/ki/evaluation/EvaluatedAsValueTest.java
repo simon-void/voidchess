@@ -42,6 +42,6 @@ public class EvaluatedAsValueTest {
         Evaluated value = getValue(1f, .5f);
         assertTrue(value.isValue());
         assertFalse(value.isDraw());
-        assertFalse(value.isMatt());
+        assertFalse(value.isCheckmate());
     }
 }

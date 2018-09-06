@@ -25,10 +25,10 @@ public class EvaluadedTest {
         assertEquals(value.toString().replace('.', ','), "0,00");
 
         value = new EvaluatedAsMatt(2, false);
-        assertEquals(value.toString(), "Ich bin matt in 2.");
+        assertEquals(value.toString(), "checkmate in 2");
 
         value = new EvaluatedAsMatt(12, true);
-        assertEquals(value.toString(), "Du bist matt in 12.");
+        assertEquals(value.toString(), "checkmate in 12");
     }
 
     @Test
@@ -126,12 +126,12 @@ public class EvaluadedTest {
 
     @Test(dataProvider = "mattEvaluatedProvider")
     public void assertIsEvaluatedAsMatt(Evaluated mattValue) {
-        assertTrue(mattValue.isMatt(), "this should be a matt evaluation:" + mattValue);
+        assertTrue(mattValue.isCheckmate(), "this should be a matt evaluation:" + mattValue);
     }
 
     @Test(dataProvider = "notMattEvaluatedProvider")
     public void assertIsNotEvaluatedAsMatt(Evaluated notMattValue) {
-        assertFalse(notMattValue.isMatt(), "this shouldn't be a matt evaluation");
+        assertFalse(notMattValue.isCheckmate(), "this shouldn't be a matt evaluation");
     }
 
     @DataProvider(name = "mattEvaluatedProvider")

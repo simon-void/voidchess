@@ -335,9 +335,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private MoveResult isEnd() {
         if (noMovesLeft(whiteTurn)) {
             if (isCheck(whiteTurn)) {
-                return MoveResult.MATT;
+                return MoveResult.CHECKMATE;
             } else {
-                return MoveResult.PATT;
+                return MoveResult.STALEMATE;
             }
         }
         if (isDrawBecauseOfLowMaterial()) {
@@ -471,15 +471,15 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     public boolean equals(ChessGame other) {
         if (whiteTurn != other.whiteTurn) return false;
 
-        for (int row = 0; row < 8; row++) {
-            for (int column = 0; column < 8; column++) {
-                Position pos = Position.Companion.get(row, column);
-                if (isFreeArea(pos) != other.isFreeArea(pos)) return false;
-                if (!isFreeArea(pos)) {
-                    Figure figure1 = getFigure(pos);
-                    Figure figure2 = other.getFigure(pos);
-                    if (!figure1.equals(figure2)) return false;
-                }
+        for (int index = 0; index < 64; index++) {
+            Position pos = Position.Companion.byIndex(index);
+            BoardContent content = getContent(pos);
+            BoardContent otherContent = other.getContent(pos);
+            if (content.isFreeArea() != otherContent.isFreeArea()) return false;
+            if (!content.isFreeArea()) {
+                Figure figure1 = content.getFigure();
+                Figure figure2 = otherContent.getFigure();
+                if (!figure1.equals(figure2)) return false;
             }
         }
 

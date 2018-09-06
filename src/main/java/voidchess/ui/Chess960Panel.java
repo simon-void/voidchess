@@ -22,7 +22,7 @@ public class Chess960Panel
     private ChessGameInterface game;
     private ChessGameUI gameUI;
 
-    public Chess960Panel(ChessGameInterface game, ChessGameUI gameUI) {
+    Chess960Panel(ChessGameInterface game, ChessGameUI gameUI) {
         this.game = game;
         this.gameUI = gameUI;
         designLayout();
@@ -34,8 +34,8 @@ public class Chess960Panel
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBackground(Color.WHITE);
 
-        classicButton = new JButton("Schach");
-        random960Button = new JButton("Schach960");
+        classicButton = new JButton("classic setup");
+        random960Button = new JButton("shuffle setup");
         positionIndexField = new JTextField(Integer.toString(positionIndex), 3);
 
         classicButton.addActionListener(this);
@@ -44,11 +44,11 @@ public class Chess960Panel
 
         add(classicButton);
         add(random960Button);
-        add(new JLabel(" Er\u00F6ffnungsstellung:"));
+        add(new JLabel(" current setup: "));
         add(positionIndexField);
     }
 
-    public int getPositionCode() {
+    int getPositionCode() {
         return positionIndex;
     }
 

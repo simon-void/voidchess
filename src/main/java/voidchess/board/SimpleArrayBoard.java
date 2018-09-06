@@ -6,7 +6,10 @@ package voidchess.board;
 
 import voidchess.figures.Figure;
 import voidchess.figures.FigureFactory;
-import voidchess.helper.*;
+import voidchess.helper.CheckSearch;
+import voidchess.helper.CheckStatus;
+import voidchess.helper.ExtendedMove;
+import voidchess.helper.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -324,13 +327,14 @@ public class SimpleArrayBoard
         for (int row = 0; row < 8; row++) {
             for (int column = 0; column < 8; column++) {
                 Position pos = Position.Companion.get(row, column);
-                if (!isFreeArea(pos)) {
-                    buffer.append(getFigure(pos).toString());
+                BoardContent content = getContent(pos);
+                if (!content.isFreeArea()) {
+                    buffer.append(content.getFigure().toString());
                     buffer.append(" ");
                 }
             }
         }
-        //löscht das letzte space
+        //delete the final space
         if (buffer.length() != 0) buffer.deleteCharAt(buffer.length() - 1);
 
         return buffer.toString();

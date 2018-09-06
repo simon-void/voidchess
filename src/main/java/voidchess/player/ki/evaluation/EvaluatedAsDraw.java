@@ -10,7 +10,7 @@ final public class EvaluatedAsDraw implements Evaluated {
     }
 
     @Override
-    public boolean isMatt() {
+    public boolean isCheckmate() {
         return false;
     }
 

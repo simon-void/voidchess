@@ -349,7 +349,7 @@ public class ChessGameTest {
                 + "Pawn-black-f3-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
         MoveResult endoption = game.move(Move.Companion.byCode("h2-e2"));
-        assertTrue(endoption == MoveResult.MATT);
+        assertTrue(endoption == MoveResult.CHECKMATE);
     }
 
     @Test
@@ -358,7 +358,7 @@ public class ChessGameTest {
                 + "Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
         MoveResult endoption = game.move(Move.Companion.byCode("h2-g2"));
-        assertTrue(endoption == MoveResult.PATT);
+        assertTrue(endoption == MoveResult.STALEMATE);
     }
 
     @Test

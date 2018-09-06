@@ -163,7 +163,7 @@ public class ComputerPlayer
         }
     }
 
-    public PawnPromotion askForPawnChange(Position pawnPosition) {
+    public PawnPromotion askForPawnPromotionType(Position pawnPosition) {
         return PawnPromotion.QUEEN;
     }
 

@@ -15,7 +15,7 @@ final public class EvaluatedAsMatt implements Evaluated {
     }
 
     @Override
-    public boolean isMatt() {
+    public boolean isCheckmate() {
         return true;
     }
 
@@ -31,7 +31,7 @@ final public class EvaluatedAsMatt implements Evaluated {
 
     @Override
     public boolean isCloseToByPrimary(Evaluated other) {
-        if (other.isMatt()) {
+        if (other.isCheckmate()) {
             EvaluatedAsMatt otherMattValue = (EvaluatedAsMatt) other;
             return depth == otherMattValue.depth && isOtherMatt == otherMattValue.isOtherMatt;
         }
@@ -45,7 +45,7 @@ final public class EvaluatedAsMatt implements Evaluated {
 
     @Override
     public int compareTo(Evaluated other) {
-        if (other.isMatt()) {
+        if (other.isCheckmate()) {
             return compareWith((EvaluatedAsMatt) other);
         } else {
             if (isOtherMatt) {
@@ -85,15 +85,7 @@ final public class EvaluatedAsMatt implements Evaluated {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(16);
-        if (isOtherMatt) {
-            sb.append("Du bist ");
-        } else {
-            sb.append("Ich bin ");
-        }
-        sb.append("matt in ").append(depth).append('.');
-
-        return sb.toString();
+        return "checkmate in " + depth;
     }
 
     @Override

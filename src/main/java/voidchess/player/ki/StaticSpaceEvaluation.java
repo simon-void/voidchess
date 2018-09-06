@@ -1,5 +1,6 @@
 package voidchess.player.ki;
 
+import voidchess.board.BoardContent;
 import voidchess.board.ChessGameInterface;
 import voidchess.figures.Figure;
 import voidchess.helper.Position;
@@ -23,18 +24,17 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         boolean colorOfWinnerIsWhite = true;
         List figuresPos = new LinkedList();
 
-        for (int row = 0; row < 8; row++) {
-            for (int column = 0; column < 8; column++) {
-                Position pos = Position.Companion.get(row, column);
-                if (!game.isFreeArea(pos)) {
-                    Figure figure = game.getFigure(pos);
-                    if (figure.isKing()) {
-                        if (figure.isWhite()) whiteKingPos = pos;
-                        else blackKingPos = pos;
-                    } else {
-                        colorOfWinnerIsWhite = figure.isWhite();
-                        figuresPos.add(pos);
-                    }
+        for (int index = 0; index < 64; index++) {
+            Position pos = Position.Companion.byIndex(index);
+            BoardContent content = game.getContent(pos);
+            if (!content.isFreeArea()) {
+                Figure figure = content.getFigure();
+                if (figure.isKing()) {
+                    if (figure.isWhite()) whiteKingPos = pos;
+                    else blackKingPos = pos;
+                } else {
+                    colorOfWinnerIsWhite = figure.isWhite();
+                    figuresPos.add(pos);
                 }
             }
         }
@@ -143,18 +143,16 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
     static boolean shouldUseStaticSpaceEvaluation(ChessGameInterface game) {
         int whiteFigures = 0;
         int blackFigures = 0;
-        for (int column = 0; column < 8; column++) {
-            for (int row = 0; row < 8; row++) {
-                Position pos = Position.Companion.get(row, column);
-                if (!game.isFreeArea(pos)) {
-                    Figure figure = game.getFigure(pos);
-                    if (figure.isWhite()) {
-                        whiteFigures++;
-                    } else {
-                        blackFigures++;
-                    }
-                    if (figure.isPawn() || (whiteFigures > 1 && blackFigures > 1)) return false;
+        for (int index = 0; index < 64; index++) {
+            BoardContent content = game.getContent(Position.Companion.byIndex(index));
+            if (!content.isFreeArea()) {
+                Figure figure = content.getFigure();
+                if (figure.isWhite()) {
+                    whiteFigures++;
+                } else {
+                    blackFigures++;
                 }
+                if (figure.isPawn() || (whiteFigures > 1 && blackFigures > 1)) return false;
             }
         }
         return true;

@@ -6,7 +6,6 @@ import voidchess.player.HumanPlayerInterface;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,11 +14,11 @@ import java.util.List;
  */
 public class ChessGameAdapter implements MouseInputListener {
     private ChessGameUI ui;
-    private List players;
+    private List<HumanPlayerInterface> players;
 
     ChessGameAdapter(ChessGameUI ui) {
         this.ui = ui;
-        players = new LinkedList();
+        players = new LinkedList<>();
     }
 
     public void mousePressed(MouseEvent e) {
@@ -41,9 +40,7 @@ public class ChessGameAdapter implements MouseInputListener {
     public void mouseMoved(MouseEvent e) {
         Position pos = getPositionFromPoint(e.getPoint());
         if (pos != null) {
-            Iterator iter = players.iterator();
-            while (iter.hasNext()) {
-                HumanPlayerInterface player = (HumanPlayerInterface) iter.next();
+            for (HumanPlayerInterface player : players) {
                 player.mouseMovedOver(pos);
             }
         }
@@ -52,9 +49,7 @@ public class ChessGameAdapter implements MouseInputListener {
     public void mouseClicked(MouseEvent e) {
         Position pos = getPositionFromPoint(e.getPoint());
         if (pos != null) {
-            Iterator iter = players.iterator();
-            while (iter.hasNext()) {
-                HumanPlayerInterface player = (HumanPlayerInterface) iter.next();
+            for (HumanPlayerInterface player : players) {
                 player.mouseClickedOn(pos);
             }
         }

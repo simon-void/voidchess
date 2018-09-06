@@ -14,6 +14,6 @@ public class EvaluatedAsDrawTest {
         Evaluated value = EvaluatedAsDraw.INSTANCE;
         assertFalse(value.isValue());
         assertTrue(value.isDraw());
-        assertFalse(value.isMatt());
+        assertFalse(value.isCheckmate());
     }
 }

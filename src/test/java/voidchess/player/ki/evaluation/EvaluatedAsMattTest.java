@@ -14,6 +14,6 @@ public class EvaluatedAsMattTest {
         Evaluated value = new EvaluatedAsMatt(1, true);
         assertFalse(value.isValue());
         assertFalse(value.isDraw());
-        assertTrue(value.isMatt());
+        assertTrue(value.isCheckmate());
     }
 }

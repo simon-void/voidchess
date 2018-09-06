@@ -11,7 +11,7 @@ public interface PlayerInterface {
 
     void play();
 
-    PawnPromotion askForPawnChange(Position pawnPosition);
+    PawnPromotion askForPawnPromotionType(Position pawnPosition);
 
     void setColor(boolean isWhite);
 }

@@ -16,7 +16,7 @@ public class CoresPanel extends JPanel implements ActionListener {
     /**
      * @return true if more than one core is available
      */
-    public boolean hasOptions() {
+    boolean hasOptions() {
         return comboBox.getItemCount() > 1;
     }
 
@@ -24,7 +24,7 @@ public class CoresPanel extends JPanel implements ActionListener {
 
     final private JComboBox<String> comboBox;
 
-    public CoresPanel(ComputerPlayer player) {
+    CoresPanel(ComputerPlayer player) {
         this.player = player;
 
         comboBox = new JComboBox<>();
@@ -35,7 +35,6 @@ public class CoresPanel extends JPanel implements ActionListener {
 
     private void designLayout() {
         setBackground(Color.WHITE);
-//        setBorder(new LineBorder(Color.LIGHT_GRAY));
 
         final int numberOfCores = Runtime.getRuntime().availableProcessors();
         if (numberOfCores == 1) {
@@ -47,7 +46,6 @@ public class CoresPanel extends JPanel implements ActionListener {
         comboBox.setEditable(false);
         comboBox.addActionListener(this);
 
-//        add(new JLabel("#cores:"));
         add(comboBox);
     }
 
@@ -56,14 +54,11 @@ public class CoresPanel extends JPanel implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent event) {
-        int numberOfCoresToUse = 1;
-//        try{
-        numberOfCoresToUse = Integer.parseInt(comboBox.getSelectedItem().toString());
-//        }catch(NumberFormatException e){}
+        int numberOfCoresToUse = Integer.parseInt(comboBox.getSelectedItem().toString());
         player.setNumberOfCoresToUse(numberOfCoresToUse);
     }
 
-    public JPanel getLabel() {
+    JPanel getLabel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panel.setBackground(Color.WHITE);
         JLabel label = new JLabel("#cores:");

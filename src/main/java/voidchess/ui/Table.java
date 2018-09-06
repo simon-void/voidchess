@@ -6,7 +6,6 @@ import voidchess.helper.ChessGameSupervisor;
 import voidchess.helper.Move;
 import voidchess.helper.PawnPromotion;
 import voidchess.helper.Position;
-import voidchess.player.HumanPlayerInterface;
 import voidchess.player.PlayerInterface;
 
 /**
@@ -21,7 +20,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
     private ChessPanel parent;
 
 
-    public Table(ChessGameInterface game, ChessGameUI ui, ChessPanel parent, Chess960Panel panel960) {
+    Table(ChessGameInterface game, ChessGameUI ui, ChessPanel parent, Chess960Panel panel960) {
         this.game = game;
         this.ui = ui;
         this.parent = parent;
@@ -29,8 +28,8 @@ public class Table implements ChessGameSupervisor, TableInterface {
     }
 
     public PawnPromotion askForPawnChange(Position pawnPosition) {
-        if (whitePlayersTurn) return whitePlayer.askForPawnChange(pawnPosition);
-        else return blackPlayer.askForPawnChange(pawnPosition);
+        if (whitePlayersTurn) return whitePlayer.askForPawnPromotionType(pawnPosition);
+        else return blackPlayer.askForPawnPromotionType(pawnPosition);
     }
 
     public void move(Move move) {
@@ -81,13 +80,5 @@ public class Table implements ChessGameSupervisor, TableInterface {
         whitePlayer.setIsPlaying(false);
         blackPlayer.setIsPlaying(false);
         parent.gameover(endoption);
-    }
-
-    synchronized void resignGame() {
-        if (whitePlayersTurn == whitePlayer instanceof HumanPlayerInterface) {
-            stopGame(MoveResult.RESIGN);
-        } else {
-            resign = true;
-        }
     }
 }

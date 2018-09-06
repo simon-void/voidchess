@@ -23,9 +23,9 @@ public class ChessGameUI extends JComponent {
     private Position from, to;
     private BasicChessGameInterface game;
     private Map<ImageType, FigureImage> imageTypeToImage;
-    ChessGameAdapter adapter;
+    private ChessGameAdapter adapter;
 
-    public ChessGameUI(BasicChessGameInterface game, ImageObserver imageObserver) {
+    ChessGameUI(BasicChessGameInterface game, ImageObserver imageObserver) {
         this.game = game;
         areaSize = 50;
         borderSize = 25;
@@ -50,7 +50,7 @@ public class ChessGameUI extends JComponent {
         }
     }
 
-    public void repaintAfterMove(Move move) {
+    void repaintAfterMove(Move move) {
         repaintPositionAtOnce(move.getFrom());
         repaintPositionAtOnce(move.getTo());
 
@@ -81,7 +81,7 @@ public class ChessGameUI extends JComponent {
         paintImmediately(x_pos, y_pos, repaintSize * 8, repaintSize);
     }
 
-    public void repaintAtOnce() {
+    void repaintAtOnce() {
         Dimension dim = getSize();
         paintImmediately(0, 0, dim.width, dim.height);
     }

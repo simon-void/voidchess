@@ -85,7 +85,7 @@ final public class EvaluatedAsValue implements Evaluated {
     }
 
     @Override
-    public boolean isMatt() {
+    public boolean isCheckmate() {
         return false;
     }
 

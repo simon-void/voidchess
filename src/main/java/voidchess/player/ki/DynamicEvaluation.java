@@ -42,7 +42,7 @@ public class DynamicEvaluation {
         if (endoption == MoveResult.NO_END) {
             final List<Move> minPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
             result = getMin(game, forWhite, depth, thisMove_isChess, thisMove_hasHitFigure, minPossibleMovesBuffer);
-        } else if (endoption == MoveResult.MATT) {
+        } else if (endoption == MoveResult.CHECKMATE) {
             result = new EvaluatedAsMatt(depth + 1, true);
         } else {
             result = EvaluatedAsDraw.INSTANCE;
@@ -93,7 +93,7 @@ public class DynamicEvaluation {
                         thisMove_isChess,
                         thisMove_hasHitFigure,
                         maxPossibleMovesBuffer);
-            } else if (endoption == MoveResult.MATT) {
+            } else if (endoption == MoveResult.CHECKMATE) {
                 game.undo();
                 return new EvaluatedAsMatt(depth + 1, false);
             } else {
@@ -170,7 +170,7 @@ public class DynamicEvaluation {
                         thisMove_isChess,
                         thisMove_hasHitFigure,
                         minPossibleMovesBuffer);
-            } else if (endoption == MoveResult.MATT) {
+            } else if (endoption == MoveResult.CHECKMATE) {
                 game.undo();
                 return new EvaluatedAsMatt(depth + 1, true);
             } else {

@@ -15,16 +15,16 @@ import java.awt.event.ActionListener;
 public class DifficultyPanel
         extends JPanel
         implements ActionListener {
-    final private static String LEVEL1_TEXT = "Stufe 1";
-    final private static String LEVEL2_TEXT = "Stufe 2";
-    final private static String LEVEL3_TEXT = "Stufe 3";
+    final private static String LEVEL1_TEXT = "level 1";
+    final private static String LEVEL2_TEXT = "level 2";
+    final private static String LEVEL3_TEXT = "level 3";
 
     final private ComputerPlayer player;
     final private SimplePruner level_1_pruner, level_2_pruner, level_3_pruner;
 
     final private JComboBox<String> comboBox;
 
-    public DifficultyPanel(ComputerPlayer player) {
+    DifficultyPanel(ComputerPlayer player) {
         //it's a good idea to have figureHitRadius bigger than chessRadius
         //else the ai tries to prevent material loss through bad chesses
         level_1_pruner = new SimplePruner(1, 4, 3);
@@ -41,7 +41,6 @@ public class DifficultyPanel
 
     private void designLayout() {
         setBackground(Color.WHITE);
-//        setBorder(new LineBorder(Color.LIGHT_GRAY));
 
         comboBox.addItem(LEVEL1_TEXT);
         comboBox.addItem(LEVEL2_TEXT);
@@ -49,7 +48,6 @@ public class DifficultyPanel
         comboBox.setEditable(false);
         comboBox.addActionListener(this);
 
-//        add(new JLabel("Schwierigkeitsgrad:"));
         add(comboBox);
     }
 
@@ -67,7 +65,7 @@ public class DifficultyPanel
         }
     }
 
-    public JLabel getLabel() {
-        return new JLabel("Schwierigkeitsgrad:");
+    JLabel getLabel() {
+        return new JLabel("difficulty:");
     }
 }

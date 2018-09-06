@@ -4,7 +4,7 @@ package voidchess.player.ki.evaluation;
  * Created by stephan on 12.07.2015.
  */
 public interface Evaluated extends Comparable<Evaluated> {
-    boolean isMatt();
+    boolean isCheckmate();
 
     boolean isDraw();
 

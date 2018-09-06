@@ -5,7 +5,6 @@
 package voidchess.ui;
 
 import voidchess.board.ChessGame;
-import voidchess.board.ChessGameInterface;
 import voidchess.board.MoveResult;
 import voidchess.helper.ChessGameSupervisorDummy;
 import voidchess.player.HumanPlayer;
@@ -22,9 +21,9 @@ import java.awt.event.ActionListener;
 public class ChessPanel
         extends JPanel
         implements ActionListener {
-    final private static String startString = "Start";
-    final private static String resignString = "Aufgeben";
-    final private static String switchString = "Pl\u00E4tze tauschen";
+    final private static String startString = "start";
+    final private static String resignString = "resign";
+    final private static String switchString = "change seats";
 
     private PlayerInterface humanPlayer;
     private PlayerInterface computerPlayer;
@@ -125,7 +124,7 @@ public class ChessPanel
                 switchPlayer();
                 break;
             case resignString:
-                stop(MoveResult.RESIGN);
+                table.stopGame(MoveResult.RESIGN);
                 break;
         }
     }
@@ -139,29 +138,25 @@ public class ChessPanel
         table.startGame();
     }
 
-    void stop(MoveResult endoption) {
-        table.stopGame(endoption);
-    }
-
     void gameover(MoveResult endoption) {
         switch (endoption) {
             case DRAW:
-                JOptionPane.showMessageDialog(this, "Unentschieden");
+                JOptionPane.showMessageDialog(this, "draw");
                 break;
-            case PATT:
-                JOptionPane.showMessageDialog(this, "Patt");
+            case STALEMATE:
+                JOptionPane.showMessageDialog(this, "stalemate");
                 break;
-            case MATT:
-                JOptionPane.showMessageDialog(this, "Matt");
+            case CHECKMATE:
+                JOptionPane.showMessageDialog(this, "checkmate");
                 break;
             case THREE_TIMES_SAME_POSITION:
-                JOptionPane.showMessageDialog(this, "Unentschieden wegen \ndreimaliger Stellungswiederholung");
+                JOptionPane.showMessageDialog(this, "draw because of\nthreefold repetition");
                 break;
             case FIFTY_MOVES_NO_HIT:
-                JOptionPane.showMessageDialog(this, "Unentschieden,\nda 50 Z\u00FCge keine Figure geschlagen wurde");
+                JOptionPane.showMessageDialog(this, "draw because of\nfifty-move rule");
                 break;
             case RESIGN:
-                JOptionPane.showMessageDialog(this, "Spieler hat aufgegeben");
+                JOptionPane.showMessageDialog(this, "player has resigned");
                 break;
         }
         startButton.setText(startString);

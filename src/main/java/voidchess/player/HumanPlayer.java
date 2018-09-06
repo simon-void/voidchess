@@ -75,22 +75,22 @@ public class HumanPlayer
         }
     }
 
-    public PawnPromotion askForPawnChange(Position pawnPosition) {
-        String[] figs = {"Dame", "Turm", "L\u00E4ufer", "Springer"};
+    public PawnPromotion askForPawnPromotionType(Position pawnPosition) {
+        String[] figs = {"Queen", "Rock", "Bishop", "Knight"};
         String out = (String) JOptionPane.showInputDialog(null,
-                "W\u00E4hle eine Figur",
-                "Bauernumwandlung",
+                "Promote pawn to what type?",
+                "pawn promotion",
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 figs,
-                "Dame");
+                "Queen");
 
         switch (out) {
-            case "Dame":
+            case "Queen":
                 return PawnPromotion.QUEEN;
-            case "Turm":
+            case "Rock":
                 return PawnPromotion.ROCK;
-            case "Springer":
+            case "Knight":
                 return PawnPromotion.KNIGHT;
             default:
                 return PawnPromotion.BISHOP;
