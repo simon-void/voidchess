@@ -6,8 +6,9 @@ package voidchess.helper
 class Move private constructor(val from: Position, val to: Position) {
     private val index = getMoveIndex(from.index, to.index)
 
-    fun equalsMove(move: Move) = index == move.index
-    override fun equals(other: Any?) = other is Move && index == other.index
+    // TODO remove equalsMove, it's not faster than equals
+    fun equalsMove(move: Move) = this === move //index == move.index
+    override fun equals(other: Any?) = this === other //other is Move && index == other.index
     override fun toString() = "$from-$to"
     override fun hashCode() = index
 

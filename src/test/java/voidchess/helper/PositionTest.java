@@ -33,10 +33,10 @@ public class PositionTest {
     @DataProvider
     private Object[][] getInvalidGetRowColumnData() {
         return new Object[][]{
-            new Object[] {-1, 0},
-            new Object[] {0, -1},
-            new Object[] {8, 0},
-            new Object[] {0, 8},
+                new Object[]{-1, 0},
+                new Object[]{0, -1},
+                new Object[]{8, 0},
+                new Object[]{0, 8},
         };
     }
 
@@ -157,5 +157,85 @@ public class PositionTest {
         assertFalse(pos5.isStraightOrDiagonalTo(pos2));
         assertFalse(pos5.isStraightOrDiagonalTo(pos3));
         assertFalse(pos5.isStraightOrDiagonalTo(pos4));
+    }
+
+    @Test
+    public void testPositionByCode() {
+        Position a1 = Position.Companion.byCode("a1");
+        assertEquals(a1.toString(), "a1");
+        assertEquals(a1.getColumn(), 0, "column");
+        assertEquals(a1.getRow(), 0, "row");
+
+        Position b3 = Position.Companion.byCode("b3");
+        assertEquals(b3.toString(), "b3");
+        assertEquals(b3.getColumn(), 1, "column");
+        assertEquals(b3.getRow(), 2, "row");
+    }
+
+    @Test
+    public void testPositionByIndex() {
+        Position b3 = Position.Companion.byCode("b3");
+        Position actualPos = Position.Companion.byIndex(b3.getIndex());
+        assertEquals(actualPos, b3);
+    }
+
+    @Test(dataProvider = "getTestStepData")
+    public void testStep(Position pos, Direction direction, Position expectedPos) {
+        Position actualPos = pos.step(direction);
+        assertEquals(actualPos, expectedPos);
+    }
+
+    @DataProvider
+    public Object[][] getTestStepData() {
+        return new Object[][]{
+                // middle of board -> all steps exists
+                getPositionDirectionOptionalPosition("e4", Direction.DOWN_LEFT, "d3"),
+                getPositionDirectionOptionalPosition("e4", Direction.DOWN, "e3"),
+                getPositionDirectionOptionalPosition("e4", Direction.DOWN_RIGHT, "f3"),
+                getPositionDirectionOptionalPosition("e4", Direction.LEFT, "d4"),
+                getPositionDirectionOptionalPosition("e4", Direction.RIGHT, "f4"),
+                getPositionDirectionOptionalPosition("e4", Direction.UP_LEFT, "d5"),
+                getPositionDirectionOptionalPosition("e4", Direction.UP, "e5"),
+                getPositionDirectionOptionalPosition("e4", Direction.UP_RIGHT, "f5"),
+                // and now the corners -> where not all directions stay on the board
+                getPositionDirectionOptionalPosition("a1", Direction.DOWN_LEFT, null),
+                getPositionDirectionOptionalPosition("a1", Direction.DOWN, null),
+                getPositionDirectionOptionalPosition("a1", Direction.DOWN_RIGHT, null),
+                getPositionDirectionOptionalPosition("a1", Direction.LEFT, null),
+                getPositionDirectionOptionalPosition("a1", Direction.RIGHT, "b1"),
+                getPositionDirectionOptionalPosition("a1", Direction.UP_LEFT, null),
+                getPositionDirectionOptionalPosition("a1", Direction.UP, "a2"),
+                getPositionDirectionOptionalPosition("a1", Direction.UP_RIGHT, "b2"),
+                getPositionDirectionOptionalPosition("a8", Direction.DOWN_LEFT, null),
+                getPositionDirectionOptionalPosition("a8", Direction.DOWN, "a7"),
+                getPositionDirectionOptionalPosition("a8", Direction.DOWN_RIGHT, "b7"),
+                getPositionDirectionOptionalPosition("a8", Direction.LEFT, null),
+                getPositionDirectionOptionalPosition("a8", Direction.RIGHT, "b8"),
+                getPositionDirectionOptionalPosition("a8", Direction.UP_LEFT, null),
+                getPositionDirectionOptionalPosition("a8", Direction.UP, null),
+                getPositionDirectionOptionalPosition("a8", Direction.UP_RIGHT, null),
+                getPositionDirectionOptionalPosition("h1", Direction.DOWN_LEFT, null),
+                getPositionDirectionOptionalPosition("h1", Direction.DOWN, null),
+                getPositionDirectionOptionalPosition("h1", Direction.DOWN_RIGHT, null),
+                getPositionDirectionOptionalPosition("h1", Direction.LEFT, "g1"),
+                getPositionDirectionOptionalPosition("h1", Direction.RIGHT, null),
+                getPositionDirectionOptionalPosition("h1", Direction.UP_LEFT, "g2"),
+                getPositionDirectionOptionalPosition("h1", Direction.UP, "h2"),
+                getPositionDirectionOptionalPosition("h1", Direction.UP_RIGHT, null),
+                getPositionDirectionOptionalPosition("h8", Direction.DOWN_LEFT, "g7"),
+                getPositionDirectionOptionalPosition("h8", Direction.DOWN, "h7"),
+                getPositionDirectionOptionalPosition("h8", Direction.DOWN_RIGHT, null),
+                getPositionDirectionOptionalPosition("h8", Direction.LEFT, "g8"),
+                getPositionDirectionOptionalPosition("h8", Direction.RIGHT, null),
+                getPositionDirectionOptionalPosition("h8", Direction.UP_LEFT, null),
+                getPositionDirectionOptionalPosition("h8", Direction.UP, null),
+                getPositionDirectionOptionalPosition("h8", Direction.UP_RIGHT, null),
+        };
+    }
+
+    private Object[] getPositionDirectionOptionalPosition(String posCode, Direction direction, String expectedPosCode) {
+        Position pos = Position.Companion.byCode(posCode);
+        Position newPos = expectedPosCode == null ? null : Position.Companion.byCode(expectedPosCode);
+        return new Object[]{pos, direction, newPos};
     }
 }

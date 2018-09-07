@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import static java.lang.System.in;
+
 /**
  * @author stephan
  */
@@ -666,6 +668,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
             final int endIndexMinusOne = endIndex-1;
             long compressedValue = 0;
             for(int i=startIndex; i<endIndexMinusOne; i++ ) {
+                assert board[i]>=0 && board[i]<16; // board[i] (=figure==null?0:figure.typeInfo) out of Bounds, it has to fit into 4 bits with 0->no figure!
                 compressedValue+=board[i];
                 compressedValue <<=4;
             }

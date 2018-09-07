@@ -2,10 +2,7 @@ package voidchess.figures
 
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
-import voidchess.helper.CheckSearch
-import voidchess.helper.CheckStatus
-import voidchess.helper.Move
-import voidchess.helper.Position
+import voidchess.helper.*
 import voidchess.image.ImageType
 import java.util.*
 
@@ -26,11 +23,6 @@ abstract class Figure constructor(
             get() = type.getImageType(isWhite)
     private val reachableMoves = LinkedList<Move>()
 
-    init {
-        // typeInfo = 0 is used in ChessGame.Memento
-        assert(typeInfo in 1..15) { "TypeInfo out of Bounds" }
-    }
-
     fun isPawn() = type == FigureType.PAWN
     fun isRock() = type == FigureType.ROCK
     fun isKnight() = type == FigureType.KNIGHT
@@ -46,10 +38,6 @@ abstract class Figure constructor(
         return false
     }
 
-    private fun toBasicString() = "${type.label}-${if (isWhite) "white" else "black"}-$position"
-
-    override fun toString() = toBasicString()
-
     open fun figureMoved(move: Move) {
         if (position.equalsPosition(move.from)) position = move.to
     }
@@ -59,6 +47,26 @@ abstract class Figure constructor(
     }
 
     abstract fun isReachable(to: Position, game: BasicChessGameInterface): Boolean
+    abstract fun countReachableMoves(game: BasicChessGameInterface): Int
+    abstract fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>)
+    abstract fun isSelectable(game: SimpleChessBoardInterface): Boolean
+
+    fun isMovable(to: Position, game: SimpleChessBoardInterface): Boolean {
+        return isReachable(to, game) && !isBound(to, game)
+    }
+
+    fun getPossibleMoves(game: SimpleChessBoardInterface, result: MutableList<Move>) {
+        reachableMoves.clear()
+        getReachableMoves(game, reachableMoves)
+        val checkStatus = game.getCheckStatus(isWhite)
+
+        for (move in reachableMoves) {
+            val checkPosition = move.to
+            if (!isBound(checkPosition, game, checkStatus)) {
+                result.add(move)
+            }
+        }
+    }
 
     open fun isPassiveBound(to: Position, game: SimpleChessBoardInterface): Boolean {
         val kingPos = game.getKingPosition(isWhite)
@@ -132,29 +140,26 @@ abstract class Figure constructor(
         }
     }
 
-    fun isMovable(to: Position, game: SimpleChessBoardInterface): Boolean {
-        return isReachable(to, game) && !isBound(to, game)
-    }
+    protected inline fun forEachReachablePos(game: BasicChessGameInterface, direction: Direction, informOf: (Position) -> Unit) {
+        var currentPos: Position? = position
 
-    abstract fun countReachableMoves(game: BasicChessGameInterface): Int
-
-    abstract fun getReachableMoves(game: BasicChessGameInterface, result: List<Move>)
-
-    fun getPossibleMoves(game: SimpleChessBoardInterface, result: MutableList<Move>) {
-        reachableMoves.clear()
-        getReachableMoves(game, reachableMoves)
-        val checkStatus = game.getCheckStatus(isWhite)
-
-        for (move in reachableMoves) {
-            val checkPosition = move.to
-            if (!isBound(checkPosition, game, checkStatus)) {
-                result.add(move)
+        while (true) {
+            // the initial currentPos is not null and after every assignment it is checked if currentPos is null, so !!. is fine
+            currentPos = currentPos!!.step(direction)
+            if (currentPos==null) return
+            val figure = game.getFigure(currentPos)
+            if (figure == null) {
+                informOf(currentPos)
+            } else {
+                if (hasDifferentColor(figure)) {
+                    informOf(currentPos)
+                }
+                return
             }
         }
     }
 
-    abstract fun isSelectable(game: SimpleChessBoardInterface): Boolean
-
+    override fun toString() = "${type.label}-${if (isWhite) "white" else "black"}-$position"
     override fun equals(other: Any?) = other is Figure && typeInfo == other.typeInfo && position.equalsPosition(other.position)
-    override fun hashCode() = typeInfo.toInt()
+    override fun hashCode() = typeInfo
 }
