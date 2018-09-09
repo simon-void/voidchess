@@ -274,7 +274,7 @@ public class King extends RochadeFigure {
     public void undoMove(Position oldPosition) {
         super.undoMove(oldPosition);
 
-        if (stepsTaken == 0) {
+        if (getStepsTaken() == 0) {
             didRochade = false;
         }
     }
