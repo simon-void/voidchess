@@ -43,5 +43,36 @@ public class QueenTest {
         List<Move> moveIter = new LinkedList<>();
         queen.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 17);
+
+        des = "white 0 Rock-black-a1-1 Queen-white-d1 King-white-e1-0 ";
+        game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
+
+        queen = game.getFigure(Position.Companion.byCode("d1"));
+        moveIter = new LinkedList<>();
+        queen.getPossibleMoves(game, moveIter);
+        assertEquals(moveIter.size(), 3);
+
+        des = "white 0 King-white-e1-0 Bishop-black-c3 Queen-white-b4";
+        game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
+
+        queen = game.getFigure(Position.Companion.byCode("b4"));
+        moveIter = new LinkedList<>();
+        queen.getPossibleMoves(game, moveIter);
+        assertEquals(moveIter.size(), 1);
+    }
+
+    @Test
+    public void testIsSelectable() {
+        String des = "white 0 King-white-e1-0 Bishop-black-c3 Queen-white-b4";
+        SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
+
+        Figure queen = game.getFigure(Position.Companion.byCode("b4"));
+        assertTrue(queen.isSelectable(game), "isSelectable");
+
+        des = "white 0 King-white-e1-0 Bishop-black-c3 Queen-white-b5";
+        game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
+
+        queen = game.getFigure(Position.Companion.byCode("b5"));
+        assertFalse(queen.isSelectable(game), "isSelectable");
     }
 }
