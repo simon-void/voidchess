@@ -14,7 +14,7 @@ abstract class Figure constructor(
         //Farbe der Figur
         val isWhite: Boolean,
         var position: Position,
-        val type: FigureType
+        private val type: FigureType
 ) {
 
     //kodiert Name der Klasse + Farbe

@@ -5,11 +5,11 @@ import voidchess.image.ImageType
 /**
  * @author stephan
  */
-enum class FigureType private constructor(
+enum class FigureType constructor(
         val index: Int,
         val label: String,
-        val whiteImageType: ImageType?,
-        val blackImageType: ImageType?
+        private val whiteImageType: ImageType?,
+        private val blackImageType: ImageType?
 ) {
     PAWN(1, "Pawn", ImageType.W_PAWN, ImageType.B_PAWN),
     ROCK(2, "Rock", ImageType.W_ROCK, ImageType.B_ROCK),

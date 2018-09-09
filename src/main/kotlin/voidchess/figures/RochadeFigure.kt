@@ -8,7 +8,7 @@ import voidchess.helper.Position
  */
 abstract class RochadeFigure(isWhite: Boolean, val initialPosition: Position, protected var stepsTaken: Int, type: FigureType) : Figure(isWhite, initialPosition, type) {
 
-    constructor(isWhite: Boolean, startPosition: Position, type: FigureType) : this(isWhite, startPosition, 0, type) {}
+    constructor(isWhite: Boolean, startPosition: Position, type: FigureType) : this(isWhite, startPosition, 0, type)
 
     override fun undoMove(oldPosition: Position) {
         stepsTaken--

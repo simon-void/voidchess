@@ -5,17 +5,22 @@ import voidchess.board.SimpleChessBoardInterface
 import voidchess.helper.Direction
 import voidchess.helper.Move
 import voidchess.helper.Position
+import voidchess.image.ImageType
+
+import java.util.ArrayList
 
 /**
  * @author stephan
  */
+class Rock : RochadeFigure {
 
-class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.BISHOP) {
+    constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.ROCK)
+    constructor(isWhite: Boolean, startPosition: Position, stepsTaken: Int) : super(isWhite, startPosition, stepsTaken, FigureType.ROCK)
 
     override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val direction = position.getDirectionTo(to)
 
-        if (direction == null || direction.isHorizontalOrVertical) {
+        if (direction == null || direction.isDiagonal) {
             return false
         }
 
@@ -27,10 +32,10 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
     }
 
     private inline fun forEachReachablePos(game: BasicChessGameInterface, informOf: (Position) -> Unit) {
-        forEachReachablePos(game, Direction.UP_RIGHT, informOf)
-        forEachReachablePos(game, Direction.UP_LEFT, informOf)
-        forEachReachablePos(game, Direction.DOWN_RIGHT, informOf)
-        forEachReachablePos(game, Direction.DOWN_LEFT, informOf)
+        forEachReachablePos(game, Direction.UP, informOf)
+        forEachReachablePos(game, Direction.LEFT, informOf)
+        forEachReachablePos(game, Direction.DOWN, informOf)
+        forEachReachablePos(game, Direction.RIGHT, informOf)
     }
 
     override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
