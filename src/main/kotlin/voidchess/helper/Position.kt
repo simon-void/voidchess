@@ -32,6 +32,9 @@ class Position private constructor(val row: Int, val column: Int) {
         return byIndex(index + direction.posIndexDiff)
     }
 
+    /**
+     * returns a direction if to lies on a straight line or diagonal to this, else null.
+     */
     fun getDirectionTo(to: Position): Direction? {
         if (this===to) return null
 
@@ -112,4 +115,20 @@ enum class Direction(val posIndexDiff: Int, val isDiagonal: Boolean) {
     DOWN_LEFT(-9, true), DOWN(-8, false), DOWN_RIGHT(-7, true);
 
     val isHorizontalOrVertical = !isDiagonal
+
+    companion object {
+        fun getDiagonal(upOrDown: Direction, leftOrRight: Direction): Direction = when (upOrDown){
+            UP -> when (leftOrRight) {
+                LEFT  -> UP_LEFT
+                RIGHT -> UP_RIGHT
+                else -> throw IllegalArgumentException("leftOrRight parameter isn't LEFT or RIGHT but $leftOrRight")
+            }
+            DOWN -> when(leftOrRight) {
+                LEFT  -> DOWN_LEFT
+                RIGHT -> DOWN_RIGHT
+                else -> throw IllegalArgumentException("leftOrRight parameter isn't LEFT or RIGHT but $leftOrRight")
+            }
+            else -> throw IllegalArgumentException("upOrDown parameter isn't UP or DOWN but $upOrDown")
+        }
+    }
 }
