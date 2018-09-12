@@ -1,15 +1,8 @@
-/*
- * Created on 24.09.2006
- */
-
 package voidchess.board;
 
 import voidchess.figures.Figure;
 import voidchess.figures.FigureFactory;
-import voidchess.helper.CheckSearch;
-import voidchess.helper.CheckStatus;
-import voidchess.helper.ExtendedMove;
-import voidchess.helper.Position;
+import voidchess.helper.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -278,6 +271,7 @@ public class SimpleArrayBoard
         blackKingPosition = null;
     }
 
+    @Override
     public void setFigure(Position pos, Figure figure) {
         clearCheckComputation();
 
@@ -286,7 +280,23 @@ public class SimpleArrayBoard
             if (figure.isWhite()) whiteKingPosition = pos;
             else blackKingPosition = pos;
         }
+    }
 
+    @Override
+    public Figure move(Figure figure, Position to) {
+        Move move = Move.Companion.get(figure.getPosition(), to);
+        game[figure.getPosition().getIndex()] = null;
+        Figure figureTaken = game[to.getIndex()];
+        game[to.getIndex()] = figure;
+        figure.figureMoved(move);
+        return figureTaken;
+    }
+
+    @Override
+    public void undoMove(Figure figure, Position from, Figure figureTaken) {
+        game[figure.getPosition().getIndex()] = figureTaken;
+        game[from.getIndex()] = figure;
+        figure.undoMove(from);
     }
 
     @Override

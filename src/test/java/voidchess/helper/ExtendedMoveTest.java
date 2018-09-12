@@ -41,7 +41,7 @@ public class ExtendedMoveTest {
 
     @Test
     public void testGetFigure() {
-        assertTrue(extendedMove.getFigure() == null);
+        assertTrue(extendedMove.getFigureTaken() == null);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ExtendedMoveTest {
 
     @Test
     public void testHasHitFigure() {
-        assertFalse(extendedMove.hasHitFigure());
+        assertFalse(extendedMove.wasFigureTaken());
         ExtendedMove hitPawn =
                 new ExtendedMove(
                         Move.Companion.get(
@@ -75,7 +75,7 @@ public class ExtendedMoveTest {
                         true,
                         false
                 );
-        assertTrue(hitPawn.hasHitFigure());
+        assertTrue(hitPawn.wasFigureTaken());
         ExtendedMove hitFigure =
                 new ExtendedMove(
                         Move.Companion.get(
@@ -88,6 +88,6 @@ public class ExtendedMoveTest {
                         false,
                         true,
                         false);
-        assertTrue(hitFigure.hasHitFigure());
+        assertTrue(hitFigure.wasFigureTaken());
     }
 }

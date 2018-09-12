@@ -1,6 +1,7 @@
 package voidchess.board;
 
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import voidchess.figures.Figure;
 import voidchess.helper.CheckStatus;
@@ -103,6 +104,43 @@ public class SimpleBoardTest {
         status = board.getCheckStatus(true);
         assertTrue(status.isCheck());
         assertTrue(status.onlyKingCanMove());
+    }
+
+    @Test(dataProvider = "getTestMoveUndoMoveInvarianceData")
+    public void testMoveUndoMoveInvariance(String fromCode, String toCode, String gameDes) {
+        board.init(gameDes);
+        String initialLongGameDescription = board.toString();
+        int initialFigureCount = board.getFigures().size();
+        Position from = Position.Companion.byCode(fromCode);
+        Position to = Position.Companion.byCode(toCode);
+
+        Figure figure = board.getFigure(from);
+        assertNotNull(figure, "figure to move");
+        boolean canDoRochadeInitially = figure.canParticipateInRochade();
+        boolean willTakeFigure = !board.isFreeArea(to);
+
+        Figure figureTaken = board.move(figure, to);
+
+        boolean wasFigureTaken = figureTaken != null;
+        assertEquals(wasFigureTaken, willTakeFigure, "figure taken");
+        assertEquals(board.getFigures().size(), wasFigureTaken?initialFigureCount-1:initialFigureCount);
+        assertEquals(board.getFigure(to), figure, "figure after move");
+        assertEquals(figure.getPosition(), to, "figure position after move");
+        assertFalse(figure.canParticipateInRochade(), "after a move, yuo can't do rochade garanteed");
+
+        board.undoMove(figure, from, figureTaken);
+
+        assertEquals(board.toString(), initialLongGameDescription, "game state after move-undo");
+        assertEquals(figure.getPosition(), from);
+        assertEquals(figure.canParticipateInRochade(), canDoRochadeInitially, "same rochade state as before");
+    }
+
+    @DataProvider
+    public Object[][] getTestMoveUndoMoveInvarianceData() {
+        return new Object[][] {
+                new Object[] {"e1", "d2", "white 0 King-white-e1-0 Queen-black-d2"},
+                new Object[] {"e1", "f1", "white 0 King-white-e1-0 Queen-black-d2"},
+        };
     }
 
     @Test

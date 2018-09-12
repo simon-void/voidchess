@@ -132,13 +132,13 @@ public class KingTest {
         Figure king = board.getFigure(Position.Companion.byCode("f1"));
         List<Move> moveIter = new LinkedList<>();
         king.getPossibleMoves(board, moveIter);
-        assertEquals(7, moveIter.size());
+        assertEquals(moveIter.size(), 5);
 
         board.init(621);
         king = board.getFigure(board.getKingPosition(true));
         moveIter = new LinkedList<>();
         king.getPossibleMoves(board, moveIter);
-        assertEquals(0, moveIter.size());
+        assertEquals(moveIter.size(), 0);
 
         ChessGame game = new ChessGame(621);
         game.move(Move.Companion.byCode("c2-c3"));
@@ -148,7 +148,7 @@ public class KingTest {
         game.move(Move.Companion.byCode("c2-h7"));
         Position pos = Position.Companion.byCode("e8");
         List<Move> movesFrom = FigureTest.getPossibleMovesFrom(game, pos);
-        assertEquals(1, movesFrom.size());
+        assertEquals(movesFrom.size(), 1);
     }
 
     @Test

@@ -57,41 +57,4 @@ class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPo
         }
         return reachableMovesCount
     }
-
-//    private val bishop: Bishop
-//    private val rock: Rock
-//
-//    init {
-//        bishop = Bishop(isWhite, startPosition)
-//        rock = Rock(isWhite, startPosition)
-//    }
-//
-//    override fun figureMoved(move: Move) {
-//        bishop.figureMoved(move)
-//        rock.figureMoved(move)
-//        super.figureMoved(move)
-//    }
-//
-//    override fun undoMove(oldPosition: Position) {
-//        bishop.undoMove(oldPosition)
-//        rock.undoMove(oldPosition)
-//        super.undoMove(oldPosition)
-//    }
-//
-//    override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
-//        return bishop.isReachable(to, game) || rock.isReachable(to, game)
-//    }
-//
-//    override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
-//        bishop.getReachableMoves(game, result)
-//        rock.getReachableMoves(game, result)
-//    }
-//
-//    override fun isSelectable(game: SimpleChessBoardInterface): Boolean {
-//        return rock.isSelectable(game) || bishop.isSelectable(game)
-//    }
-//
-//    override fun countReachableMoves(game: BasicChessGameInterface): Int {
-//        return rock.countReachableMoves(game) + bishop.countReachableMoves(game)
-//    }
 }

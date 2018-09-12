@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static java.lang.System.in;
-
 /**
  * @author stephan
  */
@@ -373,11 +371,11 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         Figure activeFigure = getFigure(lastMove.getTo());
         setFigure(lastMove.getFrom(), activeFigure);
         if (!wasRochade || !lastMove.getFrom().equalsPosition(lastMove.getTo())) {
-            setFigure(lastMove.getTo(), lastExtMove.getFigure());
+            setFigure(lastMove.getTo(), lastExtMove.getFigureTaken());
         }
         activeFigure.undoMove(lastMove.getFrom());
 
-        if (lastExtMove.hasHitFigure()) {
+        if (lastExtMove.wasFigureTaken()) {
             figureCount++;
         }
 

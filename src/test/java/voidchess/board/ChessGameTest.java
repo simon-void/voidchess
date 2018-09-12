@@ -1,14 +1,18 @@
 package voidchess.board;
 
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import voidchess.figures.Bishop;
 import voidchess.figures.Figure;
 import voidchess.figures.King;
 import voidchess.helper.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.testng.Assert.*;
 
@@ -155,26 +159,6 @@ public class ChessGameTest {
         game.move(move);
         game.undo();
         assertTrue(game.isMoveable(pos1, pos2, true));
-
-
-        des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
-        game = new ChessGame(des);
-        pos1 = Position.Companion.byCode("e8");
-        pos2 = Position.Companion.byCode("a8");
-        move = Move.Companion.get(pos1, pos2);
-
-        assertTrue(game.isMoveable(pos1, pos2, false));
-        assertEquals(getPossibleMoves(game).size(), 16);
-        game.move(move);
-        game.move(Move.Companion.byCode("e1-f1"));
-        game.move(Move.Companion.byCode("d8-f8"));
-        game.move(Move.Companion.byCode("f1-g1"));
-        game.undo();
-        game.undo();
-        game.undo();
-        game.undo();
-        assertEquals(getPossibleMoves(game).size(), 16);
-        assertTrue(game.isMoveable(pos1, pos2, false));
 
 
         des = "white 4 Rock-white-a1-0 King-white-e1-0 Bishop-white-f1 " +
@@ -538,139 +522,57 @@ public class ChessGameTest {
         assertTrue(game.countFigures() == 5);
     }
 
-    @Test
-    public void testGetPossibleMoves() {
-        game.move(Move.Companion.byCode("g1-f3"));
-        game.move(Move.Companion.byCode("b8-c6"));
-        game.move(Move.Companion.byCode("f3-g1"));
-        game.move(Move.Companion.byCode("c6-b4"));
-        game.move(Move.Companion.byCode("g1-f3"));
-        game.move(Move.Companion.byCode("b4-c2"));
+    @Test(dataProvider = "getTestGetPossibleMovesData")
+    public void testGetPossibleMoves(ChessGame game, List<String> moveCodes, int expectedPossibleMovesCount) {
+        List<Move> moves = moveCodes.stream().map(Move.Companion::byCode).collect(Collectors.toList());
+        for(Move move: moves) {
+            assertTrue(game.isMoveable(move.getFrom(), move.getTo(), game.isWhiteTurn()), "given move should be valid");
+            game.move(move);
+        }
         List<Move> possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 1);
+        assertEquals(possibleMoves.size(), expectedPossibleMovesCount, "possible move count");
+    }
 
-        String des = "black 0 King-white-g1-2 Bishop-black-b6 King-black-e8-0";
-        ChessGame game = new ChessGame(des);
-        game.move(Move.Companion.byCode("b6-c5"));
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 4);
-
-        des = "black 0 Rock-white-a1-0 Rock-white-f1-1 King-white-g1-1-true "
-                + "Pawn-white-a2-false Pawn-white-b2-false Bishop-white-d2 Bishop-white-e2 "
-                + "Pawn-white-f2-false Pawn-white-h2-false Queen-white-b3 Pawn-white-g3-false "
-                + "Pawn-white-e4-false Pawn-black-b5-false Pawn-black-a6-false Bishop-black-b6 "
-                + "Pawn-black-h6-false Bishop-black-b7 Pawn-black-f7-false Pawn-black-g7-false "
-                + "Rock-black-c8-1 Queen-black-d8 Rock-black-f8-1 King-black-g8-1";
-        game = new ChessGame(des);
-        game.move(Move.Companion.byCode("b6-f2"));
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 4);
-
-        des = "black 0 Pawn-white-b2-false King-white-d3-2 Rock-black-h4-1 " +
-                "Rock-black-a8-0 King-black-e8-0";
-        game = new ChessGame(des);
-        game.move(Move.Companion.byCode("a8-a3"));
-        possibleMoves = getPossibleMoves(game);
-
-        assertEquals(possibleMoves.size(), 5);
-
-        des = "black 0 King-white-d3-2 Knight-black-e5 Bishop-black-g8 King-black-e8-0";
-        game = new ChessGame(des);
-        game.move(Move.Companion.byCode("g8-h7"));
-        possibleMoves = getPossibleMoves(game);
-
-        assertEquals(possibleMoves.size(), 5);
-
-        des = "white 2 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 King-white-e1-0 " +
-                "Queen-white-d1 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 Pawn-white-a2-false " +
-                "Pawn-white-b2-false Pawn-white-d2-false Pawn-white-e2-false " +
-                "Pawn-white-f2-false Pawn-white-g2-false Pawn-white-h2-false " +
-                "Pawn-white-c3-false Pawn-black-d6-false Pawn-black-a7-false " +
-                "Pawn-black-b7-false Pawn-black-c7-false Pawn-black-e7-false Pawn-black-f7-false " +
-                "Pawn-black-g7-false Pawn-black-h7-false Rock-black-a8-0 Knight-black-b8 " +
-                "Bishop-black-c8 Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 " +
-                "Rock-black-h8-0";
-        game = new ChessGame(des);
-        game.move(Move.Companion.byCode("d1-a4"));
-        possibleMoves = getPossibleMoves(game);
-
-        assertEquals(possibleMoves.size(), 6);
-
-        des = "black 0 King-white-e1-0 Rock-white-d2-2 Queen-black-e2 " +
-                "Bishop-black-b4 King-black-e8-0";
-        game = new ChessGame(des);
-        game.move(Move.Companion.byCode("b4-c3"));
-        possibleMoves = getPossibleMoves(game);
-
-        assertEquals(possibleMoves.size(), 1);
-
-        des = "black 0 King-white-g1-2 Pawn-black-c4-false Pawn-white-d4-true " +
-                "Bishop-black-b6 King-black-e8-0";
-        game = new ChessGame(des);
-        game.move(Move.Companion.byCode("c4-d3"));
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 4);
-
-        des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
-        game = new ChessGame(des);
-        game.move(Move.Companion.byCode("e8-a8"));
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 3);
-
-        des = "black 0 King-white-h1-3 Pawn-white-c7-false "
-                + "Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false "
-                + "Knight-black-a7 King-black-b7-3-false";
-        game = new ChessGame(des);
-        game.move(Move.Companion.byCode("b7-c6"));
-        game.move(Move.Companion.byCode("c7-c8"));
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 1);
-
-        des = "black 0 King-white-g7-6 King-black-e8-0 Rock-black-h8-0";
-        game = new ChessGame(des);
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 12);
-
-        des = "white 0 King-white-g6-6 Pawn-white-g7-false King-black-e8-0 Knight-black-h8";
-        game = new ChessGame(des);
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 7);
-
-        des = "white 0 Rock-white-b1-0 King-white-d1-0 Rock-white-e1-0 Bishop-black-d3 King-black-d8-0";
-        game = new ChessGame(des);
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 22);
-
-        game = new ChessGame(518);
-        game.move(Move.Companion.byCode("e2-e4"));
-        game.move(Move.Companion.byCode("d7-d5"));
-        game.move(Move.Companion.byCode("f1-b5"));
-        game.move(Move.Companion.byCode("c7-c6"));
-        game.move(Move.Companion.byCode("b5-c6"));
-        game.move(Move.Companion.byCode("b8-d7"));
-        game.move(Move.Companion.byCode("c6-b5"));
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 19);
-
-        game = new ChessGame(621);
-        game.move(Move.Companion.byCode("g2-g3"));
-        game.move(Move.Companion.byCode("f7-f6"));
-        game.move(Move.Companion.byCode("c2-c3"));
-        game.move(Move.Companion.byCode("g8-f7"));
-        game.move(Move.Companion.byCode("d1-c2"));
-        game.move(Move.Companion.byCode("e8-f8"));
-        game.move(Move.Companion.byCode("c2-h7"));
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 1);
-
-        des = "white 0 Rock-black-e1-8 "
-                + "Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 "
-                + "Knight-white-g4 Queen-black-e8 King-black-g7-3";
-        game = new ChessGame(des);
-        game.move(Move.Companion.byCode("f2-e1"));
-        game.move(Move.Companion.byCode("e2-f1"));
-        possibleMoves = getPossibleMoves(game);
-        assertEquals(possibleMoves.size(), 2);
+    @DataProvider
+    public Object[][] getTestGetPossibleMovesData() {
+        return new Object[][] {
+                new Object[] {new ChessGame(518), Arrays.asList("g1-f3", "b8-c6", "f3-g1", "c6-b4", "g1-f3", "b4-c2"), 1},
+                new Object[] {new ChessGame("black 0 King-white-g1-2 Bishop-black-b6 King-black-e8-0"), Arrays.asList("b6-c5"), 4},
+                new Object[] {new ChessGame("black 0 Rock-white-a1-0 Rock-white-f1-1 King-white-g1-1-true "
+                        + "Pawn-white-a2-false Pawn-white-b2-false Bishop-white-d2 Bishop-white-e2 "
+                        + "Pawn-white-f2-false Pawn-white-h2-false Queen-white-b3 Pawn-white-g3-false "
+                        + "Pawn-white-e4-false Pawn-black-b5-false Pawn-black-a6-false Bishop-black-b6 "
+                        + "Pawn-black-h6-false Bishop-black-b7 Pawn-black-f7-false Pawn-black-g7-false "
+                        + "Rock-black-c8-1 Queen-black-d8 Rock-black-f8-1 King-black-g8-1"), Arrays.asList("b6-f2"), 4},
+                new Object[] {new ChessGame("black 0 Pawn-white-b2-false King-white-d3-2 Rock-black-h4-1 " +
+                        "Rock-black-a8-0 King-black-e8-0"), Arrays.asList("a8-a3"), 5},
+                new Object[] {new ChessGame("black 0 King-white-d3-2 Knight-black-e5 Bishop-black-g8 King-black-e8-0"), Arrays.asList("g8-h7"), 5},
+                new Object[] {new ChessGame("white 2 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 King-white-e1-0 " +
+                        "Queen-white-d1 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 Pawn-white-a2-false " +
+                        "Pawn-white-b2-false Pawn-white-d2-false Pawn-white-e2-false " +
+                        "Pawn-white-f2-false Pawn-white-g2-false Pawn-white-h2-false " +
+                        "Pawn-white-c3-false Pawn-black-d6-false Pawn-black-a7-false " +
+                        "Pawn-black-b7-false Pawn-black-c7-false Pawn-black-e7-false Pawn-black-f7-false " +
+                        "Pawn-black-g7-false Pawn-black-h7-false Rock-black-a8-0 Knight-black-b8 " +
+                        "Bishop-black-c8 Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 " +
+                        "Rock-black-h8-0"), Arrays.asList("d1-a4"), 6},
+                new Object[] {new ChessGame("black 0 King-white-e1-0 Rock-white-d2-2 Queen-black-e2 " +
+                        "Bishop-black-b4 King-black-e8-0"), Arrays.asList("b4-c3"), 1},
+                new Object[] {new ChessGame("black 0 King-white-g1-2 Pawn-black-c4-false Pawn-white-d4-true " +
+                        "Bishop-black-b6 King-black-e8-0"), Arrays.asList("c4-d3"), 4},
+                new Object[] {new ChessGame("black 0 King-white-h1-3 Pawn-white-c7-false "
+                        + "Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false "
+                        + "Knight-black-a7 King-black-b7-3-false"), Arrays.asList("b7-c6", "c7-c8"), 1},
+                new Object[] {new ChessGame("black 0 King-white-g7-6 King-black-e8-0 Rock-black-h8-0"), Arrays.asList(), 12},
+                new Object[] {new ChessGame("white 0 King-white-g6-6 Pawn-white-g7-false King-black-e8-0 Knight-black-h8"), Arrays.asList(), 7},
+                new Object[] {new ChessGame("white 0 Rock-white-b1-0 King-white-d1-0 Rock-white-e1-0 Bishop-black-d3 King-black-d8-0"), Arrays.asList(), 21},
+                new Object[] {new ChessGame("white 0 Rock-white-b1-0 King-white-d1-0 Rock-white-e1-0 Rock-black-h1-1 Rock-black-a2-1 Knight-black-d3 King-black-d8-0"), Arrays.asList(), 12},
+                new Object[] {new ChessGame(518), Arrays.asList("e2-e4", "d7-d5", "f1-b5", "c7-c6", "b5-c6", "b8-d7", "c6-b5"), 19},
+                new Object[] {new ChessGame(621), Arrays.asList("g2-g3", "f7-f6", "c2-c3", "g8-f7", "d1-c2", "e8-f8", "c2-h7"), 1},
+                new Object[] {new ChessGame("white 0 Rock-black-e1-8 "
+                        + "Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 "
+                        + "Knight-white-g4 Queen-black-e8 King-black-g7-3"), Arrays.asList("f2-e1", "e2-f1"), 2},
+        };
     }
 
     @Test
