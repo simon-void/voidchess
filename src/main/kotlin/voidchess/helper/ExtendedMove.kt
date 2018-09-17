@@ -7,7 +7,7 @@ import voidchess.figures.Figure
  */
 class ExtendedMove(val move: Move,
                    val figureTaken: Figure?,
-                   val enpassentPawnOrRochadeRock: Figure?,
+                   val enpassentPawnOrRochadeRook: Figure?,
                    val colorOfMove: Boolean,
                    val isRochade: Boolean,
                    val isEnpassent: Boolean,

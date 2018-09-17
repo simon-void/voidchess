@@ -20,7 +20,7 @@ public class StaticSpaceEvaluationTest {
 
     @Test
     public void testEvaluation() {
-        String des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
+        String des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
         Evaluated evaluateForWhite = evaluation.getPrimaryEvaluation(game, true);
@@ -31,7 +31,7 @@ public class StaticSpaceEvaluationTest {
         assertEquals(getCombinedEvaluation(evaluateForBlack), -getCombinedEvaluation(evaluateForWhite));
 
 
-        des = "black 0 King-white-e1-0 Rock-black-b8-0 King-black-e8-0";
+        des = "black 0 King-white-e1-0 Rook-black-b8-0 King-black-e8-0";
         ChessGame game2 = new ChessGame(des);
 
         Evaluated evaluateForWhite2 = evaluation.getPrimaryEvaluation(game2, true);
@@ -50,7 +50,7 @@ public class StaticSpaceEvaluationTest {
 
     @Test
     public void testCountRestSpace() {
-        String des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0";
+        String des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
         List otherPositions = new LinkedList();
@@ -60,7 +60,7 @@ public class StaticSpaceEvaluationTest {
 
         assertEquals(evaluation.countRestSpace(game, kingPos, otherPositions), 48);
 
-        des = "black 0 King-white-e1-0 Rock-black-e7-0 King-black-e8-0";
+        des = "black 0 King-white-e1-0 Rook-black-e7-0 King-black-e8-0";
         game = new ChessGame(des);
 
         otherPositions.clear();

@@ -20,7 +20,7 @@ public class CheckSearch {
         isCheckByKing(game, kingPos, attackPositions);
         isCheckByKnight(game, kingPos, attackPositions, isWhite);
         isCheckByPawn(game, kingPos, attackPositions, isWhite);
-        isCheckByRockOrQueen(game, kingPos, attackPositions, isWhite);
+        isCheckByRookOrQueen(game, kingPos, attackPositions, isWhite);
 
         switch (attackPositions.size()) {
             case 0:
@@ -129,12 +129,12 @@ public class CheckSearch {
     private static CheckStatus analyseCheckAfterRochade(SimpleChessBoardInterface game, boolean whiteInCheck, Move lastMove) {
         final Position kingPos = game.getKingPosition(whiteInCheck);
 
-        final int rock_row = lastMove.getTo().getRow();
-        final int rock_column = lastMove.getTo().getColumn() == 2 ? 3 : 5;
-        final Position rockPos = Position.Companion.get(rock_row, rock_column);
-        final Figure rock = game.getFigure(rockPos);
+        final int Rook_row = lastMove.getTo().getRow();
+        final int Rook_column = lastMove.getTo().getColumn() == 2 ? 3 : 5;
+        final Position RookPos = Position.Companion.get(Rook_row, Rook_column);
+        final Figure Rook = game.getFigure(RookPos);
 
-        if (rock.isReachable(kingPos, game)) return getPossiblePositions(kingPos, rockPos);
+        if (Rook.isReachable(kingPos, game)) return getPossiblePositions(kingPos, RookPos);
         return CheckStatus.Companion.getNO_CHECK();
     }
 
@@ -157,7 +157,7 @@ public class CheckSearch {
 
         final List<Position> attackPositions = new ArrayList<Position>(2);
         if (isCheckByBishopOrQueen(game, kingPos, attackPositions, isWhite)) return true;
-        if (isCheckByRockOrQueen(game, kingPos, attackPositions, isWhite)) return true;
+        if (isCheckByRookOrQueen(game, kingPos, attackPositions, isWhite)) return true;
         if (isCheckByKnight(game, kingPos, attackPositions, isWhite)) return true;
         if (isCheckByKing(game, kingPos, attackPositions)) return true;
         return isCheckByPawn(game, kingPos, attackPositions, isWhite);
@@ -309,7 +309,7 @@ public class CheckSearch {
         return false;
     }
 
-    private static boolean isCheckByRockOrQueen(
+    private static boolean isCheckByRookOrQueen(
             final BasicChessGameInterface game, final Position kingPos, final List<Position> attackerPos, final boolean isWhite) {
         if (isDoubleHorizontalCheckAfterPawnTransformation(game, kingPos, attackerPos, isWhite)) return true;
 
@@ -320,7 +320,7 @@ public class CheckSearch {
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
-            if (figure.isRock() || figure.isQueen()) {
+            if (figure.isRook() || figure.isQueen()) {
                 attackerPos.add(pos);
                 return true;
             }
@@ -331,7 +331,7 @@ public class CheckSearch {
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
-            if (figure.isRock() || figure.isQueen()) {
+            if (figure.isRook() || figure.isQueen()) {
                 attackerPos.add(pos);
                 return true;
             }
@@ -342,7 +342,7 @@ public class CheckSearch {
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
-            if (figure.isRock() || figure.isQueen()) {
+            if (figure.isRook() || figure.isQueen()) {
                 attackerPos.add(pos);
                 return true;
             }
@@ -353,7 +353,7 @@ public class CheckSearch {
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
-            if (figure.isRock() || figure.isQueen()) {
+            if (figure.isRook() || figure.isQueen()) {
                 attackerPos.add(pos);
                 return true;
             }
@@ -364,7 +364,7 @@ public class CheckSearch {
 
     private static boolean isDoubleHorizontalCheckAfterPawnTransformation(
             final BasicChessGameInterface game, final Position kingPos, final List<Position> attackerPos, final boolean isWhite) {
-        //only possible if the king stod in the columnshadow of a pawn which transformed in the last move to rock or queen
+        //only possible if the king stod in the columnshadow of a pawn which transformed in the last move to Rook or queen
         final int groundRow = isWhite ? 0 : 7;
         if (kingPos.getRow() != groundRow) return false;
 
@@ -374,7 +374,7 @@ public class CheckSearch {
             final Position leftKingPos = Position.Companion.get(groundRow, kingPos.getColumn() - 1);
             final Figure leftFromKingFigure = game.getFigure(leftKingPos);
             if (leftFromKingFigure != null && leftFromKingFigure.isWhite() != isWhite &&
-                    (leftFromKingFigure.isQueen() || leftFromKingFigure.isRock())) {
+                    (leftFromKingFigure.isQueen() || leftFromKingFigure.isRook())) {
                 kingSideAttackerPos = leftKingPos;
             }
         }
@@ -383,7 +383,7 @@ public class CheckSearch {
             final Position rightKingPos = Position.Companion.get(groundRow, kingPos.getColumn() + 1);
             final Figure rightFromKingFigure = game.getFigure(rightKingPos);
             if (rightFromKingFigure != null && rightFromKingFigure.isWhite() != isWhite &&
-                    (rightFromKingFigure.isQueen() || rightFromKingFigure.isRock())) {
+                    (rightFromKingFigure.isQueen() || rightFromKingFigure.isRook())) {
                 kingSideAttackerPos = rightKingPos;
             }
         }
@@ -400,7 +400,7 @@ public class CheckSearch {
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             //either figure says 'chess' or king is not in danger
-            if (figure.isWhite() != isWhite && (figure.isRock() || figure.isQueen())) {
+            if (figure.isWhite() != isWhite && (figure.isRook() || figure.isQueen())) {
                 attackerPos.add(kingSideAttackerPos);
                 attackerPos.add(pos);
                 return true;

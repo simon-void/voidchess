@@ -66,25 +66,25 @@ public class SingleThreadStrategyTest {
                 //best move with matt
                 new Object[]{
                         1,
-                        "black 0 King-white-h1-3 Pawn-white-g2-false Pawn-white-h2-false Rock-black-f4-2 King-black-e8-0",
+                        "black 0 King-white-h1-3 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f4-2 King-black-e8-0",
                         Move.Companion.byCode("f4-f1")
                 },
                 //color inverted matt
                 new Object[]{
                         1,
-                        "white 0 King-black-h8-3 Pawn-black-g7-false Pawn-black-h7-false Rock-white-f4-2 King-white-e1-0",
+                        "white 0 King-black-h8-3 Pawn-black-g7-false Pawn-black-h7-false Rook-white-f4-2 King-white-e1-0",
                         Move.Companion.byCode("f4-f8")
                 },
                 //best move with value
                 new Object[]{
                         1,
-                        "white 0 King-white-e1-0 Pawn-white-g2-false Pawn-white-h2-false Rock-black-f2-2 King-black-e8-0",
+                        "white 0 King-white-e1-0 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f2-2 King-black-e8-0",
                         Move.Companion.byCode("e1-f2")
                 },
                 //best matt move in 2
                 new Object[]{
                         2,
-                        "white 0 Bishop-white-a1 Rock-black-b2-2 Knight-black-c2 Pawn-white-d6-false King-white-g6-8  King-black-h8-4",
+                        "white 0 Bishop-white-a1 Rook-black-b2-2 Knight-black-c2 Pawn-white-d6-false King-white-g6-8  King-black-h8-4",
                         Move.Companion.byCode("d6-d7")
                 },
         };
@@ -96,19 +96,19 @@ public class SingleThreadStrategyTest {
                 //worst move goes into matt
                 new Object[]{
                         1,
-                        "white 0 King-white-g1-2 Pawn-white-g2-false Pawn-white-h2-false Rock-black-f4-2 King-black-e8-0",
+                        "white 0 King-white-g1-2 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f4-2 King-black-e8-0",
                         Move.Companion.byCode("g1-h1")
                 },
                 //color inverted worst move goes into matt
                 new Object[]{
                         1,
-                        "black 0 King-black-g8-2 Pawn-black-g7-false Pawn-black-h7-false Rock-white-f4-2 King-white-e1-0",
+                        "black 0 King-black-g8-2 Pawn-black-g7-false Pawn-black-h7-false Rook-white-f4-2 King-white-e1-0",
                         Move.Companion.byCode("g8-h8")
                 },
                 //worst move by value
                 new Object[]{
                         1,
-                        "white 0 King-white-e1-0 Rock-black-f2-2 Queen-black-d1 King-black-e8-0",
+                        "white 0 King-white-e1-0 Rook-black-f2-2 Queen-black-d1 King-black-e8-0",
                         Move.Companion.byCode("e1-f2")
                 },
         };

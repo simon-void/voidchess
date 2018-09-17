@@ -17,14 +17,14 @@ import static org.testng.Assert.*;
  */
 public class SimpleBoardTest {
     private SimpleChessBoardInterface board;
-    final private String initial = "Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 " +
-            "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 " +
+    final private String initial = "Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 " +
+            "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 " +
             "Pawn-white-a2-false Pawn-white-b2-false Pawn-white-c2-false Pawn-white-d2-false " +
             "Pawn-white-e2-false Pawn-white-f2-false Pawn-white-g2-false Pawn-white-h2-false " +
             "Pawn-black-a7-false Pawn-black-b7-false Pawn-black-c7-false Pawn-black-d7-false " +
             "Pawn-black-e7-false Pawn-black-f7-false Pawn-black-g7-false Pawn-black-h7-false " +
-            "Rock-black-a8-0 Knight-black-b8 Bishop-black-c8 " +
-            "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
+            "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 " +
+            "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0";
 
     @BeforeMethod
     public void setUp() {
@@ -34,7 +34,7 @@ public class SimpleBoardTest {
     @Test
     public void testInit() {
         Figure figure = board.getFigure(Position.Companion.byCode("a1"));
-        assertTrue(figure.isRock());
+        assertTrue(figure.isRook());
         assertTrue(figure.isWhite());
 
         figure = board.getFigure(Position.Companion.byCode("e8"));
@@ -91,7 +91,7 @@ public class SimpleBoardTest {
         CheckStatus status = board.getCheckStatus(true);
         assertFalse(status.isCheck());
 
-        String des = "white 0 King-white-e1-0 Rock-white-h2-1 Queen-black-b4";
+        String des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-b4";
         board.init(des);
         status = board.getCheckStatus(true);
         assertTrue(status.isCheck());
@@ -99,7 +99,7 @@ public class SimpleBoardTest {
         assertEquals(status.getCheckInterceptPositions().size(), 3);
 
         des = "white 0 King-white-e2-3 Knight-black-g1 "
-                + "Knight-white-f3 Rock-black-h2-12 King-black-g7-3";
+                + "Knight-white-f3 Rook-black-h2-12 King-black-g7-3";
         board.init(des);
         status = board.getCheckStatus(true);
         assertTrue(status.isCheck());

@@ -56,7 +56,7 @@ public class FigureTest {
     public void testSubtypes() {
         Position pos = Position.Companion.byCode("g4");
         new Pawn(true, pos);
-        new Rock(true, pos);
+        new Rook(true, pos);
         new Knight(true, pos);
         new Bishop(true, pos);
         new Queen(true, pos);
@@ -67,7 +67,7 @@ public class FigureTest {
     public void testIsWhite() {
         Position pos = Position.Companion.byCode("g4");
 
-        Figure figure1 = new Rock(true, pos);
+        Figure figure1 = new Rook(true, pos);
         assertTrue(figure1.isWhite());
 
         Figure figure2 = new Knight(false, pos);
@@ -100,15 +100,15 @@ public class FigureTest {
         king.figureMoved(move);
         assertFalse(king.canParticipateInRochade(), "moved king");
 
-        Figure rock = new Rock(false, from);
-        assertTrue(rock.canParticipateInRochade(), "unmoved rock");
-        rock.figureMoved(move);
-        assertFalse(rock.canParticipateInRochade(), "moved rock");
+        Figure Rook = new Rook(false, from);
+        assertTrue(Rook.canParticipateInRochade(), "unmoved Rook");
+        Rook.figureMoved(move);
+        assertFalse(Rook.canParticipateInRochade(), "moved Rook");
     }
 
     @Test
     public void testIsPassivetBound() {
-        String des = "white 0 King-white-e1-0 Rock-white-e3-4 Queen-black-e5";
+        String des = "white 0 King-white-e1-0 Rook-white-e3-4 Queen-black-e5";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Position from = Position.Companion.byCode("e3");
@@ -118,18 +118,18 @@ public class FigureTest {
         Position to4 = Position.Companion.byCode("e6");
         Position to5 = Position.Companion.byCode("d3");
 
-        Rock rock = new Rock(true, from);
+        Rook rook = new Rook(true, from);
 
-        assertFalse(rock.isPassiveBound(to1, game));
-        assertFalse(rock.isPassiveBound(to2, game));
-        assertFalse(rock.isPassiveBound(to3, game));
-        assertTrue(rock.isPassiveBound(to4, game));
-        assertTrue(rock.isPassiveBound(to5, game));
+        assertFalse(rook.isPassiveBound(to1, game));
+        assertFalse(rook.isPassiveBound(to2, game));
+        assertFalse(rook.isPassiveBound(to3, game));
+        assertTrue(rook.isPassiveBound(to4, game));
+        assertTrue(rook.isPassiveBound(to5, game));
     }
 
     @Test
     public void testIsBound() throws Exception {
-        String des = "white 0 King-white-e1-0 Rock-white-e3-4 Queen-black-e5";
+        String des = "white 0 King-white-e1-0 Rook-white-e3-4 Queen-black-e5";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Position from1 = Position.Companion.byCode("e3");
@@ -142,30 +142,30 @@ public class FigureTest {
         Position to6 = Position.Companion.byCode("d2");
         Position to7 = Position.Companion.byCode("a1");
 
-        Rock rock = new Rock(true, from1);
+        Rook rook = new Rook(true, from1);
         King king = new King(true, from2);
 
-        assertFalse(rock.isBound(to1, game));
-        assertFalse(rock.isBound(to2, game));
-        assertFalse(rock.isBound(to3, game));
-        assertTrue(rock.isBound(to4, game));
-        assertTrue(rock.isBound(to5, game));
+        assertFalse(rook.isBound(to1, game));
+        assertFalse(rook.isBound(to2, game));
+        assertFalse(rook.isBound(to3, game));
+        assertTrue(rook.isBound(to4, game));
+        assertTrue(rook.isBound(to5, game));
         assertFalse(king.isBound(to1, game));
         assertFalse(king.isBound(to6, game));
 
-        des = "white 0 Rock-white-a1-0 King-white-e1-0 Rock-white-e3-4 Bishop-black-c3 Queen-black-e5";
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-e3-4 Bishop-black-c3 Queen-black-e5";
         game.init(des);
 
-        assertTrue(rock.isBound(to1, game));
-        assertTrue(rock.isBound(to2, game));
-        assertTrue(rock.isBound(to3, game));
-        assertTrue(rock.isBound(to4, game));
-        assertTrue(rock.isBound(to5, game));
+        assertTrue(rook.isBound(to1, game));
+        assertTrue(rook.isBound(to2, game));
+        assertTrue(rook.isBound(to3, game));
+        assertTrue(rook.isBound(to4, game));
+        assertTrue(rook.isBound(to5, game));
         assertFalse(king.isBound(to1, game));
         assertTrue(king.isBound(to6, game));
         assertTrue(king.isBound(to7, game));
 
-        des = "white 0 Rock-white-a1-0 King-white-e1-0 Bishop-black-e2";
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Bishop-black-e2";
         game.init(des);
 
         assertFalse(king.isBound(to1, game));
@@ -175,7 +175,7 @@ public class FigureTest {
 
     @Test
     public void testIsMoveable() {
-        String des = "white 0 King-white-e1-0 Rock-white-h2-1 Queen-black-h4";
+        String des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-h4";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Position from = Position.Companion.byCode("h2");
@@ -184,12 +184,12 @@ public class FigureTest {
         Position to3 = Position.Companion.byCode("g3");
         Position to4 = Position.Companion.byCode("e2");
 
-        Rock rock = new Rock(true, from);
+        Rook rook = new Rook(true, from);
 
-        assertTrue(rock.isMovable(to1, game));
-        assertTrue(rock.isMovable(to2, game));
-        assertFalse(rock.isMovable(to3, game));
-        assertFalse(rock.isMovable(to4, game));
+        assertTrue(rook.isMovable(to1, game));
+        assertTrue(rook.isMovable(to2, game));
+        assertFalse(rook.isMovable(to3, game));
+        assertFalse(rook.isMovable(to4, game));
     }
 
     @Test
@@ -206,14 +206,14 @@ public class FigureTest {
         assertTrue(pawn1.getTypeInfo() != pawn3.getTypeInfo()); //unterschiedliche TypeInfo bei unterschiedliche Farbe
         assertTrue(pawn1.getTypeInfo() == pawn4.getTypeInfo()); //Position geht nicht mit ein
 
-        Rock rock = new Rock(true, from1);
+        Rook rook = new Rook(true, from1);
         Knight knight = new Knight(true, from1);
         Bishop bishop = new Bishop(true, from1);
         Queen queen = new Queen(true, from1);
         King king = new King(true, from2);
 
         Integer pawnByte = pawn1.getTypeInfo();
-        Integer rockByte = rock.getTypeInfo();
+        Integer RookByte = rook.getTypeInfo();
         Integer knightByte = knight.getTypeInfo();
         Integer bishopByte = bishop.getTypeInfo();
         Integer queenByte = queen.getTypeInfo();
@@ -223,10 +223,10 @@ public class FigureTest {
         //Die byte-Werte müssen paarweise disjunkt sein
         figureByteList.add(pawnByte);
         assertFalse(
-                figureByteList.contains(rockByte),
+                figureByteList.contains(RookByte),
                 "Bytewert sollte noch nicht in der Liste sein"
         );
-        figureByteList.add(rockByte);
+        figureByteList.add(RookByte);
         assertFalse(
                 figureByteList.contains(knightByte),
                 "Bytewert sollte noch nicht in der Liste sein"

@@ -19,8 +19,8 @@ import static org.testng.Assert.*;
 public class KingTest {
     @Test
     public void testIsReachable() {
-        String des = "white 0 Rock-white-a1-0 King-white-e1-0 "
-                + "Rock-white-h1-0";
+        String des = "white 0 Rook-white-a1-0 King-white-e1-0 "
+                + "Rook-white-h1-0";
         ChessGame game = new ChessGame(des);
 
         Position from = Position.Companion.byCode("e1");
@@ -45,8 +45,8 @@ public class KingTest {
         assertTrue(king.isReachable(to8, game));
 
 
-        des = "black 0 Rock-black-a8-0 Knight-black-b8 "
-                + "King-black-c8-0 Rock-black-h8-0";
+        des = "black 0 Rook-black-a8-0 Knight-black-b8 "
+                + "King-black-c8-0 Rook-black-h8-0";
         game = new ChessGame(des);
 
         from = Position.Companion.byCode("c8");
@@ -89,8 +89,8 @@ public class KingTest {
 
     @Test
     public void testIsPassiveBound() {
-        String des = "black 0 Knight-white-b6 Rock-black-a8-0 "
-                + "King-black-e8-0 Rock-black-h8-0";
+        String des = "black 0 Knight-white-b6 Rook-black-a8-0 "
+                + "King-black-e8-0 Rook-black-h8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Position from = Position.Companion.byCode("e8");
@@ -106,8 +106,8 @@ public class KingTest {
         assertFalse(king.isPassiveBound(to3, game));
         assertFalse(king.isPassiveBound(to4, game));
 
-        des = "black 0 Bishop-white-c6 Rock-black-a8-0 "
-                + "King-black-e8-0 Rock-black-h8-0";
+        des = "black 0 Bishop-white-c6 Rook-black-a8-0 "
+                + "King-black-e8-0 Rook-black-h8-0";
         game.init(des);
         from = Position.Companion.byCode("e8");
         to1 = Position.Companion.byCode("a8");
@@ -125,8 +125,8 @@ public class KingTest {
 
     @Test
     public void testGetPossibleMoves() {
-        String des = "white 0 Rock-white-a1-0 King-white-f1-0 "
-                + "Rock-white-h1-0";
+        String des = "white 0 Rook-white-a1-0 King-white-f1-0 "
+                + "Rook-white-h1-0";
         SimpleArrayBoard board = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Figure king = board.getFigure(Position.Companion.byCode("f1"));
@@ -153,7 +153,7 @@ public class KingTest {
 
     @Test
     public void testDidRochade() {
-        String des = "white 0 Rock-white-a1-0 King-white-e1-0 "
+        String des = "white 0 Rook-white-a1-0 King-white-e1-0 "
                 + "King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
@@ -167,14 +167,14 @@ public class KingTest {
     public void testImmidiatlyRochadeInChess960Positions() {
         //siehe https://de.wikipedia.org/wiki/Chess960#Rochaderegeln
 
-        //rock on a1, king on b1 so b1-a1 should be possible as a first move
+        //Rook on a1, king on b1 so b1-a1 should be possible as a first move
         ChessGame game = new ChessGame(314);
         Position c1 = Position.Companion.byCode("c1");
         Position d1 = Position.Companion.byCode("d1");
         boolean isRochadePossible = game.isMoveable(d1, c1, true);
         assertTrue(isRochadePossible, "rochade should be possible");
 
-        //rock on a1, king on b1 so b1-a1 should be be possible as a first move
+        //Rook on a1, king on b1 so b1-a1 should be be possible as a first move
         game = new ChessGame(759);
         Position a1 = Position.Companion.byCode("a1");
         Position b1 = Position.Companion.byCode("b1");

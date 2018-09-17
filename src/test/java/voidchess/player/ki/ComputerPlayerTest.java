@@ -51,12 +51,12 @@ public class ComputerPlayerTest {
         testTermination(game);
 
         des = "black 0 Bishop-white-b1 King-white-h1-3 "
-                + "Pawn-black-f7-false King-black-e8-0 Rock-black-f8-0";
+                + "Pawn-black-f7-false King-black-e8-0 Rook-black-f8-0";
 
         game = new ChessGame(des);
         testTermination(game);
 
-        des = "white 0 Rock-black-e1-8 "
+        des = "white 0 Rook-black-e1-8 "
                 + "Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 "
                 + "Knight-white-g4 Queen-black-e5 King-black-g7-3";
 
@@ -84,14 +84,14 @@ public class ComputerPlayerTest {
 
     @Test
     public void testInvarianz() {
-        String des = "black 0 Rock-white-a1-0 King-white-e1-0 Pawn-white-a5-false "
-                + "Pawn-black-b7-false King-black-e8-0 Rock-black-h8-3";
+        String des = "black 0 Rook-white-a1-0 King-white-e1-0 Pawn-white-a5-false "
+                + "Pawn-black-b7-false King-black-e8-0 Rook-black-h8-3";
 
         ChessGame game = new ChessGame(des);
         game.move(Move.Companion.byCode("b7-b5"));
         testTermination(game);
-        String newDes = "white 1 Rock-white-a1-0 King-white-e1-0 Pawn-white-a5-false "
-                + "Pawn-black-b5-true King-black-e8-0 Rock-black-h8-3";
+        String newDes = "white 1 Rook-white-a1-0 King-white-e1-0 Pawn-white-a5-false "
+                + "Pawn-black-b5-true King-black-e8-0 Rook-black-h8-3";
         assertEquals(game.toString(), newDes);
     }
 
@@ -183,45 +183,45 @@ public class ComputerPlayerTest {
         System.out.println("Loadtest: Start");
 
         // Grundaufstellung ohne Bauern
-        String des = "white 0 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "
-                + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 "
-                + "Rock-black-a8-0 Knight-black-b8 Bishop-black-c8 "
-                + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
+        String des = "white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
+                + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
+                + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
+                + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0";
         loadTest( des );
 
         // Grundaufstellung mit Bauern vor König und ohne Läufer
-        des = "white 0 Rock-white-a1-0 Knight-white-b1 "
-                + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rock-white-h1-0 "
+        des = "white 0 Rook-white-a1-0 Knight-white-b1 "
+                + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rook-white-h1-0 "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
-                + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false " + "Rock-black-a8-0 Knight-black-b8 "
-                + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rock-black-h8-0";
+                + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false " + "Rook-black-a8-0 Knight-black-b8 "
+                + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rook-black-h8-0";
         // loadTest( des );
 
         // Grundaufstellung mit Bauern vor König und ohne Königsläufer
-        des = "white 0 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "
-                + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rock-white-h1-0 "
+        des = "white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
+                + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rook-white-h1-0 "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
                 + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
-                + "Rock-black-a8-0 Knight-black-b8 Bishop-black-c8 "
-                + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rock-black-h8-0";
+                + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
+                + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rook-black-h8-0";
         // loadTest( des );
 
         // Grundaufstellung mit Bauern vor König
-        des = "white 0 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "
-                + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 "
+        des = "white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
+                + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
                 + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
-                + "Rock-black-a8-0 Knight-black-b8 Bishop-black-c8 "
-                + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
+                + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
+                + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0";
         // loadTest( des );
 
         // Grundaufstellung mit Bauern vor König und ohne Damen
-        des = "white 0 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "
-                + "King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 "
+        des = "white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
+                + "King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
                 + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
-                + "Rock-black-a8-0 Knight-black-b8 Bishop-black-c8 "
-                + "King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
+                + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
+                + "King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0";
         // loadTest( des );
 
         // Zeit von

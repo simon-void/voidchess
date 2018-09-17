@@ -48,18 +48,18 @@ public class ChessGameTest {
     @Test
     public void testToString() {
         String code = "white 0 "
-                + "Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 "
+                + "Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
                 + "Queen-white-d1 King-white-e1-0 "
-                + "Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 "
+                + "Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
                 + "Pawn-white-a2-false Pawn-white-b2-false Pawn-white-c2-false "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
                 + "Pawn-white-g2-false Pawn-white-h2-false "
                 + "Pawn-black-a7-false Pawn-black-b7-false Pawn-black-c7-false "
                 + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
                 + "Pawn-black-g7-false Pawn-black-h7-false "
-                + "Rock-black-a8-0 Knight-black-b8 Bishop-black-c8 "
+                + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
                 + "Queen-black-d8 King-black-e8-0 "
-                + "Bishop-black-f8 Knight-black-g8 Rock-black-h8-0";
+                + "Bishop-black-f8 Knight-black-g8 Rook-black-h8-0";
         assertEquals(game.toString(), code);
     }
 
@@ -123,13 +123,13 @@ public class ChessGameTest {
 
     @Test
     public void testUndo() {
-        String des = "white 0 King-white-e1-0 Rock-white-h1-0 King-black-e8-0";
+        String des = "white 0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
         Position pos1 = Position.Companion.byCode("e1");
         Position pos2 = Position.Companion.byCode("h1");
         Move move = Move.Companion.get(pos1, pos2);
         game.move(move);
-        String new_des = "black 1 Rock-white-f1-1 King-white-g1-1-true King-black-e8-0";
+        String new_des = "black 1 Rook-white-f1-1 King-white-g1-1-true King-black-e8-0";
 
         assertEquals(game.toString(), new_des);
         game.undo();
@@ -137,7 +137,7 @@ public class ChessGameTest {
         assertTrue(game.isMoveable(pos1, pos2, true));
 
 
-        des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-f8-0";
+        des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-f8-0";
         game = new ChessGame(des);
         pos1 = Position.Companion.byCode("f8");
         pos2 = Position.Companion.byCode("g8");
@@ -161,16 +161,16 @@ public class ChessGameTest {
         assertTrue(game.isMoveable(pos1, pos2, true));
 
 
-        des = "white 4 Rock-white-a1-0 King-white-e1-0 Bishop-white-f1 " +
-                "Rock-white-h1-0 Pawn-white-b2-false Queen-white-d2 " +
+        des = "white 4 Rook-white-a1-0 King-white-e1-0 Bishop-white-f1 " +
+                "Rook-white-h1-0 Pawn-white-b2-false Queen-white-d2 " +
                 "Pawn-white-f2-false Pawn-white-g2-false Pawn-white-h2-false " +
                 "Pawn-white-a3-false Knight-white-c3 Knight-white-f3 " +
                 "Pawn-white-c4-false Pawn-black-h4-false Pawn-white-e5-false " +
                 "Bishop-black-a6 Pawn-black-b6-false Knight-black-c6 " +
                 "Pawn-black-e6-false Pawn-black-h6-false Pawn-black-a7-false " +
                 "Pawn-black-c7-false Pawn-black-d7-false Pawn-black-f7-false " +
-                "Rock-black-a8-0 Queen-black-d8 King-black-e8-0 " +
-                "Rock-black-h8-0";
+                "Rook-black-a8-0 Queen-black-d8 King-black-e8-0 " +
+                "Rook-black-h8-0";
         game = new ChessGame(des);
         pos1 = Position.Companion.byCode("e1");
         pos2 = Position.Companion.byCode("a1");
@@ -291,39 +291,39 @@ public class ChessGameTest {
 
     @Test
     public void testHandleRochade() {
-        String des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-e8-0 ";
+        String des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0 ";
         ChessGame game = new ChessGame(des);
         Move move = Move.Companion.get(Position.Companion.byCode("e8"), Position.Companion.byCode("a8"));
         game.move(move);
-        String new_des = "white 1 King-white-e1-0 King-black-c8-1-true Rock-black-d8-1";
+        String new_des = "white 1 King-white-e1-0 King-black-c8-1-true Rook-black-d8-1";
         assertEquals(game.toString(), new_des);
 
-        des = "black 0 King-white-e1-0 Rock-black-a8-0 King-black-f8-0 ";
+        des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-f8-0 ";
         game = new ChessGame(des);
         move = Move.Companion.get(Position.Companion.byCode("f8"), Position.Companion.byCode("a8"));
         game.move(move);
-        new_des = "white 1 King-white-e1-0 King-black-c8-1-true Rock-black-d8-1";
+        new_des = "white 1 King-white-e1-0 King-black-c8-1-true Rook-black-d8-1";
         assertEquals(game.toString(), new_des);
 
-        des = "white 0 King-white-e1-0 Rock-white-h1-0 King-black-e8-0 ";
+        des = "white 0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0 ";
         game = new ChessGame(des);
         move = Move.Companion.get(Position.Companion.byCode("e1"), Position.Companion.byCode("h1"));
         game.move(move);
-        new_des = "black 1 Rock-white-f1-1 King-white-g1-1-true King-black-e8-0";
+        new_des = "black 1 Rook-white-f1-1 King-white-g1-1-true King-black-e8-0";
         assertEquals(game.toString(), new_des);
 
-        des = "white 0 King-white-g1-0 Rock-white-h1-0 King-black-e8-0 ";
+        des = "white 0 King-white-g1-0 Rook-white-h1-0 King-black-e8-0 ";
         game = new ChessGame(des);
         move = Move.Companion.get(Position.Companion.byCode("g1"), Position.Companion.byCode("h1"));
         game.move(move);
-        new_des = "black 1 Rock-white-f1-1 King-white-g1-1-true King-black-e8-0";
+        new_des = "black 1 Rook-white-f1-1 King-white-g1-1-true King-black-e8-0";
         assertEquals(game.toString(), new_des);
 
-        des = "white 0 King-white-f1-0 Rock-white-g1-0 King-black-e8-0 ";
+        des = "white 0 King-white-f1-0 Rook-white-g1-0 King-black-e8-0 ";
         game = new ChessGame(des);
         move = Move.Companion.get(Position.Companion.byCode("f1"), Position.Companion.byCode("g1"));
         game.move(move);
-        new_des = "black 1 Rock-white-f1-1 King-white-g1-1-true King-black-e8-0";
+        new_des = "black 1 Rook-white-f1-1 King-white-g1-1-true King-black-e8-0";
         assertEquals(game.toString(), new_des);
     }
 
@@ -357,7 +357,7 @@ public class ChessGameTest {
     @Test
     public void testIsDrawBecauseOfThreeTimesSamePosition() {
         //Ich gehe davon aus, daß es ein Unterschied in der Stellung ist,
-        //ob der König noch rockadefähig ist, oder nicht
+        //ob der König noch Rookadefähig ist, oder nicht
         String des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 "
                 + "Knight-white-c2 Knight-white-e7 King-black-e8-0";
         ChessGame game = new ChessGame(des);
@@ -428,7 +428,7 @@ public class ChessGameTest {
         assertTrue(game.isSelectable(Position.Companion.byCode("c8"), false));
 
         des = "black 0 King-white-e1-0 Queen-white-e2 "
-                + "Rock-black-a6-1 King-black-e8-0";
+                + "Rook-black-a6-1 King-black-e8-0";
         game = new ChessGame(des);
         assertTrue(game.isSelectable(Position.Companion.byCode("a6"), false));
     }
@@ -443,11 +443,11 @@ public class ChessGameTest {
         assertTrue(game.isMoveable(Position.Companion.byCode("e6"), Position.Companion.byCode("e7"), true));
 
         des = "black 0 King-white-e1-0 Pawn-black-a5-false "
-                + "King-black-g6-2 Rock-white-h6-1";
+                + "King-black-g6-2 Rook-white-h6-1";
         game = new ChessGame(des);
         assertFalse(game.isMoveable(Position.Companion.byCode("a5"), Position.Companion.byCode("a4"), false));
 
-        des = "black 0 King-white-g7-6 King-black-e8-0 Rock-black-h8-0";
+        des = "black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0";
         game = new ChessGame(des);
         assertFalse(game.isMoveable(Position.Companion.byCode("e8"), Position.Companion.byCode("g8"), false));
 
@@ -538,38 +538,38 @@ public class ChessGameTest {
         return new Object[][] {
                 new Object[] {new ChessGame(518), Arrays.asList("g1-f3", "b8-c6", "f3-g1", "c6-b4", "g1-f3", "b4-c2"), 1},
                 new Object[] {new ChessGame("black 0 King-white-g1-2 Bishop-black-b6 King-black-e8-0"), Arrays.asList("b6-c5"), 4},
-                new Object[] {new ChessGame("black 0 Rock-white-a1-0 Rock-white-f1-1 King-white-g1-1-true "
+                new Object[] {new ChessGame("black 0 Rook-white-a1-0 Rook-white-f1-1 King-white-g1-1-true "
                         + "Pawn-white-a2-false Pawn-white-b2-false Bishop-white-d2 Bishop-white-e2 "
                         + "Pawn-white-f2-false Pawn-white-h2-false Queen-white-b3 Pawn-white-g3-false "
                         + "Pawn-white-e4-false Pawn-black-b5-false Pawn-black-a6-false Bishop-black-b6 "
                         + "Pawn-black-h6-false Bishop-black-b7 Pawn-black-f7-false Pawn-black-g7-false "
-                        + "Rock-black-c8-1 Queen-black-d8 Rock-black-f8-1 King-black-g8-1"), Arrays.asList("b6-f2"), 4},
-                new Object[] {new ChessGame("black 0 Pawn-white-b2-false King-white-d3-2 Rock-black-h4-1 " +
-                        "Rock-black-a8-0 King-black-e8-0"), Arrays.asList("a8-a3"), 5},
+                        + "Rook-black-c8-1 Queen-black-d8 Rook-black-f8-1 King-black-g8-1"), Arrays.asList("b6-f2"), 4},
+                new Object[] {new ChessGame("black 0 Pawn-white-b2-false King-white-d3-2 Rook-black-h4-1 " +
+                        "Rook-black-a8-0 King-black-e8-0"), Arrays.asList("a8-a3"), 5},
                 new Object[] {new ChessGame("black 0 King-white-d3-2 Knight-black-e5 Bishop-black-g8 King-black-e8-0"), Arrays.asList("g8-h7"), 5},
-                new Object[] {new ChessGame("white 2 Rock-white-a1-0 Knight-white-b1 Bishop-white-c1 King-white-e1-0 " +
-                        "Queen-white-d1 Bishop-white-f1 Knight-white-g1 Rock-white-h1-0 Pawn-white-a2-false " +
+                new Object[] {new ChessGame("white 2 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 King-white-e1-0 " +
+                        "Queen-white-d1 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 Pawn-white-a2-false " +
                         "Pawn-white-b2-false Pawn-white-d2-false Pawn-white-e2-false " +
                         "Pawn-white-f2-false Pawn-white-g2-false Pawn-white-h2-false " +
                         "Pawn-white-c3-false Pawn-black-d6-false Pawn-black-a7-false " +
                         "Pawn-black-b7-false Pawn-black-c7-false Pawn-black-e7-false Pawn-black-f7-false " +
-                        "Pawn-black-g7-false Pawn-black-h7-false Rock-black-a8-0 Knight-black-b8 " +
+                        "Pawn-black-g7-false Pawn-black-h7-false Rook-black-a8-0 Knight-black-b8 " +
                         "Bishop-black-c8 Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 " +
-                        "Rock-black-h8-0"), Arrays.asList("d1-a4"), 6},
-                new Object[] {new ChessGame("black 0 King-white-e1-0 Rock-white-d2-2 Queen-black-e2 " +
+                        "Rook-black-h8-0"), Arrays.asList("d1-a4"), 6},
+                new Object[] {new ChessGame("black 0 King-white-e1-0 Rook-white-d2-2 Queen-black-e2 " +
                         "Bishop-black-b4 King-black-e8-0"), Arrays.asList("b4-c3"), 1},
                 new Object[] {new ChessGame("black 0 King-white-g1-2 Pawn-black-c4-false Pawn-white-d4-true " +
                         "Bishop-black-b6 King-black-e8-0"), Arrays.asList("c4-d3"), 4},
                 new Object[] {new ChessGame("black 0 King-white-h1-3 Pawn-white-c7-false "
                         + "Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false "
                         + "Knight-black-a7 King-black-b7-3-false"), Arrays.asList("b7-c6", "c7-c8"), 1},
-                new Object[] {new ChessGame("black 0 King-white-g7-6 King-black-e8-0 Rock-black-h8-0"), Arrays.asList(), 12},
+                new Object[] {new ChessGame("black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0"), Arrays.asList(), 12},
                 new Object[] {new ChessGame("white 0 King-white-g6-6 Pawn-white-g7-false King-black-e8-0 Knight-black-h8"), Arrays.asList(), 7},
-                new Object[] {new ChessGame("white 0 Rock-white-b1-0 King-white-d1-0 Rock-white-e1-0 Bishop-black-d3 King-black-d8-0"), Arrays.asList(), 21},
-                new Object[] {new ChessGame("white 0 Rock-white-b1-0 King-white-d1-0 Rock-white-e1-0 Rock-black-h1-1 Rock-black-a2-1 Knight-black-d3 King-black-d8-0"), Arrays.asList(), 12},
+                new Object[] {new ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Bishop-black-d3 King-black-d8-0"), Arrays.asList(), 21},
+                new Object[] {new ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Rook-black-h1-1 Rook-black-a2-1 Knight-black-d3 King-black-d8-0"), Arrays.asList(), 12},
                 new Object[] {new ChessGame(518), Arrays.asList("e2-e4", "d7-d5", "f1-b5", "c7-c6", "b5-c6", "b8-d7", "c6-b5"), 19},
                 new Object[] {new ChessGame(621), Arrays.asList("g2-g3", "f7-f6", "c2-c3", "g8-f7", "d1-c2", "e8-f8", "c2-h7"), 1},
-                new Object[] {new ChessGame("white 0 Rock-black-e1-8 "
+                new Object[] {new ChessGame("white 0 Rook-black-e1-8 "
                         + "Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 "
                         + "Knight-white-g4 Queen-black-e8 King-black-g7-3"), Arrays.asList("f2-e1", "e2-f1"), 2},
         };

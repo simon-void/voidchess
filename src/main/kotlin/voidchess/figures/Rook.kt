@@ -5,17 +5,14 @@ import voidchess.board.SimpleChessBoardInterface
 import voidchess.helper.Direction
 import voidchess.helper.Move
 import voidchess.helper.Position
-import voidchess.image.ImageType
-
-import java.util.ArrayList
 
 /**
  * @author stephan
  */
-class Rock : RochadeFigure {
+class Rook : RochadeFigure {
 
-    constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.ROCK)
-    constructor(isWhite: Boolean, startPosition: Position, stepsTaken: Int) : super(isWhite, startPosition, stepsTaken, FigureType.ROCK)
+    constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.ROOK)
+    constructor(isWhite: Boolean, startPosition: Position, stepsTaken: Int) : super(isWhite, startPosition, stepsTaken, FigureType.ROOK)
 
     override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val direction = position.getDirectionTo(to)

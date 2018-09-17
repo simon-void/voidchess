@@ -75,7 +75,7 @@ public class BishopTest {
 
     @Test
     public void testGetReachableMoves() {
-        String des = "white 0 Knight-white-e1 Rock-black-b2-2 Bishop-white-d2 King-white-e2-1 "
+        String des = "white 0 Knight-white-e1 Rook-black-b2-2 Bishop-white-d2 King-white-e2-1 "
                 + "Pawn-white-a5-false Knight-black-g5";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
@@ -87,7 +87,7 @@ public class BishopTest {
 
     @Test
     public void testCountReachableMoves() {
-        String des = "white 0 Knight-white-e1 Rock-black-b2-2 Bishop-white-d2 King-white-e2-1 "
+        String des = "white 0 Knight-white-e1 Rook-black-b2-2 Bishop-white-d2 King-white-e2-1 "
                 + "Pawn-white-a5-false Knight-black-g5";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 

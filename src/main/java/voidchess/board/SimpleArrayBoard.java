@@ -96,9 +96,9 @@ public class SimpleArrayBoard
             setFigure(pos, figureFactory.getPawn(pos, false));
         }
         pos = Position.Companion.byCode("a1");
-        setFigure(pos, figureFactory.getRock(pos, true));
+        setFigure(pos, figureFactory.getRook(pos, true));
         pos = Position.Companion.byCode("h1");
-        setFigure(pos, figureFactory.getRock(pos, true));
+        setFigure(pos, figureFactory.getRook(pos, true));
         pos = Position.Companion.byCode("b1");
         setFigure(pos, figureFactory.getKnight(pos, true));
         pos = Position.Companion.byCode("g1");
@@ -114,9 +114,9 @@ public class SimpleArrayBoard
         whiteKingPosition = pos;
 
         pos = Position.Companion.byCode("a8");
-        setFigure(pos, figureFactory.getRock(pos, false));
+        setFigure(pos, figureFactory.getRook(pos, false));
         pos = Position.Companion.byCode("h8");
-        setFigure(pos, figureFactory.getRock(pos, false));
+        setFigure(pos, figureFactory.getRook(pos, false));
         pos = Position.Companion.byCode("b8");
         setFigure(pos, figureFactory.getKnight(pos, false));
         pos = Position.Companion.byCode("g8");
@@ -242,7 +242,7 @@ public class SimpleArrayBoard
     }
 
     private Figure createFigure(String name, boolean isWhite, Position pos) {
-        if (name.equals("Turm")) return figureFactory.getRock(pos, isWhite);
+        if (name.equals("Turm")) return figureFactory.getRook(pos, isWhite);
         if (name.equals("Springer")) return figureFactory.getKnight(pos, isWhite);
         if (name.equals("König")) return figureFactory.getKing(pos, isWhite);
 

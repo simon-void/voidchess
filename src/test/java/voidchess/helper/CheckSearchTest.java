@@ -59,7 +59,7 @@ public class CheckSearchTest {
         assertTrue(possiblePositions.contains(Position.Companion.byCode("e6")));
         assertTrue(possiblePositions.contains(Position.Companion.byCode("e7")));
 
-        des = "white 0 King-white-e1-0 Rock-white-h2-1 Queen-black-h4";
+        des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-h4";
         game.init(des);
         status = CheckSearch.analyseCheck(game, true);
 

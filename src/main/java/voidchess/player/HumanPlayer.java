@@ -76,7 +76,7 @@ public class HumanPlayer
     }
 
     public PawnPromotion askForPawnPromotionType(Position pawnPosition) {
-        String[] figs = {"Queen", "Rock", "Bishop", "Knight"};
+        String[] figs = {"Queen", "Rook", "Bishop", "Knight"};
         String out = (String) JOptionPane.showInputDialog(null,
                 "Promote pawn to what type?",
                 "pawn promotion",
@@ -88,8 +88,8 @@ public class HumanPlayer
         switch (out) {
             case "Queen":
                 return PawnPromotion.QUEEN;
-            case "Rock":
-                return PawnPromotion.ROCK;
+            case "Rook":
+                return PawnPromotion.Rook;
             case "Knight":
                 return PawnPromotion.KNIGHT;
             default:

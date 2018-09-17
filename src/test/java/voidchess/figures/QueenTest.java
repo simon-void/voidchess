@@ -44,7 +44,7 @@ public class QueenTest {
         queen.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 17);
 
-        des = "white 0 Rock-black-a1-1 Queen-white-d1 King-white-e1-0 ";
+        des = "white 0 Rook-black-a1-1 Queen-white-d1 King-white-e1-0 ";
         game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         queen = game.getFigure(Position.Companion.byCode("d1"));

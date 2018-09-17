@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class StaticEvaluation implements StaticEvaluationInterface {
     final private static double PAWN_VALUE = 1f;
-    final private static double ROCK_VALUE = 4.5f;
+    final private static double Rook_VALUE = 4.5f;
     final private static double KNIGHT_VALUE = 3f;
     final private static double BISHOP_VALUE = 3f;
     final private static double QUEEN_VALUE = 9f;
@@ -43,8 +43,8 @@ public class StaticEvaluation implements StaticEvaluationInterface {
             if (figure.isWhite()) {
                 if (figure.isPawn()) {
                     whiteFigures += PAWN_VALUE;
-                } else if (figure.isRock()) {
-                    whiteFigures += ROCK_VALUE;
+                } else if (figure.isRook()) {
+                    whiteFigures += Rook_VALUE;
                 } else if (figure.isKnight()) {
                     whiteFigures += KNIGHT_VALUE;
                 } else if (figure.isBishop()) {
@@ -55,8 +55,8 @@ public class StaticEvaluation implements StaticEvaluationInterface {
             } else {
                 if (figure.isPawn()) {
                     blackFigures += PAWN_VALUE;
-                } else if (figure.isRock()) {
-                    blackFigures += ROCK_VALUE;
+                } else if (figure.isRook()) {
+                    blackFigures += Rook_VALUE;
                 } else if (figure.isKnight()) {
                     blackFigures += KNIGHT_VALUE;
                 } else if (figure.isBishop()) {

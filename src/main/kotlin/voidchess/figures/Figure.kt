@@ -24,7 +24,7 @@ abstract class Figure constructor(
     private val reachableMoves = LinkedList<Move>()
 
     fun isPawn() = type == FigureType.PAWN
-    fun isRock() = type == FigureType.ROCK
+    fun isRook() = type == FigureType.ROOK
     fun isKnight() = type == FigureType.KNIGHT
     fun isBishop() = type == FigureType.BISHOP
     fun isQueen() = type == FigureType.QUEEN
@@ -106,7 +106,7 @@ abstract class Figure constructor(
                 val figure = content.figure
                 if (hasDifferentColor(figure)) {
                     if (figure.isQueen() ||
-                            (rowStep == 0 || columnStep == 0) && figure.isRock() ||
+                            (rowStep == 0 || columnStep == 0) && figure.isRook() ||
                             rowStep != 0 && columnStep != 0 && figure.isBishop()) {
                         return !isToPositionInBetweenKingAndAttacker
                     }

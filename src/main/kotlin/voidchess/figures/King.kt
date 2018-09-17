@@ -90,7 +90,7 @@ class King : RochadeFigure {
                         middlePosition = Position.get(groundRow, column)
                         val middleFigure = game.getFigure(middlePosition)
                         if (middleFigure!=null) {
-                            if (!middleFigure.canParticipateInRochade() || middleFigure.isRock()) {
+                            if (!middleFigure.canParticipateInRochade() || middleFigure.isRook()) {
                                 return false
                             }
                         }
@@ -99,7 +99,7 @@ class King : RochadeFigure {
                     middlePosition = Position.get(groundRow, 3)
                     val middleFigure = game.getFigure(middlePosition)
                     if (middleFigure!=null) {
-                        if (!middleFigure.canParticipateInRochade() || middleFigure.isRock()) {
+                        if (!middleFigure.canParticipateInRochade() || middleFigure.isRook()) {
                             return false
                         }
                     }
