@@ -36,7 +36,7 @@ public class DifficultyPanel
         comboBox = new JComboBox<>();
         designLayout();
         //preselect the second option
-        comboBox.setSelectedIndex(1);
+        comboBox.setSelectedIndex(0);
     }
 
     private void designLayout() {
