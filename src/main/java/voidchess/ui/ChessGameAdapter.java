@@ -13,10 +13,10 @@ import java.util.List;
  * @author stephan
  */
 public class ChessGameAdapter implements MouseInputListener {
-    private ChessGameUI ui;
+    private ChessboardUI ui;
     private List<HumanPlayerInterface> players;
 
-    ChessGameAdapter(ChessGameUI ui) {
+    ChessGameAdapter(ChessboardUI ui) {
         this.ui = ui;
         players = new LinkedList<>();
     }

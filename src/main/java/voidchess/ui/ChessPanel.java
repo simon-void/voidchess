@@ -30,7 +30,7 @@ public class ChessPanel
     private Table table;
     private JButton startButton;
     private JButton switchButton;
-    private ChessGameUI chessGameUI;
+    private ChessboardUI chessboardUI;
     private Chess960Panel panel960;
     private DifficultyPanel difficultyPanel;
     private CoresPanel coresPanel;
@@ -54,11 +54,11 @@ public class ChessPanel
         buttonPanel.add(switchButton);
 
         ChessGame game = new ChessGame(ChessGameSupervisorDummy.INSTANCE);
-        chessGameUI = new ChessGameUI(game, this);
-        panel960 = new Chess960Panel(game, chessGameUI);
-        table = new Table(game, chessGameUI, this, panel960);
+        chessboardUI = new ChessboardUI(game, this);
+        panel960 = new Chess960Panel(game, chessboardUI);
+        table = new Table(game, chessboardUI, this, panel960);
         game.useSupervisor(table);
-        humanPlayer = new HumanPlayer(table, true, chessGameUI, game);
+        humanPlayer = new HumanPlayer(table, true, chessboardUI, game);
         ComputerPlayerUI computerPlayerUI = new ComputerPlayerUI();
         ComputerPlayer kiPlayer = new ComputerPlayer(table, game, computerPlayerUI);
         computerPlayer = kiPlayer;
@@ -75,7 +75,7 @@ public class ChessPanel
 
         JPanel gameUIPanel = new JPanel();
         gameUIPanel.setBackground(Color.WHITE);
-        gameUIPanel.add(chessGameUI);
+        gameUIPanel.add(chessboardUI);
 
         setBackground(Color.WHITE);
         GridBagLayout layout = new GridBagLayout();
@@ -177,6 +177,6 @@ public class ChessPanel
         }
         humanPlayer.setColor(humanPlaysWhite);
         computerPlayer.setColor(!humanPlaysWhite);
-        chessGameUI.setView(humanPlaysWhite);
+        chessboardUI.setViewPoint(humanPlaysWhite);
     }
 }

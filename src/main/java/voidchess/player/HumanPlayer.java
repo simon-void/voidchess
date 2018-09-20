@@ -4,7 +4,7 @@ import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
 import voidchess.helper.PawnPromotion;
 import voidchess.helper.Position;
-import voidchess.ui.ChessGameUI;
+import voidchess.ui.ChessboardUI;
 import voidchess.ui.TableInterface;
 
 import javax.swing.*;
@@ -16,14 +16,14 @@ public class HumanPlayer
         implements HumanPlayerInterface {
     private Position from;
     private ChessGameInterface game;
-    private ChessGameUI ui;
+    private ChessboardUI ui;
     private TableInterface table;
     private boolean isWhitePlayer;
     private boolean isMyTurn;
 
     public HumanPlayer(TableInterface table,
                        boolean isWhitePlayer,
-                       ChessGameUI ui,
+                       ChessboardUI ui,
                        ChessGameInterface game) {
         this.table = table;
         this.game = game;

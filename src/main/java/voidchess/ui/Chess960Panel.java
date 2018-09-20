@@ -20,9 +20,9 @@ public class Chess960Panel
     private int positionIndex;
 
     private ChessGameInterface game;
-    private ChessGameUI gameUI;
+    private ChessboardUI gameUI;
 
-    Chess960Panel(ChessGameInterface game, ChessGameUI gameUI) {
+    Chess960Panel(ChessGameInterface game, ChessboardUI gameUI) {
         this.game = game;
         this.gameUI = gameUI;
         designLayout();
