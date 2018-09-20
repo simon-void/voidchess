@@ -17,16 +17,12 @@ import static org.testng.Assert.*;
  * @author stephan
  */
 public class FigureTest {
-    @Test
-    public void testConstructor() {
-        new MockFigure(true, Position.Companion.get(0, 0));
-    }
 
     @Test
     public void testIsDifferentColor() {
-        Figure figure1 = new MockFigure(true, Position.Companion.get(0, 0));
-        Figure figure2 = new MockFigure(true, Position.Companion.get(0, 0));
-        Figure figure3 = new MockFigure(false, Position.Companion.get(0, 0));
+        Figure figure1 = new Queen(true, Position.Companion.get(0, 0));
+        Figure figure2 = new Rook(true, Position.Companion.get(0, 0));
+        Figure figure3 = new Bishop(false, Position.Companion.get(0, 0));
         assertTrue(figure1.hasDifferentColor(figure3));
         assertFalse(figure2.hasDifferentColor(figure1));
         assertFalse(figure3.hasDifferentColor(figure3));
@@ -35,7 +31,7 @@ public class FigureTest {
     @Test
     public void testCanBeHitByEnpasent() {
         assertFalse(
-                new MockFigure(
+                new Knight(
                         true,
                         Position.Companion.get(0, 0)
                 ).canBeHitByEnpasent(),
@@ -46,8 +42,8 @@ public class FigureTest {
     @Test
     public void testToString() {
         Position pos = Position.Companion.byCode("g4");
-        Figure figure1 = new MockFigure(true, pos);
-        assertEquals("MockFigure-white-g4", figure1.toString());
+        Figure figure1 = new Bishop(true, pos);
+        assertEquals("Bishop-white-g4", figure1.toString());
         Figure figure2 = new Bishop(false, pos);
         assertEquals("Bishop-black-g4", figure2.toString());
     }
@@ -128,7 +124,7 @@ public class FigureTest {
     }
 
     @Test
-    public void testIsBound() throws Exception {
+    public void testIsBound() {
         String des = "white 0 King-white-e1-0 Rook-white-e3-4 Queen-black-e5";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
@@ -202,9 +198,9 @@ public class FigureTest {
         Pawn pawn3 = new Pawn(false, from1);
         Pawn pawn4 = new Pawn(true, from2);
 
-        assertTrue(pawn1.getTypeInfo() == pawn2.getTypeInfo());    //gleiche Objekte sollten die gleiche TypeInfo haben
-        assertTrue(pawn1.getTypeInfo() != pawn3.getTypeInfo()); //unterschiedliche TypeInfo bei unterschiedliche Farbe
-        assertTrue(pawn1.getTypeInfo() == pawn4.getTypeInfo()); //Position geht nicht mit ein
+        assertEquals(pawn1.getTypeInfo(), pawn2.getTypeInfo());    //gleiche Objekte sollten die gleiche TypeInfo haben
+        assertNotEquals(pawn1.getTypeInfo(), pawn3.getTypeInfo()); //unterschiedliche TypeInfo bei unterschiedliche Farbe
+        assertEquals(pawn1.getTypeInfo(), pawn4.getTypeInfo());    //Position geht nicht mit ein
 
         Rook rook = new Rook(true, from1);
         Knight knight = new Knight(true, from1);
@@ -248,7 +244,7 @@ public class FigureTest {
         );
     }
 
-    public static List<Move> getPossibleMovesFrom(ChessGameInterface game, Position from) {
+    static List<Move> getPossibleMovesFrom(ChessGameInterface game, Position from) {
         List<Move> moveIter = new LinkedList<>();
         List<Move> allMoves = new LinkedList<>();
         game.getPossibleMoves(allMoves);

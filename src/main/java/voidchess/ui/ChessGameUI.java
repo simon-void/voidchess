@@ -162,10 +162,6 @@ public class ChessGameUI extends JComponent {
         adapter.addPlayer(player);
     }
 
-    public void removePlayer(HumanPlayerInterface player) {
-        adapter.removePlayer(player);
-    }
-
     public void markPosition(Position pos, boolean isFromPosition) {
         if (isFromPosition) {
             Position temp = from;
