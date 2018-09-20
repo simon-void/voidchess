@@ -4,13 +4,14 @@
 
     <groupId>de.gmx.simonvoid</groupId>
     <artifactId>voidchess</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <kotlin.version>1.2.70</kotlin.version>
+        <mainClass>voidchess.ui.ChessFrame</mainClass>
     </properties>
 
     <dependencies>
@@ -112,7 +113,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>voidchess.ui.ChessFrame</mainClass>
+                            <mainClass>${mainClass}</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Built-By>Stephan Schroeder</Built-By>
@@ -133,6 +134,53 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.23</version>
+                <executions>
+                    <execution>
+                        <id>l4j-gui</id>
+                        <phase>package</phase>
+                        <goals><goal>launch4j</goal></goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <outfile>target/${project.build.finalName}.exe</outfile>
+                            <jar>target/${project.build.finalName}.jar</jar>
+                            <errTitle>${project.name}</errTitle>
+                            <downloadUrl>http://java.com/download</downloadUrl>
+                            <icon>about/exe-icon.ico</icon>
+                            <classPath>
+                                <mainClass>${mainClass}</mainClass>
+                            </classPath>
+                            <jre>
+                                <!-- Specify path or minVersion or both. -->
+                                <!--<path>bundled JRE path (%VAR%)</path>-->
+                                <!--<bundledJre64Bit>true|false</bundledJre64Bit>-->
+                                <!--<bundledJreAsFallback>true|false</bundledJreAsFallback>-->
+                                <!--<minVersion>1.x.x[_xxx]|xxx[.xxx[.xxx]]</minVersion>-->
+                                <minVersion>${maven.compiler.target}</minVersion>
+                                <!--<maxVersion>1.x.x[_xxx]|xxx[.xxx[.xxx]]</maxVersion>-->
+                                <!--<jdkPreference>jreOnly|preferJre|preferJdk|jdkOnly</jdkPreference>-->
+                                <!--<runtimeBits>64|64/32|32/64|32</runtimeBits>-->
+                                <!-- Heap sizes in MB and % of available memory. -->
+                                <!--<initialHeapSize>MB</initialHeapSize>-->
+                                <!--<initialHeapPercent>%</initialHeapPercent>-->
+                                <!--<maxHeapSize>MB</maxHeapSize>-->
+                                <!--<maxHeapPercent>%</maxHeapPercent>-->
+                                <!--<opt>text (%VAR%)</opt>-->
+                            </jre>
+                            <!--splash>
+                                <file>file</file>
+                                <waitForWindow>true|false</waitForWindow>
+                                <timeout>seconds [60]</timeout>
+                                <timeoutErr>true|false</timeoutErr>
+                            </splash-->
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
