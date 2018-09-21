@@ -41,7 +41,7 @@ public class CheckSearch {
 
         final Move lastMove = lastExtMove.getMove();
         if (lastExtMove.isEnpassent()) return analyseCheckAfterEnpassent(game, whiteInCheck, lastMove);
-        if (lastExtMove.isRochade()) return analyseCheckAfterRochade(game, whiteInCheck, lastMove);
+        if (lastExtMove.isCastling()) return analyseCheckAfterCastling(game, whiteInCheck, lastMove);
         if (lastExtMove.isPawnTransformation()) return analyseCheckAfterPawnTransform(game, whiteInCheck, lastMove);
 
         final Position kingPos = game.getKingPosition(whiteInCheck);
@@ -126,7 +126,7 @@ public class CheckSearch {
         }
     }
 
-    private static CheckStatus analyseCheckAfterRochade(SimpleChessBoardInterface game, boolean whiteInCheck, Move lastMove) {
+    private static CheckStatus analyseCheckAfterCastling(SimpleChessBoardInterface game, boolean whiteInCheck, Move lastMove) {
         final Position kingPos = game.getKingPosition(whiteInCheck);
 
         final int Rook_row = lastMove.getTo().getRow();

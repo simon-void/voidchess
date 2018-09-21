@@ -9,7 +9,7 @@ import voidchess.helper.Position
 /**
  * @author stephan
  */
-class Rook : RochadeFigure {
+class Rook : CastlingFigure {
 
     constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.ROOK)
     constructor(isWhite: Boolean, startPosition: Position, stepsTaken: Int) : super(isWhite, startPosition, stepsTaken, FigureType.ROOK)

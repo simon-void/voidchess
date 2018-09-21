@@ -210,11 +210,11 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         assert (getFigure(move.getFrom()).isWhite() == whiteTurn)
                 : "figure to be moved has wrong color";
 
-        Rook rochadeRook = extractRochadeRook(move);
-        //im Fall der Rochade wird der Zug jetzt so umgebogen,
+        Rook castlingRook = extractCastlingRook(move);
+        //im Fall der Castling wird der Zug jetzt so umgebogen,
         //das move.to dem Zielfeld des Königs entspricht
-        //und nicht dem Feld des Rochadeturms
-        if (rochadeRook != null) {
+        //und nicht dem Feld des Castlingturms
+        if (castlingRook != null) {
             final int row = move.getTo().getRow();
             final int column = move.getTo().getColumn() - move.getFrom().getColumn() > 0 ? 6 : 2;
             move = Move.Companion.get(move.getFrom(), Position.Companion.get(row, column));
@@ -224,17 +224,17 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         Figure hitFigure = moveFigure(move);
 
         informFiguresOfMove(move);
-        reinsertRochadeRook(rochadeRook, move.getTo());
+        reinsertCastlingRook(castlingRook, move.getTo());
         boolean pawnTransformed = handlePawnTransformation(move);
 
         memorizeGame();
-        memorizeMove(move, !whiteTurn, pawnTransformed, hitPawn, rochadeRook, hitFigure);
+        memorizeMove(move, !whiteTurn, pawnTransformed, hitPawn, castlingRook, hitFigure);
 
         return isEnd();
     }
 
     private Figure moveFigure(Move move) {
-        final boolean toEqualsFrom = move.getTo().equalsPosition(move.getFrom());//für manche Schach960rochaden true
+        final boolean toEqualsFrom = move.getTo().equalsPosition(move.getFrom());//für manche Schach960castlingn true
         hasHitFigure = !isFreeArea(move.getTo()) && !toEqualsFrom;  //Enpasent wird nicht beachtet
         Figure fromFigure = getFigure(move.getFrom());
 
@@ -279,27 +279,27 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         return null;
     }
 
-    private Rook extractRochadeRook(Move move) {
+    private Rook extractCastlingRook(Move move) {
         final Figure movingFigure = getFigure(move.getFrom());
         if (!(movingFigure.isKing())) return null;
 
-        final Figure rochadeRook = getFigure(move.getTo());
-        if (rochadeRook != null && rochadeRook.isWhite() == movingFigure.isWhite()) {
+        final Figure castlingRook = getFigure(move.getTo());
+        if (castlingRook != null && castlingRook.isWhite() == movingFigure.isWhite()) {
             setFigure(move.getTo(), null);    //der Turm wird kurzfristig vom Brett genommen
-            ((King) movingFigure).performRochade();
-            return (Rook) rochadeRook;
+            ((King) movingFigure).performCastling();
+            return (Rook) castlingRook;
         }
         return null;
     }
 
-    private void reinsertRochadeRook(Rook rochadeRook, Position moveTo) {
-        if (rochadeRook != null) {
-            Position RookFrom = rochadeRook.getPosition();
+    private void reinsertCastlingRook(Rook castlingRook, Position moveTo) {
+        if (castlingRook != null) {
+            Position RookFrom = castlingRook.getPosition();
             Position RookTo = moveTo.getColumn() == 6 ?
                     Position.Companion.get(moveTo.getRow(), 5) :
                     Position.Companion.get(moveTo.getRow(), 3);
-            rochadeRook.figureMoved(Move.Companion.get(RookFrom, RookTo));
-            setFigure(RookTo, rochadeRook);
+            castlingRook.figureMoved(Move.Companion.get(RookFrom, RookTo));
+            setFigure(RookTo, castlingRook);
         }
     }
 
@@ -367,10 +367,10 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
         ExtendedMove lastExtMove = extendedMoveStack.popExtendedMove();
         Move lastMove = lastExtMove.getMove();
-        final boolean wasRochade = lastExtMove.isRochade();
+        final boolean wasCastling = lastExtMove.isCastling();
         Figure activeFigure = getFigure(lastMove.getTo());
         setFigure(lastMove.getFrom(), activeFigure);
-        if (!wasRochade || !lastMove.getFrom().equalsPosition(lastMove.getTo())) {
+        if (!wasCastling || !lastMove.getFrom().equalsPosition(lastMove.getTo())) {
             setFigure(lastMove.getTo(), lastExtMove.getFigureTaken());
         }
         activeFigure.undoMove(lastMove.getFrom());
@@ -379,14 +379,14 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
             figureCount++;
         }
 
-        if (wasRochade) undoRochade(lastExtMove);
+        if (wasCastling) undoCastling(lastExtMove);
         if (lastExtMove.isEnpassent()) undoEnpassent(lastExtMove);
         if (lastExtMove.isPawnTransformation()) undoPawnTransformation(lastExtMove);
         rebuildPawnEnpassentCapability();
     }
 
-    private void undoRochade(ExtendedMove lastExtMove) {
-        Rook rook = (Rook) lastExtMove.getEnpassentPawnOrRochadeRook();
+    private void undoCastling(ExtendedMove lastExtMove) {
+        Rook rook = (Rook) lastExtMove.getEnpassentPawnOrCastlingRook();
         Position RookStartPos = rook.getInitialPosition();
         Position RookCurrentPos = rook.getPosition();
 
@@ -398,7 +398,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     private void undoEnpassent(ExtendedMove lastExtMove) {
-        Pawn hitPawn = (Pawn) lastExtMove.getEnpassentPawnOrRochadeRook();
+        Pawn hitPawn = (Pawn) lastExtMove.getEnpassentPawnOrCastlingRook();
         Position pawnPos = Position.Companion.get(lastExtMove.getMove().getFrom().getRow(), lastExtMove.getMove().getTo().getColumn());
         setFigure(pawnPos, hitPawn);
         hitPawn.setCanBeHitByEnpasent();
@@ -603,20 +603,20 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
                               boolean whiteMove,
                               boolean pawnTransformed,
                               Pawn hitPawn,
-                              Rook rochadeRook,
+                              Rook castlingRook,
                               Figure hitFigure) {
         boolean hitsEnpassent = hitPawn != null;
-        boolean isRochade = rochadeRook != null;
-        Figure rochadeRookOrEnpassentPawn = hitPawn;
-        if (isRochade) {
-            rochadeRookOrEnpassentPawn = rochadeRook;
+        boolean isCastling = castlingRook != null;
+        Figure castlingRookOrEnpassentPawn = hitPawn;
+        if (isCastling) {
+            castlingRookOrEnpassentPawn = castlingRook;
         }
         ExtendedMove extendedMove = new ExtendedMove(
                 move,
                 hitFigure,
-                rochadeRookOrEnpassentPawn,
+                castlingRookOrEnpassentPawn,
                 whiteMove,
-                isRochade,
+                isCastling,
                 hitsEnpassent,
                 pawnTransformed);
         extendedMoveStack.putExtendedMove(extendedMove);

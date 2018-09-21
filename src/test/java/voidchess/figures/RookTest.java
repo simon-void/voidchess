@@ -44,11 +44,11 @@ public class RookTest {
         FigureFactory figureFactory = new FigureFactory();
         Rook rook = (Rook) figureFactory.getRook(Position.Companion.byCode("a1"), false);
 
-        assertTrue(rook.canParticipateInRochade());
+        assertTrue(rook.canParticipateInCastling());
         rook.figureMoved(Move.Companion.byCode("a1-b1"));
-        assertFalse(rook.canParticipateInRochade());
+        assertFalse(rook.canParticipateInCastling());
         rook.undoMove(Position.Companion.byCode("a1"));
-        assertTrue(rook.canParticipateInRochade());
+        assertTrue(rook.canParticipateInCastling());
     }
 
     @Test

@@ -84,22 +84,22 @@ public class FigureTest {
     }
 
     @Test
-    public void testRochade() {
+    public void testCastling() {
         Position from = Position.Companion.byCode("c1");
         Position to = Position.Companion.byCode("g5");
         Move move = Move.Companion.get(from, to);
 
-        assertFalse(new Pawn(true, from).canParticipateInRochade());
+        assertFalse(new Pawn(true, from).canParticipateInCastling());
 
         Figure king = new King(true, from);
-        assertTrue(king.canParticipateInRochade(), "unmoved king");
+        assertTrue(king.canParticipateInCastling(), "unmoved king");
         king.figureMoved(move);
-        assertFalse(king.canParticipateInRochade(), "moved king");
+        assertFalse(king.canParticipateInCastling(), "moved king");
 
         Figure Rook = new Rook(false, from);
-        assertTrue(Rook.canParticipateInRochade(), "unmoved Rook");
+        assertTrue(Rook.canParticipateInCastling(), "unmoved Rook");
         Rook.figureMoved(move);
-        assertFalse(Rook.canParticipateInRochade(), "moved Rook");
+        assertFalse(Rook.canParticipateInCastling(), "moved Rook");
     }
 
     @Test

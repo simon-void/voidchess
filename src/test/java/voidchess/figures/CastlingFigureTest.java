@@ -6,7 +6,7 @@ import voidchess.helper.Position;
 
 import static org.testng.Assert.assertEquals;
 
-public class RochadeFigureTest {
+public class CastlingFigureTest {
     @Test
     public void testGetInitialPosition() {
         Position initial = Position.Companion.byCode("e1");

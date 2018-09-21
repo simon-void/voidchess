@@ -50,8 +50,8 @@ public class ExtendedMoveTest {
     }
 
     @Test
-    public void testIsRochade() {
-        assertFalse(extendedMove.isRochade());
+    public void testIsCastling() {
+        assertFalse(extendedMove.isCastling());
     }
 
     @Test

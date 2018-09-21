@@ -152,33 +152,33 @@ public class KingTest {
     }
 
     @Test
-    public void testDidRochade() {
+    public void testDidCastling() {
         String des = "white 0 Rook-white-a1-0 King-white-e1-0 "
                 + "King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
         King king = (King) game.getFigure(Position.Companion.byCode("e1"));
-        assertFalse(king.didRochade());
+        assertFalse(king.didCastling());
         game.move(Move.Companion.byCode("e1-a1"));
-        assertTrue(king.didRochade());
+        assertTrue(king.didCastling());
     }
 
     @Test
-    public void testImmidiatlyRochadeInChess960Positions() {
-        //siehe https://de.wikipedia.org/wiki/Chess960#Rochaderegeln
+    public void testImmidiatlyCastlingInChess960Positions() {
+        //siehe https://de.wikipedia.org/wiki/Chess960#Castlingregeln
 
         //Rook on a1, king on b1 so b1-a1 should be possible as a first move
         ChessGame game = new ChessGame(314);
         Position c1 = Position.Companion.byCode("c1");
         Position d1 = Position.Companion.byCode("d1");
-        boolean isRochadePossible = game.isMoveable(d1, c1, true);
-        assertTrue(isRochadePossible, "rochade should be possible");
+        boolean isCastlingPossible = game.isMoveable(d1, c1, true);
+        assertTrue(isCastlingPossible, "castling should be possible");
 
         //Rook on a1, king on b1 so b1-a1 should be be possible as a first move
         game = new ChessGame(759);
         Position a1 = Position.Companion.byCode("a1");
         Position b1 = Position.Companion.byCode("b1");
-        isRochadePossible = game.isMoveable(b1, a1, true);
-        assertFalse(isRochadePossible, "rochade should be impossible possible");
+        isCastlingPossible = game.isMoveable(b1, a1, true);
+        assertFalse(isCastlingPossible, "castling should be impossible possible");
     }
 }

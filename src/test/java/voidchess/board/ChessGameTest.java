@@ -290,7 +290,7 @@ public class ChessGameTest {
     }
 
     @Test
-    public void testHandleRochade() {
+    public void testHandleCastling() {
         String des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0 ";
         ChessGame game = new ChessGame(des);
         Move move = Move.Companion.get(Position.Companion.byCode("e8"), Position.Companion.byCode("a8"));

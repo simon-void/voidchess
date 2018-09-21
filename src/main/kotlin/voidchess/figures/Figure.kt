@@ -34,7 +34,7 @@ abstract class Figure constructor(
 
     open fun canBeHitByEnpasent() = false
 
-    open fun canParticipateInRochade(): Boolean {
+    open fun canParticipateInCastling(): Boolean {
         return false
     }
 

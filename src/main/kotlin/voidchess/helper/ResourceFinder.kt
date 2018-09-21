@@ -17,13 +17,12 @@ import java.io.InputStream
  */
 @Throws(IOException::class)
 fun getResourceStream(relativePath: String): InputStream {
-    val path = "src/main/resources/$relativePath"
-    val file = File(path)
+    val file = File("src/main/resources/$relativePath")
     return if (file.exists()) {
         //should find file in file system
         FileInputStream(file)
     } else {
         //should find file in jar
-        File::class.java.getResourceAsStream("/$relativePath")
+        file.javaClass.getResourceAsStream("/$relativePath")
     }
 }

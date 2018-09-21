@@ -9,16 +9,16 @@ import voidchess.helper.Position
 /**
  * @author stephan
  */
-class King : RochadeFigure {
-    private var didRochade: Boolean = false
+class King : CastlingFigure {
+    private var didCastling: Boolean = false
     private val groundRow = if (isWhite) 0 else 7
 
     constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.KING) {
-        didRochade = false
+        didCastling = false
     }
 
-    constructor(isWhite: Boolean, startPosition: Position, stepsTaken: Int, didRochade: Boolean) : super(isWhite, startPosition, stepsTaken, FigureType.KING) {
-        this.didRochade = didRochade
+    constructor(isWhite: Boolean, startPosition: Position, stepsTaken: Int, didCastling: Boolean) : super(isWhite, startPosition, stepsTaken, FigureType.KING) {
+        this.didCastling = didCastling
     }
 
     override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
@@ -28,16 +28,16 @@ class King : RochadeFigure {
             val figure = game.getFigure(to)
             if (figure==null || hasDifferentColor(figure)) return true
         }
-        if (isShortRochadeReachable(to, game)) return true
-        return isLongRochadeReachable(to, game)
+        if (isShortCastlingReachable(to, game)) return true
+        return isLongCastlingReachable(to, game)
     }
 
-    private fun isShortRochadeReachable(to: Position, game: BasicChessGameInterface): Boolean {
+    private fun isShortCastlingReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val toFigure = game.getFigure(to)
-        if (canParticipateInRochade() &&
+        if (canParticipateInCastling() &&
                 toFigure!=null &&
                 to.column > position.column) {
-            if (toFigure.canParticipateInRochade() && toFigure.isWhite == isWhite) {
+            if (toFigure.canParticipateInCastling() && toFigure.isWhite == isWhite) {
                 if (position.column == 6) {
                     if (!game.isFreeArea(Position.get(groundRow, 5))) {
                         return false
@@ -47,7 +47,7 @@ class King : RochadeFigure {
                     for (column in position.column + 1..6) {
                         val middlePosition = Position.get(groundRow, column)
                         val middleFigure = game.getFigure(middlePosition)
-                        if (middleFigure!=null && !middleFigure.canParticipateInRochade()) {
+                        if (middleFigure!=null && !middleFigure.canParticipateInCastling()) {
                             return false
                         }
                     }
@@ -58,14 +58,14 @@ class King : RochadeFigure {
         return false
     }
 
-    private fun isLongRochadeReachable(to: Position, game: BasicChessGameInterface): Boolean {
+    private fun isLongCastlingReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val toFigure = game.getFigure(to)
-        if (canParticipateInRochade() &&
+        if (canParticipateInCastling() &&
                 toFigure!=null &&
                 to.column < position.column) {
 
 
-            if (toFigure.canParticipateInRochade() && toFigure.isWhite == isWhite) {
+            if (toFigure.canParticipateInCastling() && toFigure.isWhite == isWhite) {
                 //kommt der König auf die c-Linie?
                 if (position.column == 1) {        //auf der a-Linie kann der König nicht stehen, da dort Turm sein muß
                     if (!game.isFreeArea(Position.get(groundRow, 2))) {
@@ -76,7 +76,7 @@ class King : RochadeFigure {
                     for (column in position.column - 1 downTo 2) {
                         val middlePosition = Position.get(groundRow, column)
                         val middleFigure = game.getFigure(middlePosition)
-                        if (middleFigure!=null && !middleFigure.canParticipateInRochade()) {
+                        if (middleFigure!=null && !middleFigure.canParticipateInCastling()) {
                             return false
                         }
                     }
@@ -90,7 +90,7 @@ class King : RochadeFigure {
                         middlePosition = Position.get(groundRow, column)
                         val middleFigure = game.getFigure(middlePosition)
                         if (middleFigure!=null) {
-                            if (!middleFigure.canParticipateInRochade() || middleFigure.isRook()) {
+                            if (!middleFigure.canParticipateInCastling() || middleFigure.isRook()) {
                                 return false
                             }
                         }
@@ -99,7 +99,7 @@ class King : RochadeFigure {
                     middlePosition = Position.get(groundRow, 3)
                     val middleFigure = game.getFigure(middlePosition)
                     if (middleFigure!=null) {
-                        if (!middleFigure.canParticipateInRochade() || middleFigure.isRook()) {
+                        if (!middleFigure.canParticipateInCastling() || middleFigure.isRook()) {
                             return false
                         }
                     }
@@ -113,16 +113,16 @@ class King : RochadeFigure {
     override fun isPassiveBound(to: Position, game: SimpleChessBoardInterface): Boolean {
         var realTo = to
         val toFigure = game.getFigure(to)
-        if (toFigure!=null && toFigure.canParticipateInRochade()) {
+        if (toFigure!=null && toFigure.canParticipateInCastling()) {
             val column = if (to.column - position.column > 0) 6 else 2
             realTo = Position.get(to.row, column)
             if (CheckSearch.isCheck(game, position)) return true
-            if (isKingAtCheckInbetweenRochade(position, realTo, game)) return true
+            if (isKingAtCheckInbetweenCastling(position, realTo, game)) return true
         }
         return isKingCheckAt(realTo, game)
     }
 
-    private fun isKingAtCheckInbetweenRochade(
+    private fun isKingAtCheckInbetweenCastling(
             from: Position,
             to: Position,
             game: SimpleChessBoardInterface
@@ -164,11 +164,11 @@ class King : RochadeFigure {
             }
         }
 
-        if (canParticipateInRochade()) {
+        if (canParticipateInCastling()) {
             for (column in position.column + 1..7) {
                 val pos = Position.get(position.row, column)
                 val figure = game.getFigure(pos)
-                if (figure!=null && figure.canParticipateInRochade() && isReachable(pos, game)) {
+                if (figure!=null && figure.canParticipateInCastling() && isReachable(pos, game)) {
                     result.add(Move.get(position, pos))
                 }
                 break
@@ -176,7 +176,7 @@ class King : RochadeFigure {
             for (column in position.column - 1 downTo 0) {
                 val pos = Position.get(position.row, column)
                 val figure = game.getFigure(pos)
-                if (figure!=null && figure.canParticipateInRochade() && isReachable(pos, game)) {
+                if (figure!=null && figure.canParticipateInCastling() && isReachable(pos, game)) {
                     result.add(Move.get(position, pos))
                 }
                 break
@@ -200,15 +200,15 @@ class King : RochadeFigure {
         }
 
         if (position.column + 2 < 8) {
-            val shortRochade = Position.get(position.row, position.column + 2)
-            if (isMovable(shortRochade, game)) {
+            val shortCastling = Position.get(position.row, position.column + 2)
+            if (isMovable(shortCastling, game)) {
                 return true
             }
         }
 
         if (position.column - 2 >= 0) {
-            val longRochade = Position.get(position.row, position.column - 2)
-            if (isMovable(longRochade, game)) {
+            val longCastling = Position.get(position.row, position.column - 2)
+            if (isMovable(longCastling, game)) {
                 return true
             }
         }
@@ -233,15 +233,15 @@ class King : RochadeFigure {
         }
 
         if (position.column + 2 < 8) {
-            val shortRochade = Position.get(position.row, position.column + 2)
-            if (isReachable(shortRochade, game)) {
+            val shortCastling = Position.get(position.row, position.column + 2)
+            if (isReachable(shortCastling, game)) {
                 count++
             }
         }
 
         if (position.column - 2 >= 0) {
-            val longRochade = Position.get(position.row, position.column - 2)
-            if (isReachable(longRochade, game)) {
+            val longCastling = Position.get(position.row, position.column - 2)
+            if (isReachable(longCastling, game)) {
                 count++
             }
         }
@@ -249,19 +249,19 @@ class King : RochadeFigure {
         return count
     }
 
-    fun didRochade() = didRochade
+    fun didCastling() = didCastling
 
-    fun performRochade() {
-        didRochade = true
+    fun performCastling() {
+        didCastling = true
     }
 
     override fun undoMove(oldPosition: Position) {
         super.undoMove(oldPosition)
 
         if (stepsTaken == 0) {
-            didRochade = false
+            didCastling = false
         }
     }
 
-    override fun toString() = if (didRochade) "${super.toString()}-true" else super.toString()
+    override fun toString() = if (didCastling) "${super.toString()}-true" else super.toString()
 }

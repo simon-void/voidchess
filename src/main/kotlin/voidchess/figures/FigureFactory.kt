@@ -15,7 +15,7 @@ class FigureFactory {
     fun getKnight(pos: Position, isWhite: Boolean) = Knight(isWhite, pos)
     fun getRook(pos: Position, isWhite: Boolean)= Rook(isWhite, pos)
     fun getPawn(pos: Position, isWhite: Boolean) = Pawn(isWhite, pos)
-    private fun getKing(pos: Position, isWhite: Boolean, stepsTaken: Int, didRochade: Boolean) = King(isWhite, pos, stepsTaken, didRochade)
+    private fun getKing(pos: Position, isWhite: Boolean, stepsTaken: Int, didCastling: Boolean) = King(isWhite, pos, stepsTaken, didCastling)
     private fun getRook(pos: Position, isWhite: Boolean, stepsTaken: Int) = Rook(isWhite, pos, stepsTaken)
     private fun getPawn(pos: Position, isWhite: Boolean, canBeHitByEnpasent: Boolean) = Pawn(isWhite, pos, canBeHitByEnpasent)
 
@@ -30,15 +30,15 @@ class FigureFactory {
         if (type == "Queen") return getQueen(pos, isWhite)
 
         if (type == "Pawn") {
-            val readyForRochadeOrEnpasent = st.nextToken().toBoolean()
-            return getPawn(pos, isWhite, readyForRochadeOrEnpasent)
+            val readyForCastlingOrEnpasent = st.nextToken().toBoolean()
+            return getPawn(pos, isWhite, readyForCastlingOrEnpasent)
         }
 
         val stepsTaken = st.nextToken().toInt()
         if (type == "Rook") return getRook(pos, isWhite, stepsTaken)
 
-        val didRochade = st.hasMoreTokens() && st.nextToken().toBoolean()
-        if (type == "King") return getKing(pos, isWhite, stepsTaken, didRochade)
+        val didCastling = st.hasMoreTokens() && st.nextToken().toBoolean()
+        if (type == "King") return getKing(pos, isWhite, stepsTaken, didCastling)
 
         throw IllegalArgumentException("figure description misformated: $description")
     }

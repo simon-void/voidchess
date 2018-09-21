@@ -242,19 +242,19 @@ public class StaticEvaluation implements StaticEvaluationInterface {
 
 
     private float evaluateKing(ChessGameInterface game, Position pos) {
-        float value = evaluateRochade(game, pos);
+        float value = evaluateCastling(game, pos);
         value += evaluateKingDefense(game, pos);
         return value;
     }
 
     final static float NO_ROCHADE_PUNISHMENT = -0.4f;
 
-    private float evaluateRochade(ChessGameInterface game, Position pos) {
+    private float evaluateCastling(ChessGameInterface game, Position pos) {
 
         King king = (King) game.getFigure(pos);
 
         if (gameStillContainsQueenOfColor(game, !king.isWhite())
-                && !king.didRochade()) {
+                && !king.didCastling()) {
             return NO_ROCHADE_PUNISHMENT;
         }
         return 0;
@@ -272,7 +272,7 @@ public class StaticEvaluation implements StaticEvaluationInterface {
         int groundRow = isWhite ? 0 : 7;
         int secondRow = isWhite ? 1 : 6;
 
-        if (king.didRochade() && pos.getRow() == groundRow) {
+        if (king.didCastling() && pos.getRow() == groundRow) {
             int minColumn = Math.max(0, pos.getRow() - 1);
             int maxColumn = Math.min(7, pos.getRow() + 1);
             for (int column = minColumn; column <= maxColumn; column++) {

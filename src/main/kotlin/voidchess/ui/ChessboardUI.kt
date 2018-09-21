@@ -56,7 +56,7 @@ class ChessboardUI internal constructor(private val game: BasicChessGameInterfac
         if (horizontalDiff == 1 && verticalDiff == 1) {                                //enpassant?
             repaintPositionAtOnce(Position.get(move.from.row, move.to.column))
             repaintPositionAtOnce(Position.get(move.to.row, move.from.column))
-        } else if (verticalDiff == 0 && (move.to.row == 0 || move.to.row == 7)) {            //Rochade?muss auch für Schach960 funktionieren
+        } else if (verticalDiff == 0 && (move.to.row == 0 || move.to.row == 7)) {      //castling?muss auch für Schach960 funktionieren
             repaintRowAtOnce(move.from.row)
         }
     }
