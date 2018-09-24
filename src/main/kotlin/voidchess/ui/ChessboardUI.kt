@@ -53,10 +53,10 @@ class ChessboardUI internal constructor(private val game: BasicChessGameInterfac
         val horizontalDiff = Math.abs(move.from.column - move.to.column)
         val verticalDiff = Math.abs(move.from.row - move.to.row)
 
-        if (horizontalDiff == 1 && verticalDiff == 1) {                                //enpassant?
+        if (horizontalDiff == 1 && verticalDiff == 1) {                                //en passant?
             repaintPositionAtOnce(Position.get(move.from.row, move.to.column))
             repaintPositionAtOnce(Position.get(move.to.row, move.from.column))
-        } else if (verticalDiff == 0 && (move.to.row == 0 || move.to.row == 7)) {      //castling?muss auch für Schach960 funktionieren
+        } else if (verticalDiff == 0 && (move.to.row == 0 || move.to.row == 7)) {      //castling? has to work for chess960 as well
             repaintRowAtOnce(move.from.row)
         }
     }
@@ -93,11 +93,10 @@ class ChessboardUI internal constructor(private val game: BasicChessGameInterfac
         g.fillRect(0, 0, 2 * borderSize + 8 * areaSize, 2 * borderSize + 8 * areaSize)
         g.color = Color.lightGray
         g.drawRect(borderSize, borderSize, 8 * areaSize, 8 * areaSize)
-        for (i in 0..7) {
-            for (j in 0..7) {
-                if ((i + j) % 2 == 1) {
-                    g.fillRect(borderSize + i * areaSize, borderSize + j * areaSize, areaSize, areaSize)
-                }
+        for (i in 0..6 step 2) {
+            for (j in 1..7 step 2) {
+                g.fillRect(borderSize + i * areaSize, borderSize + j * areaSize, areaSize, areaSize)
+                g.fillRect(borderSize + (i+1) * areaSize, borderSize + (j-1) * areaSize, areaSize, areaSize)
             }
         }
     }

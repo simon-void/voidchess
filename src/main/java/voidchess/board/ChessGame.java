@@ -313,7 +313,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
                     case QUEEN:
                         newFigure = figureFactory.getQueen(move.getTo(), isWhite);
                         break;
-                    case Rook:
+                    case ROOK:
                         newFigure = figureFactory.getRook(move.getTo(), isWhite);
                         break;
                     case KNIGHT:

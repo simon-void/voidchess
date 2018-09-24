@@ -89,7 +89,7 @@ public class HumanPlayer
             case "Queen":
                 return PawnPromotion.QUEEN;
             case "Rook":
-                return PawnPromotion.Rook;
+                return PawnPromotion.ROOK;
             case "Knight":
                 return PawnPromotion.KNIGHT;
             default:
