@@ -1,19 +1,15 @@
 package voidchess.ui;
 
-import voidchess.image.ImageType;
-import voidchess.image.Images;
+import voidchess.image.ImageLoader;
 
 import javax.swing.*;
 
-/**
- * @author stephan
- */
 
 public class ChessFrame extends JFrame {
     public static void main(String[] args) {
         try {
             voidchess.helper.RuntimeFacade.assertJavaVersion();
-            Images.loadImageResources();
+            ImageLoader.loadImageResources();
             //Swing UI updates have to come from the SwingHandler or something
             SwingUtilities.invokeLater(
                     ChessFrame::new
@@ -29,13 +25,11 @@ public class ChessFrame extends JFrame {
 
     private ChessFrame() {
         super("  VoidChess960  ");
-        setIconImage(Images.get(ImageType.ICON));
+        setIconImage(ImageLoader.getIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(new ChessPanel());
         pack();
         setResizable(false);
         setVisible(true);
     }
-
-
 }

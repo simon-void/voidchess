@@ -3,23 +3,16 @@ package voidchess.ui
 import voidchess.board.BasicChessGameInterface
 import voidchess.helper.Move
 import voidchess.helper.Position
-import voidchess.image.FigureImage
-import voidchess.image.ImageType
-import voidchess.image.Images
+import voidchess.image.FigureGallery
 import voidchess.player.HumanPlayerInterface
 
 import javax.swing.*
 import java.awt.*
-import java.awt.image.ImageObserver
-import java.util.HashMap
 
-/**
- * @author stephan
- */
-class ChessboardUI internal constructor(private val game: BasicChessGameInterface, imageObserver: ImageObserver) : JComponent() {
+
+class ChessboardUI constructor(private val game: BasicChessGameInterface, private val figureGallery: FigureGallery) : JComponent() {
     val areaSize: Int = 50
     val borderSize: Int = 25
-    private val imageTypeToImage: Map<ImageType, FigureImage>
     private val adapter: ChessGameAdapter
     var isWhiteView: Boolean = true
         private set(value) { field = value }
@@ -36,14 +29,6 @@ class ChessboardUI internal constructor(private val game: BasicChessGameInterfac
         addMouseListener(adapter)
         addMouseMotionListener(adapter)
         isDoubleBuffered = true
-
-        imageTypeToImage = HashMap(20)
-        for (imageType in ImageType.values()) {
-            if (imageType.isFigure) {
-                val figureImage = FigureImage(imageObserver, Images.get(imageType))
-                imageTypeToImage[imageType] = figureImage
-            }
-        }
     }
 
     fun repaintAfterMove(move: Move) {
@@ -107,9 +92,8 @@ class ChessboardUI internal constructor(private val game: BasicChessGameInterfac
             val xPos = borderSize + areaSize * if (isWhiteView) pos.column else 7 - pos.column
             val yPos = borderSize + areaSize * if (isWhiteView) 7 - pos.row else pos.row
 
-            val imageType = figure.imageType
-            val figureImage = imageTypeToImage[imageType]!!
-            figureImage.paint(g, xPos, yPos, areaSize)
+            val paintableFigure = figureGallery.getPaintable(figure)
+            paintableFigure.paintOn(g, xPos, yPos, areaSize)
         }
     }
 

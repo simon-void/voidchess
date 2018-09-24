@@ -5,7 +5,6 @@ import voidchess.board.SimpleChessBoardInterface
 import voidchess.helper.Direction
 import voidchess.helper.Move
 import voidchess.helper.Position
-import voidchess.image.ImageType
 
 /**
  * @author stephan

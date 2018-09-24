@@ -3,24 +3,18 @@ package voidchess.figures
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
 import voidchess.helper.*
-import voidchess.image.ImageType
 import java.util.*
 
-/**
- * @author stephan
- */
 
 abstract class Figure constructor(
         //Farbe der Figur
         val isWhite: Boolean,
         var position: Position,
-        private val type: FigureType
+        val type: FigureType
 ) {
 
     //kodiert Name der Klasse + Farbe
     val typeInfo: Int = if (isWhite) type.index else (type.index + 7)
-    val imageType: ImageType
-            get() = type.getImageType(isWhite)
     private val reachableMoves = LinkedList<Move>()
 
     fun isPawn() = type == FigureType.PAWN

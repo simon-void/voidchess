@@ -1,12 +1,9 @@
-/*
- * Created on 11.09.2006
- */
-
 package voidchess.ui;
 
 import voidchess.board.ChessGame;
 import voidchess.board.MoveResult;
 import voidchess.helper.ChessGameSupervisorDummy;
+import voidchess.image.FigureGallery;
 import voidchess.player.HumanPlayer;
 import voidchess.player.PlayerInterface;
 import voidchess.player.ki.ComputerPlayer;
@@ -17,6 +14,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 
 public class ChessPanel
         extends JPanel
@@ -54,7 +52,7 @@ public class ChessPanel
         buttonPanel.add(switchButton);
 
         ChessGame game = new ChessGame(ChessGameSupervisorDummy.INSTANCE);
-        chessboardUI = new ChessboardUI(game, this);
+        chessboardUI = new ChessboardUI(game, new FigureGallery(this));
         panel960 = new Chess960Panel(game, chessboardUI);
         table = new Table(game, chessboardUI, this, panel960);
         game.useSupervisor(table);
