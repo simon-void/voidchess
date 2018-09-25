@@ -9,7 +9,6 @@ public class ChessFrame extends JFrame {
     public static void main(String[] args) {
         try {
             voidchess.helper.RuntimeFacade.assertJavaVersion();
-            ImageLoader.loadImageResources();
             //Swing UI updates have to come from the SwingHandler or something
             SwingUtilities.invokeLater(
                     ChessFrame::new
@@ -25,7 +24,7 @@ public class ChessFrame extends JFrame {
 
     private ChessFrame() {
         super("  VoidChess960  ");
-        setIconImage(ImageLoader.getIcon());
+        setIconImage(ImageLoader.INSTANCE.getIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(new ChessPanel());
         pack();

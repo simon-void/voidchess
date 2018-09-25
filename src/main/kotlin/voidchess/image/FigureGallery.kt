@@ -2,18 +2,19 @@ package voidchess.image
 
 import voidchess.figures.Figure
 import voidchess.figures.FigureType
+import voidchess.ui.ChessboardUI
 import java.awt.image.ImageObserver
 
-class FigureGallery(private val imageObserver: ImageObserver) {
+class FigureGallery(imageObserver: ImageObserver, imageWidthHeight: Int) {
     private val whitePaintables: Array<Paintable>
     private val blackPaintables: Array<Paintable>
 
     init{
         whitePaintables = Array(FigureType.values().size) {
-            Paintable(imageObserver, ImageLoader.getFigureImage(FigureType.values()[it], true))
+            Paintable(imageObserver, ImageLoader.getFigureImage(FigureType.values()[it], true, imageWidthHeight))
         }
         blackPaintables = Array(FigureType.values().size) {
-            Paintable(imageObserver, ImageLoader.getFigureImage(FigureType.values()[it], false))
+            Paintable(imageObserver, ImageLoader.getFigureImage(FigureType.values()[it], false, imageWidthHeight))
         }
     }
 

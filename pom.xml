@@ -21,12 +21,7 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
-        <!--svg support: https://stackoverflow.com/questions/11435671/how-to-get-a-buffererimage-from-a-svg/35812847#35812847-->
-        <dependency>
-            <groupId>com.twelvemonkeys.imageio</groupId>
-            <artifactId>imageio-batik</artifactId>
-            <version>3.4.1</version>
-        </dependency>
+        <!--svg support-->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>

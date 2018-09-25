@@ -52,7 +52,7 @@ public class ChessPanel
         buttonPanel.add(switchButton);
 
         ChessGame game = new ChessGame(ChessGameSupervisorDummy.INSTANCE);
-        chessboardUI = new ChessboardUI(game, new FigureGallery(this));
+        chessboardUI = new ChessboardUI(game, this);
         panel960 = new Chess960Panel(game, chessboardUI);
         table = new Table(game, chessboardUI, this, panel960);
         game.useSupervisor(table);

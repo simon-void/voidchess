@@ -1,9 +1,12 @@
+optimizations:
 1)CheckStatus should contain a List<BoundLines>{Attacker, BoundFigure, King} stating explicitly which figures are bound!
 2)is isNotBound easier to compute than !isBound?? (migth be unimportant after 1) )
+
+features:
 - "check/checkmate/good game"-speech bubble
 - deselect hover-over-field mark if mouse leaves board
 - select hover-over-field mark on current (where is mouse pointer is at the beginning of the move) field if movable
 - highlight move from-to fields on board
 - Matt-Valuations with a material evaluation (to choose smarter matt)
-- figures from svg -> full-screen interface possible
+- resizable interface (inclusive full-screen)
 - pure chess engine module with 2-way channels (so different engines (written e.g. in Go, Rust, ...) can be used)

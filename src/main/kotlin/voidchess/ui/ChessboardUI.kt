@@ -8,12 +8,14 @@ import voidchess.player.HumanPlayerInterface
 
 import javax.swing.*
 import java.awt.*
+import java.awt.image.ImageObserver
 
 
-class ChessboardUI constructor(private val game: BasicChessGameInterface, private val figureGallery: FigureGallery) : JComponent() {
+class ChessboardUI constructor(private val game: BasicChessGameInterface, imageObserver: ImageObserver) : JComponent() {
     val areaSize: Int = 50
     val borderSize: Int = 25
     private val adapter: ChessGameAdapter
+    private val figureGallery = FigureGallery(imageObserver, areaSize)
     var isWhiteView: Boolean = true
         private set(value) { field = value }
     private var from: Position? = null
