@@ -28,7 +28,7 @@ abstract class Figure constructor(
 
     open fun canBeHitByEnpasent() = false
 
-    open fun canParticipateInCastling(): Boolean {
+    open fun canCastle(): Boolean {
         return false
     }
 

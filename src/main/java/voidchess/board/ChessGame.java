@@ -234,8 +234,8 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     private Figure moveFigure(Move move) {
-        final boolean toEqualsFrom = move.getTo().equalsPosition(move.getFrom());//für manche Schach960castlingn true
-        hasHitFigure = !isFreeArea(move.getTo()) && !toEqualsFrom;  //Enpasent wird nicht beachtet
+        final boolean toNotEqualsFrom = move.getTo().notEqualsPosition(move.getFrom());//für manche Schach960castlingn true
+        hasHitFigure = !isFreeArea(move.getTo()) && toNotEqualsFrom;  //Enpasent wird nicht beachtet
         Figure fromFigure = getFigure(move.getFrom());
 
         if (hasHitFigure) {
@@ -248,7 +248,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         }
 
         Figure hitFigure = null;
-        if (!toEqualsFrom) {
+        if (toNotEqualsFrom) {
             hitFigure = getFigure(move.getTo());
             setFigure(move.getTo(), fromFigure);
             setFigure(move.getFrom(), null);
@@ -370,7 +370,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         final boolean wasCastling = lastExtMove.isCastling();
         Figure activeFigure = getFigure(lastMove.getTo());
         setFigure(lastMove.getFrom(), activeFigure);
-        if (!wasCastling || !lastMove.getFrom().equalsPosition(lastMove.getTo())) {
+        if (!wasCastling || lastMove.getFrom().notEqualsPosition(lastMove.getTo())) {
             setFigure(lastMove.getTo(), lastExtMove.getFigureTaken());
         }
         activeFigure.undoMove(lastMove.getFrom());
@@ -391,7 +391,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         Position RookCurrentPos = rook.getPosition();
 
         setFigure(RookStartPos, rook);
-        if (!RookStartPos.equalsPosition(RookCurrentPos) && !lastExtMove.getMove().getFrom().equalsPosition(RookCurrentPos)) {
+        if (RookStartPos.notEqualsPosition(RookCurrentPos) && lastExtMove.getMove().getFrom().notEqualsPosition(RookCurrentPos)) {
             setFigure(RookCurrentPos, null);
         }
         rook.undoMove(RookStartPos);

@@ -565,13 +565,13 @@ public class ChessGameTest {
                         + "Knight-black-a7 King-black-b7-3-false"), Arrays.asList("b7-c6", "c7-c8"), 1},
                 new Object[] {new ChessGame("black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0"), Arrays.asList(), 12},
                 new Object[] {new ChessGame("white 0 King-white-g6-6 Pawn-white-g7-false King-black-e8-0 Knight-black-h8"), Arrays.asList(), 7},
-                new Object[] {new ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Bishop-black-d3 King-black-d8-0"), Arrays.asList(), 21},
                 new Object[] {new ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Rook-black-h1-1 Rook-black-a2-1 Knight-black-d3 King-black-d8-0"), Arrays.asList(), 12},
                 new Object[] {new ChessGame(518), Arrays.asList("e2-e4", "d7-d5", "f1-b5", "c7-c6", "b5-c6", "b8-d7", "c6-b5"), 19},
                 new Object[] {new ChessGame(621), Arrays.asList("g2-g3", "f7-f6", "c2-c3", "g8-f7", "d1-c2", "e8-f8", "c2-h7"), 1},
                 new Object[] {new ChessGame("white 0 Rook-black-e1-8 "
                         + "Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 "
                         + "Knight-white-g4 Queen-black-e8 King-black-g7-3"), Arrays.asList("f2-e1", "e2-f1"), 2},
+                new Object[] {new ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Bishop-black-d3 King-black-d8-0"), Arrays.asList(), 22}, //don't forget to count short castling
         };
     }
 

@@ -89,17 +89,17 @@ public class FigureTest {
         Position to = Position.Companion.byCode("g5");
         Move move = Move.Companion.get(from, to);
 
-        assertFalse(new Pawn(true, from).canParticipateInCastling());
+        assertFalse(new Pawn(true, from).canCastle());
 
         Figure king = new King(true, from);
-        assertTrue(king.canParticipateInCastling(), "unmoved king");
+        assertTrue(king.canCastle(), "unmoved king");
         king.figureMoved(move);
-        assertFalse(king.canParticipateInCastling(), "moved king");
+        assertFalse(king.canCastle(), "moved king");
 
         Figure Rook = new Rook(false, from);
-        assertTrue(Rook.canParticipateInCastling(), "unmoved Rook");
+        assertTrue(Rook.canCastle(), "unmoved Rook");
         Rook.figureMoved(move);
-        assertFalse(Rook.canParticipateInCastling(), "moved Rook");
+        assertFalse(Rook.canCastle(), "moved Rook");
     }
 
     @Test
@@ -244,7 +244,8 @@ public class FigureTest {
         );
     }
 
-    static List<Move> getPossibleMovesFrom(ChessGameInterface game, Position from) {
+    static List<Move> getPossibleMovesFrom(String posCode, ChessGameInterface game) {
+        Position from = Position.Companion.byCode(posCode);
         List<Move> moveIter = new LinkedList<>();
         List<Move> allMoves = new LinkedList<>();
         game.getPossibleMoves(allMoves);

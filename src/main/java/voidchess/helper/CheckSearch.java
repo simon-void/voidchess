@@ -110,7 +110,7 @@ public class CheckSearch {
         if (transformedPawn.isReachable(kingPos, game)) {
             attackPositions.add(lastMove.getTo());
         }
-        if (passiveAttacker != null && !passiveAttacker.equalsPosition(lastMove.getTo())) {
+        if (passiveAttacker != null && passiveAttacker.notEqualsPosition(lastMove.getTo())) {
             attackPositions.add(passiveAttacker);
         }
 

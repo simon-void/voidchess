@@ -116,7 +116,7 @@ public class SimpleBoardTest {
 
         Figure figure = board.getFigure(from);
         assertNotNull(figure, "figure to move");
-        boolean canDoCastlingInitially = figure.canParticipateInCastling();
+        boolean canDoCastlingInitially = figure.canCastle();
         boolean willTakeFigure = !board.isFreeArea(to);
 
         Figure figureTaken = board.move(figure, to);
@@ -126,13 +126,13 @@ public class SimpleBoardTest {
         assertEquals(board.getFigures().size(), wasFigureTaken?initialFigureCount-1:initialFigureCount);
         assertEquals(board.getFigure(to), figure, "figure after move");
         assertEquals(figure.getPosition(), to, "figure position after move");
-        assertFalse(figure.canParticipateInCastling(), "after a move, yuo can't do castling garanteed");
+        assertFalse(figure.canCastle(), "after a move, yuo can't do castling garanteed");
 
         board.undoMove(figure, from, figureTaken);
 
         assertEquals(board.toString(), initialLongGameDescription, "game state after move-undo");
         assertEquals(figure.getPosition(), from);
-        assertEquals(figure.canParticipateInCastling(), canDoCastlingInitially, "same castling state as before");
+        assertEquals(figure.canCastle(), canDoCastlingInitially, "same castling state as before");
     }
 
     @DataProvider

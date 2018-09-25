@@ -20,6 +20,6 @@ abstract class CastlingFigure(isWhite: Boolean, val initialPosition: Position, p
         super.figureMoved(move)
     }
 
-    override fun canParticipateInCastling() = stepsTaken == 0
+    override fun canCastle() = stepsTaken == 0
     override fun toString() = "${super.toString()}-$stepsTaken"
 }

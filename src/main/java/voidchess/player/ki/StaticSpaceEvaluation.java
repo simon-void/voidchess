@@ -131,7 +131,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         for (int row = minRow; row <= maxRow; row++) {
             for (int column = minColumn; column <= maxColumn; column++) {
                 Position newPos = Position.Companion.get(row, column);
-                if (!newPos.equalsPosition(pos)) {
+                if (newPos.notEqualsPosition(pos)) {
                     positions.add(Position.Companion.get(row, column));
                 }
             }

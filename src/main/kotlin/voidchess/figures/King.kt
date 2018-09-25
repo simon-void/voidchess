@@ -34,10 +34,10 @@ class King : CastlingFigure {
 
     private fun isShortCastlingReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val toFigure = game.getFigure(to)
-        if (canParticipateInCastling() &&
+        if (canCastle() &&
                 toFigure!=null &&
                 to.column > position.column) {
-            if (toFigure.canParticipateInCastling() && toFigure.isWhite == isWhite) {
+            if (toFigure.canCastle() && toFigure.isWhite == isWhite) {
                 if (position.column == 6) {
                     if (!game.isFreeArea(Position.get(groundRow, 5))) {
                         return false
@@ -47,7 +47,7 @@ class King : CastlingFigure {
                     for (column in position.column + 1..6) {
                         val middlePosition = Position.get(groundRow, column)
                         val middleFigure = game.getFigure(middlePosition)
-                        if (middleFigure!=null && !middleFigure.canParticipateInCastling()) {
+                        if (middleFigure!=null && !middleFigure.canCastle()) {
                             return false
                         }
                     }
@@ -60,12 +60,12 @@ class King : CastlingFigure {
 
     private fun isLongCastlingReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val toFigure = game.getFigure(to)
-        if (canParticipateInCastling() &&
+        if (canCastle() &&
                 toFigure!=null &&
                 to.column < position.column) {
 
 
-            if (toFigure.canParticipateInCastling() && toFigure.isWhite == isWhite) {
+            if (toFigure.canCastle() && toFigure.isWhite == isWhite) {
                 //kommt der König auf die c-Linie?
                 if (position.column == 1) {        //auf der a-Linie kann der König nicht stehen, da dort Turm sein muß
                     if (!game.isFreeArea(Position.get(groundRow, 2))) {
@@ -76,7 +76,7 @@ class King : CastlingFigure {
                     for (column in position.column - 1 downTo 2) {
                         val middlePosition = Position.get(groundRow, column)
                         val middleFigure = game.getFigure(middlePosition)
-                        if (middleFigure!=null && !middleFigure.canParticipateInCastling()) {
+                        if (middleFigure!=null && !middleFigure.canCastle()) {
                             return false
                         }
                     }
@@ -90,7 +90,7 @@ class King : CastlingFigure {
                         middlePosition = Position.get(groundRow, column)
                         val middleFigure = game.getFigure(middlePosition)
                         if (middleFigure!=null) {
-                            if (!middleFigure.canParticipateInCastling() || middleFigure.isRook()) {
+                            if (!middleFigure.canCastle() || middleFigure.isRook()) {
                                 return false
                             }
                         }
@@ -99,7 +99,7 @@ class King : CastlingFigure {
                     middlePosition = Position.get(groundRow, 3)
                     val middleFigure = game.getFigure(middlePosition)
                     if (middleFigure!=null) {
-                        if (!middleFigure.canParticipateInCastling() || middleFigure.isRook()) {
+                        if (!middleFigure.canCastle() || middleFigure.isRook()) {
                             return false
                         }
                     }
@@ -113,7 +113,7 @@ class King : CastlingFigure {
     override fun isPassiveBound(to: Position, game: SimpleChessBoardInterface): Boolean {
         var realTo = to
         val toFigure = game.getFigure(to)
-        if (toFigure!=null && toFigure.canParticipateInCastling()) {
+        if (toFigure!=null && toFigure.canCastle()) {
             val column = if (to.column - position.column > 0) 6 else 2
             realTo = Position.get(to.row, column)
             if (CheckSearch.isCheck(game, position)) return true
@@ -155,7 +155,7 @@ class King : CastlingFigure {
         for (row in minRow..maxRow) {
             for (column in minColumn..maxColumn) {
                 val checkPosition = Position.get(row, column)
-                if (!checkPosition.equalsPosition(position)) {
+                if (checkPosition.notEqualsPosition(position)) {
                     val figure = game.getFigure(checkPosition)
                     if (figure==null || figure.isWhite != isWhite) {
                         result.add(Move.get(position, checkPosition))
@@ -164,22 +164,22 @@ class King : CastlingFigure {
             }
         }
 
-        if (canParticipateInCastling()) {
+        if (canCastle()) {
             for (column in position.column + 1..7) {
                 val pos = Position.get(position.row, column)
                 val figure = game.getFigure(pos)
-                if (figure!=null && figure.canParticipateInCastling() && isReachable(pos, game)) {
+                if (figure!=null && figure.canCastle() && isShortCastlingReachable(pos, game)) {
                     result.add(Move.get(position, pos))
+                    break
                 }
-                break
             }
             for (column in position.column - 1 downTo 0) {
                 val pos = Position.get(position.row, column)
                 val figure = game.getFigure(pos)
-                if (figure!=null && figure.canParticipateInCastling() && isReachable(pos, game)) {
+                if (figure!=null && figure.canCastle() && isLongCastlingReachable(pos, game)) {
                     result.add(Move.get(position, pos))
+                    break
                 }
-                break
             }
         }
     }

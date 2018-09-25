@@ -6,8 +6,8 @@ package voidchess.helper
 class Position private constructor(val row: Int, val column: Int) {
     val index = getIndex(row, column)
 
-    // TODO remove equalsPosition, it's not faster than equals
     fun equalsPosition(pos: Position) = this === pos //index == pos.index
+    fun notEqualsPosition(pos: Position) = this !== pos
     override fun equals(other: Any?) = this === other //other is Position && index == other.index
     override fun toString() = "${(column + 97).toChar()}${row + 1}"
     override fun hashCode() = index
