@@ -14,7 +14,7 @@ import java.awt.image.ImageObserver
 class ChessboardUI constructor(private val game: BasicChessGameInterface, imageObserver: ImageObserver) : JComponent() {
     val areaSize: Int = 50
     val borderSize: Int = 25
-    private val adapter: ChessGameAdapter
+    private val adapter: ChessboardAdapter
     private val figureGallery = FigureGallery(imageObserver, areaSize)
     var isWhiteView: Boolean = true
         private set(value) { field = value }
@@ -27,7 +27,7 @@ class ChessboardUI constructor(private val game: BasicChessGameInterface, imageO
                 BorderFactory.createLineBorder(Color.black),
                 BorderFactory.createBevelBorder(0, Color.gray, Color.darkGray)
         )
-        adapter = ChessGameAdapter(this)
+        adapter = ChessboardAdapter(this)
         addMouseListener(adapter)
         addMouseMotionListener(adapter)
         isDoubleBuffered = true
@@ -118,8 +118,8 @@ class ChessboardUI constructor(private val game: BasicChessGameInterface, imageO
         repaint()
     }
 
-    fun addPlayer(player: HumanPlayerInterface) {
-        adapter.addPlayer(player)
+    fun setPlayer(player: HumanPlayerInterface) {
+        adapter.setPlayer(player)
     }
 
     fun markPosition(pos: Position?, isFromPosition: Boolean) {
