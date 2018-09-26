@@ -1,6 +1,7 @@
 package voidchess.board
 
 import voidchess.helper.ChessGameSupervisor
+import voidchess.helper.ExtendedMove
 import voidchess.helper.Move
 import voidchess.helper.Position
 
@@ -20,6 +21,7 @@ interface ChessGameInterface : BasicChessGameInterface {
      * @return all the moves played so far in a string representation
      */
     fun getCompleteHistory(): String
+    fun getLastExtendedMove(): ExtendedMove
     fun initGame(chess960: Int)
     fun copyGame(neededInstances: Int): List<ChessGameInterface>
     fun countFigures(): Int

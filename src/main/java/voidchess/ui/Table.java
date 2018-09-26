@@ -2,10 +2,7 @@ package voidchess.ui;
 
 import voidchess.board.ChessGameInterface;
 import voidchess.board.MoveResult;
-import voidchess.helper.ChessGameSupervisor;
-import voidchess.helper.Move;
-import voidchess.helper.PawnPromotion;
-import voidchess.helper.Position;
+import voidchess.helper.*;
 import voidchess.player.PlayerInterface;
 
 /**
@@ -40,7 +37,8 @@ public class Table implements ChessGameSupervisor, TableInterface {
                 return;
             }
             endoption = game.move(move);
-            ui.repaintAfterMove(move);
+            ExtendedMove extendedMove = game.getLastExtendedMove();
+            ui.repaintAfterMove(extendedMove);
 
             whitePlayersTurn = !whitePlayersTurn;
         }

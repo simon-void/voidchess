@@ -622,6 +622,10 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         extendedMoveStack.putExtendedMove(extendedMove);
     }
 
+    public ExtendedMove getLastExtendedMove() {
+        return extendedMoveStack.topExtendedMove();
+    }
+
     private class Memento {
         final private int figureCount;
         final private boolean isWhite;
