@@ -16,6 +16,7 @@ class HumanPlayer(
         private val ui: ChessboardUI,
         private val game: ChessGameInterface
 ) : HumanPlayerInterface {
+    private var mouseOverWhileInactivePos: Position? = null
     private var from: Position? = null
     private var isMyTurn: Boolean = false
 
@@ -25,6 +26,7 @@ class HumanPlayer(
 
     override fun play() {
         isMyTurn = true
+        mouseMovedOver(mouseOverWhileInactivePos)
     }
 
     fun move(move: Move) {
@@ -34,7 +36,10 @@ class HumanPlayer(
     }
 
     override fun mouseMovedOver(pos: Position?) {
-        if (!isMyTurn) return
+        if (!isMyTurn) {
+            mouseOverWhileInactivePos = pos
+            return
+        }
 
         val lockedFrom = from
         if( pos==null) {

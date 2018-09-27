@@ -7,7 +7,7 @@ import java.awt.event.MouseEvent
 import javax.swing.event.MouseInputListener
 
 
-class ChessboardAdapter internal constructor(private val ui: ChessboardUI) : MouseInputListener {
+class ChessboardAdapter constructor(private val ui: ChessboardUI) : MouseInputListener {
     private var player: HumanPlayerInterface? = null
     private var lastMouseMovedPos: Position? = null
 
@@ -17,14 +17,18 @@ class ChessboardAdapter internal constructor(private val ui: ChessboardUI) : Mou
     override fun mouseExited(e: MouseEvent) {}
     override fun mouseDragged(e: MouseEvent) {}
 
+    fun resendLatestMousePos() {
+        player?.let { human ->
+            human.mouseMovedOver(lastMouseMovedPos)
+        }
+    }
 
     override fun mouseMoved(e: MouseEvent) {
-        getPositionFromPoint(e.point).let { pos ->
-            player?.let { human ->
-                if(lastMouseMovedPos!==pos){
-                    lastMouseMovedPos = pos
-                    human.mouseMovedOver(pos)
-                }
+        val pos = getPositionFromPoint(e.point)
+        player?.let { human ->
+            if(lastMouseMovedPos !== pos){
+                lastMouseMovedPos = pos
+                human.mouseMovedOver(pos)
             }
         }
     }

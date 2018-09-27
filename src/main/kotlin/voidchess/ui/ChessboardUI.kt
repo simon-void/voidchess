@@ -62,6 +62,10 @@ class ChessboardUI constructor(private val game: BasicChessGameInterface, imageO
                     repaintPositionAtOnce(it)
                 }
             }
+
+            if (isComputerMove) {
+                adapter.resendLatestMousePos()
+            }
         }
 
         repaintPositionAtOnce(move.from)

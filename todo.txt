@@ -4,9 +4,6 @@ optimizations:
 
 features:
 - "check/checkmate/good game"-speech bubble
-- deselect hover-over-field mark if mouse leaves board
-- select hover-over-field mark on current (where is mouse pointer is at the beginning of the move) field if movable
-- highlight move from-to fields on board
 - Matt-Valuations with a material evaluation (to choose smarter matt)
 - resizable interface (inclusive full-screen)
 - pure chess engine module with 2-way channels (so different engines (written e.g. in Go, Rust, ...) can be used)
