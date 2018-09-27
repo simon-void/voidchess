@@ -175,7 +175,9 @@ class ChessboardUI constructor(private val game: BasicChessGameInterface, imageO
             }
             to = pos
         }
-        if (pos != null) repaintPositionAtOnce(pos)
+        if (pos != null) {
+            repaintPositionAtOnce(pos)
+        }
     }
 }
 
