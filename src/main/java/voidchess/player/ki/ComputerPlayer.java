@@ -11,6 +11,7 @@ import voidchess.player.ki.concurrent.ConcurrencyStrategyFactory;
 import voidchess.player.ki.evaluation.Evaluated;
 import voidchess.player.ki.evaluation.EvaluatedMove;
 import voidchess.player.ki.openings.OpeningsLibrary;
+import voidchess.ui.ComputerPlayerUI;
 import voidchess.ui.TableInterface;
 
 import java.util.Iterator;
@@ -25,7 +26,7 @@ public class ComputerPlayer
         implements PlayerInterface {
     private ChessGameInterface game;
     private TableInterface table;
-    private AbstractComputerPlayerUI ui;
+    private ComputerPlayerUI ui;
     private DynamicEvaluation dynamicEvaluation;
     private SearchTreePruner standardPruner;
     private StaticEvaluationInterface standardEvaluation;
@@ -35,7 +36,7 @@ public class ComputerPlayer
     private boolean useLibrary;
     private Random randomNumberGenerator;
 
-    public ComputerPlayer(TableInterface table, ChessGameInterface game, AbstractComputerPlayerUI ui) {
+    public ComputerPlayer(TableInterface table, ChessGameInterface game, ComputerPlayerUI ui) {
         this.ui = ui;
         this.game = game;
         this.table = table;

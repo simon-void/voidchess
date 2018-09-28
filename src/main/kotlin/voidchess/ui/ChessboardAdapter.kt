@@ -7,7 +7,7 @@ import java.awt.event.MouseEvent
 import javax.swing.event.MouseInputListener
 
 
-class ChessboardAdapter constructor(private val ui: ChessboardUI) : MouseInputListener {
+class ChessboardAdapter constructor(private val ui: ChessboardComponent) : MouseInputListener {
     private var player: HumanPlayerInterface? = null
     private var lastMouseMovedPos: Position? = null
 

@@ -2,7 +2,7 @@ package voidchess.player.ki.concurrent;
 
 import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
-import voidchess.player.ki.AbstractComputerPlayerUI;
+import voidchess.ui.ComputerPlayerUI;
 import voidchess.player.ki.DynamicEvaluation;
 import voidchess.player.ki.evaluation.Evaluated;
 import voidchess.player.ki.evaluation.EvaluatedMove;
@@ -12,7 +12,7 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 class SingleThreadStrategy extends AbstractConcurrencyStrategy {
-    SingleThreadStrategy(AbstractComputerPlayerUI ui) {
+    SingleThreadStrategy(ComputerPlayerUI ui) {
         super(ui);
     }
 

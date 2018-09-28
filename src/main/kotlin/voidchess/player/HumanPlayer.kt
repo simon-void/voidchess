@@ -4,7 +4,7 @@ import voidchess.board.ChessGameInterface
 import voidchess.helper.Move
 import voidchess.helper.PawnPromotion
 import voidchess.helper.Position
-import voidchess.ui.ChessboardUI
+import voidchess.ui.ChessboardComponent
 import voidchess.ui.TableInterface
 
 import javax.swing.*
@@ -13,7 +13,7 @@ import javax.swing.*
 class HumanPlayer(
         private val table: TableInterface,
         private var isWhitePlayer: Boolean,
-        private val ui: ChessboardUI,
+        private val ui: ChessboardComponent,
         private val game: ChessGameInterface
 ) : HumanPlayerInterface {
     private var mouseOverWhileInactivePos: Position? = null

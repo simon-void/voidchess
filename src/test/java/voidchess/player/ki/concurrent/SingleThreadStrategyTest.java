@@ -8,6 +8,7 @@ import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
 import voidchess.player.ki.*;
 import voidchess.player.ki.evaluation.EvaluatedMove;
+import voidchess.ui.ComputerPlayerUI;
 
 import java.util.Iterator;
 import java.util.NavigableSet;
@@ -22,11 +23,11 @@ import static org.testng.Assert.assertTrue;
  */
 public class SingleThreadStrategyTest {
     private SingleThreadStrategy strategy;
-    private AbstractComputerPlayerUI uiMock;
+    private ComputerPlayerUI uiMock;
 
     @BeforeMethod
     public void setup() {
-        uiMock = mock(AbstractComputerPlayerUI.class);
+        uiMock = mock(ComputerPlayerUI.class);
         strategy = new SingleThreadStrategy(uiMock);
     }
 

@@ -2,7 +2,6 @@ package voidchess.image
 
 import voidchess.figures.Figure
 import voidchess.figures.FigureType
-import voidchess.ui.ChessboardUI
 import java.awt.image.ImageObserver
 
 class FigureGallery(imageObserver: ImageObserver, imageWidthHeight: Int) {

@@ -2,7 +2,7 @@ package voidchess.player.ki.concurrent;
 
 import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
-import voidchess.player.ki.AbstractComputerPlayerUI;
+import voidchess.ui.ComputerPlayerUI;
 import voidchess.player.ki.DynamicEvaluation;
 import voidchess.player.ki.evaluation.EvaluatedMove;
 
@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.NavigableSet;
 
 abstract class AbstractConcurrencyStrategy implements ConcurrencyStrategy {
-    final private AbstractComputerPlayerUI ui;
+    final private ComputerPlayerUI ui;
     final private List<Move> possibleMovesBuffer = new ArrayList<>(80);
 
-    public AbstractConcurrencyStrategy(AbstractComputerPlayerUI ui) {
+    public AbstractConcurrencyStrategy(ComputerPlayerUI ui) {
         this.ui = ui;
     }
 

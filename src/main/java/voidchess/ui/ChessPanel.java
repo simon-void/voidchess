@@ -3,11 +3,9 @@ package voidchess.ui;
 import voidchess.board.ChessGame;
 import voidchess.board.MoveResult;
 import voidchess.helper.ChessGameSupervisorDummy;
-import voidchess.image.FigureGallery;
 import voidchess.player.HumanPlayer;
 import voidchess.player.PlayerInterface;
 import voidchess.player.ki.ComputerPlayer;
-import voidchess.player.ki.ComputerPlayerUI;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -28,7 +26,7 @@ public class ChessPanel
     private Table table;
     private JButton startButton;
     private JButton switchButton;
-    private ChessboardUI chessboardUI;
+    private ChessboardComponent chessboardComponent;
     private Chess960Panel panel960;
     private DifficultyPanel difficultyPanel;
     private CoresPanel coresPanel;
@@ -52,12 +50,12 @@ public class ChessPanel
         buttonPanel.add(switchButton);
 
         ChessGame game = new ChessGame(ChessGameSupervisorDummy.INSTANCE);
-        chessboardUI = new ChessboardUI(game, this);
-        panel960 = new Chess960Panel(game, chessboardUI);
-        table = new Table(game, chessboardUI, this, panel960);
+        chessboardComponent = new ChessboardComponent(game, this);
+        panel960 = new Chess960Panel(game, chessboardComponent);
+        table = new Table(game, chessboardComponent, this, panel960);
         game.useSupervisor(table);
-        humanPlayer = new HumanPlayer(table, true, chessboardUI, game);
-        ComputerPlayerUI computerPlayerUI = new ComputerPlayerUI();
+        humanPlayer = new HumanPlayer(table, true, chessboardComponent, game);
+        ComputerPlayerComponent computerPlayerUI = new ComputerPlayerComponent();
         ComputerPlayer kiPlayer = new ComputerPlayer(table, game, computerPlayerUI);
         computerPlayer = kiPlayer;
         table.setWhitePlayer(humanPlayer);
@@ -73,7 +71,7 @@ public class ChessPanel
 
         JPanel gameUIPanel = new JPanel();
         gameUIPanel.setBackground(Color.WHITE);
-        gameUIPanel.add(chessboardUI);
+        gameUIPanel.add(chessboardComponent);
 
         setBackground(Color.WHITE);
         GridBagLayout layout = new GridBagLayout();
@@ -175,6 +173,6 @@ public class ChessPanel
         }
         humanPlayer.setColor(humanPlaysWhite);
         computerPlayer.setColor(!humanPlaysWhite);
-        chessboardUI.setViewPoint(humanPlaysWhite);
+        chessboardComponent.setViewPoint(humanPlaysWhite);
     }
 }

@@ -2,7 +2,7 @@ package voidchess.player.ki.concurrent;
 
 import voidchess.board.ChessGameInterface;
 import voidchess.helper.Move;
-import voidchess.player.ki.AbstractComputerPlayerUI;
+import voidchess.ui.ComputerPlayerUI;
 import voidchess.player.ki.DynamicEvaluation;
 import voidchess.player.ki.evaluation.Evaluated;
 import voidchess.player.ki.evaluation.EvaluatedMove;
@@ -15,7 +15,7 @@ class MultiThreadStrategy extends AbstractConcurrencyStrategy {
     private final ExecutorService executorService;
     private final int numberOfThreads;
 
-    MultiThreadStrategy(AbstractComputerPlayerUI ui, int numberOfCores) {
+    MultiThreadStrategy(ComputerPlayerUI ui, int numberOfCores) {
         super(ui);
 
         numberOfThreads = numberOfCores;

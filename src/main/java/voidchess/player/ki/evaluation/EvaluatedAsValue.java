@@ -10,7 +10,7 @@ final public class EvaluatedAsValue implements Evaluated {
     final static float FINAL_EQUALITY_CUTOF_RADIUS = 0.5f;
 
     private boolean needsSecondaryEvaluationInitialized = true;
-    final private float primaryEvaluation;
+    final public float primaryEvaluation;
     private float secondaryEvaluation;
 
     public EvaluatedAsValue(float primaryEvaluation) {

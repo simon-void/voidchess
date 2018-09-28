@@ -5,7 +5,7 @@ package voidchess.player.ki.evaluation;
  */
 final public class EvaluatedAsMatt implements Evaluated {
     final private int depth;
-    final private boolean isOtherMatt;
+    final public boolean isOtherMatt;
 
     public EvaluatedAsMatt(int depth, boolean isOtherMatt) {
         assert depth > 0;

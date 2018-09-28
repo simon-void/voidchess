@@ -10,14 +10,14 @@ import voidchess.player.PlayerInterface;
  */
 public class Table implements ChessGameSupervisor, TableInterface {
     private ChessGameInterface game;
-    private ChessboardUI ui;
+    private ChessboardComponent ui;
     private Chess960Panel panel960;
     private PlayerInterface whitePlayer, blackPlayer;
     private boolean whitePlayersTurn, resign;
     private ChessPanel parent;
 
 
-    Table(ChessGameInterface game, ChessboardUI ui, ChessPanel parent, Chess960Panel panel960) {
+    Table(ChessGameInterface game, ChessboardComponent ui, ChessPanel parent, Chess960Panel panel960) {
         this.game = game;
         this.ui = ui;
         this.parent = parent;
