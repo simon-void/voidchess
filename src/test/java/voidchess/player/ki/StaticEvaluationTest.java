@@ -27,7 +27,7 @@ public class StaticEvaluationTest {
         assertTrue(getCombinedEvaluation(evaluation.getPrimaryEvaluation(game, false)) < 0);
     }
 
-    private float getCombinedEvaluation(Evaluated evaluated) {
-        return Float.parseFloat(evaluated.toString().replace(',', '.'));
+    private double getCombinedEvaluation(Evaluated evaluated) {
+        return Double.parseDouble(evaluated.toString().replace(',', '.'));
     }
 }

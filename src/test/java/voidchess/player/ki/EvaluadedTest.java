@@ -14,11 +14,11 @@ public class EvaluadedTest {
     public void testChessvalueToString() {
         Evaluated value = new Ongoing(-1);
         assertEquals(value.toString().replace('.', ','), "-1,00");
-        value = new Ongoing(5.49999999999f);
+        value = new Ongoing(5.49999999999);
         assertEquals(value.toString().replace('.', ','), "5,50");
 
         value = Draw.INSTANCE;
-        assertEquals(value.toString().replace('.', ','), "0,00");
+        assertEquals(value.toString(), "draw");
 
         value = new CheckmateSelf(2);
         assertEquals(value.toString(), "checkmate in 2");
@@ -30,23 +30,23 @@ public class EvaluadedTest {
     @Test
     public void testIsCloseToByCombined() {
         assertTrue(
-                new Ongoing(-0.25f).isCloseToByCombined(
-                        new Ongoing(0.25f)
+                new Ongoing(-0.25).isCloseToByCombined(
+                        new Ongoing(0.25)
                 )
         );
         assertTrue(
                 Draw.INSTANCE.isCloseToByCombined(
-                        new Ongoing(0.5f)
+                        new Ongoing(0.5)
                 )
         );
         assertFalse(
-                new Ongoing(-0.3f).isCloseToByCombined(
-                        new Ongoing(0.3f)
+                new Ongoing(-0.3).isCloseToByCombined(
+                        new Ongoing(0.3)
                 )
         );
         assertFalse(
-                new Ongoing(-0.2f).isCloseToByCombined(
-                        new Ongoing(0.5f)
+                new Ongoing(-0.2).isCloseToByCombined(
+                        new Ongoing(0.5)
                 )
         );
         assertFalse(
@@ -74,28 +74,28 @@ public class EvaluadedTest {
     @Test
     public void testIsCloseToByPrimary() {
         assertTrue(
-                new Ongoing(-0.65f).isCloseToByPrimary(
-                        new Ongoing(0.25f)
+                new Ongoing(-0.65).isCloseToByPrimary(
+                        new Ongoing(0.25)
                 )
         );
         assertTrue(
-                new Ongoing(0f).isCloseToByPrimary(
-                        new Ongoing(1f)
+                new Ongoing(0).isCloseToByPrimary(
+                        new Ongoing(1)
                 )
         );
         assertTrue(
                 Draw.INSTANCE.isCloseToByPrimary(
-                        new Ongoing(0.5f)
+                        new Ongoing(0.5)
                 )
         );
         assertFalse(
-                new Ongoing(-0.3f).isCloseToByPrimary(
-                        new Ongoing(0.8f)
+                new Ongoing(-0.3).isCloseToByPrimary(
+                        new Ongoing(0.8)
                 )
         );
         assertFalse(
-                new Ongoing(-0.6f).isCloseToByPrimary(
-                        new Ongoing(0.5f)
+                new Ongoing(-0.6).isCloseToByPrimary(
+                        new Ongoing(0.5)
                 )
         );
         assertFalse(
@@ -124,7 +124,7 @@ public class EvaluadedTest {
     @Test
     public void testDrawCompareTo() {
         assertTrue(Draw.INSTANCE.compareTo(Draw.INSTANCE) ==0);
-        assertTrue(Draw.INSTANCE.compareTo(new Ongoing(0f)) <0);
-        assertTrue(Draw.INSTANCE.compareTo(new Ongoing(-0.0000000000000000000001f))>0);
+        assertTrue(Draw.INSTANCE.compareTo(new Ongoing(0.0)) <0);
+        assertTrue(Draw.INSTANCE.compareTo(new Ongoing(-0.0000000000000000000001))>0);
     }
 }

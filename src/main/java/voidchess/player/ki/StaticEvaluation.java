@@ -14,32 +14,31 @@ import java.util.List;
  * @author stephan
  */
 public class StaticEvaluation implements StaticEvaluationInterface {
-    final private static double PAWN_VALUE = 1f;
-    final private static double Rook_VALUE = 4.5f;
-    final private static double KNIGHT_VALUE = 3f;
-    final private static double BISHOP_VALUE = 3f;
-    final private static double QUEEN_VALUE = 9f;
+    final private static double PAWN_VALUE = 1.0;
+    final private static double Rook_VALUE = 4.5;
+    final private static double KNIGHT_VALUE = 3.0;
+    final private static double BISHOP_VALUE = 3.0;
+    final private static double QUEEN_VALUE = 9.0;
 
     public Evaluated getPrimaryEvaluation(ChessGameInterface game, final boolean forWhite) {
-        float primaryEvaluation = evaluateFigures(game, forWhite);
+        double primaryEvaluation = evaluateFigures(game, forWhite);
         return new Ongoing(primaryEvaluation);
     }
 
     @Override
     public void addSecondaryEvaluation(ChessGameInterface game, boolean forWhite, Evaluated withPrimaryEvaluation) {
         if (withPrimaryEvaluation instanceof Ongoing && withPrimaryEvaluation.needsSecondaryEvaluation()) {
-            float secondaryEvaluation = evaluateRuledArea(game, forWhite)
+            double secondaryEvaluation = evaluateRuledArea(game, forWhite)
                     + evaluatePosition(game, forWhite);
             withPrimaryEvaluation.setSecondaryEvaluation(secondaryEvaluation);
         }
     }
 
-    private float evaluateFigures(ChessGameInterface game, final boolean forWhite) {
-        float whiteFigures = 0;
-        float blackFigures = 0;
+    private double evaluateFigures(ChessGameInterface game, final boolean forWhite) {
+        double whiteFigures = 0;
+        double blackFigures = 0;
 
-        final List<Figure> figures = game.getFigures();
-        for (Figure figure : figures) {
+        for (Figure figure : game.getFigures()) {
             if (figure.isWhite()) {
                 if (figure.isPawn()) {
                     whiteFigures += PAWN_VALUE;
@@ -71,21 +70,21 @@ public class StaticEvaluation implements StaticEvaluationInterface {
         else return blackFigures - whiteFigures;
     }
 
-    private float evaluateRuledArea(ChessGameInterface game, final boolean forWhite) {
-        final float VALUE_OF_AREA = 0.015f;
-        final float whiteMoves = game.countReachableMoves(true);
-        final float blackMoves = game.countReachableMoves(false);
+    private double evaluateRuledArea(ChessGameInterface game, final boolean forWhite) {
+        final double VALUE_OF_AREA = 0.015;
+        final double whiteMoves = game.countReachableMoves(true);
+        final double blackMoves = game.countReachableMoves(false);
 
-        float difference;
+        double difference;
         if (forWhite) difference = whiteMoves - blackMoves;
         else difference = blackMoves - whiteMoves;
 
         return difference * VALUE_OF_AREA;
     }
 
-    private float evaluatePosition(ChessGameInterface game, final boolean forWhite) {
-        float whiteEvaluation = 0;
-        float blackEvaluation = 0;
+    private double evaluatePosition(ChessGameInterface game, final boolean forWhite) {
+        double whiteEvaluation = 0.0;
+        double blackEvaluation = 0.0;
 
         final List<Figure> figures = game.getFigures();
         for (Figure figure : figures) {
@@ -109,10 +108,10 @@ public class StaticEvaluation implements StaticEvaluationInterface {
         else return blackEvaluation - whiteEvaluation;
     }
 
-    final static float BISHOP_ON_STARTPOSITION_PUNISHMENT = -0.45f;
-    final static float BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT = -0.2f;
+    final static double BISHOP_ON_STARTPOSITION_PUNISHMENT = -0.45;
+    final static double BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT = -0.2;
 
-    private float evaluateBishop(ChessGameInterface game, Position pos) {
+    private double evaluateBishop(ChessGameInterface game, Position pos) {
 
 
         final boolean isWhite = game.getFigure(pos).isWhite();
@@ -137,9 +136,9 @@ public class StaticEvaluation implements StaticEvaluationInterface {
         return 0;
     }
 
-    final static float BORDER_KNIGHT_PUNISHMENT = -0.45f;
+    final static double BORDER_KNIGHT_PUNISHMENT = -0.45;
 
-    private float evaluateKnight(ChessGameInterface game, Position pos) {
+    private double evaluateKnight(ChessGameInterface game, Position pos) {
 
         if (pos.getRow() == 0 || pos.getRow() == 7 || pos.getColumn() == 0 || pos.getColumn() == 7) {
             return BORDER_KNIGHT_PUNISHMENT;
@@ -147,18 +146,18 @@ public class StaticEvaluation implements StaticEvaluationInterface {
         return 0;
     }
 
-    private float evaluatePawn(ChessGameInterface game, Position pos) {
-        float pawnValue = evaluatePawnPosition(game, pos);
+    private double evaluatePawn(ChessGameInterface game, Position pos) {
+        double pawnValue = evaluatePawnPosition(game, pos);
         pawnValue += evaluatePawnDefense(game, pos);
 
         return pawnValue;
     }
 
 
-    final static float MOVES_GONE_VALUE = 0.2f;
+    final static double MOVES_GONE_VALUE = 0.2;
 
-    private float evaluatePawnPosition(ChessGameInterface game, Position pos) {
-        float additionalPawnValue = 0;
+    private double evaluatePawnPosition(ChessGameInterface game, Position pos) {
+        double additionalPawnValue = 0;
 
         Figure pawn = game.getFigure(pos);
         int startRow = pawn.isWhite() ? 1 : 6;
@@ -168,11 +167,11 @@ public class StaticEvaluation implements StaticEvaluationInterface {
         return additionalPawnValue;
     }
 
-    final static float DEFENSE_VALUE = 0.10f;          //Bonuswert, wenn Bauer anderen Bauern deckt,bzw.gedeckt wird
-    final static float NEXT_TO_VALUE = 0.06f;           //Bonuswert, wenn Bauer einen Nachbarn hat
-    final static float UNPROTECTED_BORDER_PAWN_VALUE = -0.2f; //Bestrafung für ungedeckte Bauern am Rand
+    final static double DEFENSE_VALUE = 0.10;                 //Bonuswert, wenn Bauer anderen Bauern deckt,bzw.gedeckt wird
+    final static double NEXT_TO_VALUE = 0.06;                 //Bonuswert, wenn Bauer einen Nachbarn hat
+    final static double UNPROTECTED_BORDER_PAWN_VALUE = -0.2; //Bestrafung für ungedeckte Bauern am Rand
 
-    private float evaluatePawnDefense(ChessGameInterface game, Position pos) {
+    private double evaluatePawnDefense(ChessGameInterface game, Position pos) {
 
 
         Figure pawn = game.getFigure(pos);
@@ -241,15 +240,15 @@ public class StaticEvaluation implements StaticEvaluationInterface {
     }
 
 
-    private float evaluateKing(ChessGameInterface game, Position pos) {
-        float value = evaluateCastling(game, pos);
+    private double evaluateKing(ChessGameInterface game, Position pos) {
+        double value = evaluateCastling(game, pos);
         value += evaluateKingDefense(game, pos);
         return value;
     }
 
-    final static float NO_ROCHADE_PUNISHMENT = -0.4f;
+    final static double NO_ROCHADE_PUNISHMENT = -0.4;
 
-    private float evaluateCastling(ChessGameInterface game, Position pos) {
+    private double evaluateCastling(ChessGameInterface game, Position pos) {
 
         King king = (King) game.getFigure(pos);
 
@@ -257,18 +256,18 @@ public class StaticEvaluation implements StaticEvaluationInterface {
                 && !king.didCastling()) {
             return NO_ROCHADE_PUNISHMENT;
         }
-        return 0;
+        return 0.0;
     }
 
-    final static float BIG_KING_DEFENSE_VALUE = 0.6f;
-    final static float SMALL_KING_DEFENSE_VALUE = 0.2f;
+    final static double BIG_KING_DEFENSE_VALUE = 0.6;
+    final static double SMALL_KING_DEFENSE_VALUE = 0.2;
 
-    private float evaluateKingDefense(ChessGameInterface game, Position pos) {
+    private double evaluateKingDefense(ChessGameInterface game, Position pos) {
 
 
         King king = (King) game.getFigure(pos);
         final boolean isWhite = king.isWhite();
-        float value = 0;
+        double value = 0.0;
         int groundRow = isWhite ? 0 : 7;
         int secondRow = isWhite ? 1 : 6;
 

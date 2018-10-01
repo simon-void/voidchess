@@ -29,7 +29,7 @@ public class EvaluatedTest {
         assertFalse(value3.isCloseToByCombined(value1));
     }
 
-    private Ongoing getValue(float primary, float secondary) {
+    private Ongoing getValue(double primary, double secondary) {
         Ongoing value = new Ongoing(primary);
         value.setSecondaryEvaluation(secondary);
         return value;

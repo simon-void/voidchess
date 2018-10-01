@@ -14,7 +14,7 @@ public class EvaluatedMoveTest {
     @Test
     public void testGetter() {
         final Move move = Move.Companion.byCode("a2-a3");
-        final float value = -2.91f;
+        final double value = -2.91;
 
         EvaluatedMove eMove = new EvaluatedMove(move, new Ongoing(value));
 

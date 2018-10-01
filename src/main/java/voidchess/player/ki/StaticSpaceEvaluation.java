@@ -39,7 +39,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
             }
         }
 
-        float value = 0;
+        double value;
         Position kingPos;
         if (colorOfWinnerIsWhite) {
             figuresPos.add(whiteKingPos);
@@ -57,7 +57,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         if (colorOfWinnerIsWhite == forWhite) value = -value;
 
         //TODO is there is better secondary evaluation that a static 0?
-        return new Ongoing(value / 10.0f);
+        return new Ongoing(value / 10.0);
     }
 
     @Override
@@ -71,8 +71,8 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         return Math.abs(pos1.getRow() - pos2.getRow()) + Math.abs(pos1.getColumn() - pos2.getColumn());
     }
 
-    float borderMalus(Position kingPos) {
-        return -Math.max(Math.abs(kingPos.getRow() - 3.5f), Math.abs(kingPos.getColumn() - 3.5f));
+    double borderMalus(Position kingPos) {
+        return -Math.max(Math.abs(kingPos.getRow() - 3.5), Math.abs(kingPos.getColumn() - 3.5));
     }
 
     int countRestSpace(ChessGameInterface game,

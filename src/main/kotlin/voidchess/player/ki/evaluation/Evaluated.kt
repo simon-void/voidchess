@@ -4,7 +4,7 @@ import java.text.DecimalFormat
 
 
 sealed class Evaluated: Comparable<Evaluated> {
-    abstract fun setSecondaryEvaluation(secondaryEvaluation: Float)
+    abstract fun setSecondaryEvaluation(secondaryEvaluation: Double)
     abstract fun needsSecondaryEvaluation(): Boolean
     abstract fun isCloseToByPrimary(other: Evaluated): Boolean
     abstract fun isCloseToByCombined(other: Evaluated): Boolean
@@ -23,12 +23,12 @@ sealed class Evaluated: Comparable<Evaluated> {
     }
 }
 
-private const val PRIMARY_EQUALITY_CUTOFF_RADIUS = 1f
-private const val FINAL_EQUALITY_CUTOFF_RADIUS = 0.5f
+private const val PRIMARY_EQUALITY_CUTOFF_RADIUS = 1.0
+private const val FINAL_EQUALITY_CUTOFF_RADIUS = 0.5
 
 object Draw: Evaluated() {
 
-    override fun setSecondaryEvaluation(secondaryEvaluation: Float) =throw UnsupportedOperationException("DrawValue has no secondaryEvaluation")
+    override fun setSecondaryEvaluation(secondaryEvaluation: Double) =throw UnsupportedOperationException("DrawValue has no secondaryEvaluation")
 
     override fun needsSecondaryEvaluation() = false
 
@@ -44,7 +44,7 @@ object Draw: Evaluated() {
             if (other is Draw) 0
             else -other.compareTo(this)
 
-    override fun toString() = Ongoing.format(0f)
+    override fun toString() = "draw"
 }
 
 class CheckmateSelf(val depth: Int) : Evaluated() {
@@ -68,7 +68,7 @@ class CheckmateSelf(val depth: Int) : Evaluated() {
 
     private fun compareWith(other: CheckmateSelf) = depth - other.depth
 
-    override fun setSecondaryEvaluation(secondaryEvaluation: Float) = throw UnsupportedOperationException("MattValue has no secondaryEvaluation")
+    override fun setSecondaryEvaluation(secondaryEvaluation: Double) = throw UnsupportedOperationException("MattValue has no secondaryEvaluation")
 
     override fun needsSecondaryEvaluation() = false
 
@@ -96,25 +96,25 @@ class CheckmateOther(val depth: Int) : Evaluated() {
 
     private fun compareWith(other: CheckmateOther) = other.depth - depth
 
-    override fun setSecondaryEvaluation(secondaryEvaluation: Float) = throw UnsupportedOperationException("MattValue has no secondaryEvaluation")
+    override fun setSecondaryEvaluation(secondaryEvaluation: Double) = throw UnsupportedOperationException("MattValue has no secondaryEvaluation")
 
     override fun needsSecondaryEvaluation() = false
 
     override fun toString() = "checkmate in $depth"
 }
 
-class Ongoing(val primaryEvaluation: Float) : Evaluated() {
+class Ongoing(val primaryEvaluation: Double) : Evaluated() {
 
     private var needsSecondaryEvaluation = true
-    private var secondaryEvaluation: Float = 0.toFloat()
+    private var secondaryEval: Double = 0.0
 
-    val combinedEvaluation: Float
-        get() = primaryEvaluation + secondaryEvaluation
+    val combinedEvaluation: Double
+        get() = primaryEvaluation + secondaryEval
 
-    override fun setSecondaryEvaluation(secondaryEvaluation: Float) {
+    override fun setSecondaryEvaluation(secondaryEvaluation: Double) {
         assert(needsSecondaryEvaluation)
 
-        this.secondaryEvaluation = secondaryEvaluation
+        secondaryEval = secondaryEvaluation
         needsSecondaryEvaluation = false
     }
 
@@ -136,7 +136,7 @@ class Ongoing(val primaryEvaluation: Float) : Evaluated() {
         }
     }
 
-    private fun isAbsValueEqualOrLess(value: Float, okRadius: Float) = Math.abs(value) <= okRadius
+    private fun isAbsValueEqualOrLess(value: Double, okRadius: Double) = Math.abs(value) <= okRadius
 
     override fun compareTo(other: Evaluated): Int {
         return when (other) {
@@ -157,6 +157,6 @@ class Ongoing(val primaryEvaluation: Float) : Evaluated() {
             minimumFractionDigits = 2
             maximumFractionDigits = 2
         }
-        fun format(value: Float): String = formatter.format(value.toDouble())
+        fun format(value: Double): String = formatter.format(value)
     }
 }

@@ -38,8 +38,8 @@ public class StaticSpaceEvaluationTest {
         assertTrue(evaluateForWhite2.compareTo(evaluateForWhite) < 0);
     }
 
-    private float getCombinedEvaluation(Evaluated evaluated) {
-        return Float.parseFloat(evaluated.toString().replace(',', '.'));
+    private double getCombinedEvaluation(Evaluated evaluated) {
+        return Double.parseDouble(evaluated.toString().replace(',', '.'));
     }
 
     @Test
