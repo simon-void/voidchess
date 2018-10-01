@@ -53,6 +53,19 @@ class CheckmateSelf(val depth: Int) : Evaluated() {
         assert(depth > 0)
     }
 
+    private var needsSecondaryEvaluation = true
+    private var secondaryEval: Double = 0.0
+
+
+    override fun setSecondaryEvaluation(secondaryEvaluation: Double) {
+        assert(needsSecondaryEvaluation)
+
+        secondaryEval = secondaryEvaluation
+        needsSecondaryEvaluation = false
+    }
+
+    override fun needsSecondaryEvaluation() = needsSecondaryEvaluation
+
     override fun isCloseToByPrimary(other: Evaluated): Boolean {
         if (other is CheckmateSelf) {
             return depth == other.depth
@@ -60,17 +73,25 @@ class CheckmateSelf(val depth: Int) : Evaluated() {
         return false
     }
 
-    override fun isCloseToByCombined(other: Evaluated) = isCloseToByPrimary(other)
+    override fun isCloseToByCombined(other: Evaluated): Boolean {
+        if (other is CheckmateSelf) {
+            return depth == other.depth && secondaryEval == other.secondaryEval
+        }
+        return false
+    }
 
     override fun compareTo(other: Evaluated) =
             if (other is CheckmateSelf) compareWith(other)
             else -1
 
-    private fun compareWith(other: CheckmateSelf) = depth - other.depth
-
-    override fun setSecondaryEvaluation(secondaryEvaluation: Double) = throw UnsupportedOperationException("MattValue has no secondaryEvaluation")
-
-    override fun needsSecondaryEvaluation() = false
+    private fun compareWith(other: CheckmateSelf): Int {
+        val depthDiff = depth - other.depth
+        return if(depthDiff!=0) {
+            depthDiff
+        }else{
+            secondaryEval.compareTo(other.secondaryEval)
+        }
+    }
 
     override fun toString() = "checkmate in $depth"
 }

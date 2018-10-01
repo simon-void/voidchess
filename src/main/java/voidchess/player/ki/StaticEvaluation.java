@@ -5,6 +5,7 @@ import voidchess.figures.Figure;
 import voidchess.figures.King;
 import voidchess.figures.Pawn;
 import voidchess.helper.Position;
+import voidchess.player.ki.evaluation.CheckmateSelf;
 import voidchess.player.ki.evaluation.Evaluated;
 import voidchess.player.ki.evaluation.Ongoing;
 
@@ -20,6 +21,7 @@ public class StaticEvaluation implements StaticEvaluationInterface {
     final private static double BISHOP_VALUE = 3.0;
     final private static double QUEEN_VALUE = 9.0;
 
+    @Override
     public Evaluated getPrimaryEvaluation(ChessGameInterface game, final boolean forWhite) {
         double primaryEvaluation = evaluateFigures(game, forWhite);
         return new Ongoing(primaryEvaluation);
@@ -27,11 +29,22 @@ public class StaticEvaluation implements StaticEvaluationInterface {
 
     @Override
     public void addSecondaryEvaluation(ChessGameInterface game, boolean forWhite, Evaluated withPrimaryEvaluation) {
-        if (withPrimaryEvaluation instanceof Ongoing && withPrimaryEvaluation.needsSecondaryEvaluation()) {
-            double secondaryEvaluation = evaluateRuledArea(game, forWhite)
-                    + evaluatePosition(game, forWhite);
-            withPrimaryEvaluation.setSecondaryEvaluation(secondaryEvaluation);
+        if (withPrimaryEvaluation.needsSecondaryEvaluation()) {
+            if(withPrimaryEvaluation instanceof Ongoing) {
+                withPrimaryEvaluation.setSecondaryEvaluation(getSecondaryEvaluation(game, forWhite));
+            }else if(withPrimaryEvaluation instanceof CheckmateSelf) {
+                withPrimaryEvaluation.setSecondaryEvaluation(
+                        evaluateFigures(game, forWhite)
+                        + getSecondaryEvaluation(game, forWhite)
+                );
+            }else{
+                throw new IllegalStateException("unexpected class which requests a secondary evaluation: "+ withPrimaryEvaluation.getClass().getSimpleName());
+            }
         }
+    }
+
+    private double getSecondaryEvaluation(ChessGameInterface game, final boolean forWhite) {
+        return evaluateRuledArea(game, forWhite) + evaluatePosition(game, forWhite);
     }
 
     private double evaluateFigures(ChessGameInterface game, final boolean forWhite) {

@@ -9,7 +9,7 @@ import java.awt.*
 
 class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
 
-    private var value: Evaluated = Draw
+    private var value: Evaluated = Ongoing(0.0)
     private var smileFactor = HappinessLevel.CONTENT
     private var showValue = true
     private var index: Int = 1

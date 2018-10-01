@@ -127,4 +127,19 @@ public class EvaluadedTest {
         assertTrue(Draw.INSTANCE.compareTo(new Ongoing(0.0)) <0);
         assertTrue(Draw.INSTANCE.compareTo(new Ongoing(-0.0000000000000000000001))>0);
     }
+
+    @Test
+    public void testCheckmateSelfCompareTo() {
+        assertTrue(new CheckmateSelf(5).compareTo(Draw.INSTANCE) <0);
+        assertTrue(new CheckmateSelf(5).compareTo(new Ongoing(-10.0)) <0);
+        assertTrue(new CheckmateSelf(5).compareTo(new CheckmateOther(3)) <0);
+        assertTrue(new CheckmateSelf(5).compareTo(new CheckmateSelf(3))  >0);
+        assertTrue(new CheckmateSelf(5).compareTo(new CheckmateSelf(5)) ==0);
+
+        CheckmateSelf selfCM1 = new CheckmateSelf(5);
+        CheckmateSelf selfCM2 = new CheckmateSelf(5);
+        selfCM1.setSecondaryEvaluation(3.0);
+        selfCM2.setSecondaryEvaluation(2.0);
+        assertTrue(selfCM1.compareTo(selfCM2) >0);
+    }
 }
