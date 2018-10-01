@@ -5,6 +5,7 @@ import voidchess.helper.Move
 import voidchess.helper.PawnPromotion
 import voidchess.helper.Position
 import voidchess.ui.ChessboardComponent
+import voidchess.ui.PosType
 import voidchess.ui.TableInterface
 
 import javax.swing.*
@@ -16,7 +17,7 @@ class HumanPlayer(
         private val ui: ChessboardComponent,
         private val game: ChessGameInterface
 ) : HumanPlayerInterface {
-    private var mouseOverWhileInactivePos: Position? = null
+    private var mouseHoverWhileInactivePos: Position? = null
     private var from: Position? = null
     private var isMyTurn: Boolean = false
 
@@ -26,7 +27,7 @@ class HumanPlayer(
 
     override fun play() {
         isMyTurn = true
-        mouseMovedOver(mouseOverWhileInactivePos)
+        mouseMovedOver(mouseHoverWhileInactivePos)
     }
 
     fun move(move: Move) {
@@ -37,27 +38,25 @@ class HumanPlayer(
 
     override fun mouseMovedOver(pos: Position?) {
         if (!isMyTurn) {
-            mouseOverWhileInactivePos = pos
+            mouseHoverWhileInactivePos = pos
             return
         }
 
         val lockedFrom = from
         if( pos==null) {
-            ui.markPosition(null, lockedFrom==null)
+            ui.unmarkPosition(if(lockedFrom==null) PosType.HOVER_FROM else PosType.HOVER_TO)
             return
         }
 
         if (lockedFrom == null) {
+            ui.unmarkPosition(PosType.HOVER_FROM)
             if (game.isSelectable(pos, isWhitePlayer)) {
-                ui.markPosition(pos, true)
-            } else {
-                ui.markPosition(null, true)
+                ui.markPosition(pos, PosType.HOVER_FROM)
             }
         } else {
+            ui.unmarkPosition(PosType.HOVER_TO)
             if (game.isMoveable(lockedFrom, pos, isWhitePlayer)) {
-                ui.markPosition(pos, false)
-            } else {
-                ui.markPosition(null, false)
+                ui.markPosition(pos, PosType.HOVER_TO)
             }
         }
     }
@@ -69,6 +68,7 @@ class HumanPlayer(
         if (lockedFrom == null) {
             if (game.isSelectable(pos, isWhitePlayer)) {
                 from = pos
+                ui.markPosition(pos, PosType.SELECT_FROM)
             }
         } else {
             if (game.isMoveable(lockedFrom, pos, isWhitePlayer)) {
@@ -105,8 +105,9 @@ class HumanPlayer(
 
     private fun dropMarkedPositions() {
         from = null
-        ui.markPosition(null, true)
-        ui.markPosition(null, false)
+        ui.unmarkPosition(PosType.HOVER_FROM)
+        ui.unmarkPosition(PosType.SELECT_FROM)
+        ui.unmarkPosition(PosType.HOVER_TO)
     }
 
     override fun setColor(isWhite: Boolean) {

@@ -30,9 +30,12 @@ class ChessboardComponent constructor(private val game: BasicChessGameInterface,
     private val darkest = 45
     private val evenFieldComputerMoveColor = evenFieldColor.darken(minusRed = darker, minusGreen = lessDark, minusBlue = darker)
     private val oddFieldComputerMoveColor = oddFieldColor.darken(minusRed = darker, minusGreen = lessDark, minusBlue = darker)
-    private val evenFieldHumanMoveColor = evenFieldColor.darken(minusRed = darker, minusGreen = darker, minusBlue = darker)
-    private val oddFieldHumanMoveColor = oddFieldColor.darken(minusRed = darkest, minusGreen = darkest, minusBlue = darkest)
+    private val evenFieldHoverColor = evenFieldColor.darken(minusRed = darker, minusGreen = darker, minusBlue = darker)
+    private val oddFieldHoverColor = oddFieldColor.darken(minusRed = darkest, minusGreen = darkest, minusBlue = darkest)
+    private val evenFieldHumanMoveColor = evenFieldColor.darken(minusRed = darker, minusGreen = darker, minusBlue = 10)
+    private val oddFieldHumanMoveColor = oddFieldColor.darken(minusRed = darker, minusGreen = darker, minusBlue = 10)
     private var lastComputerMoveTo: Position? = null
+    private var hover: Position? = null
     private var from: Position? = null
     private var to: Position? = null
 
@@ -144,6 +147,10 @@ class ChessboardComponent constructor(private val game: BasicChessGameInterface,
             paintArea(it, evenFieldComputerMoveColor, oddFieldComputerMoveColor)
         }
 
+        val lockedHoverPos = hover
+        if (lockedHoverPos != null) {
+            paintArea(lockedHoverPos, evenFieldHoverColor, oddFieldHoverColor)
+        }
         val lockedFromPos = from
         if (lockedFromPos != null) {
             paintArea(lockedFromPos, evenFieldHumanMoveColor, oddFieldHumanMoveColor)
@@ -163,26 +170,38 @@ class ChessboardComponent constructor(private val game: BasicChessGameInterface,
         adapter.setPlayer(player)
     }
 
-    fun markPosition(pos: Position?, isFromPosition: Boolean) {
-        if (isFromPosition) {
-            val lockedFromPos = from
-            if (lockedFromPos != null) {
-                from = null
-                repaintPositionAtOnce(lockedFromPos)
-            }
-            from = pos
-        } else {
-            val lockedToPos = to
-            if (lockedToPos != null) {
-                to = null
-                repaintPositionAtOnce(lockedToPos)
-            }
-            to = pos
+    fun markPosition(pos: Position, posType: PosType) {
+        when (posType) {
+            PosType.HOVER_FROM -> hover = pos
+            PosType.SELECT_FROM -> from = pos
+            PosType.HOVER_TO -> to = pos
         }
-        if (pos != null) {
-            repaintPositionAtOnce(pos)
+        repaintPositionAtOnce(pos)
+    }
+
+    fun unmarkPosition(posType: PosType) {
+        when (posType) {
+            PosType.HOVER_FROM -> {
+                val lockedHoverPos = hover
+                hover = null
+                lockedHoverPos?.let { repaintPositionAtOnce(it) }
+            }
+            PosType.SELECT_FROM -> {
+                val lockedFromPos = from
+                from = null
+                lockedFromPos?.let { repaintPositionAtOnce(it) }
+            }
+            PosType.HOVER_TO -> {
+                val lockedToPos = to
+                to = null
+                lockedToPos?.let { repaintPositionAtOnce(it) }
+            }
         }
     }
+}
+
+enum class PosType {
+    HOVER_FROM, SELECT_FROM, HOVER_TO
 }
 
 private fun Color.darken(minusRed: Int = 0, minusGreen: Int = 0, minusBlue: Int = 0) = Color((red - minusRed).coerceIn(0, 255), (green - minusGreen).coerceIn(0, 255), (blue - minusBlue).coerceIn(0, 255))
