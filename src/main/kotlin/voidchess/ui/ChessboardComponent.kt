@@ -32,8 +32,8 @@ class ChessboardComponent constructor(private val game: BasicChessGameInterface,
     private val oddFieldComputerMoveColor = oddFieldColor.darken(minusRed = darker, minusGreen = lessDark, minusBlue = darker)
     private val evenFieldHoverColor = evenFieldColor.darken(minusRed = darker, minusGreen = darker, minusBlue = darker)
     private val oddFieldHoverColor = oddFieldColor.darken(minusRed = darkest, minusGreen = darkest, minusBlue = darkest)
-    private val evenFieldHumanMoveColor = evenFieldColor.darken(minusRed = darker, minusGreen = darker, minusBlue = 10)
-    private val oddFieldHumanMoveColor = oddFieldColor.darken(minusRed = darker, minusGreen = darker, minusBlue = 10)
+    private val evenFieldHumanMoveColor = evenFieldColor.darken(minusRed = darker, minusGreen = lessDark, minusBlue = 10)
+    private val oddFieldHumanMoveColor = oddFieldColor.darken(minusRed = darker, minusGreen = lessDark, minusBlue = 10)
     private var lastComputerMoveTo: Position? = null
     private var hover: Position? = null
     private var from: Position? = null
