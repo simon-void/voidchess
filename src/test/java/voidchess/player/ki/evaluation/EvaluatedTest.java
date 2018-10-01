@@ -5,10 +5,8 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-/**
- * Created by stephan on 26.07.2015.
- */
-public class EvaluatedAsValueTest {
+
+public class EvaluatedTest {
     @Test
     public void testCloseTo() {
         Evaluated value1 = getValue(1f, 5f);
@@ -31,17 +29,9 @@ public class EvaluatedAsValueTest {
         assertFalse(value3.isCloseToByCombined(value1));
     }
 
-    private EvaluatedAsValue getValue(float primary, float secondary) {
-        EvaluatedAsValue value = new EvaluatedAsValue(primary);
+    private Ongoing getValue(float primary, float secondary) {
+        Ongoing value = new Ongoing(primary);
         value.setSecondaryEvaluation(secondary);
         return value;
-    }
-
-    @Test
-    public void testIsValue() {
-        Evaluated value = getValue(1f, .5f);
-        assertTrue(value.isValue());
-        assertFalse(value.isDraw());
-        assertFalse(value.isCheckmate());
     }
 }

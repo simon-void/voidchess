@@ -1,10 +1,7 @@
 package voidchess.ui
 
 import voidchess.helper.Move
-import voidchess.player.ki.evaluation.Evaluated
-import voidchess.player.ki.evaluation.EvaluatedAsDraw
-import voidchess.player.ki.evaluation.EvaluatedAsMatt
-import voidchess.player.ki.evaluation.EvaluatedAsValue
+import voidchess.player.ki.evaluation.*
 
 import javax.swing.*
 import java.awt.*
@@ -12,7 +9,7 @@ import java.awt.*
 
 class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
 
-    private var value: Evaluated = EvaluatedAsDraw.INSTANCE
+    private var value: Evaluated = Draw
     private var smileFactor = HappinessLevel.CONTENT
     private var showValue = true
     private var index: Int = 1
@@ -240,21 +237,21 @@ enum class HappinessLevel(val value: Int, val mouthCornerEffect: Int) {
 }
 
 private fun Evaluated.getHappinessLevel(): HappinessLevel {
-    if(isCheckmate) {
-        return if((this as EvaluatedAsMatt).isOtherMatt) HappinessLevel.BIG_SMILE else HappinessLevel.BIG_GRIEF
+    when (this) {
+        is CheckmateOther -> return HappinessLevel.BIG_SMILE
+        is CheckmateSelf -> return HappinessLevel.BIG_GRIEF
+        is Draw -> return HappinessLevel.CONTENT
+        is Ongoing -> {
+            val value = this.combinedEvaluation
+            return when {
+                value > HappinessLevel.MEDIUM_SMILE.value -> HappinessLevel.MEDIUM_SMILE
+                value > HappinessLevel.LIGHT_SMILE.value -> HappinessLevel.LIGHT_SMILE
+                value > HappinessLevel.SLIGHT_SMILE.value -> HappinessLevel.SLIGHT_SMILE
+                value < HappinessLevel.MEDIUM_GRIEF.value -> HappinessLevel.MEDIUM_GRIEF
+                value < HappinessLevel.LIGHT_GRIEF.value -> HappinessLevel.LIGHT_GRIEF
+                value < HappinessLevel.SLIGHT_GRIEF.value -> HappinessLevel.SLIGHT_GRIEF
+                else -> HappinessLevel.CONTENT
+            }
+        }
     }
-    if(isDraw) {
-        return HappinessLevel.CONTENT
-    }
-    val value = (this as EvaluatedAsValue).primaryEvaluation
-    return when {
-        value > HappinessLevel.MEDIUM_SMILE.value -> HappinessLevel.MEDIUM_SMILE
-        value > HappinessLevel.LIGHT_SMILE.value -> HappinessLevel.LIGHT_SMILE
-        value > HappinessLevel.SLIGHT_SMILE.value -> HappinessLevel.SLIGHT_SMILE
-        value < HappinessLevel.MEDIUM_GRIEF.value -> HappinessLevel.MEDIUM_GRIEF
-        value < HappinessLevel.LIGHT_GRIEF.value -> HappinessLevel.LIGHT_GRIEF
-        value < HappinessLevel.SLIGHT_GRIEF.value -> HappinessLevel.SLIGHT_GRIEF
-        else -> HappinessLevel.CONTENT
-    }
-
 }

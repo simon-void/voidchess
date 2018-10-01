@@ -6,7 +6,7 @@ import voidchess.figures.King;
 import voidchess.figures.Pawn;
 import voidchess.helper.Position;
 import voidchess.player.ki.evaluation.Evaluated;
-import voidchess.player.ki.evaluation.EvaluatedAsValue;
+import voidchess.player.ki.evaluation.Ongoing;
 
 import java.util.List;
 
@@ -22,12 +22,12 @@ public class StaticEvaluation implements StaticEvaluationInterface {
 
     public Evaluated getPrimaryEvaluation(ChessGameInterface game, final boolean forWhite) {
         float primaryEvaluation = evaluateFigures(game, forWhite);
-        return new EvaluatedAsValue(primaryEvaluation);
+        return new Ongoing(primaryEvaluation);
     }
 
     @Override
     public void addSecondaryEvaluation(ChessGameInterface game, boolean forWhite, Evaluated withPrimaryEvaluation) {
-        if (withPrimaryEvaluation.isValue() && withPrimaryEvaluation.needsSecondaryEvaluation()) {
+        if (withPrimaryEvaluation instanceof Ongoing && withPrimaryEvaluation.needsSecondaryEvaluation()) {
             float secondaryEvaluation = evaluateRuledArea(game, forWhite)
                     + evaluatePosition(game, forWhite);
             withPrimaryEvaluation.setSecondaryEvaluation(secondaryEvaluation);

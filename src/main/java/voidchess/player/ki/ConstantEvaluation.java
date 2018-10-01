@@ -2,18 +2,16 @@ package voidchess.player.ki;
 
 import voidchess.board.ChessGameInterface;
 import voidchess.player.ki.evaluation.Evaluated;
-import voidchess.player.ki.evaluation.EvaluatedAsDraw;
+import voidchess.player.ki.evaluation.Draw;
 
 /**
  * usefull for Profile purposes (only DynamicEvaluation remains)
- *
- * @author stephan
  */
 
 public class ConstantEvaluation implements StaticEvaluationInterface {
     @Override
     public Evaluated getPrimaryEvaluation(ChessGameInterface game, boolean forWhite) {
-        return EvaluatedAsDraw.INSTANCE;
+        return Draw.INSTANCE;
     }
 
     @Override

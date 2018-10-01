@@ -4,73 +4,69 @@
 
 package voidchess.player.ki;
 
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import voidchess.player.ki.evaluation.Evaluated;
-import voidchess.player.ki.evaluation.EvaluatedAsDraw;
-import voidchess.player.ki.evaluation.EvaluatedAsMatt;
-import voidchess.player.ki.evaluation.EvaluatedAsValue;
+import voidchess.player.ki.evaluation.*;
 
 import static org.testng.Assert.*;
 
 public class EvaluadedTest {
     @Test
     public void testChessvalueToString() {
-        Evaluated value = new EvaluatedAsValue(-1);
+        Evaluated value = new Ongoing(-1);
         assertEquals(value.toString().replace('.', ','), "-1,00");
-        value = new EvaluatedAsValue(5.49999999999f);
+        value = new Ongoing(5.49999999999f);
         assertEquals(value.toString().replace('.', ','), "5,50");
 
-        value = EvaluatedAsDraw.INSTANCE;
+        value = Draw.INSTANCE;
         assertEquals(value.toString().replace('.', ','), "0,00");
 
-        value = new EvaluatedAsMatt(2, false);
+        value = new CheckmateSelf(2);
         assertEquals(value.toString(), "checkmate in 2");
 
-        value = new EvaluatedAsMatt(12, true);
+        value = new CheckmateOther(12);
         assertEquals(value.toString(), "checkmate in 12");
     }
 
     @Test
     public void testIsCloseToByCombined() {
         assertTrue(
-                new EvaluatedAsValue(-0.25f).isCloseToByCombined(
-                        new EvaluatedAsValue(0.25f)
+                new Ongoing(-0.25f).isCloseToByCombined(
+                        new Ongoing(0.25f)
                 )
         );
         assertTrue(
-                EvaluatedAsDraw.INSTANCE.isCloseToByCombined(
-                        new EvaluatedAsValue(0.5f)
+                Draw.INSTANCE.isCloseToByCombined(
+                        new Ongoing(0.5f)
                 )
         );
         assertFalse(
-                new EvaluatedAsValue(-0.3f).isCloseToByCombined(
-                        new EvaluatedAsValue(0.3f)
+                new Ongoing(-0.3f).isCloseToByCombined(
+                        new Ongoing(0.3f)
                 )
         );
         assertFalse(
-                new EvaluatedAsValue(-0.2f).isCloseToByCombined(
-                        new EvaluatedAsValue(0.5f)
+                new Ongoing(-0.2f).isCloseToByCombined(
+                        new Ongoing(0.5f)
                 )
         );
         assertFalse(
-                new EvaluatedAsMatt(1, false).isCloseToByCombined(
-                        new EvaluatedAsMatt(2, false)
+                new CheckmateSelf(1).isCloseToByCombined(
+                        new CheckmateSelf(2)
                 )
         );
         assertFalse(
-                new EvaluatedAsMatt(1, false).isCloseToByCombined(
-                        new EvaluatedAsMatt(1, true)
+                new CheckmateSelf(1).isCloseToByCombined(
+                        new CheckmateOther(1)
                 )
         );
         assertTrue(
-                new EvaluatedAsMatt(1, false).isCloseToByCombined(
-                        new EvaluatedAsMatt(1, false)
+                new CheckmateSelf(1).isCloseToByCombined(
+                        new CheckmateSelf(1)
                 )
         );
         assertFalse(
-                EvaluatedAsDraw.INSTANCE.isCloseToByCombined(
-                        new EvaluatedAsMatt(1, false)
+                Draw.INSTANCE.isCloseToByCombined(
+                        new CheckmateSelf(1)
                 )
         );
     }
@@ -78,84 +74,57 @@ public class EvaluadedTest {
     @Test
     public void testIsCloseToByPrimary() {
         assertTrue(
-                new EvaluatedAsValue(-0.65f).isCloseToByPrimary(
-                        new EvaluatedAsValue(0.25f)
+                new Ongoing(-0.65f).isCloseToByPrimary(
+                        new Ongoing(0.25f)
                 )
         );
         assertTrue(
-                new EvaluatedAsValue(0f).isCloseToByPrimary(
-                        new EvaluatedAsValue(1f)
+                new Ongoing(0f).isCloseToByPrimary(
+                        new Ongoing(1f)
                 )
         );
         assertTrue(
-                EvaluatedAsDraw.INSTANCE.isCloseToByPrimary(
-                        new EvaluatedAsValue(0.5f)
+                Draw.INSTANCE.isCloseToByPrimary(
+                        new Ongoing(0.5f)
                 )
         );
         assertFalse(
-                new EvaluatedAsValue(-0.3f).isCloseToByPrimary(
-                        new EvaluatedAsValue(0.8f)
+                new Ongoing(-0.3f).isCloseToByPrimary(
+                        new Ongoing(0.8f)
                 )
         );
         assertFalse(
-                new EvaluatedAsValue(-0.6f).isCloseToByPrimary(
-                        new EvaluatedAsValue(0.5f)
+                new Ongoing(-0.6f).isCloseToByPrimary(
+                        new Ongoing(0.5f)
                 )
         );
         assertFalse(
-                new EvaluatedAsMatt(1, false).isCloseToByPrimary(
-                        new EvaluatedAsMatt(2, false)
+                new CheckmateSelf(1).isCloseToByPrimary(
+                        new CheckmateSelf(2)
                 )
         );
         assertFalse(
-                new EvaluatedAsMatt(1, false).isCloseToByPrimary(
-                        new EvaluatedAsMatt(1, true)
+                new CheckmateSelf(1).isCloseToByPrimary(
+                        new CheckmateOther(1)
                 )
         );
         assertTrue(
-                new EvaluatedAsMatt(1, false).isCloseToByPrimary(
-                        new EvaluatedAsMatt(1, false)
+                new CheckmateSelf(1).isCloseToByPrimary(
+                        new CheckmateSelf(1)
                 )
         );
         assertFalse(
-                EvaluatedAsDraw.INSTANCE.isCloseToByPrimary(
-                        new EvaluatedAsMatt(1, false)
+                Draw.INSTANCE.isCloseToByPrimary(
+                        new CheckmateSelf(1)
                 )
         );
     }
 
-    @Test(dataProvider = "mattEvaluatedProvider")
-    public void assertIsEvaluatedAsMatt(Evaluated mattValue) {
-        assertTrue(mattValue.isCheckmate(), "this should be a matt evaluation:" + mattValue);
-    }
 
-    @Test(dataProvider = "notMattEvaluatedProvider")
-    public void assertIsNotEvaluatedAsMatt(Evaluated notMattValue) {
-        assertFalse(notMattValue.isCheckmate(), "this shouldn't be a matt evaluation");
-    }
-
-    @DataProvider(name = "mattEvaluatedProvider")
-    public Object[][] getMattEvaluated() {
-        return new Object[][]{
-                new Object[]{new EvaluatedAsMatt(1, true)},
-                new Object[]{new EvaluatedAsMatt(20, true)},
-                new Object[]{new EvaluatedAsMatt(1, false)},
-                new Object[]{new EvaluatedAsMatt(20, false)},
-        };
-    }
-
-    @DataProvider(name = "notMattEvaluatedProvider")
-    public Object[][] getNotMattEvaluated() {
-        return new Object[][]{
-                new Object[]{EvaluatedAsDraw.INSTANCE},
-                new Object[]{new EvaluatedAsValue(0f)},
-                new Object[]{new EvaluatedAsValue(1f)},
-                new Object[]{new EvaluatedAsValue(-1f)},
-                new Object[]{new EvaluatedAsValue(100f)},
-                new Object[]{new EvaluatedAsValue(-100f)},
-                //fromValue should safe-guard against too big values being interpreted as
-                new Object[]{new EvaluatedAsValue(1000000000f)},
-                new Object[]{new EvaluatedAsValue(-1000000000f)},
-        };
+    @Test
+    public void testDrawCompareTo() {
+        assertTrue(Draw.INSTANCE.compareTo(Draw.INSTANCE) ==0);
+        assertTrue(Draw.INSTANCE.compareTo(new Ongoing(0f)) <0);
+        assertTrue(Draw.INSTANCE.compareTo(new Ongoing(-0.0000000000000000000001f))>0);
     }
 }

@@ -4,10 +4,7 @@ import voidchess.board.ChessGameInterface;
 import voidchess.board.MoveResult;
 import voidchess.helper.ChessGameSupervisor;
 import voidchess.helper.Move;
-import voidchess.player.ki.evaluation.Evaluated;
-import voidchess.player.ki.evaluation.EvaluatedAsDraw;
-import voidchess.player.ki.evaluation.EvaluatedAsMatt;
-import voidchess.player.ki.evaluation.EvaluatedMove;
+import voidchess.player.ki.evaluation.*;
 
 import java.util.*;
 
@@ -43,9 +40,9 @@ public class DynamicEvaluation {
             final List<Move> minPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
             result = getMin(game, forWhite, depth, thisMove_isChess, thisMove_hasHitFigure, minPossibleMovesBuffer);
         } else if (endoption == MoveResult.CHECKMATE) {
-            result = new EvaluatedAsMatt(depth + 1, true);
+            result = new CheckmateOther(depth + 1);
         } else {
-            result = EvaluatedAsDraw.INSTANCE;
+            result = Draw.INSTANCE;
         }
 
         game.useSupervisor(interactiveSupervisor);
@@ -95,9 +92,9 @@ public class DynamicEvaluation {
                         maxPossibleMovesBuffer);
             } else if (endoption == MoveResult.CHECKMATE) {
                 game.undo();
-                return new EvaluatedAsMatt(depth + 1, false);
+                return new CheckmateSelf(depth + 1);
             } else {
-                primaryEval = EvaluatedAsDraw.INSTANCE;
+                primaryEval = Draw.INSTANCE;
             }
 
             primaryEvaluations.add(new EvaluatedMove(move, primaryEval));
@@ -172,9 +169,9 @@ public class DynamicEvaluation {
                         minPossibleMovesBuffer);
             } else if (endoption == MoveResult.CHECKMATE) {
                 game.undo();
-                return new EvaluatedAsMatt(depth + 1, true);
+                return new CheckmateOther(depth + 1);
             } else {
-                primaryEval = EvaluatedAsDraw.INSTANCE;
+                primaryEval = Draw.INSTANCE;
             }
 
             primaryEvaluations.add(new EvaluatedMove(move, primaryEval));

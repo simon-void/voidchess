@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.helper.Move;
 import voidchess.player.ki.evaluation.Evaluated;
-import voidchess.player.ki.evaluation.EvaluatedAsValue;
+import voidchess.player.ki.evaluation.Ongoing;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -52,10 +52,10 @@ public class DynamicEvaluationTest {
         //da ich eine Dame(9P) gegen einen Läufer(3P) getauscht habe
         //+Weiß kann durch den Damenzug noch Raum gewinnen
         assertTrue(
-                value.compareTo(new EvaluatedAsValue(5.5f)) > 0,
+                value.compareTo(new Ongoing(5.5f)) > 0,
                 "Min-Max-Berechnung ist zu niedrig,Soll:~6.5,Ist:" + value);
         assertTrue(
-                value.compareTo(new EvaluatedAsValue(7.5f)) < 0,
+                value.compareTo(new Ongoing(7.5f)) < 0,
                 "Min-Max-Berechnung ist zu hoch,Soll:~6.5,Ist:" + value);
     }
 

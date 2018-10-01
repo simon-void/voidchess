@@ -5,7 +5,7 @@ import voidchess.board.ChessGameInterface;
 import voidchess.figures.Figure;
 import voidchess.helper.Position;
 import voidchess.player.ki.evaluation.Evaluated;
-import voidchess.player.ki.evaluation.EvaluatedAsValue;
+import voidchess.player.ki.evaluation.Ongoing;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -57,7 +57,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         if (colorOfWinnerIsWhite == forWhite) value = -value;
 
         //TODO is there is better secondary evaluation that a static 0?
-        return new EvaluatedAsValue(value / 10.0f);
+        return new Ongoing(value / 10.0f);
     }
 
     @Override
