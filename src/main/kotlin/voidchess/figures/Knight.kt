@@ -44,42 +44,14 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
     }
 
     private inline fun forEachReachablePos(game: BasicChessGameInterface, informOf: (Position) -> Unit) {
-        posOffset(position, 2, 1)?.let {pos: Position ->
-            if(isAccessable(game, pos)) informOf(pos)
-        }
-        posOffset(position, 2, -1)?.let {pos: Position ->
-            if(isAccessable(game, pos)) informOf(pos)
-        }
-        posOffset(position, -2, 1)?.let {pos: Position ->
-            if(isAccessable(game, pos)) informOf(pos)
-        }
-        posOffset(position, -2, -1)?.let {pos: Position ->
-            if(isAccessable(game, pos)) informOf(pos)
-        }
-        posOffset(position, 1, 2)?.let {pos: Position ->
-            if(isAccessable(game, pos)) informOf(pos)
-        }
-        posOffset(position, 1, -2)?.let {pos: Position ->
-            if(isAccessable(game, pos)) informOf(pos)
-        }
-        posOffset(position, -1, 2)?.let {pos: Position ->
-            if(isAccessable(game, pos)) informOf(pos)
-        }
-        posOffset(position, -1, -2)?.let {pos: Position ->
-            if(isAccessable(game, pos)) informOf(pos)
+        position.forEachKnightPos { pos ->
+            if(isAccessible(game, pos)) informOf(pos)
         }
     }
 
-    private fun posOffset(from: Position, rowOffset: Int, columnOffset: Int): Position? {
-        val toRow = from.row + rowOffset
-        if(toRow !in 0..7) return null
-        val toColumn = from.column + columnOffset
-        if(toColumn !in 0..7) return null
 
-        return Position.get(toRow, toColumn)
-    }
 
-    private fun isAccessable(game: BasicChessGameInterface, position: Position): Boolean {
+    private fun isAccessible(game: BasicChessGameInterface, position: Position): Boolean {
         val figure = game.getFigure(position)
         return if (figure == null) true else hasDifferentColor(figure)
     }

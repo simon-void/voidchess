@@ -5,6 +5,7 @@ import voidchess.board.SimpleChessBoardInterface
 import voidchess.helper.CheckSearch
 import voidchess.helper.Move
 import voidchess.helper.Position
+import java.lang.Integer.signum
 
 /**
  * @author stephan
@@ -39,13 +40,13 @@ class King : CastlingFigure {
                 to.column > position.column) {
             if (toFigure.canCastle() && toFigure.isWhite == isWhite) {
                 if (position.column == 6) {
-                    if (!game.isFreeArea(Position.get(groundRow, 5))) {
+                    if (!game.isFreeArea(Position[groundRow, 5])) {
                         return false
                     }
                 } else {
                     //Die Felder bis zur g-Spalte müssen bis auf den Turm leer sein
                     for (column in position.column + 1..6) {
-                        val middlePosition = Position.get(groundRow, column)
+                        val middlePosition = Position[groundRow, column]
                         val middleFigure = game.getFigure(middlePosition)
                         if (middleFigure!=null && !middleFigure.canCastle()) {
                             return false
@@ -68,13 +69,13 @@ class King : CastlingFigure {
             if (toFigure.canCastle() && toFigure.isWhite == isWhite) {
                 //kommt der König auf die c-Linie?
                 if (position.column == 1) {        //auf der a-Linie kann der König nicht stehen, da dort Turm sein muß
-                    if (!game.isFreeArea(Position.get(groundRow, 2))) {
+                    if (!game.isFreeArea(Position[groundRow, 2])) {
                         return false
                     }
                 } else if (position.column > 2) {
                     //Die Felder bis zur c-Spalte müssen bis auf den Turm leer sein
                     for (column in position.column - 1 downTo 2) {
-                        val middlePosition = Position.get(groundRow, column)
+                        val middlePosition = Position[groundRow, column]
                         val middleFigure = game.getFigure(middlePosition)
                         if (middleFigure!=null && !middleFigure.canCastle()) {
                             return false
@@ -83,11 +84,11 @@ class King : CastlingFigure {
                 }
                 //kommt der Turm auf die d-Linie?
                 if (to.column != 3) {
-                    val step = CheckSearch.signum(3 - to.column)
+                    val step = signum(3 - to.column)
                     var middlePosition: Position
                     var column = to.column + step
                     while (column != 3) {
-                        middlePosition = Position.get(groundRow, column)
+                        middlePosition = Position[groundRow, column]
                         val middleFigure = game.getFigure(middlePosition)
                         if (middleFigure!=null) {
                             if (!middleFigure.canCastle() || middleFigure.isRook()) {
@@ -96,7 +97,7 @@ class King : CastlingFigure {
                         }
                         column += step
                     }
-                    middlePosition = Position.get(groundRow, 3)
+                    middlePosition = Position[groundRow, 3]
                     val middleFigure = game.getFigure(middlePosition)
                     if (middleFigure!=null) {
                         if (!middleFigure.canCastle() || middleFigure.isRook()) {
@@ -115,7 +116,7 @@ class King : CastlingFigure {
         val toFigure = game.getFigure(to)
         if (toFigure!=null && toFigure.canCastle()) {
             val column = if (to.column - position.column > 0) 6 else 2
-            realTo = Position.get(to.row, column)
+            realTo = Position[to.row, column]
             if (CheckSearch.isCheck(game, position)) return true
             if (isKingAtCheckInbetweenCastling(position, realTo, game)) return true
         }
@@ -129,10 +130,10 @@ class King : CastlingFigure {
     ): Boolean {
         assert(from.row == to.row)
 
-        val step = CheckSearch.signum(to.column - from.column)
+        val step = signum(to.column - from.column)
         var column = from.column + step
         while (column != to.column) {
-            if (isKingCheckAt(Position.get(from.row, column), game)) return true
+            if (isKingCheckAt(Position[from.row, column], game)) return true
             column += step
         }
         return false
@@ -154,11 +155,11 @@ class King : CastlingFigure {
 
         for (row in minRow..maxRow) {
             for (column in minColumn..maxColumn) {
-                val checkPosition = Position.get(row, column)
+                val checkPosition = Position[row, column]
                 if (checkPosition.notEqualsPosition(position)) {
                     val figure = game.getFigure(checkPosition)
                     if (figure==null || figure.isWhite != isWhite) {
-                        result.add(Move.get(position, checkPosition))
+                        result.add(Move[position, checkPosition])
                     }
                 }
             }
@@ -166,18 +167,18 @@ class King : CastlingFigure {
 
         if (canCastle()) {
             for (column in position.column + 1..7) {
-                val pos = Position.get(position.row, column)
+                val pos = Position[position.row, column]
                 val figure = game.getFigure(pos)
                 if (figure!=null && figure.canCastle() && isShortCastlingReachable(pos, game)) {
-                    result.add(Move.get(position, pos))
+                    result.add(Move[position, pos])
                     break
                 }
             }
             for (column in position.column - 1 downTo 0) {
-                val pos = Position.get(position.row, column)
+                val pos = Position[position.row, column]
                 val figure = game.getFigure(pos)
                 if (figure!=null && figure.canCastle() && isLongCastlingReachable(pos, game)) {
-                    result.add(Move.get(position, pos))
+                    result.add(Move[position, pos])
                     break
                 }
             }
@@ -192,7 +193,7 @@ class King : CastlingFigure {
 
         for (row in minRow..maxRow) {
             for (column in minColumn..maxColumn) {
-                val checkPosition = Position.get(row, column)
+                val checkPosition = Position[row, column]
                 if (isMovable(checkPosition, game)) {
                     return true
                 }
@@ -200,14 +201,14 @@ class King : CastlingFigure {
         }
 
         if (position.column + 2 < 8) {
-            val shortCastling = Position.get(position.row, position.column + 2)
+            val shortCastling = Position[position.row, position.column + 2]
             if (isMovable(shortCastling, game)) {
                 return true
             }
         }
 
         if (position.column - 2 >= 0) {
-            val longCastling = Position.get(position.row, position.column - 2)
+            val longCastling = Position[position.row, position.column - 2]
             if (isMovable(longCastling, game)) {
                 return true
             }
@@ -225,7 +226,7 @@ class King : CastlingFigure {
 
         for (row in minRow..maxRow) {
             for (column in minColumn..maxColumn) {
-                val checkPosition = Position.get(row, column)
+                val checkPosition = Position[row, column]
                 if (isReachable(checkPosition, game)) {
                     count++
                 }
@@ -233,14 +234,14 @@ class King : CastlingFigure {
         }
 
         if (position.column + 2 < 8) {
-            val shortCastling = Position.get(position.row, position.column + 2)
+            val shortCastling = Position[position.row, position.column + 2]
             if (isReachable(shortCastling, game)) {
                 count++
             }
         }
 
         if (position.column - 2 >= 0) {
-            val longCastling = Position.get(position.row, position.column - 2)
+            val longCastling = Position[position.row, position.column - 2]
             if (isReachable(longCastling, game)) {
                 count++
             }

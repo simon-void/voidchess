@@ -70,7 +70,7 @@ public class ChessGameTest {
     }
 
     @Test
-    public void testCopy() throws Exception {
+    public void testCopy() {
         List<ChessGameInterface> copies = game.copyGame(4);
 
         for (ChessGameInterface copy : copies) {

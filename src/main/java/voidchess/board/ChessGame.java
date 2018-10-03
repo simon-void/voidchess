@@ -549,7 +549,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     @Override
     public boolean isCheck(boolean isWhiteInCheck) {
-        return CheckSearch.isCheck(game, game.getKingPosition(isWhiteInCheck));
+        return CheckSearch.INSTANCE.isCheck(game, game.getKingPosition(isWhiteInCheck));
     }
 
     @Override

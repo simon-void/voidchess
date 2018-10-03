@@ -18,15 +18,15 @@ class Position private constructor(val row: Int, val column: Int) {
 
     fun step(direction: Direction): Position? {
 
-        when(direction) {
-            Direction.UP ->    if(row==7) return null
-            Direction.DOWN ->  if(row==0) return null
-            Direction.LEFT ->  if(column==0) return null
-            Direction.RIGHT -> if(column==7) return null
-            Direction.UP_RIGHT ->   if(row==7||column==7) return null
-            Direction.UP_LEFT ->    if(row==7||column==0) return null
-            Direction.DOWN_RIGHT -> if(row==0||column==7) return null
-            Direction.DOWN_LEFT ->  if(row==0||column==0) return null
+        when (direction) {
+            Direction.UP -> if (row == 7) return null
+            Direction.DOWN -> if (row == 0) return null
+            Direction.LEFT -> if (column == 0) return null
+            Direction.RIGHT -> if (column == 7) return null
+            Direction.UP_RIGHT -> if (row == 7 || column == 7) return null
+            Direction.UP_LEFT -> if (row == 7 || column == 0) return null
+            Direction.DOWN_RIGHT -> if (row == 0 || column == 7) return null
+            Direction.DOWN_LEFT -> if (row == 0 || column == 0) return null
         }
 
         return byIndex(index + direction.posIndexDiff)
@@ -36,23 +36,23 @@ class Position private constructor(val row: Int, val column: Int) {
      * returns a direction if to lies on a straight line or diagonal to this, else null.
      */
     fun getDirectionTo(to: Position): Direction? {
-        if (this===to) return null
+        if (this === to) return null
 
         val rowDifference = to.row - row
         val columnDifference = to.column - column
 
-        if (rowDifference==0) {
-            if(columnDifference>0) {
+        if (rowDifference == 0) {
+            if (columnDifference > 0) {
                 return Direction.RIGHT
-            }else{
+            } else {
                 return Direction.LEFT
             }
         }
 
-        if (columnDifference==0) {
-            if(rowDifference>0) {
+        if (columnDifference == 0) {
+            if (rowDifference > 0) {
                 return Direction.UP
-            }else{
+            } else {
                 return Direction.DOWN
             }
         }
@@ -74,6 +74,67 @@ class Position private constructor(val row: Int, val column: Int) {
             } else {
                 Direction.DOWN_LEFT
             }
+        }
+    }
+
+    fun offset(rowOffset: Int, columnOffset: Int): Position? {
+        val toRow = row + rowOffset
+        if (toRow !in 0..7) return null
+        val toColumn = column + columnOffset
+        if (toColumn !in 0..7) return null
+
+        return Position[toRow, toColumn]
+    }
+
+    inline fun forEachKnightPos(informOf: (Position) -> Unit) {
+        offset(2, 1)?.let { pos: Position ->
+            informOf(pos)
+        }
+        offset(2, -1)?.let { pos: Position ->
+            informOf(pos)
+        }
+        offset(-2, 1)?.let { pos: Position ->
+            informOf(pos)
+        }
+        offset(-2, -1)?.let { pos: Position ->
+            informOf(pos)
+        }
+        offset(1, 2)?.let { pos: Position ->
+            informOf(pos)
+        }
+        offset(1, -2)?.let { pos: Position ->
+            informOf(pos)
+        }
+        offset(-1, 2)?.let { pos: Position ->
+            informOf(pos)
+        }
+        offset(-1, -2)?.let { pos: Position ->
+            informOf(pos)
+        }
+    }
+
+    inline fun forEachPosInLine(direction: Direction, shouldBreak: (Position) -> Boolean) {
+        var oldPos = this
+        while (true) {
+            val newPos = oldPos.step(direction)
+            if (newPos == null || shouldBreak(newPos)) break
+            oldPos = newPos
+        }
+    }
+
+    inline fun forEachMiddlePosInLine(other: Position, informOf: (Position) -> Unit) {
+        val directionTo = getDirectionTo(other)
+        if(directionTo==null) throw IllegalArgumentException("there is no line between $this and $other")
+
+        var oldPos = this
+        while (true) {
+            val middlePos = oldPos.step(directionTo)!!
+            if (middlePos.notEqualsPosition(other)) {
+                informOf(middlePos)
+            } else {
+                break
+            }
+            oldPos = middlePos
         }
     }
 
@@ -113,21 +174,23 @@ class Position private constructor(val row: Int, val column: Int) {
 }
 
 enum class Direction(val posIndexDiff: Int, val isDiagonal: Boolean) {
-    UP_LEFT(7, true),    UP(8, false),    UP_RIGHT(9, true),
-    LEFT(-1, false), /*  current                           */  RIGHT(1, false),
+    UP_LEFT(7, true), UP(8, false), UP_RIGHT(9, true),
+    LEFT(-1, false), /*  current                           */ RIGHT(1, false),
     DOWN_LEFT(-9, true), DOWN(-8, false), DOWN_RIGHT(-7, true);
 
     val isHorizontalOrVertical = !isDiagonal
 
     companion object {
-        fun getDiagonal(upOrDown: Direction, leftOrRight: Direction): Direction = when (upOrDown){
+        val straightDirs = listOf(UP, LEFT, RIGHT, DOWN)
+        val diagonalDirs = listOf(UP_LEFT, UP_RIGHT, DOWN_RIGHT, DOWN_LEFT)
+        fun getDiagonal(upOrDown: Direction, leftOrRight: Direction): Direction = when (upOrDown) {
             UP -> when (leftOrRight) {
-                LEFT  -> UP_LEFT
+                LEFT -> UP_LEFT
                 RIGHT -> UP_RIGHT
                 else -> throw IllegalArgumentException("leftOrRight parameter isn't LEFT or RIGHT but $leftOrRight")
             }
-            DOWN -> when(leftOrRight) {
-                LEFT  -> DOWN_LEFT
+            DOWN -> when (leftOrRight) {
+                LEFT -> DOWN_LEFT
                 RIGHT -> DOWN_RIGHT
                 else -> throw IllegalArgumentException("leftOrRight parameter isn't LEFT or RIGHT but $leftOrRight")
             }

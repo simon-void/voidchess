@@ -70,8 +70,8 @@ abstract class Figure constructor(
             return false
         }
 
-        val rowStep = CheckSearch.signum(kingPos.row - position.row)
-        val columnStep = CheckSearch.signum(kingPos.column - position.column)
+        val rowStep = Integer.signum(kingPos.row - position.row)
+        val columnStep = Integer.signum(kingPos.column - position.column)
 
         var row = position.row + rowStep
         var column = position.column + columnStep

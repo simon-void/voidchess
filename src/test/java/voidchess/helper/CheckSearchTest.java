@@ -1,8 +1,10 @@
 package voidchess.helper;
 
 import org.testng.annotations.Test;
+import voidchess.board.ChessGame;
 import voidchess.board.LastMoveProvider;
 import voidchess.board.SimpleArrayBoard;
+import voidchess.figures.Figure;
 import voidchess.figures.Pawn;
 
 import java.util.List;
@@ -15,18 +17,12 @@ import static org.testng.Assert.*;
  * @author stephan
  */
 public class CheckSearchTest {
-    @Test
-    public void testSignum() {
-        assertEquals(CheckSearch.signum(4), 1);
-        assertEquals(CheckSearch.signum(0), 0);
-        assertEquals(CheckSearch.signum(-34), -1);
-    }
 
     @Test
     public void testAnalyseCheck() {
         String des = "white 0 King-white-e4-4 King-black-e5-4";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
-        CheckStatus status = CheckSearch.analyseCheck(game, true);
+        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, true);
 
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
@@ -36,21 +32,21 @@ public class CheckSearchTest {
 
         des = "white 0 King-white-e4-4 King-black-e6-4";
         game.init(des);
-        status = CheckSearch.analyseCheck(game, true);
+        status = CheckSearch.INSTANCE.analyseCheck(game, true);
 
         assertFalse(status.isCheck());
         assertFalse(status.onlyKingCanMove());
 
         des = "black 0 King-white-e1-0 Queen-white-e2 Knight-white-d6 King-black-e8-0";
         game.init(des);
-        status = CheckSearch.analyseCheck(game, false);
+        status = CheckSearch.INSTANCE.analyseCheck(game, false);
 
         assertTrue(status.isCheck());
         assertTrue(status.onlyKingCanMove());
 
         des = "black 0 King-white-e1-0 Queen-white-e6 Knight-white-c6 King-black-e8-0";
         game.init(des);
-        status = CheckSearch.analyseCheck(game, false);
+        status = CheckSearch.INSTANCE.analyseCheck(game, false);
 
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
@@ -61,7 +57,7 @@ public class CheckSearchTest {
 
         des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-h4";
         game.init(des);
-        status = CheckSearch.analyseCheck(game, true);
+        status = CheckSearch.INSTANCE.analyseCheck(game, true);
 
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
@@ -81,7 +77,7 @@ public class CheckSearchTest {
         LastMoveProvider moveProvider = mock(LastMoveProvider.class);
         when(moveProvider.getLastMove()).thenReturn(extendedMove);
         SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
-        CheckStatus status = CheckSearch.analyseCheck(game, false, extendedMove);
+        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, false, extendedMove);
 
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
@@ -98,7 +94,7 @@ public class CheckSearchTest {
         LastMoveProvider moveProvider = mock(LastMoveProvider.class);
         when(moveProvider.getLastMove()).thenReturn(extendedMove);
         SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
-        CheckStatus status = CheckSearch.analyseCheck(game, false, extendedMove);
+        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, false, extendedMove);
 
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
@@ -115,12 +111,39 @@ public class CheckSearchTest {
         LastMoveProvider moveProvider = mock(LastMoveProvider.class);
         when(moveProvider.getLastMove()).thenReturn(extendedMove);
         SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
-        CheckStatus status = CheckSearch.analyseCheck(game, false, extendedMove);
+        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, false, extendedMove);
 
         assertTrue(status.isCheck());
         assertFalse(status.onlyKingCanMove());
         List<Position> possiblePositions = status.getCheckInterceptPositions();
         assertEquals(possiblePositions.size(), 1);
+    }
+
+    @Test
+    void testAnalyseDoubleStraightCheckAfterPawnpromotion() {
+        // white king stands in the shadow of the pawn
+        // so when the pawn promotes to queen or rook after taking a figure,
+        // the king will be in check on two straight lines
+        String des = "black 0 King-white-e1-5 Bishop-white-f1 Pawn-black-e2-false Queen-black-e5 King-black-e8-0";
+
+        ChessGame game = new ChessGame(des);
+        game.move(Move.get(Position.byCode("e2"), Position.byCode("f1")));
+        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, true);
+
+        assertTrue(status.isCheck());
+        assertTrue(status.onlyKingCanMove(), "is double check");
+    }
+
+    @Test
+    void testAnalyseSingleStraightCheckAfterPawnpromotion() {
+        String des = "black 0 King-white-e1-5 Bishop-white-f1 Bishop-white-g1 Pawn-black-e2-false King-black-e8-0";
+
+        ChessGame game = new ChessGame(des);
+        game.move(Move.get(Position.byCode("e2"), Position.byCode("f1")));
+        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, true);
+
+        assertTrue(status.isCheck());
+        assertFalse(status.onlyKingCanMove(), "only king can move");
     }
 
     private ExtendedMove getEnpassentMove(Move move) {

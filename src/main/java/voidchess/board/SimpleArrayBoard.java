@@ -48,13 +48,13 @@ public class SimpleArrayBoard
     public boolean isCheck(boolean isWhite) {
         if (isWhite) {
             if (!calculatedWhiteCheck) {
-                isWhiteCheck = CheckSearch.isCheck(this, getKingPosition(isWhite));
+                isWhiteCheck = CheckSearch.INSTANCE.isCheck(this, whiteKingPosition);
                 calculatedWhiteCheck = true;
             }
             return isWhiteCheck;
         } else {
             if (!calculatedBlackCheck) {
-                isBlackCheck = CheckSearch.isCheck(this, getKingPosition(isWhite));
+                isBlackCheck = CheckSearch.INSTANCE.isCheck(this, blackKingPosition);
                 calculatedBlackCheck = true;
             }
             return isBlackCheck;
@@ -66,12 +66,12 @@ public class SimpleArrayBoard
         final ExtendedMove lastMove = lastMoveProvider.getLastMove();
         if (isWhite) {
             if (whiteCheckStatus == null) {
-                whiteCheckStatus = CheckSearch.analyseCheck(this, isWhite, lastMove);
+                whiteCheckStatus = CheckSearch.INSTANCE.analyseCheck(this, true, lastMove);
             }
             return whiteCheckStatus;
         } else {
             if (blackCheckStatus == null) {
-                blackCheckStatus = CheckSearch.analyseCheck(this, isWhite, lastMove);
+                blackCheckStatus = CheckSearch.INSTANCE.analyseCheck(this, false, lastMove);
             }
             return blackCheckStatus;
         }
