@@ -134,27 +134,7 @@ public class ChessPanel
         table.startGame();
     }
 
-    void gameover(MoveResult endoption) {
-        switch (endoption) {
-            case DRAW:
-                JOptionPane.showMessageDialog(this, "draw");
-                break;
-            case STALEMATE:
-                JOptionPane.showMessageDialog(this, "stalemate");
-                break;
-            case CHECKMATE:
-                JOptionPane.showMessageDialog(this, "checkmate");
-                break;
-            case THREE_TIMES_SAME_POSITION:
-                JOptionPane.showMessageDialog(this, "draw because of\nthreefold repetition");
-                break;
-            case FIFTY_MOVES_NO_HIT:
-                JOptionPane.showMessageDialog(this, "draw because of\nfifty-move rule");
-                break;
-            case RESIGN:
-                JOptionPane.showMessageDialog(this, "player has resigned");
-                break;
-        }
+    void gameover() {
         startButton.setText(startString);
         switchButton.setEnabled(true);
         panel960.setEnabled(true);

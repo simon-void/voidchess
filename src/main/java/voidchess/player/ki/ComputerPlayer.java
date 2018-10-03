@@ -1,6 +1,7 @@
 package voidchess.player.ki;
 
 import voidchess.board.ChessGameInterface;
+import voidchess.board.MoveResult;
 import voidchess.helper.Move;
 import voidchess.helper.PawnPromotion;
 import voidchess.helper.Position;
@@ -35,6 +36,7 @@ public class ComputerPlayer
     private OpeningsLibrary openingsLibrary;
     private boolean useLibrary;
     private Random randomNumberGenerator;
+    private boolean isWhite = false;
 
     public ComputerPlayer(TableInterface table, ChessGameInterface game, ComputerPlayerUI ui) {
         this.ui = ui;
@@ -50,8 +52,9 @@ public class ComputerPlayer
         initEvaluation();
     }
 
+    @Override
     public void play() {
-
+        ui.showThoughts(true);
         EvaluatedMove chosenMove = getNextMove();
         ui.setValue(chosenMove.getValue());
         table.move(chosenMove.getMove());
@@ -164,26 +167,57 @@ public class ComputerPlayer
         }
     }
 
+    @Override
     public PawnPromotion askForPawnPromotionType(Position pawnPosition) {
         return PawnPromotion.QUEEN;
     }
 
-    //am Anfang jedes Spiels wird die EvaluationStrategie zurückgesetzt vom potentiel StaticSpaceEvaluation
-    public void setIsPlaying(boolean isPlaying) {
-        if (isPlaying) initEvaluation();
+    @Override
+    public void gameStarts() {
+        initEvaluation();
+        if(!isWhite) {
+            ui.setBubbleText("make your move");
+        }
     }
 
-    //setzt die Default-EvaluationStrategie
+    @Override
+    public void gameEnds(MoveResult endoption) {
+        ui.showThoughts(false);
+        switch (endoption) {
+            case DRAW:
+                ui.setBubbleText("draw");
+                break;
+            case STALEMATE:
+                ui.setBubbleText("stalemate");
+                break;
+            case CHECKMATE:
+                ui.setBubbleText("checkmate");
+                break;
+            case THREE_TIMES_SAME_POSITION:
+                ui.setBubbleText("draw because of\n3x repetition");
+                break;
+            case FIFTY_MOVES_NO_HIT:
+                ui.setBubbleText("draw because of\n50-move rule");
+                break;
+            case RESIGN:
+                ui.setBubbleText("you resigned\nalready ?!");
+                break;
+            default:
+                ui.setBubbleText(endoption.toString());
+        }
+    }
+
+    @Override
+    public void setColor(boolean isWhite) {
+    }
+
+    // initializes the default EvaluationStrategie
     private void initEvaluation() {
         dynamicEvaluation.setEvaluationStrategy(standardEvaluation);
         dynamicEvaluation.setSearchTreePruner(standardPruner);
         usesStandardEvaluation = true;
         //use the library only if the figures are used in the classical way (no Chess960)
         useLibrary = game.isStandardGame();
-    }
-
-    //die Funktion wird nur von HumanPlayer benötigt (bis jetzt)
-    public void setColor(boolean isWhite) {
     }
 
     public void setSearchTreePruner(SearchTreePruner pruner) {

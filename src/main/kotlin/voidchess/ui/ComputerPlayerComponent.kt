@@ -10,9 +10,10 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
 
     private var bubbleText: String? = "let's play"
     private var smileFactor = HappinessLevel.CONTENT
-    private var value: Evaluated = Ongoing(0.0)
-    private var showValue = true
-    private var index: Int = 1
+    private var value: Evaluated = Draw
+    private var showThoughts = false
+    private var showValue = false
+    private var index: Int = 0
     private var total: Int = 1
 
     init {
@@ -28,13 +29,27 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         }
     }
 
+    override fun showThoughts(show: Boolean) {
+        val needsRepaint = show.xor(showThoughts)
+        showThoughts = show
+        if(needsRepaint) {
+            if(show) {
+                showValue = false
+                index = 0
+                total = 0
+            }
+            paintImmediately(THOUGHT_RECTANGLE)
+        }
+    }
+
     override fun setProgress(computedMoves: Int, totalMoves: Int) {
+        showThoughts = true
         showValue = false
         index = computedMoves
         total = totalMoves
         setBubbleText(null)
 
-        paintImmediately(THOUGHT_RECTANGLE)
+        paintImmediately(THOUGHT_CONTENT_RECTANGLE)
     }
 
     override fun setValue(value: Evaluated) {
@@ -44,7 +59,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
 
         paintImmediately(HAND_RECTANGLE)
         paintImmediately(MOUTH_RECTANGLE)
-        paintImmediately(THOUGHT_RECTANGLE)
+        paintImmediately(THOUGHT_CONTENT_RECTANGLE)
     }
 
     override fun paintComponent(g: Graphics) {
@@ -164,24 +179,26 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
     }
 
     private fun drawProgress(g: Graphics) {
-        g.color = Color.BLACK
-        drawRoundRect(g, 30, 30, 140, 50)
-        g.drawOval(20, 80, 20, 20)
-        g.drawOval(30, 110, 10, 10)
+        if(showThoughts) {
+            g.color = Color.BLACK
+            drawRoundRect(g, 30, 30, 140, 50)
+            g.drawOval(20, 80, 20, 20)
+            g.drawOval(30, 110, 10, 10)
 
-        if (showValue) {
-            g.color = Color.WHITE
-            g.fillRect(49, 46, 110, 20)
-            g.color = Color.BLACK
-            drawCenteredString(g, value.toString(), 100, 60)
-        } else {
-            g.color = Color.WHITE
-            g.fillRect(49, 46, 110, 20)
-            g.color = Color.BLACK
-            g.drawRect(49, 46, 101, 18)
-            g.color = Color.DARK_GRAY
-            val progress = Math.ceil(100 * index / total.toDouble()).toInt()
-            g.fillRect(50, 47, progress, 17)
+            if (showValue) {
+                g.color = Color.WHITE
+                g.fillRect(49, 46, 110, 20)
+                g.color = Color.BLACK
+                drawCenteredString(g, value.toString(), 100, 60)
+            } else {
+                g.color = Color.WHITE
+                g.fillRect(49, 46, 110, 20)
+                g.color = Color.BLACK
+                g.drawRect(49, 46, 101, 18)
+                g.color = Color.DARK_GRAY
+                val progress = Math.ceil(100 * index / total.toDouble()).toInt()
+                g.fillRect(50, 47, progress, 17)
+            }
         }
     }
 
@@ -212,10 +229,23 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         bubbleText?.let {text ->
             g.color = Color.BLACK
             val centeredX = 80
-            val textBorder = 6
+            val textBorderWidth = 6
+            val textBorderHeight = 4
             val bubbleY = 320
-            val halfTextWidth = drawCenteredString(g, text, centeredX, bubbleY+15)
-            g.drawRect(centeredX-halfTextWidth-textBorder, bubbleY, (halfTextWidth+textBorder)*2, 20)
+            val lineHight = 13
+            val lines = text.split('\n')
+            var maxHalfTextWidth = 0
+            // print the text
+            lines.forEachIndexed { i, line ->
+                val halfTextWidth = drawCenteredString(g, line, centeredX, bubbleY+textBorderHeight+(i+1)*lineHight)
+                if( halfTextWidth>maxHalfTextWidth) {
+                    maxHalfTextWidth = halfTextWidth
+                }
+            }
+            // paint the bubble
+            val bubbleHeight = lines.size*lineHight+textBorderHeight*2+1
+            val bubbleWidth = (maxHalfTextWidth+textBorderWidth)*2
+            g.drawRect(centeredX-maxHalfTextWidth-textBorderWidth, bubbleY, bubbleWidth, bubbleHeight)
             g.drawLine(centeredX+5, bubbleY, centeredX-10, bubbleY-10)
             g.drawLine(centeredX-5, bubbleY, centeredX-10, bubbleY-10)
             g.color = Color.white
@@ -257,8 +287,9 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
                 HAND_START_Y - THUMB_HEIGHT - 1,
                 HAND_WITH + 2,
                 HAND_HEIGHT + 2 * THUMB_HEIGHT + 2)
-        private val THOUGHT_RECTANGLE = Rectangle(49, 46, 102, 19)
-        val SPEECH_BUBBLE_RECTANGLE = Rectangle(35, 308, 90, 35)
+        private val THOUGHT_CONTENT_RECTANGLE = Rectangle(49, 46, 102, 19)
+        private val THOUGHT_RECTANGLE = Rectangle(14, 28, 160, 95)
+        private val SPEECH_BUBBLE_RECTANGLE = Rectangle(17, 308, 126, 60)
     }
 }
 

@@ -1,6 +1,7 @@
 package voidchess.player
 
 import voidchess.board.ChessGameInterface
+import voidchess.board.MoveResult
 import voidchess.helper.Move
 import voidchess.helper.PawnPromotion
 import voidchess.helper.Position
@@ -94,13 +95,13 @@ class HumanPlayer(
         }
     }
 
-    override fun setIsPlaying(isPlaying: Boolean) {
-        isMyTurn = isPlaying && isWhitePlayer
+    override fun gameStarts() {
+        isMyTurn = isWhitePlayer
+    }
 
-        if (!isPlaying) {
-            //removes selected fields even if game was aborted
-            dropMarkedPositions()
-        }
+    override fun gameEnds(endoption: MoveResult) {
+        isMyTurn = false
+        dropMarkedPositions()
     }
 
     private fun dropMarkedPositions() {

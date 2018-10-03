@@ -68,15 +68,15 @@ public class Table implements ChessGameSupervisor, TableInterface {
         game.initGame(panel960.getPositionCode());
         ui.repaintAtOnce();
 
-        whitePlayer.setIsPlaying(true);
-        blackPlayer.setIsPlaying(true);
+        whitePlayer.gameStarts();
+        blackPlayer.gameStarts();
 
         whitePlayer.play();
     }
 
     public void stopGame(MoveResult endoption) {
-        whitePlayer.setIsPlaying(false);
-        blackPlayer.setIsPlaying(false);
-        parent.gameover(endoption);
+        whitePlayer.gameEnds(endoption);
+        blackPlayer.gameEnds(endoption);
+        parent.gameover();
     }
 }
