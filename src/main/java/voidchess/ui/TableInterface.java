@@ -13,4 +13,5 @@ public interface TableInterface {
     void move(Move move);
     void setWhitePlayer(PlayerInterface player);
     void setBlackPlayer(PlayerInterface player);
+    void switchPlayer();
 }

@@ -20,6 +20,18 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         preferredSize = Dimension(200, 378)
     }
 
+    override fun init() {
+        bubbleText = "make your move"
+        value = Draw
+        smileFactor = HappinessLevel.CONTENT
+        showThoughts = false
+        showValue = false
+        index = 0
+        total = 1
+
+        paintImmediately(0, 0, preferredSize.width, preferredSize.height)
+    }
+
     override fun setBubbleText(msg: String?) {
         val oldBubbleText = bubbleText
         bubbleText = msg
@@ -33,12 +45,8 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         val needsRepaint = show.xor(showThoughts)
         showThoughts = show
         if(needsRepaint) {
-            if(show) {
-                showValue = false
-                index = 0
-                total = 0
-            }
             paintImmediately(THOUGHT_RECTANGLE)
+            paintImmediately(HAND_RECTANGLE)
         }
     }
 

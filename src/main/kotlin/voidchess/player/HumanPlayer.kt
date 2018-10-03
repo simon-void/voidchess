@@ -99,7 +99,7 @@ class HumanPlayer(
         isMyTurn = isWhitePlayer
     }
 
-    override fun gameEnds(endoption: MoveResult) {
+    override fun gameEnds(endoption: MoveResult, lastMoveByWhite: Boolean) {
         isMyTurn = false
         dropMarkedPositions()
     }
@@ -113,5 +113,6 @@ class HumanPlayer(
 
     override fun setColor(isWhite: Boolean) {
         isWhitePlayer = isWhite
+        ui.setViewPoint(isWhite)
     }
 }

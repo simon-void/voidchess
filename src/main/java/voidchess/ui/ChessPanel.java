@@ -21,8 +21,6 @@ public class ChessPanel
     final private static String resignString = "resign";
     final private static String switchString = "change seats";
 
-    private PlayerInterface humanPlayer;
-    private PlayerInterface computerPlayer;
     private Table table;
     private JButton startButton;
     private JButton switchButton;
@@ -30,7 +28,6 @@ public class ChessPanel
     private Chess960Panel panel960;
     private DifficultyPanel difficultyPanel;
     private CoresPanel coresPanel;
-    private boolean humanPlaysWhite;
 
     ChessPanel() {
         designLayout();
@@ -54,13 +51,12 @@ public class ChessPanel
         panel960 = new Chess960Panel(game, chessboardComponent);
         table = new Table(game, chessboardComponent, this, panel960);
         game.useSupervisor(table);
-        humanPlayer = new HumanPlayer(table, true, chessboardComponent, game);
+        PlayerInterface humanPlayer = new HumanPlayer(table, true, chessboardComponent, game);
         ComputerPlayerComponent computerPlayerUI = new ComputerPlayerComponent();
         ComputerPlayer kiPlayer = new ComputerPlayer(table, game, computerPlayerUI);
-        computerPlayer = kiPlayer;
+        PlayerInterface computerPlayer = kiPlayer;
         table.setWhitePlayer(humanPlayer);
         table.setBlackPlayer(computerPlayer);
-        humanPlaysWhite = true;
 
         JPanel computerPlayerOptionsPanel = getComputerPlayerSettingsPanel(kiPlayer);
 
@@ -117,7 +113,7 @@ public class ChessPanel
                 start();
                 break;
             case switchString:
-                switchPlayer();
+                table.switchPlayer();
                 break;
             case resignString:
                 table.stopGame(MoveResult.RESIGN);
@@ -140,19 +136,5 @@ public class ChessPanel
         panel960.setEnabled(true);
         difficultyPanel.setEnabled(true);
         coresPanel.setEnabled(true);
-    }
-
-    private void switchPlayer() {
-        humanPlaysWhite = !humanPlaysWhite;
-        if (humanPlaysWhite) {
-            table.setWhitePlayer(humanPlayer);
-            table.setBlackPlayer(computerPlayer);
-        } else {
-            table.setWhitePlayer(computerPlayer);
-            table.setBlackPlayer(humanPlayer);
-        }
-        humanPlayer.setColor(humanPlaysWhite);
-        computerPlayer.setColor(!humanPlaysWhite);
-        chessboardComponent.setViewPoint(humanPlaysWhite);
     }
 }

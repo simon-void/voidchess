@@ -175,13 +175,11 @@ public class ComputerPlayer
     @Override
     public void gameStarts() {
         initEvaluation();
-        if(!isWhite) {
-            ui.setBubbleText("make your move");
-        }
+        ui.init();
     }
 
     @Override
-    public void gameEnds(MoveResult endoption) {
+    public void gameEnds(MoveResult endoption, boolean lastMoveByWhite) {
         ui.showThoughts(false);
         switch (endoption) {
             case DRAW:
@@ -191,7 +189,8 @@ public class ComputerPlayer
                 ui.setBubbleText("stalemate");
                 break;
             case CHECKMATE:
-                ui.setBubbleText("checkmate");
+                String text = lastMoveByWhite == isWhite ? "checkmate" : "good game";
+                ui.setBubbleText(text);
                 break;
             case THREE_TIMES_SAME_POSITION:
                 ui.setBubbleText("draw because of\n3x repetition");
@@ -209,6 +208,7 @@ public class ComputerPlayer
 
     @Override
     public void setColor(boolean isWhite) {
+        this.isWhite = isWhite;
     }
 
     // initializes the default EvaluationStrategie

@@ -29,6 +29,7 @@ public class Table implements ChessGameSupervisor, TableInterface {
         else return blackPlayer.askForPawnPromotionType(pawnPosition);
     }
 
+    @Override
     public void move(Move move) {
         MoveResult endoption;
         synchronized (this) {
@@ -54,14 +55,26 @@ public class Table implements ChessGameSupervisor, TableInterface {
 
     }
 
+    @Override
     public void setWhitePlayer(PlayerInterface player) {
         whitePlayer = player;
+        player.setColor(true);
     }
 
+    @Override
     public void setBlackPlayer(PlayerInterface player) {
         blackPlayer = player;
+        player.setColor(false);
     }
 
+    @Override
+    public void switchPlayer() {
+        PlayerInterface formerWhitePlayer = whitePlayer;
+        setWhitePlayer(blackPlayer);
+        setBlackPlayer(formerWhitePlayer);
+    }
+
+    @Override
     public void startGame() {
         whitePlayersTurn = true;
         resign = false;
@@ -74,9 +87,10 @@ public class Table implements ChessGameSupervisor, TableInterface {
         whitePlayer.play();
     }
 
+    @Override
     public void stopGame(MoveResult endoption) {
-        whitePlayer.gameEnds(endoption);
-        blackPlayer.gameEnds(endoption);
+        whitePlayer.gameEnds(endoption, !whitePlayersTurn);
+        blackPlayer.gameEnds(endoption, !whitePlayersTurn);
         parent.gameover();
     }
 }
