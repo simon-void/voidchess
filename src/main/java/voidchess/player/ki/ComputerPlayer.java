@@ -200,7 +200,7 @@ public class ComputerPlayer
                 ui.setBubbleText("draw because of\n50-move rule");
                 break;
             case RESIGN:
-                ui.setBubbleText("you resigned\nalready ?!");
+                ui.setBubbleText("you're already\nresigning ?!");
                 break;
             default:
                 ui.setBubbleText(endoption.toString());

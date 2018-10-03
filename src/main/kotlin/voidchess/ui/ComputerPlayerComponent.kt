@@ -238,20 +238,21 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
             g.color = Color.BLACK
             val centeredX = 80
             val textBorderWidth = 6
-            val textBorderHeight = 4
+            val textBorderUp = 2
+            val textBorderDown = 5
             val bubbleY = 320
             val lineHight = 13
             val lines = text.split('\n')
             var maxHalfTextWidth = 0
             // print the text
             lines.forEachIndexed { i, line ->
-                val halfTextWidth = drawCenteredString(g, line, centeredX, bubbleY+textBorderHeight+(i+1)*lineHight)
+                val halfTextWidth = drawCenteredString(g, line, centeredX, bubbleY+textBorderUp+(i+1)*lineHight)
                 if( halfTextWidth>maxHalfTextWidth) {
                     maxHalfTextWidth = halfTextWidth
                 }
             }
             // paint the bubble
-            val bubbleHeight = lines.size*lineHight+textBorderHeight*2+1
+            val bubbleHeight = lines.size*lineHight+textBorderUp+textBorderDown
             val bubbleWidth = (maxHalfTextWidth+textBorderWidth)*2
             g.drawRect(centeredX-maxHalfTextWidth-textBorderWidth, bubbleY, bubbleWidth, bubbleHeight)
             g.drawLine(centeredX+5, bubbleY, centeredX-10, bubbleY-10)
