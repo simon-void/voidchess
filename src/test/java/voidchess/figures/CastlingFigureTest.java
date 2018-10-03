@@ -15,7 +15,7 @@ public class CastlingFigureTest {
         King king = new King(true, initial);
 
         assertEquals(king.getInitialPosition(), initial);
-        king.figureMoved(Move.Companion.get(initial, second));
+        king.figureMoved(Move.get(initial, second));
         assertEquals(king.getInitialPosition(), initial);
     }
 }

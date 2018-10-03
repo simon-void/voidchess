@@ -17,7 +17,7 @@ public class ExtendedMoveTest {
     protected void setUp() {
         extendedMove =
                 new ExtendedMove(
-                        Move.Companion.get(
+                        Move.get(
                                 Position.byCode("a1"),
                                 Position.byCode("d1")
                         ),
@@ -64,7 +64,7 @@ public class ExtendedMoveTest {
         assertFalse(extendedMove.wasFigureTaken());
         ExtendedMove hitPawn =
                 new ExtendedMove(
-                        Move.Companion.get(
+                        Move.get(
                                 Position.byCode("b5"),
                                 Position.byCode("a6")
                         ),
@@ -78,7 +78,7 @@ public class ExtendedMoveTest {
         assertTrue(hitPawn.wasFigureTaken());
         ExtendedMove hitFigure =
                 new ExtendedMove(
-                        Move.Companion.get(
+                        Move.get(
                                 Position.byCode("b5"),
                                 Position.byCode("a6")
                         ),

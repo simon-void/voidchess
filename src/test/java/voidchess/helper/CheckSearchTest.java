@@ -192,7 +192,7 @@ public class CheckSearchTest {
 
     private ExtendedMove getEnpassentMove(Move move) {
         boolean isWhiteMove = move.getTo().getRow() > move.getFrom().getRow();
-        Pawn hitByEnpassant = new Pawn(!isWhiteMove, Position.Companion.get(move.getFrom().getRow(), move.getTo().getColumn()));
+        Pawn hitByEnpassant = new Pawn(!isWhiteMove, Position.get(move.getFrom().getRow(), move.getTo().getColumn()));
 
         ExtendedMove extendedMove = new ExtendedMove(move, null, hitByEnpassant, isWhiteMove, false, true, false);
 

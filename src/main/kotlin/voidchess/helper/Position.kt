@@ -169,6 +169,7 @@ class Position private constructor(val row: Int, val column: Int) {
         // optimized from: column + row * 8
         private fun getIndex(row: Int, column: Int) = column + (row shl 3)
 
+        @JvmStatic
         fun inBounds(row: Int, column: Int): Boolean = row in 0..7 && column in 0..7
     }
 }

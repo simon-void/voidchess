@@ -20,9 +20,9 @@ public class FigureTest {
 
     @Test
     public void testIsDifferentColor() {
-        Figure figure1 = new Queen(true, Position.Companion.get(0, 0));
-        Figure figure2 = new Rook(true, Position.Companion.get(0, 0));
-        Figure figure3 = new Bishop(false, Position.Companion.get(0, 0));
+        Figure figure1 = new Queen(true, Position.get(0, 0));
+        Figure figure2 = new Rook(true, Position.get(0, 0));
+        Figure figure3 = new Bishop(false, Position.get(0, 0));
         assertTrue(figure1.hasDifferentColor(figure3));
         assertFalse(figure2.hasDifferentColor(figure1));
         assertFalse(figure3.hasDifferentColor(figure3));
@@ -33,7 +33,7 @@ public class FigureTest {
         assertFalse(
                 new Knight(
                         true,
-                        Position.Companion.get(0, 0)
+                        Position.get(0, 0)
                 ).canBeHitByEnpasent(),
                 "should be false for all voidchess.figures but pawns"
         );
@@ -77,9 +77,9 @@ public class FigureTest {
         Position thirdpos = Position.byCode("f5");
 
         Figure figure1 = new Bishop(true, from);
-        figure1.figureMoved(Move.Companion.get(from, to));
+        figure1.figureMoved(Move.get(from, to));
         assertEquals(figure1.toString(), "Bishop-white-g5");
-        figure1.figureMoved(Move.Companion.get(thirdpos, from));
+        figure1.figureMoved(Move.get(thirdpos, from));
         assertEquals(figure1.toString(), "Bishop-white-g5");
     }
 
@@ -87,7 +87,7 @@ public class FigureTest {
     public void testCastling() {
         Position from = Position.byCode("c1");
         Position to = Position.byCode("g5");
-        Move move = Move.Companion.get(from, to);
+        Move move = Move.get(from, to);
 
         assertFalse(new Pawn(true, from).canCastle());
 

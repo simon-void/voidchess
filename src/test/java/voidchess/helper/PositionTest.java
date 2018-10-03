@@ -11,7 +11,7 @@ import static org.testng.Assert.*;
 public class PositionTest {
     @Test
     public void testGet() {
-        Position pos1 = Position.Companion.get(0, 7);
+        Position pos1 = Position.get(0, 7);
         assertTrue(pos1.getRow() == 0);
         assertTrue(pos1.getColumn() == 7);
 
@@ -23,7 +23,7 @@ public class PositionTest {
     @Test(dataProvider = "getInvalidGetRowColumnData")
     public void testInvalidGetByIntsFails(int row, int column) {
         try {
-            Position.Companion.get(row, column);
+            Position.get(row, column);
             fail("test should have failed on row:" + row + ", column:" + column + " but didn't");
         } catch (AssertionError | ArrayIndexOutOfBoundsException e) {
             // expected to fail
@@ -50,11 +50,11 @@ public class PositionTest {
 
     @Test
     public void testToString() {
-        Position pos1 = Position.Companion.get(0, 0);
+        Position pos1 = Position.get(0, 0);
         assertEquals(pos1.toString(), "a1");
-        Position pos2 = Position.Companion.get(7, 0);
+        Position pos2 = Position.get(7, 0);
         assertEquals(pos2.toString(), "a8");
-        Position pos3 = Position.Companion.get(7, 7);
+        Position pos3 = Position.get(7, 7);
         assertEquals(pos3.toString(), "h8");
     }
 
@@ -71,16 +71,16 @@ public class PositionTest {
 
     @Test
     public void testInBounds() {
-        assertFalse(Position.Companion.inBounds(-1, 4));
-        assertFalse(Position.Companion.inBounds(1, 8));
-        assertFalse(Position.Companion.inBounds(8, 4));
-        assertFalse(Position.Companion.inBounds(1, -1));
+        assertFalse(Position.inBounds(-1, 4));
+        assertFalse(Position.inBounds(1, 8));
+        assertFalse(Position.inBounds(8, 4));
+        assertFalse(Position.inBounds(1, -1));
 
-        assertTrue(Position.Companion.inBounds(0, 0));
-        assertTrue(Position.Companion.inBounds(0, 7));
-        assertTrue(Position.Companion.inBounds(7, 0));
-        assertTrue(Position.Companion.inBounds(7, 7));
-        assertTrue(Position.Companion.inBounds(3, 4));
+        assertTrue(Position.inBounds(0, 0));
+        assertTrue(Position.inBounds(0, 7));
+        assertTrue(Position.inBounds(7, 0));
+        assertTrue(Position.inBounds(7, 7));
+        assertTrue(Position.inBounds(3, 4));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class PositionTest {
     @Test
     public void testPositionByIndex() {
         Position b3 = Position.byCode("b3");
-        Position actualPos = Position.Companion.byIndex(b3.getIndex());
+        Position actualPos = Position.byIndex(b3.getIndex());
         assertEquals(actualPos, b3);
     }
 
