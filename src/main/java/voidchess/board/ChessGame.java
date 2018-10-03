@@ -172,7 +172,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     @Override
     public BoardContent getContent(Position pos) {
-        return BoardContent.Companion.get(game.getFigure(pos));
+        return BoardContent.get(game.getFigure(pos));
     }
 
     private void setFigure(Position pos, Figure figure) {
@@ -217,7 +217,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         if (castlingRook != null) {
             final int row = move.getTo().getRow();
             final int column = move.getTo().getColumn() - move.getFrom().getColumn() > 0 ? 6 : 2;
-            move = Move.Companion.get(move.getFrom(), Position.Companion.get(row, column));
+            move = Move.get(move.getFrom(), Position.get(row, column));
         }
 
         Pawn hitPawn = handleEnpasent(move);
@@ -269,7 +269,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
                 && move.getFrom().getColumn() != move.getTo().getColumn()
                 && isFreeArea(move.getTo())
         ) {
-            Position pawnToBeHit = Position.Companion.get(move.getFrom().getRow(), move.getTo().getColumn());
+            Position pawnToBeHit = Position.get(move.getFrom().getRow(), move.getTo().getColumn());
             Pawn pawn = (Pawn) getFigure(pawnToBeHit);
             setFigure(pawnToBeHit, null);
             figureCount--;
@@ -296,9 +296,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         if (castlingRook != null) {
             Position RookFrom = castlingRook.getPosition();
             Position RookTo = moveTo.getColumn() == 6 ?
-                    Position.Companion.get(moveTo.getRow(), 5) :
-                    Position.Companion.get(moveTo.getRow(), 3);
-            castlingRook.figureMoved(Move.Companion.get(RookFrom, RookTo));
+                    Position.get(moveTo.getRow(), 5) :
+                    Position.get(moveTo.getRow(), 3);
+            castlingRook.figureMoved(Move.get(RookFrom, RookTo));
             setFigure(RookTo, castlingRook);
         }
     }
@@ -399,7 +399,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     private void undoEnpassent(ExtendedMove lastExtMove) {
         Pawn hitPawn = (Pawn) lastExtMove.getEnpassentPawnOrCastlingRook();
-        Position pawnPos = Position.Companion.get(lastExtMove.getMove().getFrom().getRow(), lastExtMove.getMove().getTo().getColumn());
+        Position pawnPos = Position.get(lastExtMove.getMove().getFrom().getRow(), lastExtMove.getMove().getTo().getColumn());
         setFigure(pawnPos, hitPawn);
         hitPawn.setCanBeHitByEnpasent();
     }
@@ -472,7 +472,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         if (whiteTurn != other.whiteTurn) return false;
 
         for (int index = 0; index < 64; index++) {
-            Position pos = Position.Companion.byIndex(index);
+            Position pos = Position.byIndex(index);
             BoardContent content = getContent(pos);
             BoardContent otherContent = other.getContent(pos);
             if (content.isFreeArea() != otherContent.isFreeArea()) return false;
@@ -635,7 +635,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
             int count = 0;
             int[] board = new int[64];
             for (int index = 0; index < 64; index++) {
-                Figure figure = game.getFigure(Position.Companion.byIndex(index));
+                Figure figure = game.getFigure(Position.byIndex(index));
                 if (figure != null) {
                     board[index] = figure.getTypeInfo();
                     count++;

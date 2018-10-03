@@ -78,7 +78,7 @@ public class CheckSearch {
         Position passiveAttacker = getPassiveAttacker(game, kingPos, lastMove.getFrom());
         if (passiveAttacker == null) {
             //an attackpath may have opend over the diagonal of the removed pawn
-            Position removedPawnPos = Position.Companion.get(lastMove.getFrom().getRow(), lastMove.getTo().getColumn());
+            Position removedPawnPos = Position.get(lastMove.getFrom().getRow(), lastMove.getTo().getColumn());
             passiveAttacker = getPassiveAttacker(game, kingPos, removedPawnPos);
         }
 
@@ -131,7 +131,7 @@ public class CheckSearch {
 
         final int Rook_row = lastMove.getTo().getRow();
         final int Rook_column = lastMove.getTo().getColumn() == 2 ? 3 : 5;
-        final Position RookPos = Position.Companion.get(Rook_row, Rook_column);
+        final Position RookPos = Position.get(Rook_row, Rook_column);
         final Figure Rook = game.getFigure(RookPos);
 
         if (Rook.isReachable(kingPos, game)) return getPossiblePositions(kingPos, RookPos);
@@ -173,7 +173,7 @@ public class CheckSearch {
         for (int row = minRow; row <= maxRow; row++) {
             for (int column = minColumn; column <= maxColumn; column++) {
                 if (row != kingPos.getRow() || column != kingPos.getColumn()) {
-                    final Position pos = Position.Companion.get(row, column);
+                    final Position pos = Position.get(row, column);
                     final Figure figure = game.getFigure(pos);
                     if (figure != null && figure.isKing()) {
                         attackerPos.add(pos);
@@ -191,7 +191,7 @@ public class CheckSearch {
 
         if (possiblePawnRow < 0 || possiblePawnRow > 7) return false;
         if (kingPos.getColumn() != 0) {
-            final Position pos = Position.Companion.get(possiblePawnRow, kingPos.getColumn() - 1);
+            final Position pos = Position.get(possiblePawnRow, kingPos.getColumn() - 1);
             final Figure figure = game.getFigure(pos);
             if (figure != null && figure.isWhite() != isWhite && figure.isPawn()) {
                 attackerPos.add(pos);
@@ -200,7 +200,7 @@ public class CheckSearch {
         }
 
         if (kingPos.getColumn() != 7) {
-            final Position pos = Position.Companion.get(possiblePawnRow, kingPos.getColumn() + 1);
+            final Position pos = Position.get(possiblePawnRow, kingPos.getColumn() + 1);
             final Figure figure = game.getFigure(pos);
             if (figure != null && figure.isWhite() != isWhite && figure.isPawn()) {
                 attackerPos.add(pos);
@@ -223,7 +223,7 @@ public class CheckSearch {
                 final int vertical_dif = Math.abs(kingPos.getRow() - row);
                 final int horizontal_dif = Math.abs(kingPos.getColumn() - column);
                 if (vertical_dif + horizontal_dif == 3) {
-                    final Position pos = Position.Companion.get(row, column);
+                    final Position pos = Position.get(row, column);
                     final Figure figure = game.getFigure(pos);
                     if (figure != null && figure.isWhite() != isWhite && figure.isKnight()) {
                         attackerPos.add(pos);
@@ -242,7 +242,7 @@ public class CheckSearch {
         column = kingPos.getColumn() + 1;
         row = kingPos.getRow() + 1;
         while (column < 8 && row < 8) {
-            final Position pos = Position.Companion.get(row, column);
+            final Position pos = Position.get(row, column);
             row++;
             column++;
 
@@ -259,7 +259,7 @@ public class CheckSearch {
         column = kingPos.getColumn() - 1;
         row = kingPos.getRow() + 1;
         while (column >= 0 && row < 8) {
-            final Position pos = Position.Companion.get(row, column);
+            final Position pos = Position.get(row, column);
             row++;
             column--;
 
@@ -276,7 +276,7 @@ public class CheckSearch {
         column = kingPos.getColumn() + 1;
         row = kingPos.getRow() - 1;
         while (column < 8 && row >= 0) {
-            final Position pos = Position.Companion.get(row, column);
+            final Position pos = Position.get(row, column);
             row--;
             column++;
 
@@ -293,7 +293,7 @@ public class CheckSearch {
         column = kingPos.getColumn() - 1;
         row = kingPos.getRow() - 1;
         while (column >= 0 && row >= 0) {
-            final Position pos = Position.Companion.get(row, column);
+            final Position pos = Position.get(row, column);
             row--;
             column--;
 
@@ -316,7 +316,7 @@ public class CheckSearch {
         //da die Bauerntransformation jetzt ausgeschlossen ist,
         //darf nach dem Fund eines Angreifer aufgehört werden
         for (int row = kingPos.getRow() + 1; row < 8; row++) {                        //vertikale Reihe
-            final Position pos = Position.Companion.get(row, kingPos.getColumn());
+            final Position pos = Position.get(row, kingPos.getColumn());
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
@@ -327,7 +327,7 @@ public class CheckSearch {
             break;
         }
         for (int row = kingPos.getRow() - 1; row >= 0; row--) {                        //vertikale Reihe
-            final Position pos = Position.Companion.get(row, kingPos.getColumn());
+            final Position pos = Position.get(row, kingPos.getColumn());
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
@@ -338,7 +338,7 @@ public class CheckSearch {
             break;
         }
         for (int column = kingPos.getColumn() + 1; column < 8; column++) {//horizontale Reihe
-            final Position pos = Position.Companion.get(kingPos.getRow(), column);
+            final Position pos = Position.get(kingPos.getRow(), column);
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
@@ -349,7 +349,7 @@ public class CheckSearch {
             break;
         }
         for (int column = kingPos.getColumn() - 1; column >= 0; column--) {//horizontale Reihe
-            final Position pos = Position.Companion.get(kingPos.getRow(), column);
+            final Position pos = Position.get(kingPos.getRow(), column);
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             if (figure.isWhite() == isWhite) break;
@@ -371,7 +371,7 @@ public class CheckSearch {
         Position kingSideAttackerPos = null;
 
         if (kingPos.getColumn() != 0) {
-            final Position leftKingPos = Position.Companion.get(groundRow, kingPos.getColumn() - 1);
+            final Position leftKingPos = Position.get(groundRow, kingPos.getColumn() - 1);
             final Figure leftFromKingFigure = game.getFigure(leftKingPos);
             if (leftFromKingFigure != null && leftFromKingFigure.isWhite() != isWhite &&
                     (leftFromKingFigure.isQueen() || leftFromKingFigure.isRook())) {
@@ -380,7 +380,7 @@ public class CheckSearch {
         }
 
         if (kingPos.getColumn() != 7 && kingSideAttackerPos == null) {
-            final Position rightKingPos = Position.Companion.get(groundRow, kingPos.getColumn() + 1);
+            final Position rightKingPos = Position.get(groundRow, kingPos.getColumn() + 1);
             final Figure rightFromKingFigure = game.getFigure(rightKingPos);
             if (rightFromKingFigure != null && rightFromKingFigure.isWhite() != isWhite &&
                     (rightFromKingFigure.isQueen() || rightFromKingFigure.isRook())) {
@@ -396,7 +396,7 @@ public class CheckSearch {
         int row = groundRow;
         do {
             row += rowStep;
-            final Position pos = Position.Companion.get(row, kingPos.getColumn());
+            final Position pos = Position.get(row, kingPos.getColumn());
             final Figure figure = game.getFigure(pos);
             if (figure == null) continue;
             //either figure says 'chess' or king is not in danger
@@ -425,7 +425,7 @@ public class CheckSearch {
         int column = first.getColumn() + columnStep;
         final List<Position> middlePositions = new ArrayList<Position>(positionNumberPlusOne);
         while (row != second.getRow() || column != second.getColumn()) {
-            middlePositions.add(Position.Companion.get(row, column));
+            middlePositions.add(Position.get(row, column));
             row += rowStep;
             column += columnStep;
         }
@@ -449,7 +449,7 @@ public class CheckSearch {
         int column = lastMovedFrom.getColumn() + columnStep;
 
         while (row >= 0 && column >= 0 && row < 8 && column < 8) {
-            final Position pos = Position.Companion.get(row, column);
+            final Position pos = Position.get(row, column);
             final Figure figure = game.getFigure(pos);
             if (figure != null) {
 

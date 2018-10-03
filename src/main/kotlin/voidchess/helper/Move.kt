@@ -21,8 +21,10 @@ class Move private constructor(val from: Position, val to: Position) {
             )
         }
 
-        fun get(from: Position, to: Position) = moves[getMoveIndex(from.index, to.index)]
+        @JvmStatic
+        operator fun get(from: Position, to: Position) = moves[getMoveIndex(from.index, to.index)]
 
+        @JvmStatic
         fun byCode(code: String): Move {
             val fromColumn = code[0].toInt() - 97
             val fromRow = code[1].toInt() - 49
@@ -35,6 +37,7 @@ class Move private constructor(val from: Position, val to: Position) {
             )
         }
 
+        @JvmStatic
         fun isValid(code: String?): Boolean {
             if (code == null || code.length != 5 || code[2] != '-') {
                 return false

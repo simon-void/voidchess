@@ -7,6 +7,7 @@ sealed class BoardContent {
     abstract val figure: Figure
 
     companion object {
+        @JvmStatic
         fun get(optionalFigure: Figure?): BoardContent {
             return if(optionalFigure==null) {
                 NoFigure

@@ -98,11 +98,11 @@ public class OpeningsLibrary {
 
         for (String textMove : textMoves) {
             textMove = textMove.trim();
-            if (!Move.Companion.isValid(textMove)) {
+            if (!Move.isValid(textMove)) {
                 throw new IllegalArgumentException(
                         "illegal move format'" + textMove + "' in opening sequence: " + openingSequence);
             }
-            Move move = Move.Companion.byCode(textMove);
+            Move move = Move.byCode(textMove);
             boolean isMoveExecutable = game.isMoveable(
                     move.getFrom(), move.getTo(), game.isWhiteTurn()
             );

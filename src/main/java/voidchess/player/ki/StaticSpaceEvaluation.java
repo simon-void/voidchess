@@ -25,7 +25,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         List figuresPos = new LinkedList();
 
         for (int index = 0; index < 64; index++) {
-            Position pos = Position.Companion.byIndex(index);
+            Position pos = Position.byIndex(index);
             BoardContent content = game.getContent(pos);
             if (!content.isFreeArea()) {
                 Figure figure = content.getFigure();
@@ -130,9 +130,9 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         LinkedList positions = new LinkedList();
         for (int row = minRow; row <= maxRow; row++) {
             for (int column = minColumn; column <= maxColumn; column++) {
-                Position newPos = Position.Companion.get(row, column);
+                Position newPos = Position.get(row, column);
                 if (newPos.notEqualsPosition(pos)) {
-                    positions.add(Position.Companion.get(row, column));
+                    positions.add(Position.get(row, column));
                 }
             }
         }
@@ -144,7 +144,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         int whiteFigures = 0;
         int blackFigures = 0;
         for (int index = 0; index < 64; index++) {
-            BoardContent content = game.getContent(Position.Companion.byIndex(index));
+            BoardContent content = game.getContent(Position.byIndex(index));
             if (!content.isFreeArea()) {
                 Figure figure = content.getFigure();
                 if (figure.isWhite()) {

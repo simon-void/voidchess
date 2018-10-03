@@ -18,7 +18,7 @@ public class OpeningsLibraryTest {
         List<String> moves = OpeningsLibrary.splitAndCheckOpeningSequence(validOpeningSequence);
         assertEquals(moves.size(), numberOfMoves, "number of moves in opening");
         for (String move : moves) {
-            assertTrue(Move.Companion.isValid(move), "should be valid move: " + move);
+            assertTrue(Move.isValid(move), "should be valid move: " + move);
         }
     }
 

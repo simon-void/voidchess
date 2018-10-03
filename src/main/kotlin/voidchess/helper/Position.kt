@@ -84,6 +84,7 @@ class Position private constructor(val row: Int, val column: Int) {
             return@Array Position(row, column)
         }
 
+        @JvmStatic
         fun byCode(code: String): Position {
             assert(code.length == 2) { "argument is supposed to be something like \"a8\"" }
 
@@ -93,9 +94,11 @@ class Position private constructor(val row: Int, val column: Int) {
             return get(row, column)
         }
 
+        @JvmStatic
         fun byIndex(index: Int) = positions[index]
 
-        fun get(row: Int, column: Int): Position {
+        @JvmStatic
+        operator fun get(row: Int, column: Int): Position {
             assert(inBounds(row, column)) {
                 return@assert "position arguments row $row and column $column are not in range 0..7"
             }
