@@ -104,6 +104,9 @@ class HumanPlayer(
         dropMarkedPositions()
     }
 
+    override fun gaveCheck() {
+    }
+
     private fun dropMarkedPositions() {
         from = null
         ui.unmarkPosition(PosType.HOVER_FROM)

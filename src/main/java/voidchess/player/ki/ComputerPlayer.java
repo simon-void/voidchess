@@ -54,6 +54,7 @@ public class ComputerPlayer
 
     @Override
     public void play() {
+        ui.setBubbleText(null);
         ui.showThoughts(true);
         EvaluatedMove chosenMove = getNextMove();
         ui.setValue(chosenMove.getValue());
@@ -204,6 +205,11 @@ public class ComputerPlayer
             default:
                 ui.setBubbleText(endoption.toString());
         }
+    }
+
+    @Override
+    public void gaveCheck() {
+        ui.setBubbleText("check");
     }
 
     @Override

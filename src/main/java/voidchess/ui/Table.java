@@ -44,15 +44,21 @@ public class Table implements ChessGameSupervisor, TableInterface {
             whitePlayersTurn = !whitePlayersTurn;
         }
         if (endoption == MoveResult.NO_END) {
+            boolean gaveCheck = game.isCheck(whitePlayersTurn);
             if (whitePlayersTurn) {
                 whitePlayer.play();
+                if(gaveCheck) {
+                    blackPlayer.gaveCheck();
+                }
             } else {
                 blackPlayer.play();
+                if(gaveCheck) {
+                    whitePlayer.gaveCheck();
+                }
             }
         } else {
             stopGame(endoption);
         }
-
     }
 
     @Override

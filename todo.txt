@@ -3,7 +3,5 @@ optimizations:
 2)is isNotBound easier to compute than !isBound?? (migth be unimportant after 1) )
 
 features:
-- "check/checkmate/good game"-speech bubble
-- Matt-Valuations with a material evaluation (to choose smarter matt)
 - resizable interface (inclusive full-screen)
 - pure chess engine module with 2-way channels (so different engines (written e.g. in Go, Rust, ...) can be used)
