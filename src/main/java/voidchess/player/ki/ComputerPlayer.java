@@ -53,7 +53,7 @@ public class ComputerPlayer
     public void play() {
 
         EvaluatedMove chosenMove = getNextMove();
-        ui.setValue(chosenMove.getValue(), chosenMove.getMove());
+        ui.setValue(chosenMove.getValue());
         table.move(chosenMove.getMove());
 
         RuntimeFacade.collectGarbage();

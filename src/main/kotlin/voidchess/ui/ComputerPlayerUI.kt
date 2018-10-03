@@ -10,5 +10,6 @@ import javax.swing.*
  */
 interface ComputerPlayerUI {
     fun setProgress(computedMoves: Int, totalMoves: Int)
-    fun setValue(value: Evaluated, move: Move)
+    fun setValue(value: Evaluated)
+    fun setBubbleText(msg: String?)
 }

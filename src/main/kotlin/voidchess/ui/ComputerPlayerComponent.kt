@@ -1,6 +1,5 @@
 package voidchess.ui
 
-import voidchess.helper.Move
 import voidchess.player.ki.evaluation.*
 
 import javax.swing.*
@@ -9,8 +8,9 @@ import java.awt.*
 
 class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
 
-    private var value: Evaluated = Ongoing(0.0)
+    private var bubbleText: String? = "let's play"
     private var smileFactor = HappinessLevel.CONTENT
+    private var value: Evaluated = Ongoing(0.0)
     private var showValue = true
     private var index: Int = 1
     private var total: Int = 1
@@ -19,18 +19,29 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         preferredSize = Dimension(200, 378)
     }
 
+    override fun setBubbleText(msg: String?) {
+        val oldBubbleText = bubbleText
+        bubbleText = msg
+
+        if(bubbleText!=oldBubbleText) {
+            paintImmediately(SPEECH_BUBBLE_RECTANGLE)
+        }
+    }
+
     override fun setProgress(computedMoves: Int, totalMoves: Int) {
         showValue = false
         index = computedMoves
         total = totalMoves
+        setBubbleText(null)
 
         paintImmediately(THOUGHT_RECTANGLE)
     }
 
-    override fun setValue(value: Evaluated, move: Move) {
+    override fun setValue(value: Evaluated) {
         showValue = true
-        setSmileFactor(value)
+        smileFactor = value.getHappinessLevel()
         this.value = value
+
         paintImmediately(HAND_RECTANGLE)
         paintImmediately(MOUTH_RECTANGLE)
         paintImmediately(THOUGHT_RECTANGLE)
@@ -45,6 +56,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         drawMouth(g)
         drawHand(g)
         drawProgress(g)
+        drawSpeechBubble(g)
     }
 
     private fun drawFace(g: Graphics) {
@@ -92,10 +104,6 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
                 NOSE_START_Y,
                 FACE_MIDDLE,
                 NOSE_START_Y + NOSE_LENGTH)
-    }
-
-    private fun setSmileFactor(value: Evaluated) {
-        smileFactor = value.getHappinessLevel()
     }
 
     private fun drawMouth(g: Graphics) {
@@ -165,9 +173,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
             g.color = Color.WHITE
             g.fillRect(49, 46, 110, 20)
             g.color = Color.BLACK
-            val metric = g.fontMetrics
-            val news = value.toString()
-            g.drawString(news, 100 - metric.stringWidth(news) / 2, 60)
+            drawCenteredString(g, value.toString(), 100, 60)
         } else {
             g.color = Color.WHITE
             g.fillRect(49, 46, 110, 20)
@@ -179,11 +185,42 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         }
     }
 
+    private fun drawCenteredString(g: Graphics, text: String, centeredX: Int, y: Int): Int {
+        val metric = g.fontMetrics
+        val textHalfWidth = metric.stringWidth(text) / 2
+        g.drawString(text, centeredX - textHalfWidth, y)
+        return textHalfWidth
+    }
+
     private fun drawRoundRect(g: Graphics, x: Int, y: Int, w: Int, h: Int) {
         g.drawArc(x, y, h, h, 90, 180)
         g.drawArc(x + w - h, y, h, h, 270, 180)
         g.drawLine(x + h / 2, y, x + w - h / 2, y)
         g.drawLine(x + h / 2, y + h, x + w - h / 2, y + h)
+    }
+
+    private fun drawSpeechBubble(g: Graphics) {
+
+//        HAND_RECTANGLE.apply {
+//            g.color = Color.BLUE
+//            g.drawRect(x, y, width, height)
+//        }
+//        SPEECH_BUBBLE_RECTANGLE.apply {
+//            g.color = Color.RED
+//            g.drawRect(x, y, width, height)
+//        }
+        bubbleText?.let {text ->
+            g.color = Color.BLACK
+            val centeredX = 80
+            val textBorder = 6
+            val bubbleY = 320
+            val halfTextWidth = drawCenteredString(g, text, centeredX, bubbleY+15)
+            g.drawRect(centeredX-halfTextWidth-textBorder, bubbleY, (halfTextWidth+textBorder)*2, 20)
+            g.drawLine(centeredX+5, bubbleY, centeredX-10, bubbleY-10)
+            g.drawLine(centeredX-5, bubbleY, centeredX-10, bubbleY-10)
+            g.color = Color.white
+            g.drawLine(centeredX-4, bubbleY, centeredX+4, bubbleY)
+        }
     }
 
     companion object {
@@ -221,6 +258,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
                 HAND_WITH + 2,
                 HAND_HEIGHT + 2 * THUMB_HEIGHT + 2)
         private val THOUGHT_RECTANGLE = Rectangle(49, 46, 102, 19)
+        val SPEECH_BUBBLE_RECTANGLE = Rectangle(35, 308, 90, 35)
     }
 }
 
