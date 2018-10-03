@@ -15,7 +15,7 @@ public class PositionTest {
         assertTrue(pos1.getRow() == 0);
         assertTrue(pos1.getColumn() == 7);
 
-        Position pos2 = Position.Companion.byCode("a8");
+        Position pos2 = Position.byCode("a8");
         assertTrue(pos2.getColumn() == 0);
         assertTrue(pos2.getRow() == 7);
     }
@@ -42,9 +42,9 @@ public class PositionTest {
 
     @Test
     public void testIndex() {
-        Position pos1 = Position.Companion.byCode("a1");
+        Position pos1 = Position.byCode("a1");
         assertEquals(pos1.getIndex(), 0);
-        Position pos2 = Position.Companion.byCode("h8");
+        Position pos2 = Position.byCode("h8");
         assertEquals(pos2.getIndex(), 63);
     }
 
@@ -60,9 +60,9 @@ public class PositionTest {
 
     @Test
     public void testEquals() {
-        Position pos1 = Position.Companion.byCode("d4");
-        Position pos2 = Position.Companion.byCode("e6");
-        Position pos3 = Position.Companion.byCode("d4");
+        Position pos1 = Position.byCode("d4");
+        Position pos2 = Position.byCode("e6");
+        Position pos3 = Position.byCode("d4");
 
         assertFalse(pos1.equalsPosition(pos2));
         assertFalse(pos2.equalsPosition(pos3));
@@ -85,10 +85,10 @@ public class PositionTest {
 
     @Test
     public void testIsDiagonalTo() {
-        Position pos1 = Position.Companion.byCode("a1");
-        Position pos2 = Position.Companion.byCode("a8");
-        Position pos3 = Position.Companion.byCode("h1");
-        Position pos4 = Position.Companion.byCode("h8");
+        Position pos1 = Position.byCode("a1");
+        Position pos2 = Position.byCode("a8");
+        Position pos3 = Position.byCode("h1");
+        Position pos4 = Position.byCode("h8");
 
         assertTrue(pos1.isDiagonalTo(pos4));
         assertTrue(pos4.isDiagonalTo(pos1));
@@ -107,10 +107,10 @@ public class PositionTest {
 
     @Test
     public void testIsStraightTo() {
-        Position pos1 = Position.Companion.byCode("a1");
-        Position pos2 = Position.Companion.byCode("a8");
-        Position pos3 = Position.Companion.byCode("h1");
-        Position pos4 = Position.Companion.byCode("h8");
+        Position pos1 = Position.byCode("a1");
+        Position pos2 = Position.byCode("a8");
+        Position pos3 = Position.byCode("h1");
+        Position pos4 = Position.byCode("h8");
 
         assertTrue(pos1.isStraightTo(pos2));
         assertTrue(pos1.isStraightTo(pos3));
@@ -129,12 +129,12 @@ public class PositionTest {
 
     @Test
     public void testIsStraightOrDiagonalTo() {
-        Position pos1 = Position.Companion.byCode("a1");
-        Position pos2 = Position.Companion.byCode("a8");
-        Position pos3 = Position.Companion.byCode("h1");
-        Position pos4 = Position.Companion.byCode("h8");
+        Position pos1 = Position.byCode("a1");
+        Position pos2 = Position.byCode("a8");
+        Position pos3 = Position.byCode("h1");
+        Position pos4 = Position.byCode("h8");
 
-        Position pos5 = Position.Companion.byCode("b3");
+        Position pos5 = Position.byCode("b3");
 
         assertTrue(pos1.isStraightOrDiagonalTo(pos2));
         assertTrue(pos1.isStraightOrDiagonalTo(pos3));
@@ -161,12 +161,12 @@ public class PositionTest {
 
     @Test
     public void testPositionByCode() {
-        Position a1 = Position.Companion.byCode("a1");
+        Position a1 = Position.byCode("a1");
         assertEquals(a1.toString(), "a1");
         assertEquals(a1.getColumn(), 0, "column");
         assertEquals(a1.getRow(), 0, "row");
 
-        Position b3 = Position.Companion.byCode("b3");
+        Position b3 = Position.byCode("b3");
         assertEquals(b3.toString(), "b3");
         assertEquals(b3.getColumn(), 1, "column");
         assertEquals(b3.getRow(), 2, "row");
@@ -174,7 +174,7 @@ public class PositionTest {
 
     @Test
     public void testPositionByIndex() {
-        Position b3 = Position.Companion.byCode("b3");
+        Position b3 = Position.byCode("b3");
         Position actualPos = Position.Companion.byIndex(b3.getIndex());
         assertEquals(actualPos, b3);
     }
@@ -234,8 +234,8 @@ public class PositionTest {
     }
 
     private Object[] getPositionDirectionOptionalPosition(String posCode, Direction direction, String expectedPosCode) {
-        Position pos = Position.Companion.byCode(posCode);
-        Position newPos = expectedPosCode == null ? null : Position.Companion.byCode(expectedPosCode);
+        Position pos = Position.byCode(posCode);
+        Position newPos = expectedPosCode == null ? null : Position.byCode(expectedPosCode);
         return new Object[]{pos, direction, newPos};
     }
 }

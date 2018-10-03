@@ -29,18 +29,18 @@ public class ChessGameTest {
 
     @Test
     public void testIsFreeArea() {
-        assertTrue(game.isFreeArea(Position.Companion.byCode("a3")));
-        assertFalse(game.isFreeArea(Position.Companion.byCode("c1")));
-        assertFalse(game.isFreeArea(Position.Companion.byCode("d7")));
+        assertTrue(game.isFreeArea(Position.byCode("a3")));
+        assertFalse(game.isFreeArea(Position.byCode("c1")));
+        assertFalse(game.isFreeArea(Position.byCode("d7")));
     }
 
     @Test
     public void testGetFigure() {
-        assertTrue(game.getFigure(Position.Companion.byCode("e3")) == null);
-        Figure king = game.getFigure(Position.Companion.byCode("e1"));
+        assertTrue(game.getFigure(Position.byCode("e3")) == null);
+        Figure king = game.getFigure(Position.byCode("e1"));
         assertTrue(king instanceof King);
         assertTrue(king.isWhite());
-        Figure bishop = game.getFigure(Position.Companion.byCode("c8"));
+        Figure bishop = game.getFigure(Position.byCode("c8"));
         assertTrue(bishop instanceof Bishop);
         assertFalse(bishop.isWhite());
     }
@@ -80,10 +80,10 @@ public class ChessGameTest {
 
     @Test(dependsOnMethods = {"testIsDrawBecauseOfThreeTimesSamePosition", "testCopy"})
     public void testDeepCopy() {
-        Move whiteMove = Move.Companion.byCode("g1-f3");
-        Move whiteReturn = Move.Companion.byCode("f3-g1");
-        Move blackMove = Move.Companion.byCode("b8-c6");
-        Move blackReturn = Move.Companion.byCode("c6-b8");
+        Move whiteMove = Move.byCode("g1-f3");
+        Move whiteReturn = Move.byCode("f3-g1");
+        Move blackMove = Move.byCode("b8-c6");
+        Move blackReturn = Move.byCode("c6-b8");
 
         game.move(whiteMove);
         game.move(blackMove);
@@ -115,7 +115,7 @@ public class ChessGameTest {
     public void testMove() {
         String des = "white 0 King-white-e1-0 Pawn-white-c2-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        Move move = Move.Companion.get(Position.Companion.byCode("c2"), Position.Companion.byCode("c4"));
+        Move move = Move.Companion.get(Position.byCode("c2"), Position.byCode("c4"));
         game.move(move);
         String new_des = "black 1 King-white-e1-0 Pawn-white-c4-true King-black-e8-0";
         assertEquals(game.toString(), new_des);
@@ -125,8 +125,8 @@ public class ChessGameTest {
     public void testUndo() {
         String des = "white 0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        Position pos1 = Position.Companion.byCode("e1");
-        Position pos2 = Position.Companion.byCode("h1");
+        Position pos1 = Position.byCode("e1");
+        Position pos2 = Position.byCode("h1");
         Move move = Move.Companion.get(pos1, pos2);
         game.move(move);
         String new_des = "black 1 Rook-white-f1-1 King-white-g1-1-true King-black-e8-0";
@@ -139,8 +139,8 @@ public class ChessGameTest {
 
         des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-f8-0";
         game = new ChessGame(des);
-        pos1 = Position.Companion.byCode("f8");
-        pos2 = Position.Companion.byCode("g8");
+        pos1 = Position.byCode("f8");
+        pos2 = Position.byCode("g8");
         move = Move.Companion.get(pos1, pos2);
         game.move(move);
         game.undo();
@@ -151,8 +151,8 @@ public class ChessGameTest {
 
         des = "white 0 King-white-e1-0 Pawn-white-b5-false Pawn-black-c5-true King-black-e8-0";
         game = new ChessGame(des);
-        pos1 = Position.Companion.byCode("b5");
-        pos2 = Position.Companion.byCode("c6");
+        pos1 = Position.byCode("b5");
+        pos2 = Position.byCode("c6");
         move = Move.Companion.get(pos1, pos2);
 
         assertTrue(game.isMoveable(pos1, pos2, true));
@@ -172,8 +172,8 @@ public class ChessGameTest {
                 "Rook-black-a8-0 Queen-black-d8 King-black-e8-0 " +
                 "Rook-black-h8-0";
         game = new ChessGame(des);
-        pos1 = Position.Companion.byCode("e1");
-        pos2 = Position.Companion.byCode("a1");
+        pos1 = Position.byCode("e1");
+        pos2 = Position.byCode("a1");
         move = Move.Companion.get(pos1, pos2);
 
         assertTrue(game.isMoveable(pos1, pos2, true));
@@ -184,7 +184,7 @@ public class ChessGameTest {
 
         des = "black 1 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false";
         game = new ChessGame(des);
-        move = Move.Companion.byCode("a6-b6");
+        move = Move.byCode("a6-b6");
         game.move(move);
         game.undo();
 
@@ -193,7 +193,7 @@ public class ChessGameTest {
 
         des = "white 1 King-white-h1-4 Pawn-white-a2-false King-black-a6-6";
         game = new ChessGame(des);
-        move = Move.Companion.byCode("a2-a4");
+        move = Move.byCode("a2-a4");
         game.move(move);
         game.undo();
 
@@ -202,15 +202,15 @@ public class ChessGameTest {
 
         des = "white 0 King-white-h1-4 Pawn-white-a2-false Pawn-black-b4-false King-black-a6-6";
         game = new ChessGame(des);
-        move = Move.Companion.byCode("a2-a4");
+        move = Move.byCode("a2-a4");
         game.move(move);
         String newDes = "black 1 King-white-h1-4 Pawn-white-a4-true Pawn-black-b4-false King-black-a6-6";
 
-        move = Move.Companion.byCode("b4-a3");
+        move = Move.byCode("b4-a3");
         game.move(move);
-        move = Move.Companion.byCode("h1-h2");
+        move = Move.byCode("h1-h2");
         game.move(move);
-        move = Move.Companion.byCode("a3-a2");
+        move = Move.byCode("a3-a2");
         game.move(move);
         game.undo();
         game.undo();
@@ -218,11 +218,11 @@ public class ChessGameTest {
 
         assertEquals(game.toString(), newDes);
 
-        move = Move.Companion.byCode("b4-b3");
+        move = Move.byCode("b4-b3");
         game.move(move);
-        move = Move.Companion.byCode("h1-h2");
+        move = Move.byCode("h1-h2");
         game.move(move);
-        move = Move.Companion.byCode("b3-b2");
+        move = Move.byCode("b3-b2");
         game.move(move);
         game.undo();
         game.undo();
@@ -233,7 +233,7 @@ public class ChessGameTest {
 
         des = "white 0 King-white-h1-3 King-black-b7-3 Pawn-white-c7-false";
         game = new ChessGame(des);
-        move = Move.Companion.byCode("c7-c8");
+        move = Move.byCode("c7-c8");
         game.move(move);
         game.undo();
 
@@ -241,38 +241,38 @@ public class ChessGameTest {
 
 
         game = new ChessGame(621);
-        move = Move.Companion.byCode("f2-f3");
+        move = Move.byCode("f2-f3");
         game.move(move);
-        move = Move.Companion.byCode("b7-b6");
+        move = Move.byCode("b7-b6");
         game.move(move);
-        move = Move.Companion.byCode("g1-b6");
+        move = Move.byCode("g1-b6");
         game.move(move);
-        move = Move.Companion.byCode("a7-a6");
+        move = Move.byCode("a7-a6");
         game.move(move);
         des = game.toString();
-        move = Move.Companion.byCode("e1-f1");
+        move = Move.byCode("e1-f1");
         game.move(move);
         game.undo();
         assertEquals(game.toString(), des);
-        move = Move.Companion.byCode("f1-f2");
+        move = Move.byCode("f1-f2");
         game.move(move);
 
         game = new ChessGame(314);
         des = game.toString();
-        move = Move.Companion.byCode("d1-c1");
+        move = Move.byCode("d1-c1");
         game.move(move);
         game.undo();
         assertEquals(game.toString(), des);
 
         game = new ChessGame(707);
-        game.move(Move.Companion.byCode("e1-f3"));
-        game.move(Move.Companion.byCode("b7-b6"));
-        game.move(Move.Companion.byCode("f1-e3"));
-        game.move(Move.Companion.byCode("g7-g6"));
-        game.move(Move.Companion.byCode("d1-e1"));
-        game.move(Move.Companion.byCode("a8-f3"));
+        game.move(Move.byCode("e1-f3"));
+        game.move(Move.byCode("b7-b6"));
+        game.move(Move.byCode("f1-e3"));
+        game.move(Move.byCode("g7-g6"));
+        game.move(Move.byCode("d1-e1"));
+        game.move(Move.byCode("a8-f3"));
         des = game.toString();
-        game.move(Move.Companion.byCode("c1-b1"));
+        game.move(Move.byCode("c1-b1"));
         game.undo();
         assertEquals(game.toString(), des);
     }
@@ -282,7 +282,7 @@ public class ChessGameTest {
         String des = "black 0 Pawn-white-c4-true Pawn-black-b4-false "
                 + "King-white-e1-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        Move move = Move.Companion.get(Position.Companion.byCode("b4"), Position.Companion.byCode("c3"));
+        Move move = Move.Companion.get(Position.byCode("b4"), Position.byCode("c3"));
         game.move(move);
         String new_des = "white 0 King-white-e1-0 Pawn-black-c3-false "
                 + "King-black-e8-0";
@@ -293,35 +293,35 @@ public class ChessGameTest {
     public void testHandleCastling() {
         String des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0 ";
         ChessGame game = new ChessGame(des);
-        Move move = Move.Companion.get(Position.Companion.byCode("e8"), Position.Companion.byCode("a8"));
+        Move move = Move.Companion.get(Position.byCode("e8"), Position.byCode("a8"));
         game.move(move);
         String new_des = "white 1 King-white-e1-0 King-black-c8-1-true Rook-black-d8-1";
         assertEquals(game.toString(), new_des);
 
         des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-f8-0 ";
         game = new ChessGame(des);
-        move = Move.Companion.get(Position.Companion.byCode("f8"), Position.Companion.byCode("a8"));
+        move = Move.Companion.get(Position.byCode("f8"), Position.byCode("a8"));
         game.move(move);
         new_des = "white 1 King-white-e1-0 King-black-c8-1-true Rook-black-d8-1";
         assertEquals(game.toString(), new_des);
 
         des = "white 0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0 ";
         game = new ChessGame(des);
-        move = Move.Companion.get(Position.Companion.byCode("e1"), Position.Companion.byCode("h1"));
+        move = Move.Companion.get(Position.byCode("e1"), Position.byCode("h1"));
         game.move(move);
         new_des = "black 1 Rook-white-f1-1 King-white-g1-1-true King-black-e8-0";
         assertEquals(game.toString(), new_des);
 
         des = "white 0 King-white-g1-0 Rook-white-h1-0 King-black-e8-0 ";
         game = new ChessGame(des);
-        move = Move.Companion.get(Position.Companion.byCode("g1"), Position.Companion.byCode("h1"));
+        move = Move.Companion.get(Position.byCode("g1"), Position.byCode("h1"));
         game.move(move);
         new_des = "black 1 Rook-white-f1-1 King-white-g1-1-true King-black-e8-0";
         assertEquals(game.toString(), new_des);
 
         des = "white 0 King-white-f1-0 Rook-white-g1-0 King-black-e8-0 ";
         game = new ChessGame(des);
-        move = Move.Companion.get(Position.Companion.byCode("f1"), Position.Companion.byCode("g1"));
+        move = Move.Companion.get(Position.byCode("f1"), Position.byCode("g1"));
         game.move(move);
         new_des = "black 1 Rook-white-f1-1 King-white-g1-1-true King-black-e8-0";
         assertEquals(game.toString(), new_des);
@@ -332,7 +332,7 @@ public class ChessGameTest {
         String des = "black 0 King-white-e1-0 Queen-black-h2 "
                 + "Pawn-black-f3-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        MoveResult endoption = game.move(Move.Companion.byCode("h2-e2"));
+        MoveResult endoption = game.move(Move.byCode("h2-e2"));
         assertTrue(endoption == MoveResult.CHECKMATE);
     }
 
@@ -341,7 +341,7 @@ public class ChessGameTest {
         String des = "black 0 King-white-e1-0 Queen-black-h2 "
                 + "Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        MoveResult endoption = game.move(Move.Companion.byCode("h2-g2"));
+        MoveResult endoption = game.move(Move.byCode("h2-g2"));
         assertTrue(endoption == MoveResult.STALEMATE);
     }
 
@@ -350,7 +350,7 @@ public class ChessGameTest {
         String des = "white 0 King-white-e1-0 Bishop-black-g2 "
                 + "Knight-white-c2 Knight-white-e7 King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        MoveResult endoption = game.move(Move.Companion.byCode("e1-f2"));
+        MoveResult endoption = game.move(Move.byCode("e1-f2"));
         assertTrue(endoption == MoveResult.DRAW);
     }
 
@@ -361,10 +361,10 @@ public class ChessGameTest {
         String des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 "
                 + "Knight-white-c2 Knight-white-e7 King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        Move whiteMove = Move.Companion.byCode("c2-a1");
-        Move whiteReturn = Move.Companion.byCode("a1-c2");
-        Move blackMove = Move.Companion.byCode("g2-h3");
-        Move blackReturn = Move.Companion.byCode("h3-g2");
+        Move whiteMove = Move.byCode("c2-a1");
+        Move whiteReturn = Move.byCode("a1-c2");
+        Move blackMove = Move.byCode("g2-h3");
+        Move blackReturn = Move.byCode("h3-g2");
 
         game.move(whiteMove);
         game.move(blackMove);
@@ -386,17 +386,17 @@ public class ChessGameTest {
                 + "Pawn-black-b4-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
         MoveResult endoption;
-        endoption = game.move(Move.Companion.byCode("a2-a4"));
+        endoption = game.move(Move.byCode("a2-a4"));
         assertFalse(endoption == MoveResult.FIFTY_MOVES_NO_HIT);
-        endoption = game.move(Move.Companion.byCode("b4-a3"));
+        endoption = game.move(Move.byCode("b4-a3"));
         assertFalse(endoption == MoveResult.FIFTY_MOVES_NO_HIT);
 
         des = "white 98 King-white-e1-0 Pawn-white-a2-false "
                 + "Pawn-black-b4-false King-black-e8-0";
         game = new ChessGame(des);
-        endoption = game.move(Move.Companion.byCode("a2-a4"));
+        endoption = game.move(Move.byCode("a2-a4"));
         assertFalse(endoption == MoveResult.FIFTY_MOVES_NO_HIT);
-        endoption = game.move(Move.Companion.byCode("b4-b3"));
+        endoption = game.move(Move.byCode("b4-b3"));
         assertTrue(endoption == MoveResult.FIFTY_MOVES_NO_HIT);
     }
 
@@ -407,7 +407,7 @@ public class ChessGameTest {
                 + "King-black-e8-0";
         ChessGame game = new ChessGame(des);
         game.useSupervisor(mock);
-        game.move(Move.Companion.byCode("g2-g1"));
+        game.move(Move.byCode("g2-g1"));
         String new_des = "white 1 King-white-e1-0 Knight-black-g1 "
                 + "King-black-e8-0";
         assertEquals(game.toString(), new_des);
@@ -418,44 +418,44 @@ public class ChessGameTest {
         String des = "white 0 King-white-e1-0 Queen-black-g2 "
                 + "Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        assertFalse(game.isSelectable(Position.Companion.byCode("e1"), true));
-        assertTrue(game.isSelectable(Position.Companion.byCode("e6"), true));
-        assertFalse(game.isSelectable(Position.Companion.byCode("e6"), false));
+        assertFalse(game.isSelectable(Position.byCode("e1"), true));
+        assertTrue(game.isSelectable(Position.byCode("e6"), true));
+        assertFalse(game.isSelectable(Position.byCode("e6"), false));
 
         des = "black 0 King-white-e1-0 Queen-white-e2 "
                 + "Bishop-black-c8 King-black-e8-0";
         game = new ChessGame(des);
-        assertTrue(game.isSelectable(Position.Companion.byCode("c8"), false));
+        assertTrue(game.isSelectable(Position.byCode("c8"), false));
 
         des = "black 0 King-white-e1-0 Queen-white-e2 "
                 + "Rook-black-a6-1 King-black-e8-0";
         game = new ChessGame(des);
-        assertTrue(game.isSelectable(Position.Companion.byCode("a6"), false));
+        assertTrue(game.isSelectable(Position.byCode("a6"), false));
     }
 
     @Test
-    public void testIsMoveable() {
+    public void testIsMovable() {
         String des = "white 0 King-white-e1-0 Queen-black-g2 "
                 + "Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
 
-        assertTrue(game.isMoveable(Position.Companion.byCode("e6"), Position.Companion.byCode("e7"), true));
+        assertTrue(game.isMoveable(Position.byCode("e6"), Position.byCode("e7"), true));
 
         des = "black 0 King-white-e1-0 Pawn-black-a5-false "
                 + "King-black-g6-2 Rook-white-h6-1";
         game = new ChessGame(des);
-        assertFalse(game.isMoveable(Position.Companion.byCode("a5"), Position.Companion.byCode("a4"), false));
+        assertFalse(game.isMoveable(Position.byCode("a5"), Position.byCode("a4"), false));
 
         des = "black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0";
         game = new ChessGame(des);
-        assertFalse(game.isMoveable(Position.Companion.byCode("e8"), Position.Companion.byCode("g8"), false));
+        assertFalse(game.isMoveable(Position.byCode("e8"), Position.byCode("g8"), false));
 
         game = new ChessGame(621);
-        game.move(Move.Companion.byCode("f2-f3"));
-        game.move(Move.Companion.byCode("a7-a6"));
-        Position from = Position.Companion.byCode("f1");
-        Position to = Position.Companion.byCode("f2");
+        game.move(Move.byCode("f2-f3"));
+        game.move(Move.byCode("a7-a6"));
+        Position from = Position.byCode("f1");
+        Position to = Position.byCode("f2");
         assertTrue(game.isMoveable(from, to, true));
         assertFalse(game.isFreeArea(from));
     }
@@ -465,9 +465,9 @@ public class ChessGameTest {
         String des = "white 0 King-white-e1-0 Pawn-black-g3-false "
                 + "King-black-e8-0";
         ChessGame game = new ChessGame(des);
-        game.move(Move.Companion.byCode("e1-d1"));
+        game.move(Move.byCode("e1-d1"));
         try {
-            game.move(Move.Companion.byCode("d1-c1"));
+            game.move(Move.byCode("d1-c1"));
             fail();
         } catch (AssertionError e) {
         }
@@ -479,7 +479,7 @@ public class ChessGameTest {
                 + "King-black-e8-0";
         ChessGame game = new ChessGame(des);
         try {
-            game.move(Move.Companion.byCode("a1-b1"));
+            game.move(Move.byCode("a1-b1"));
             fail();
         } catch (AssertionError e) {
         }
@@ -492,17 +492,17 @@ public class ChessGameTest {
                 + "Knight-black-g5 Pawn-white-a6-false";
         ChessGame game = new ChessGame(des);
         assertTrue(game.hasHitFigure());            //da numberWithoutHit=0 ist in 'des'
-        game.move(Move.Companion.byCode("g2-h3"));
+        game.move(Move.byCode("g2-h3"));
         assertTrue(game.hasHitFigure());
-        game.move(Move.Companion.byCode("g5-h3"));
+        game.move(Move.byCode("g5-h3"));
         assertTrue(game.hasHitFigure());
-        game.move(Move.Companion.byCode("h2-h3"));
+        game.move(Move.byCode("h2-h3"));
         assertTrue(game.hasHitFigure());
-        game.move(Move.Companion.byCode("e8-e7"));
+        game.move(Move.byCode("e8-e7"));
         assertTrue(game.hasHitFigure());
-        game.move(Move.Companion.byCode("a6-a7"));
+        game.move(Move.byCode("a6-a7"));
         assertFalse(game.hasHitFigure());
-        game.move(Move.Companion.byCode("e7-d7"));
+        game.move(Move.byCode("e7-d7"));
         assertFalse(game.hasHitFigure());
     }
 
@@ -512,9 +512,9 @@ public class ChessGameTest {
                 + "Pawn-white-b5-false Pawn-white-e7-false King-black-e8-0";
         ChessGame game = new ChessGame(des);
         assertTrue(game.countFigures() == 5);
-        game.move(Move.Companion.byCode("b5-a6"));
+        game.move(Move.byCode("b5-a6"));
         assertTrue(game.countFigures() == 4);
-        game.move(Move.Companion.byCode("e8-e7"));
+        game.move(Move.byCode("e8-e7"));
         assertTrue(game.countFigures() == 3);
         game.undo();
         assertTrue(game.countFigures() == 4);
@@ -526,7 +526,11 @@ public class ChessGameTest {
     public void testGetPossibleMoves(ChessGame game, List<String> moveCodes, int expectedPossibleMovesCount) {
         List<Move> moves = moveCodes.stream().map(Move.Companion::byCode).collect(Collectors.toList());
         for(Move move: moves) {
-            assertTrue(game.isMoveable(move.getFrom(), move.getTo(), game.isWhiteTurn()), "given move should be valid");
+            Position from = move.getFrom();
+            Position to = move.getTo();
+            boolean isWhiteTurn = game.isWhiteTurn();
+            boolean isMovable = game.isMoveable(from, to, isWhiteTurn);
+            assertTrue(isMovable, move + " should be valid");
             game.move(move);
         }
         List<Move> possibleMoves = getPossibleMoves(game);
@@ -577,13 +581,13 @@ public class ChessGameTest {
 
     @Test
     public void testGetPossibleMovesAfterIndirectChessAfterEnpassent() {
-        game.move(Move.Companion.byCode("e2-e4"));
-        game.move(Move.Companion.byCode("d7-d5"));
-        game.move(Move.Companion.byCode("e4-e5"));
-        game.move(Move.Companion.byCode("e8-d7"));
-        game.move(Move.Companion.byCode("d1-g4"));
-        game.move(Move.Companion.byCode("f7-f5"));
-        game.move(Move.Companion.byCode("e5-f6")); //en-passant creates indirect chess path
+        game.move(Move.byCode("e2-e4"));
+        game.move(Move.byCode("d7-d5"));
+        game.move(Move.byCode("e4-e5"));
+        game.move(Move.byCode("e8-d7"));
+        game.move(Move.byCode("d1-g4"));
+        game.move(Move.byCode("f7-f5"));
+        game.move(Move.byCode("e5-f6")); //en-passant creates indirect chess path
         assertTrue(game.getLastMove().isEnpassent());
         List<Move> possibleMoves = getPossibleMoves(game);
         assertEquals(possibleMoves.size(), 4);
@@ -599,30 +603,30 @@ public class ChessGameTest {
     @Test
     public void testGetHistory() {
         ChessGame game = new ChessGame(621);
-        game.move(Move.Companion.byCode("g2-g3"));
-        game.move(Move.Companion.byCode("f7-f6"));
+        game.move(Move.byCode("g2-g3"));
+        game.move(Move.byCode("f7-f6"));
         assertEquals(game.getHistory(), "g2-g3,f7-f6");
-        game.move(Move.Companion.byCode("c2-c3"));
-        game.move(Move.Companion.byCode("g8-f7"));
+        game.move(Move.byCode("c2-c3"));
+        game.move(Move.byCode("g8-f7"));
         assertEquals(game.getHistory(), "g2-g3,f7-f6,c2-c3,g8-f7");
-        game.move(Move.Companion.byCode("d1-c2"));
-        game.move(Move.Companion.byCode("a7-a6"));
-        game.move(Move.Companion.byCode("c2-h7"));
+        game.move(Move.byCode("d1-c2"));
+        game.move(Move.byCode("a7-a6"));
+        game.move(Move.byCode("c2-h7"));
         assertEquals(game.getHistory(), "g8-f7,d1-c2,a7-a6,c2-h7");
     }
 
     @Test
     public void testGetCompleteHistory() {
         ChessGame game = new ChessGame(621);
-        game.move(Move.Companion.byCode("g2-g3"));
-        game.move(Move.Companion.byCode("f7-f6"));
+        game.move(Move.byCode("g2-g3"));
+        game.move(Move.byCode("f7-f6"));
         assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6");
-        game.move(Move.Companion.byCode("c2-c3"));
-        game.move(Move.Companion.byCode("g8-f7"));
+        game.move(Move.byCode("c2-c3"));
+        game.move(Move.byCode("g8-f7"));
         assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6,c2-c3,g8-f7");
-        game.move(Move.Companion.byCode("d1-c2"));
-        game.move(Move.Companion.byCode("a7-a6"));
-        game.move(Move.Companion.byCode("c2-h7"));
+        game.move(Move.byCode("d1-c2"));
+        game.move(Move.byCode("a7-a6"));
+        game.move(Move.byCode("c2-h7"));
         assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6,c2-c3,g8-f7,d1-c2,a7-a6,c2-h7");
     }
 

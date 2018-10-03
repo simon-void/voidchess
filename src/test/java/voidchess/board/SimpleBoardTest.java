@@ -33,15 +33,15 @@ public class SimpleBoardTest {
 
     @Test
     public void testInit() {
-        Figure figure = board.getFigure(Position.Companion.byCode("a1"));
+        Figure figure = board.getFigure(Position.byCode("a1"));
         assertTrue(figure.isRook());
         assertTrue(figure.isWhite());
 
-        figure = board.getFigure(Position.Companion.byCode("e8"));
+        figure = board.getFigure(Position.byCode("e8"));
         assertTrue(figure.isKing());
         assertFalse(figure.isWhite());
 
-        figure = board.getFigure(Position.Companion.byCode("e3"));
+        figure = board.getFigure(Position.byCode("e3"));
         assertNull(figure);
     }
 
@@ -67,21 +67,21 @@ public class SimpleBoardTest {
 
     @Test
     public void testIsFreeArea() {
-        assertTrue(board.isFreeArea(Position.Companion.byCode("a3")));
-        assertFalse(board.isFreeArea(Position.Companion.byCode("a2")));
+        assertTrue(board.isFreeArea(Position.byCode("a3")));
+        assertFalse(board.isFreeArea(Position.byCode("a2")));
     }
 
     @Test
     public void testSetFigure() {
-        Figure figure = board.getFigure(Position.Companion.byCode("b1"));
-        Position to = Position.Companion.byCode("e4");
+        Figure figure = board.getFigure(Position.byCode("b1"));
+        Position to = Position.byCode("e4");
         board.setFigure(to, figure);
         assertTrue(board.getFigure(to).isKnight());
     }
 
     @Test
     public void testGetFigures() {
-        board.setFigure(Position.Companion.byCode("c2"), null);
+        board.setFigure(Position.byCode("c2"), null);
         List<Figure> figures = board.getFigures();
         assertEquals(figures.size(), 31);
     }
@@ -111,8 +111,8 @@ public class SimpleBoardTest {
         board.init(gameDes);
         String initialLongGameDescription = board.toString();
         int initialFigureCount = board.getFigures().size();
-        Position from = Position.Companion.byCode(fromCode);
-        Position to = Position.Companion.byCode(toCode);
+        Position from = Position.byCode(fromCode);
+        Position to = Position.byCode(toCode);
 
         Figure figure = board.getFigure(from);
         assertNotNull(figure, "figure to move");

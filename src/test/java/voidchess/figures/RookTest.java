@@ -23,12 +23,12 @@ public class RookTest {
                 + "Knight-black-g4";
         ChessGame game = new ChessGame(des);
 
-        Position from = Position.Companion.byCode("c4");
-        Position to1 = Position.Companion.byCode("c3");
-        Position to2 = Position.Companion.byCode("g4");
-        Position to3 = Position.Companion.byCode("c2");
-        Position to4 = Position.Companion.byCode("h4");
-        Position to5 = Position.Companion.byCode("d5");
+        Position from = Position.byCode("c4");
+        Position to1 = Position.byCode("c3");
+        Position to2 = Position.byCode("g4");
+        Position to3 = Position.byCode("c2");
+        Position to4 = Position.byCode("h4");
+        Position to5 = Position.byCode("d5");
 
         Rook rook = new Rook(true, from);
         assertTrue(rook.isReachable(to1, game));
@@ -42,12 +42,12 @@ public class RookTest {
     @Test
     public void testUndoMove() {
         FigureFactory figureFactory = new FigureFactory();
-        Rook rook = (Rook) figureFactory.getRook(Position.Companion.byCode("a1"), false);
+        Rook rook = (Rook) figureFactory.getRook(Position.byCode("a1"), false);
 
         assertTrue(rook.canCastle());
-        rook.figureMoved(Move.Companion.byCode("a1-b1"));
+        rook.figureMoved(Move.byCode("a1-b1"));
         assertFalse(rook.canCastle());
-        rook.undoMove(Position.Companion.byCode("a1"));
+        rook.undoMove(Position.byCode("a1"));
         assertTrue(rook.canCastle());
     }
 
@@ -57,7 +57,7 @@ public class RookTest {
                 + "Rook-white-e4-2 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure Rook = game.getFigure(Position.Companion.byCode("e4"));
+        Figure Rook = game.getFigure(Position.byCode("e4"));
         List<Move> moveIter = new LinkedList<>();
         Rook.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 11);

@@ -24,14 +24,14 @@ public class BishopTest {
                 + "Knight-black-b5";
         ChessGame game = new ChessGame(des);
 
-        Position from = Position.Companion.byCode("d3");
-        Position to1 = Position.Companion.byCode("b5");
-        Position to2 = Position.Companion.byCode("h7");
-        Position to3 = Position.Companion.byCode("f1");
-        Position to4 = Position.Companion.byCode("c2");
-        Position to5 = Position.Companion.byCode("a6");
-        Position to6 = Position.Companion.byCode("b1");
-        Position to7 = Position.Companion.byCode("d4");
+        Position from = Position.byCode("d3");
+        Position to1 = Position.byCode("b5");
+        Position to2 = Position.byCode("h7");
+        Position to3 = Position.byCode("f1");
+        Position to4 = Position.byCode("c2");
+        Position to5 = Position.byCode("a6");
+        Position to6 = Position.byCode("b1");
+        Position to7 = Position.byCode("d4");
 
         Bishop bishop = new Bishop(true, from);
         assertTrue(bishop.isReachable(to1, game));
@@ -49,7 +49,7 @@ public class BishopTest {
         String des = "white 0 King-white-e1-0 Bishop-white-b2";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure bishop = game.getFigure(Position.Companion.byCode("b2"));
+        Figure bishop = game.getFigure(Position.byCode("b2"));
         List<Move> moveIter = new LinkedList<>();
         bishop.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 9);
@@ -58,7 +58,7 @@ public class BishopTest {
                 + "Knight-black-f7";
         game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        bishop = game.getFigure(Position.Companion.byCode("d5"));
+        bishop = game.getFigure(Position.byCode("d5"));
         moveIter = new LinkedList<>();
         bishop.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 10);
@@ -67,7 +67,7 @@ public class BishopTest {
                 + "Bishop-black-b5 Knight-black-d5";
         game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        bishop = game.getFigure(Position.Companion.byCode("c4"));
+        bishop = game.getFigure(Position.byCode("c4"));
         moveIter = new LinkedList<>();
         bishop.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 3);
@@ -79,7 +79,7 @@ public class BishopTest {
                 + "Pawn-white-a5-false Knight-black-g5";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure bishop = game.getFigure(Position.Companion.byCode("d2"));
+        Figure bishop = game.getFigure(Position.byCode("d2"));
         List<Move> moveIter = new LinkedList<>();
         bishop.getReachableMoves(game, moveIter);
         assertEquals(moveIter.size(), 6);
@@ -91,7 +91,7 @@ public class BishopTest {
                 + "Pawn-white-a5-false Knight-black-g5";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure bishop = game.getFigure(Position.Companion.byCode("d2"));
+        Figure bishop = game.getFigure(Position.byCode("d2"));
         assertEquals(bishop.countReachableMoves(game), 6);
     }
 
@@ -99,7 +99,7 @@ public class BishopTest {
     public void testIsSelectable(String des, String figurePos, boolean expectedIsSelectable) {
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure bishop = game.getFigure(Position.Companion.byCode(figurePos));
+        Figure bishop = game.getFigure(Position.byCode(figurePos));
         assertEquals(bishop.isSelectable(game), expectedIsSelectable);
     }
 

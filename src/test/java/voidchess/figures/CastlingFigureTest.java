@@ -9,8 +9,8 @@ import static org.testng.Assert.assertEquals;
 public class CastlingFigureTest {
     @Test
     public void testGetInitialPosition() {
-        Position initial = Position.Companion.byCode("e1");
-        Position second = Position.Companion.byCode("d1");
+        Position initial = Position.byCode("e1");
+        Position second = Position.byCode("d1");
 
         King king = new King(true, initial);
 
