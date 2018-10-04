@@ -60,7 +60,7 @@ public class ComputerPlayer
         ui.setValue(chosenMove.getValue());
         table.move(chosenMove.getMove());
 
-        RuntimeFacade.collectGarbage();
+        RuntimeFacade.INSTANCE.collectGarbage();
     }
 
     private EvaluatedMove getNextMove() {

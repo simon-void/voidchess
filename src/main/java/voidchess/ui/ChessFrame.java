@@ -9,7 +9,6 @@ import java.awt.*;
 public class ChessFrame extends JFrame {
     public static void main(String[] args) {
         try {
-            voidchess.helper.RuntimeFacade.assertJavaVersion();
             //Swing UI updates have to come from the SwingHandler or something
             SwingUtilities.invokeLater(
                     ChessFrame::new

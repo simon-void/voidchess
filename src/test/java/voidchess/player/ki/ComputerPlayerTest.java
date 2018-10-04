@@ -247,7 +247,7 @@ public class ComputerPlayerTest {
             long time = System.currentTimeMillis();
             computerPlayer.testTermination(game, pruner, staticEvaluation);
             System.out.println("Dauer: " + decimalFormat.format((System.currentTimeMillis() - time) / 1000.0) + "s");
-            RuntimeFacade.printMemoryUsage("Speicherverbrauch used/total");
+            RuntimeFacade.INSTANCE.printMemoryUsage("Speicherverbrauch used/total");
         } catch (RuntimeException e) {
             System.out.println(type + "fehler:" + e.getMessage());
         } finally {
