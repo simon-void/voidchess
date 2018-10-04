@@ -160,7 +160,7 @@ public class ComputerPlayer
      * So the Evaluation strategy has to be changed.
      */
     private void pickStaticSpaceEvaluationIfNeccessary() {
-        if (usesStandardEvaluation && StaticSpaceEvaluation.shouldUseStaticSpaceEvaluation(game)) {
+        if (usesStandardEvaluation && StaticSpaceEvaluation.Companion.shouldUseStaticSpaceEvaluation(game)) {
             //wird genau einmal pro Spiel ausgeführt
             dynamicEvaluation.setEvaluationStrategy(new StaticSpaceEvaluation());
             dynamicEvaluation.setSearchTreePruner(new FullMovePruner(2, 2, 2));
