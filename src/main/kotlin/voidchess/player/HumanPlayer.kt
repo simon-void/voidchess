@@ -56,7 +56,7 @@ class HumanPlayer(
             }
         } else {
             ui.unmarkPosition(PosType.HOVER_TO)
-            if (game.isMoveable(lockedFrom, pos, isWhitePlayer)) {
+            if (game.isMovable(lockedFrom, pos, isWhitePlayer)) {
                 ui.markPosition(pos, PosType.HOVER_TO)
             }
         }
@@ -72,7 +72,7 @@ class HumanPlayer(
                 ui.markPosition(pos, PosType.SELECT_FROM)
             }
         } else {
-            if (game.isMoveable(lockedFrom, pos, isWhitePlayer)) {
+            if (game.isMovable(lockedFrom, pos, isWhitePlayer)) {
                 move(Move.get(lockedFrom, pos))
             }
         }

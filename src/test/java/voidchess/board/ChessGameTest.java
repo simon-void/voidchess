@@ -8,7 +8,6 @@ import voidchess.figures.Figure;
 import voidchess.figures.King;
 import voidchess.helper.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -134,7 +133,7 @@ public class ChessGameTest {
         assertEquals(game.toString(), new_des);
         game.undo();
         assertEquals(game.toString(), des);
-        assertTrue(game.isMoveable(pos1, pos2, true));
+        assertTrue(game.isMovable(pos1, pos2, true));
 
 
         des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-f8-0";
@@ -146,7 +145,7 @@ public class ChessGameTest {
         game.undo();
 
         assertEquals(game.toString(), des);
-        assertTrue(game.isMoveable(pos1, pos2, false));
+        assertTrue(game.isMovable(pos1, pos2, false));
 
 
         des = "white 0 King-white-e1-0 Pawn-white-b5-false Pawn-black-c5-true King-black-e8-0";
@@ -155,10 +154,10 @@ public class ChessGameTest {
         pos2 = Position.byCode("c6");
         move = Move.get(pos1, pos2);
 
-        assertTrue(game.isMoveable(pos1, pos2, true));
+        assertTrue(game.isMovable(pos1, pos2, true));
         game.move(move);
         game.undo();
-        assertTrue(game.isMoveable(pos1, pos2, true));
+        assertTrue(game.isMovable(pos1, pos2, true));
 
 
         des = "white 4 Rook-white-a1-0 King-white-e1-0 Bishop-white-f1 " +
@@ -176,10 +175,10 @@ public class ChessGameTest {
         pos2 = Position.byCode("a1");
         move = Move.get(pos1, pos2);
 
-        assertTrue(game.isMoveable(pos1, pos2, true));
+        assertTrue(game.isMovable(pos1, pos2, true));
         game.move(move);
         game.undo();
-        assertTrue(game.isMoveable(pos1, pos2, true));
+        assertTrue(game.isMovable(pos1, pos2, true));
 
 
         des = "black 1 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false";
@@ -440,23 +439,23 @@ public class ChessGameTest {
         ChessGame game = new ChessGame(des);
 
 
-        assertTrue(game.isMoveable(Position.byCode("e6"), Position.byCode("e7"), true));
+        assertTrue(game.isMovable(Position.byCode("e6"), Position.byCode("e7"), true));
 
         des = "black 0 King-white-e1-0 Pawn-black-a5-false "
                 + "King-black-g6-2 Rook-white-h6-1";
         game = new ChessGame(des);
-        assertFalse(game.isMoveable(Position.byCode("a5"), Position.byCode("a4"), false));
+        assertFalse(game.isMovable(Position.byCode("a5"), Position.byCode("a4"), false));
 
         des = "black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0";
         game = new ChessGame(des);
-        assertFalse(game.isMoveable(Position.byCode("e8"), Position.byCode("g8"), false));
+        assertFalse(game.isMovable(Position.byCode("e8"), Position.byCode("g8"), false));
 
         game = new ChessGame(621);
         game.move(Move.byCode("f2-f3"));
         game.move(Move.byCode("a7-a6"));
         Position from = Position.byCode("f1");
         Position to = Position.byCode("f2");
-        assertTrue(game.isMoveable(from, to, true));
+        assertTrue(game.isMovable(from, to, true));
         assertFalse(game.isFreeArea(from));
     }
 
@@ -529,7 +528,7 @@ public class ChessGameTest {
             Position from = move.getFrom();
             Position to = move.getTo();
             boolean isWhiteTurn = game.isWhiteTurn();
-            boolean isMovable = game.isMoveable(from, to, isWhiteTurn);
+            boolean isMovable = game.isMovable(from, to, isWhiteTurn);
             assertTrue(isMovable, move + " should be valid");
             game.move(move);
         }

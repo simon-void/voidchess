@@ -28,7 +28,7 @@ interface ChessGameInterface : BasicChessGameInterface {
     fun hasHitFigure(): Boolean
     fun isCheck(isWhite: Boolean): Boolean
     fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean
-    fun isMoveable(from: Position, to: Position, whitePlayer: Boolean): Boolean
+    fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean
     fun move(move: Move): MoveResult
     fun getPossibleMoves(possibleMoves: List<Move>)
     fun countReachableMoves(isWhite: Boolean): Int

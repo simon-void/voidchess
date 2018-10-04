@@ -5,7 +5,6 @@ import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.board.LastMoveProvider;
 import voidchess.board.SimpleArrayBoard;
-import voidchess.figures.Figure;
 import voidchess.figures.Pawn;
 
 import java.util.Arrays;
@@ -78,7 +77,7 @@ public class CheckSearchTest {
             Position from = move.getFrom();
             Position to = move.getTo();
             boolean isWhiteTurn = game.isWhiteTurn();
-            boolean isMovable = game.isMoveable(from, to, isWhiteTurn);
+            boolean isMovable = game.isMovable(from, to, isWhiteTurn);
             assertTrue(isMovable, move + " should be valid");
             game.move(move);
         }

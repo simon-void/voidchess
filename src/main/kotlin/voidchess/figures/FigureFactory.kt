@@ -2,8 +2,6 @@ package voidchess.figures
 
 import voidchess.helper.Position
 
-import java.util.StringTokenizer
-
 /**
  * @author stephan
  */
@@ -17,27 +15,27 @@ class FigureFactory {
     fun getPawn(pos: Position, isWhite: Boolean) = Pawn(isWhite, pos)
     private fun getKing(pos: Position, isWhite: Boolean, stepsTaken: Int, didCastling: Boolean) = King(isWhite, pos, stepsTaken, didCastling)
     private fun getRook(pos: Position, isWhite: Boolean, stepsTaken: Int) = Rook(isWhite, pos, stepsTaken)
-    private fun getPawn(pos: Position, isWhite: Boolean, canBeHitByEnpasent: Boolean) = Pawn(isWhite, pos, canBeHitByEnpasent)
+    private fun getPawn(pos: Position, isWhite: Boolean, canBeHitByEnpassent: Boolean) = Pawn(isWhite, pos, canBeHitByEnpassent)
 
     fun getFigureByString(description: String): Figure {
-        val st = StringTokenizer(description, "-", false)
-        val type = st.nextToken()
-        val isWhite = st.nextToken() == "white"
-        val pos = Position.byCode(st.nextToken())
+        val st = description.split('-').iterator()
+        val type = st.next()
+        val isWhite = st.next() == "white"
+        val pos = Position.byCode(st.next())
 
         if (type == "Knight") return getKnight(pos, isWhite)
         if (type == "Bishop") return getBishop(pos, isWhite)
         if (type == "Queen") return getQueen(pos, isWhite)
 
         if (type == "Pawn") {
-            val readyForCastlingOrEnpasent = st.nextToken().toBoolean()
-            return getPawn(pos, isWhite, readyForCastlingOrEnpasent)
+            val readyForCastlingOrEnpassent = st.next().toBoolean()
+            return getPawn(pos, isWhite, readyForCastlingOrEnpassent)
         }
 
-        val stepsTaken = st.nextToken().toInt()
+        val stepsTaken = st.next().toInt()
         if (type == "Rook") return getRook(pos, isWhite, stepsTaken)
 
-        val didCastling = st.hasMoreTokens() && st.nextToken().toBoolean()
+        val didCastling = st.hasNext() && st.next().toBoolean()
         if (type == "King") return getKing(pos, isWhite, stepsTaken, didCastling)
 
         throw IllegalArgumentException("figure description misformated: $description")

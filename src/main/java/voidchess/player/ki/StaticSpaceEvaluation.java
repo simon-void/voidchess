@@ -116,7 +116,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         while (iter.hasNext()) {
             Position from = (Position) iter.next();
             if (from.equalsPosition(to)) return false;
-            if (game.isMoveable(from, to, figuresHaveWhiteColor)) return false;
+            if (game.isMovable(from, to, figuresHaveWhiteColor)) return false;
         }
         return true;
     }

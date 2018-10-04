@@ -279,12 +279,12 @@ class KingTest {
             move(Move.byCode("g8-f6"))
         }
 
-        assertTrue(game.isMoveable(Position.byCode("e1"), Position.byCode("h1"), true), "isMoveable: king can move to h1 (short castling)")
+        assertTrue(game.isMovable(Position.byCode("e1"), Position.byCode("h1"), true), "isMovable: king can move to h1 (short castling)")
         val whiteKingMoves = FigureTest.getPossibleMovesFrom("e1", game)
         assertEquals(whiteKingMoves.size,2, "king can go to f1 and h1 (short castling), therefore getPossibleMoves#")
         assertTrue(whiteKingMoves.contains(Move.byCode("e1-h1")), "possible move e1-h1")
         game.move(Move.byCode("e1-h1"))
-        assertTrue(game.isMoveable(Position.byCode("e8"), Position.byCode("h8"), false), "isMoveable: king can move to h8 (short castling)")
+        assertTrue(game.isMovable(Position.byCode("e8"), Position.byCode("h8"), false), "isMovable: king can move to h8 (short castling)")
         val blackKingMoves = FigureTest.getPossibleMovesFrom("e8", game)
         assertEquals(blackKingMoves.size, 2, "king can go to f8 and h8 (short castling), therefore getPossibleMoves#")
         assertTrue(blackKingMoves.contains(Move.byCode("e8-h8")), "possible move e8-h8")
@@ -306,12 +306,12 @@ class KingTest {
             move(Move.byCode("c8-b7"))
         }
 
-        assertTrue(game.isMoveable(Position.byCode("e1"), Position.byCode("a1"), true), "isMoveable: king can move to a1 (long castling)")
+        assertTrue(game.isMovable(Position.byCode("e1"), Position.byCode("a1"), true), "isMovable: king can move to a1 (long castling)")
         val whiteKingMoves = FigureTest.getPossibleMovesFrom("e1", game)
         assertEquals(whiteKingMoves.size, 2, "king can go to d1 and a1 (long castling), therefore getPossibleMoves#")
         assertTrue(whiteKingMoves.contains(Move.byCode("e1-a1")), "possible move e1-a1")
         game.move(Move.byCode("e1-a1"))
-        assertTrue(game.isMoveable(Position.byCode("e8"), Position.byCode("a8"), false), "isMoveable: king can move to a8 (long castling)")
+        assertTrue(game.isMovable(Position.byCode("e8"), Position.byCode("a8"), false), "isMovable: king can move to a8 (long castling)")
         val blackKingMoves = FigureTest.getPossibleMovesFrom("e8", game)
         assertEquals(blackKingMoves.size, 2, "king can go to d8 and a8 (long castling), therefore getPossibleMoves#")
         assertTrue(blackKingMoves.contains(Move.byCode("e8-a8")), "possible move e8-a8")
@@ -325,14 +325,14 @@ class KingTest {
         var game = ChessGame(314)
         val c1 = Position.byCode("c1")
         val d1 = Position.byCode("d1")
-        var isCastlingPossible = game.isMoveable(d1, c1, true)
+        var isCastlingPossible = game.isMovable(d1, c1, true)
         assertTrue(isCastlingPossible, "castling should be possible")
 
         //Rook on a1, king on b1 so b1-a1 should be be possible as a first move
         game = ChessGame(759)
         val a1 = Position.byCode("a1")
         val b1 = Position.byCode("b1")
-        isCastlingPossible = game.isMoveable(b1, a1, true)
+        isCastlingPossible = game.isMovable(b1, a1, true)
         assertFalse(isCastlingPossible, "castling should be impossible possible")
     }
 }

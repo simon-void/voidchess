@@ -103,7 +103,7 @@ public class OpeningsLibrary {
                         "illegal move format'" + textMove + "' in opening sequence: " + openingSequence);
             }
             Move move = Move.byCode(textMove);
-            boolean isMoveExecutable = game.isMoveable(
+            boolean isMoveExecutable = game.isMovable(
                     move.getFrom(), move.getTo(), game.isWhiteTurn()
             );
             if (!isMoveExecutable) {

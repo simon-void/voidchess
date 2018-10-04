@@ -85,7 +85,7 @@ public class SingleThreadStrategyTest {
                 //best matt move in 2
                 new Object[]{
                         2,
-                        "white 0 Bishop-white-a1 Rook-black-b2-2 Knight-black-c2 Pawn-white-d6-false King-white-g6-8  King-black-h8-4",
+                        "white 0 Bishop-white-a1 Rook-black-b2-2 Knight-black-c2 Pawn-white-d6-false King-white-g6-8 King-black-h8-4",
                         Move.byCode("d6-d7")
                 },
         };

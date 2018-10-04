@@ -36,7 +36,7 @@ public class QueenTest {
 
     @Test
     public void testGetPossibleMoves() {
-        String des = "white 0 Queen-white-d1 King-white-e1-0 ";
+        String des = "white 0 Queen-white-d1 King-white-e1-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Figure queen = game.getFigure(Position.byCode("d1"));

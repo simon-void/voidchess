@@ -176,7 +176,11 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     private void setFigure(Position pos, Figure figure) {
-        game.setFigure(pos, figure);
+        if(figure==null) {
+            game.clearFigure(pos);
+        } else {
+            game.setFigure(pos, figure);
+        }
     }
 
     @Override
@@ -192,7 +196,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     @Override
-    public boolean isMoveable(Position from, Position to, boolean whitePlayer) {
+    public boolean isMovable(Position from, Position to, boolean whitePlayer) {
         if (isFreeArea(from)) return false;
         Figure figure = getFigure(from);
         return figure.isWhite() == whitePlayer && figure.isMovable(to, game);

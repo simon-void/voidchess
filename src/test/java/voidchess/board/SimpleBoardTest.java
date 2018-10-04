@@ -66,6 +66,13 @@ public class SimpleBoardTest {
     }
 
     @Test
+    public void testInitByDescriptionWithToManySpaces() {
+        String des = "  white   0   Queen-white-d1     King-white-e1-0   ";
+        board.init(des);
+        assertTrue(board.getFigure(Position.byCode("d1")).isQueen());
+    }
+
+    @Test
     public void testIsFreeArea() {
         assertTrue(board.isFreeArea(Position.byCode("a3")));
         assertFalse(board.isFreeArea(Position.byCode("a2")));
@@ -81,7 +88,7 @@ public class SimpleBoardTest {
 
     @Test
     public void testGetFigures() {
-        board.setFigure(Position.byCode("c2"), null);
+        board.clearFigure(Position.byCode("c2"));
         List<Figure> figures = board.getFigures();
         assertEquals(figures.size(), 31);
     }
