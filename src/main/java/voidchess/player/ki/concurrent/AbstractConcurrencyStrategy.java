@@ -14,13 +14,10 @@ abstract class AbstractConcurrencyStrategy implements ConcurrencyStrategy {
     final private ComputerPlayerUI ui;
     final private List<Move> possibleMovesBuffer = new ArrayList<>(80);
 
-    public AbstractConcurrencyStrategy(ComputerPlayerUI ui) {
+    AbstractConcurrencyStrategy(ComputerPlayerUI ui) {
         this.ui = ui;
     }
 
-    /* (non-Javadoc)
-     * @see voidchess.player.ki.concurrent.ConcurrencyStrategy#evaluatePossibleMoves(voidchess.board.ChessGameInterface, voidchess.player.ki.DynamicEvaluation)
-     */
     public abstract NavigableSet<EvaluatedMove> evaluatePossibleMoves(final ChessGameInterface game, final DynamicEvaluation dynamicEvaluation);
 
     final protected void showProgress(int movesDone, final int totalNumberOfMoves) {
