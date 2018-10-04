@@ -2,10 +2,7 @@ package voidchess.board
 
 import voidchess.figures.Figure
 import voidchess.figures.FigureFactory
-import voidchess.helper.CheckSearch
-import voidchess.helper.CheckStatus
-import voidchess.helper.Move
-import voidchess.helper.Position
+import voidchess.helper.*
 import java.util.*
 
 class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvider) : SimpleChessBoardInterface {
@@ -194,7 +191,7 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
     override fun init(des: String) {
         clear()
 
-        val iter = des.trim().split(' ').filter { it!="" }.iterator()
+        val iter = des.splitAndTrim(' ').iterator()
         iter.next()
         iter.next()
 

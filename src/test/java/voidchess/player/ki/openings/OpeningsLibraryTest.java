@@ -15,7 +15,7 @@ import static org.testng.Assert.assertTrue;
 public class OpeningsLibraryTest {
     @Test(dataProvider = "validOpeningsProvider")
     public void testValidOpenings(String validOpeningSequence, int numberOfMoves) {
-        List<String> moves = OpeningsLibrary.splitAndCheckOpeningSequence(validOpeningSequence);
+        List<String> moves = OpeningsLibrary.Companion.splitAndCheckOpeningSequence(validOpeningSequence);
         assertEquals(moves.size(), numberOfMoves, "number of moves in opening");
         for (String move : moves) {
             assertTrue(Move.isValid(move), "should be valid move: " + move);
@@ -24,7 +24,7 @@ public class OpeningsLibraryTest {
 
     @Test(dataProvider = "invalidOpeningsProvider", expectedExceptions = IllegalArgumentException.class)
     public void testInValidOpenings(String invalidOpeningSequence) {
-        OpeningsLibrary.splitAndCheckOpeningSequence(invalidOpeningSequence);
+        OpeningsLibrary.Companion.splitAndCheckOpeningSequence(invalidOpeningSequence);
     }
 
     @DataProvider(name = "validOpeningsProvider")

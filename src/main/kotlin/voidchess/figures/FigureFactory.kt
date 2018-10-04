@@ -2,9 +2,7 @@ package voidchess.figures
 
 import voidchess.helper.Position
 
-/**
- * @author stephan
- */
+
 class FigureFactory {
 
     fun getKing(pos: Position, isWhite: Boolean) = King(isWhite, pos)

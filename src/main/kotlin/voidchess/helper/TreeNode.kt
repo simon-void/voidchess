@@ -8,8 +8,8 @@ import java.util.stream.Stream
 class TreeNode<T : Comparable<T>> private constructor(var data: T) : Comparable<TreeNode<T>> {
     private var childrenByData: SortedMap<T, TreeNode<T>> = TreeMap()
 
-    val childData: Stream<T>
-        get() = childrenByData.values.stream().map { node: TreeNode<T> -> node.data }
+    val childData: List<T>
+        get() = childrenByData.values.map { node: TreeNode<T> -> node.data }
 
     fun addChild(data: T): TreeNode<T> {
         var childNode: TreeNode<T>? = childrenByData[data]
