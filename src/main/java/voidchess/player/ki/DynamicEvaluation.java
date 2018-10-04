@@ -75,9 +75,9 @@ public class DynamicEvaluation {
         for (Move move : minPossibleMovesBuffer) {
             Evaluated primaryEval;
 
-            assert (game.isFreeArea(move.getTo()) || !game.getFigure(move.getTo()).isKing())
+            assert (game.isFreeArea(move.to) || !game.getFigure(move.to).isKing())
                     : "getMin:" +
-                    game.getFigure(move.getFrom()).getClass().getName() +
+                    game.getFigure(move.from).getClass().getName() +
                     " hits King white Move " +
                     move.toString();
 
@@ -152,9 +152,9 @@ public class DynamicEvaluation {
         for (Move move : maxPossibleMovesBuffer) {
             Evaluated primaryEval;
 
-            assert (game.isFreeArea(move.getTo()) || !game.getFigure(move.getTo()).isKing())
+            assert (game.isFreeArea(move.to) || !game.getFigure(move.to).isKing())
                     : "getMax:" +
-                    game.getFigure(move.getFrom()).getClass().getName() +
+                    game.getFigure(move.from).getClass().getName() +
                     " hits King white Move " +
                     move.toString();
 
@@ -201,11 +201,11 @@ public class DynamicEvaluation {
         return combinedEvaluations.last();
     }
 
-    public void setEvaluationStrategy(StaticEvaluationInterface strategy) {
+    void setEvaluationStrategy(StaticEvaluationInterface strategy) {
         this.strategy = strategy;
     }
 
-    public void setSearchTreePruner(SearchTreePruner pruner) {
+    void setSearchTreePruner(SearchTreePruner pruner) {
         this.pruner = pruner;
     }
 }

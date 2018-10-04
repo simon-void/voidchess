@@ -3,7 +3,7 @@ package voidchess.helper
 /**
  * @author stephan
  */
-class Move private constructor(val from: Position, val to: Position) {
+class Move private constructor(@JvmField val from: Position, @JvmField val to: Position) {
     private val index = getMoveIndex(from.index, to.index)
 
     fun equalsMove(move: Move) = this === move //index == move.index

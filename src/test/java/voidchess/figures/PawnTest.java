@@ -23,7 +23,7 @@ public class PawnTest {
         Move other_move = Move.get(Position.byCode("d2"), Position.byCode("d4"));
 
 
-        Pawn pawn = new Pawn(true, move.getFrom());
+        Pawn pawn = new Pawn(true, move.from);
         assertFalse(pawn.canBeHitByEnpasent());
         pawn.figureMoved(move);
         assertTrue(pawn.canBeHitByEnpasent());

@@ -250,7 +250,7 @@ public class FigureTest {
         List<Move> allMoves = new LinkedList<>();
         game.getPossibleMoves(allMoves);
         for (Move move : allMoves) {
-            if (move.getFrom().equalsPosition(from)) {
+            if (move.from.equalsPosition(from)) {
                 moveIter.add(move);
             }
         }

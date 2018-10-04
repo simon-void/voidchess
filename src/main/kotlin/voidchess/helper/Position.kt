@@ -3,7 +3,7 @@ package voidchess.helper
 /**
  * @author stephan
  */
-class Position private constructor(val row: Int, val column: Int) {
+class Position private constructor(@JvmField val row: Int, @JvmField val column: Int) {
     val index = getIndex(row, column)
 
     fun equalsPosition(pos: Position) = this === pos //index == pos.index

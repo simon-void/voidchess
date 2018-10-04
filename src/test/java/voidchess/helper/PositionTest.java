@@ -12,12 +12,12 @@ public class PositionTest {
     @Test
     public void testGet() {
         Position pos1 = Position.get(0, 7);
-        assertTrue(pos1.getRow() == 0);
-        assertTrue(pos1.getColumn() == 7);
+        assertTrue(pos1.row == 0);
+        assertTrue(pos1.column == 7);
 
         Position pos2 = Position.byCode("a8");
-        assertTrue(pos2.getColumn() == 0);
-        assertTrue(pos2.getRow() == 7);
+        assertTrue(pos2.column == 0);
+        assertTrue(pos2.row == 7);
     }
 
     @Test(dataProvider = "getInvalidGetRowColumnData")
@@ -163,13 +163,13 @@ public class PositionTest {
     public void testPositionByCode() {
         Position a1 = Position.byCode("a1");
         assertEquals(a1.toString(), "a1");
-        assertEquals(a1.getColumn(), 0, "column");
-        assertEquals(a1.getRow(), 0, "row");
+        assertEquals(a1.column, 0, "column");
+        assertEquals(a1.row, 0, "row");
 
         Position b3 = Position.byCode("b3");
         assertEquals(b3.toString(), "b3");
-        assertEquals(b3.getColumn(), 1, "column");
-        assertEquals(b3.getRow(), 2, "row");
+        assertEquals(b3.column, 1, "column");
+        assertEquals(b3.row, 2, "row");
     }
 
     @Test

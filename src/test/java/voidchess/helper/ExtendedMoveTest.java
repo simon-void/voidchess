@@ -31,12 +31,12 @@ public class ExtendedMoveTest {
 
     @Test
     public void testFrom() {
-        assertTrue(extendedMove.getMove().getFrom().equalsPosition(Position.byCode("a1")));
+        assertTrue(extendedMove.getMove().from.equalsPosition(Position.byCode("a1")));
     }
 
     @Test
     public void testTo() {
-        assertTrue(extendedMove.getMove().getTo().equalsPosition(Position.byCode("d1")));
+        assertTrue(extendedMove.getMove().to.equalsPosition(Position.byCode("d1")));
     }
 
     @Test

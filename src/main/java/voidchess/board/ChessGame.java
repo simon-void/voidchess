@@ -209,9 +209,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     @Override
     public MoveResult move(Move move) {
-        assert !isFreeArea(move.getFrom())
+        assert !isFreeArea(move.from)
                 : "the move moves a null value:" + move.toString();
-        assert (getFigure(move.getFrom()).isWhite() == whiteTurn)
+        assert (getFigure(move.from).isWhite() == whiteTurn)
                 : "figure to be moved has wrong color";
 
         Rook castlingRook = extractCastlingRook(move);
@@ -219,16 +219,16 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         //das move.to dem Zielfeld des Königs entspricht
         //und nicht dem Feld des Castlingturms
         if (castlingRook != null) {
-            final int row = move.getTo().getRow();
-            final int column = move.getTo().getColumn() - move.getFrom().getColumn() > 0 ? 6 : 2;
-            move = Move.get(move.getFrom(), Position.get(row, column));
+            final int row = move.to.row;
+            final int column = move.to.column - move.from.column > 0 ? 6 : 2;
+            move = Move.get(move.from, Position.get(row, column));
         }
 
         Pawn hitPawn = handleEnpasent(move);
         Figure hitFigure = moveFigure(move);
 
         informFiguresOfMove(move);
-        reinsertCastlingRook(castlingRook, move.getTo());
+        reinsertCastlingRook(castlingRook, move.to);
         boolean pawnTransformed = handlePawnTransformation(move);
 
         memorizeGame();
@@ -238,9 +238,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     private Figure moveFigure(Move move) {
-        final boolean toNotEqualsFrom = move.getTo().notEqualsPosition(move.getFrom());//für manche Schach960castlingn true
-        hasHitFigure = !isFreeArea(move.getTo()) && toNotEqualsFrom;  //Enpasent wird nicht beachtet
-        Figure fromFigure = getFigure(move.getFrom());
+        final boolean toNotEqualsFrom = move.to.notEqualsPosition(move.from);//für manche Schach960castlingn true
+        hasHitFigure = !isFreeArea(move.to) && toNotEqualsFrom;  //Enpasent wird nicht beachtet
+        Figure fromFigure = getFigure(move.from);
 
         if (hasHitFigure) {
             numberStack.figureHit();
@@ -253,9 +253,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
         Figure hitFigure = null;
         if (toNotEqualsFrom) {
-            hitFigure = getFigure(move.getTo());
-            setFigure(move.getTo(), fromFigure);
-            setFigure(move.getFrom(), null);
+            hitFigure = getFigure(move.to);
+            setFigure(move.to, fromFigure);
+            setFigure(move.from, null);
         }
 
         whiteTurn = !whiteTurn;
@@ -269,11 +269,11 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     private Pawn handleEnpasent(Move move) {
-        if (getFigure(move.getFrom()).isPawn()
-                && move.getFrom().getColumn() != move.getTo().getColumn()
-                && isFreeArea(move.getTo())
+        if (getFigure(move.from).isPawn()
+                && move.from.column != move.to.column
+                && isFreeArea(move.to)
         ) {
-            Position pawnToBeHit = Position.get(move.getFrom().getRow(), move.getTo().getColumn());
+            Position pawnToBeHit = Position.get(move.from.row, move.to.column);
             Pawn pawn = (Pawn) getFigure(pawnToBeHit);
             setFigure(pawnToBeHit, null);
             figureCount--;
@@ -284,12 +284,12 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     }
 
     private Rook extractCastlingRook(Move move) {
-        final Figure movingFigure = getFigure(move.getFrom());
+        final Figure movingFigure = getFigure(move.from);
         if (!(movingFigure.isKing())) return null;
 
-        final Figure castlingRook = getFigure(move.getTo());
+        final Figure castlingRook = getFigure(move.to);
         if (castlingRook != null && castlingRook.isWhite() == movingFigure.isWhite()) {
-            setFigure(move.getTo(), null);    //der Turm wird kurzfristig vom Brett genommen
+            setFigure(move.to, null);    //der Turm wird kurzfristig vom Brett genommen
             ((King) movingFigure).performCastling();
             return (Rook) castlingRook;
         }
@@ -299,37 +299,37 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
     private void reinsertCastlingRook(Rook castlingRook, Position moveTo) {
         if (castlingRook != null) {
             Position RookFrom = castlingRook.getPosition();
-            Position RookTo = moveTo.getColumn() == 6 ?
-                    Position.get(moveTo.getRow(), 5) :
-                    Position.get(moveTo.getRow(), 3);
+            Position RookTo = moveTo.column == 6 ?
+                    Position.get(moveTo.row, 5) :
+                    Position.get(moveTo.row, 3);
             castlingRook.figureMoved(Move.get(RookFrom, RookTo));
             setFigure(RookTo, castlingRook);
         }
     }
 
     private boolean handlePawnTransformation(Move move) {
-        if (getFigure(move.getTo()).isPawn()) {
-            if (move.getTo().getRow() == 0 || move.getTo().getRow() == 7) {
-                PawnPromotion figure = supervisor.askForPawnChange(move.getTo());
-                boolean isWhite = move.getTo().getRow() == 7;
+        if (getFigure(move.to).isPawn()) {
+            if (move.to.row == 0 || move.to.row == 7) {
+                PawnPromotion figure = supervisor.askForPawnChange(move.to);
+                boolean isWhite = move.to.row == 7;
                 Figure newFigure;
                 switch (figure) {
                     case QUEEN:
-                        newFigure = figureFactory.getQueen(move.getTo(), isWhite);
+                        newFigure = figureFactory.getQueen(move.to, isWhite);
                         break;
                     case ROOK:
-                        newFigure = figureFactory.getRook(move.getTo(), isWhite);
+                        newFigure = figureFactory.getRook(move.to, isWhite);
                         break;
                     case KNIGHT:
-                        newFigure = figureFactory.getKnight(move.getTo(), isWhite);
+                        newFigure = figureFactory.getKnight(move.to, isWhite);
                         break;
                     case BISHOP:
-                        newFigure = figureFactory.getBishop(move.getTo(), isWhite);
+                        newFigure = figureFactory.getBishop(move.to, isWhite);
                         break;
                     default:
                         throw new NullPointerException("invalide pawn-transformation-string:" + figure);
                 }
-                setFigure(move.getTo(), newFigure);
+                setFigure(move.to, newFigure);
                 return true;
             }
         }
@@ -372,12 +372,12 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         ExtendedMove lastExtMove = extendedMoveStack.popExtendedMove();
         Move lastMove = lastExtMove.getMove();
         final boolean wasCastling = lastExtMove.isCastling();
-        Figure activeFigure = getFigure(lastMove.getTo());
-        setFigure(lastMove.getFrom(), activeFigure);
-        if (!wasCastling || lastMove.getFrom().notEqualsPosition(lastMove.getTo())) {
-            setFigure(lastMove.getTo(), lastExtMove.getFigureTaken());
+        Figure activeFigure = getFigure(lastMove.to);
+        setFigure(lastMove.from, activeFigure);
+        if (!wasCastling || lastMove.from.notEqualsPosition(lastMove.to)) {
+            setFigure(lastMove.to, lastExtMove.getFigureTaken());
         }
-        activeFigure.undoMove(lastMove.getFrom());
+        activeFigure.undoMove(lastMove.from);
 
         if (lastExtMove.wasFigureTaken()) {
             figureCount++;
@@ -395,7 +395,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         Position RookCurrentPos = rook.getPosition();
 
         setFigure(RookStartPos, rook);
-        if (RookStartPos.notEqualsPosition(RookCurrentPos) && lastExtMove.getMove().getFrom().notEqualsPosition(RookCurrentPos)) {
+        if (RookStartPos.notEqualsPosition(RookCurrentPos) && lastExtMove.getMove().from.notEqualsPosition(RookCurrentPos)) {
             setFigure(RookCurrentPos, null);
         }
         rook.undoMove(RookStartPos);
@@ -403,13 +403,13 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
     private void undoEnpassent(ExtendedMove lastExtMove) {
         Pawn hitPawn = (Pawn) lastExtMove.getEnpassentPawnOrCastlingRook();
-        Position pawnPos = Position.get(lastExtMove.getMove().getFrom().getRow(), lastExtMove.getMove().getTo().getColumn());
+        Position pawnPos = Position.get(lastExtMove.getMove().from.row, lastExtMove.getMove().to.column);
         setFigure(pawnPos, hitPawn);
         hitPawn.setCanBeHitByEnpasent();
     }
 
     private void undoPawnTransformation(ExtendedMove lastExtMove) {
-        Position pawnPos = lastExtMove.getMove().getFrom();
+        Position pawnPos = lastExtMove.getMove().from;
         Figure pawn = figureFactory.getPawn(pawnPos, lastExtMove.getColorOfMove());
         setFigure(pawnPos, pawn);
     }
@@ -418,9 +418,9 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         if (extendedMoveStack.isEmpty()) return;
 
         ExtendedMove newLatestMove = extendedMoveStack.topExtendedMove();
-        Figure figure = getFigure(newLatestMove.getMove().getTo());
+        Figure figure = getFigure(newLatestMove.getMove().to);
         if (figure.isPawn() &&
-                Math.abs(newLatestMove.getMove().getFrom().getRow() - newLatestMove.getMove().getTo().getRow()) == 2) {
+                Math.abs(newLatestMove.getMove().from.row - newLatestMove.getMove().to.row) == 2) {
             ((Pawn) figure).setCanBeHitByEnpasent();
         }
     }

@@ -74,8 +74,8 @@ public class CheckSearchTest {
     public void testAnalyseCheckWithLastCheck(ChessGame game, List<String> moveCodes, int expectedNumberOfCurrentChecks) {
         List<Move> moves = moveCodes.stream().map(Move.Companion::byCode).collect(Collectors.toList());
         for(Move move: moves) {
-            Position from = move.getFrom();
-            Position to = move.getTo();
+            Position from = move.from;
+            Position to = move.to;
             boolean isWhiteTurn = game.isWhiteTurn();
             boolean isMovable = game.isMovable(from, to, isWhiteTurn);
             assertTrue(isMovable, move + " should be valid");
@@ -190,8 +190,8 @@ public class CheckSearchTest {
     }
 
     private ExtendedMove getEnpassentMove(Move move) {
-        boolean isWhiteMove = move.getTo().getRow() > move.getFrom().getRow();
-        Pawn hitByEnpassant = new Pawn(!isWhiteMove, Position.get(move.getFrom().getRow(), move.getTo().getColumn()));
+        boolean isWhiteMove = move.to.row > move.from.row;
+        Pawn hitByEnpassant = new Pawn(!isWhiteMove, Position.get(move.from.row, move.to.column));
 
         ExtendedMove extendedMove = new ExtendedMove(move, null, hitByEnpassant, isWhiteMove, false, true, false);
 

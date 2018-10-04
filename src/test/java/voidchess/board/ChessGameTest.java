@@ -525,8 +525,8 @@ public class ChessGameTest {
     public void testGetPossibleMoves(ChessGame game, List<String> moveCodes, int expectedPossibleMovesCount) {
         List<Move> moves = moveCodes.stream().map(Move.Companion::byCode).collect(Collectors.toList());
         for(Move move: moves) {
-            Position from = move.getFrom();
-            Position to = move.getTo();
+            Position from = move.from;
+            Position to = move.to;
             boolean isWhiteTurn = game.isWhiteTurn();
             boolean isMovable = game.isMovable(from, to, isWhiteTurn);
             assertTrue(isMovable, move + " should be valid");

@@ -104,7 +104,7 @@ public class OpeningsLibrary {
             }
             Move move = Move.byCode(textMove);
             boolean isMoveExecutable = game.isMovable(
-                    move.getFrom(), move.getTo(), game.isWhiteTurn()
+                    move.from, move.to, game.isWhiteTurn()
             );
             if (!isMoveExecutable) {
                 throw new IllegalArgumentException(

@@ -68,11 +68,11 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
 
     int getKingDistance(Position pos1, Position pos2) {
         //return	Math.max( Math.abs(pos1.row-pos2.row),Math.abs(pos1.column-pos2.column) );
-        return Math.abs(pos1.getRow() - pos2.getRow()) + Math.abs(pos1.getColumn() - pos2.getColumn());
+        return Math.abs(pos1.row - pos2.row) + Math.abs(pos1.column - pos2.column);
     }
 
     double borderMalus(Position kingPos) {
-        return -Math.max(Math.abs(kingPos.getRow() - 3.5), Math.abs(kingPos.getColumn() - 3.5));
+        return -Math.max(Math.abs(kingPos.row - 3.5), Math.abs(kingPos.column - 3.5));
     }
 
     int countRestSpace(ChessGameInterface game,
@@ -122,10 +122,10 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
     }
 
     private Iterator getPossibleKingPositions(Position pos) {
-        int minRow = Math.max(0, pos.getRow() - 1);
-        int maxRow = Math.min(7, pos.getRow() + 1);
-        int minColumn = Math.max(0, pos.getColumn() - 1);
-        int maxColumn = Math.min(7, pos.getColumn() + 1);
+        int minRow = Math.max(0, pos.row - 1);
+        int maxRow = Math.min(7, pos.row + 1);
+        int minColumn = Math.max(0, pos.column - 1);
+        int maxColumn = Math.min(7, pos.column + 1);
 
         LinkedList positions = new LinkedList();
         for (int row = minRow; row <= maxRow; row++) {
