@@ -46,7 +46,7 @@ public class ComputerPlayer
         standardPruner = new SimplePruner(1, 2, 2);
         standardEvaluation = new StaticEvaluation();
         dynamicEvaluation = new DynamicEvaluation(standardPruner, standardEvaluation);
-        concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, 1);
+        concurrencyStrategy = ConcurrencyStrategyFactory.INSTANCE.getConcurrencyStrategy(ui, 1);
         openingsLibrary = new OpeningsLibrary("openings.txt");
         randomNumberGenerator = new Random();
         initEvaluation();
@@ -232,7 +232,7 @@ public class ComputerPlayer
     }
 
     public void setNumberOfCoresToUse(int numberOfCoresToUse) {
-        concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, numberOfCoresToUse);
+        concurrencyStrategy = ConcurrencyStrategyFactory.INSTANCE.getConcurrencyStrategy(ui, numberOfCoresToUse);
     }
 
     private void wait(final int milliseconds) {

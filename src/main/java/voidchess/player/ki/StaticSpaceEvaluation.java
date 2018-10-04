@@ -12,9 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author stephan
- */
+
 class StaticSpaceEvaluation implements StaticEvaluationInterface {
 
     public Evaluated getPrimaryEvaluation(ChessGameInterface game, boolean forWhite) {
@@ -22,7 +20,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         Position whiteKingPos = null;
         Position blackKingPos = null;
         boolean colorOfWinnerIsWhite = true;
-        List figuresPos = new LinkedList();
+        List<Position> figuresPos = new LinkedList<>();
 
         for (int index = 0; index < 64; index++) {
             Position pos = Position.byIndex(index);
@@ -77,17 +75,15 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
 
     int countRestSpace(ChessGameInterface game,
                        Position kingPos,
-                       List otherFiguresPos) {
+                       List<Position> otherFiguresPos) {
         boolean figuresHaveWhiteColor = !game.getFigure(kingPos).isWhite();
-        HashSet foundPositions = new HashSet(64);
-        HashSet searchPositions = new HashSet(2);
+        HashSet<Position> foundPositions = new HashSet<>(64);
+        HashSet<Position> searchPositions = new HashSet<>(2);
         foundPositions.add(kingPos);
         searchPositions.add(kingPos);
         while (!searchPositions.isEmpty()) {
-            HashSet newSearchPositions = new HashSet(10, 1);
-            Iterator iter = searchPositions.iterator();
-            while (iter.hasNext()) {
-                Position search_this = (Position) iter.next();
+            HashSet<Position> newSearchPositions = new HashSet<>(10, 1);
+            for (Position search_this : searchPositions) {
                 Iterator newIter = getPossibleKingPositions(search_this);
                 while (newIter.hasNext()) {
                     Position foundPos = (Position) newIter.next();
@@ -109,12 +105,11 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
     }
 
     private boolean isNotReachableByFiguresInList(Position to,
-                                                  List other,
+                                                  List<Position> other,
                                                   ChessGameInterface game,
                                                   boolean figuresHaveWhiteColor) {
-        Iterator iter = other.iterator();
-        while (iter.hasNext()) {
-            Position from = (Position) iter.next();
+        for (Object anOther : other) {
+            Position from = (Position) anOther;
             if (from.equalsPosition(to)) return false;
             if (game.isMovable(from, to, figuresHaveWhiteColor)) return false;
         }
@@ -127,7 +122,7 @@ class StaticSpaceEvaluation implements StaticEvaluationInterface {
         int minColumn = Math.max(0, pos.column - 1);
         int maxColumn = Math.min(7, pos.column + 1);
 
-        LinkedList positions = new LinkedList();
+        LinkedList<Position> positions = new LinkedList<>();
         for (int row = minRow; row <= maxRow; row++) {
             for (int column = minColumn; column <= maxColumn; column++) {
                 Position newPos = Position.get(row, column);
