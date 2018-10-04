@@ -355,28 +355,25 @@ public class ChessGameTest {
 
     @Test
     public void testIsDrawBecauseOfThreeTimesSamePosition() {
-        //Ich gehe davon aus, daß es ein Unterschied in der Stellung ist,
-        //ob der König noch Rookadefähig ist, oder nicht
-        String des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 "
-                + "Knight-white-c2 Knight-white-e7 King-black-e8-0";
+        String des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 Knight-white-c2 Knight-white-e7 King-black-e8-0";
         ChessGame game = new ChessGame(des);
         Move whiteMove = Move.byCode("c2-a1");
         Move whiteReturn = Move.byCode("a1-c2");
         Move blackMove = Move.byCode("g2-h3");
         Move blackReturn = Move.byCode("h3-g2");
 
-        game.move(whiteMove);
-        game.move(blackMove);
-        game.move(whiteReturn);
-        game.move(blackReturn);
+        assertEquals(game.move(whiteMove), MoveResult.NO_END);
+        assertEquals(game.move(blackMove), MoveResult.NO_END);
+        assertEquals(game.move(whiteReturn), MoveResult.NO_END);
+        assertEquals(game.move(blackReturn), MoveResult.NO_END);
 
-        game.move(whiteMove);
-        game.move(blackMove);
-        MoveResult endoption;
-        endoption = game.move(whiteReturn);
-        assertFalse(endoption == MoveResult.THREE_TIMES_SAME_POSITION);
-        endoption = game.move(blackReturn);
-        assertTrue(endoption == MoveResult.THREE_TIMES_SAME_POSITION);
+        assertEquals(game.move(whiteMove), MoveResult.NO_END);
+        assertEquals(game.move(blackMove), MoveResult.NO_END);
+        assertEquals(game.move(whiteReturn), MoveResult.NO_END);
+//        assertEquals(game.move(blackReturn), MoveResult.NO_END);
+        assertEquals(game.move(blackReturn), MoveResult.THREE_TIMES_SAME_POSITION);
+
+//        assertEquals(game.move(whiteMove), MoveResult.THREE_TIMES_SAME_POSITION);
     }
 
     @Test
@@ -400,7 +397,7 @@ public class ChessGameTest {
     }
 
     @Test
-    public void testHandleTrasformPawn() {
+    public void testHandleTransformPawn() {
         ChessGameSupervisorMock mock = new ChessGameSupervisorMock(PawnPromotion.KNIGHT);
         String des = "black 0 King-white-e1-0 Pawn-black-g2-false "
                 + "King-black-e8-0";

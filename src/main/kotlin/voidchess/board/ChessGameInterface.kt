@@ -26,12 +26,12 @@ interface ChessGameInterface : BasicChessGameInterface {
     fun copyGame(neededInstances: Int): List<ChessGameInterface>
     fun countFigures(): Int
     fun hasHitFigure(): Boolean
-    fun isCheck(isWhite: Boolean): Boolean
+    fun isCheck(isWhiteInCheck: Boolean): Boolean
     fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean
     fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean
     fun move(move: Move): MoveResult
-    fun getPossibleMoves(possibleMoves: List<Move>)
-    fun countReachableMoves(isWhite: Boolean): Int
+    fun getPossibleMoves(possibleMoves: MutableList<Move>)
+    fun countReachableMoves(forWhite: Boolean): Int
     fun suspendInteractiveSupervisor(): ChessGameSupervisor
     fun useSupervisor(supervisor: ChessGameSupervisor)
     fun undo()
