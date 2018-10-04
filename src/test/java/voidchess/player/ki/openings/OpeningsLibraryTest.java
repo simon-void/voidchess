@@ -38,7 +38,7 @@ public class OpeningsLibraryTest {
     }
 
     @DataProvider(name = "invalidOpeningsProvider")
-    public Object[][] getInalidOpeningsProvider() {
+    public Object[][] getInvalidOpeningsProvider() {
         return new Object[][]{
                 new Object[]{"e4,e5"},
                 new Object[]{","},

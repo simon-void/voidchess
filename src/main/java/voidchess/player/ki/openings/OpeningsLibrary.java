@@ -65,7 +65,7 @@ public class OpeningsLibrary {
     }
 
     private TreeNode<String> parseOpenings(List<String> openingSequences) {
-        TreeNode<String> root = TreeNode.getRoot(String.class);
+        TreeNode<String> root = TreeNode.Companion.getRoot("root");
         for (String openingSequence : openingSequences) {
             TreeNode<String> currentNode = root;
             List<String> moves = splitAndCheckOpeningSequence(openingSequence);
