@@ -1,17 +1,8 @@
 package voidchess.board;
 
-import voidchess.figures.Figure;
-import voidchess.figures.FigureFactory;
-import voidchess.figures.King;
-import voidchess.figures.Pawn;
-import voidchess.figures.Rook;
-import voidchess.helper.CheckSearch;
-import voidchess.helper.ChessGameSupervisor;
-import voidchess.helper.ChessGameSupervisorDummy;
-import voidchess.helper.ExtendedMove;
-import voidchess.helper.Move;
-import voidchess.helper.PawnPromotion;
-import voidchess.helper.Position;
+import voidchess.figures.*;
+import voidchess.helper.*;
+import voidchess.player.ki.SimplePruner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -749,7 +740,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
         }
 
         ExtendedMoveStack(ExtendedMoveStack other) {
-            extendedMoveArray = new ExtendedMove[other.extendedMoveArray.length];
+            extendedMoveArray = new ExtendedMove[other.index + SimplePruner.MAX_SEARCH_DEPTH];
             System.arraycopy(other.extendedMoveArray, 0, extendedMoveArray, 0, extendedMoveArray.length);
             index = other.index;
         }
@@ -787,7 +778,6 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
             final int MIN_INDEX = Math.max(0, index - count);
             StringBuilder sb = new StringBuilder(24);
 
-//            for (int i = index - 1; i >= MIN_INDEX; i--) {
             for (int i = MIN_INDEX; i < index; i++) {
                 sb.append(extendedMoveArray[i].toString());
                 sb.append(",");
@@ -821,7 +811,7 @@ public class ChessGame implements ChessGameInterface, LastMoveProvider {
 
         //copy-Constructor
         NumberStack(NumberStack other) {
-            numberStack = new int[other.numberStack.length];
+            numberStack = new int[other.index + SimplePruner.MAX_SEARCH_DEPTH];
             System.arraycopy(other.numberStack, 0, numberStack, 0, numberStack.length);
             index = other.index;
         }
