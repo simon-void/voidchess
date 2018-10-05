@@ -12,7 +12,8 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 
 class Chess960Panel internal constructor(private val game: ChessGameInterface, private val gameUI: ChessboardComponent) : JPanel(), ActionListener {
-    private var positionCode: Int = 0
+    var positionCode: Int = 0
+        private set
     private var classicButton: JButton = JButton("classic setup")
     private var random960Button: JButton = JButton("shuffle setup")
     private var positionIndexField: JTextField = JTextField(positionCode.toString(), 3)
