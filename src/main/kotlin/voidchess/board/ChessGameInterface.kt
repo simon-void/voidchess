@@ -14,8 +14,8 @@ interface ChessGameInterface : BasicChessGameInterface {
      * returns true if this game was started with the standard distribution of figures
      * (chess960 code: 518)
      */
-    fun isStandardGame(): Boolean
-    fun isWhiteTurn(): Boolean
+    val isStandardGame: Boolean
+    val isWhiteTurn: Boolean
 
     /**
      * @return all the moves played so far in a string representation

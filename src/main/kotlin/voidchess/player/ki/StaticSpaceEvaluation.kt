@@ -82,7 +82,7 @@ class StaticSpaceEvaluation : StaticEvaluationInterface {
         var searchPositions = HashSet<Position>(2)
         foundPositions.add(king.position)
         searchPositions.add(king.position)
-        while (!searchPositions.isEmpty()) {
+        while (searchPositions.isNotEmpty()) {
             val newSearchPositions = HashSet<Position>(10, 1f)
             for (searchPos in searchPositions) {
                 val newIter = getPossibleKingPositions(searchPos)

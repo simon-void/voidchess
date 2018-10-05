@@ -11,7 +11,6 @@ import java.util.*
 class ChessGame : ChessGameInterface, LastMoveProvider {
     private val game: SimpleChessBoardInterface
     private val figureFactory: FigureFactory
-    private var whiteTurn: Boolean = false
     private val mementoStack: LinkedList<Memento>
     private val extendedMoveStack: LinkedList<ExtendedMove>
     private val numberStack: NumberStack
@@ -19,7 +18,14 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     private var figureCount: Int = 0
     private var hasHitFigure: Boolean = false
     private var supervisor: ChessGameSupervisor
-    private var isStandardGame = false
+    private var standardGame = false
+    private var whiteTurn: Boolean = false
+
+    override val isStandardGame: Boolean
+        get() = standardGame
+
+    override val isWhiteTurn: Boolean
+        get() = whiteTurn
 
     private val isEnd: MoveResult
         get() {
@@ -424,7 +430,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     private fun initGame() = initGame(518)    //classic chess starting configuration
 
     override fun initGame(chess960: Int) {
-        isStandardGame = chess960 == 518
+        standardGame = chess960 == 518
         whiteTurn = true
         numberOfMovesWithoutHit = 0
         figureCount = 32
@@ -455,8 +461,6 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         return true
     }
 
-    override fun isStandardGame() = isStandardGame
-
     private fun noMovesLeft(caseWhite: Boolean): Boolean {
         val figures = game.getFigures()
         for (figure in figures) {
@@ -466,8 +470,6 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         }
         return true
     }
-
-    override fun isWhiteTurn() = whiteTurn
 
     override fun isCheck(isWhiteInCheck: Boolean) = CheckSearch.isCheck(game, game.getKingPosition(isWhiteInCheck))
 

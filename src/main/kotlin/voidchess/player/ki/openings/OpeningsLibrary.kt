@@ -93,7 +93,7 @@ class OpeningsLibrary(relativePathToOpeningsFile: String) {
                 }
                 val move = Move.byCode(textMove)
                 val isMoveExecutable = game.isMovable(
-                        move.from, move.to, game.isWhiteTurn()
+                        move.from, move.to, game.isWhiteTurn
                 )
                 if (!isMoveExecutable) {
                     throw IllegalArgumentException(

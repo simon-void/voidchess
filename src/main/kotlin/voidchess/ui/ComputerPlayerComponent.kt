@@ -10,6 +10,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
 
     private var bubbleText: String? = "let's play"
     private var smileFactor = HappinessLevel.CONTENT
+    private var thumbAction = Thumb.NO
     private var value: Evaluated = Draw
     private var showThoughts = false
     private var showValue = false
@@ -20,16 +21,25 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         preferredSize = Dimension(200, 378)
     }
 
-    override fun init() {
+    override fun reset() {
         bubbleText = "make your move"
         value = Draw
         smileFactor = HappinessLevel.CONTENT
+        thumbAction = Thumb.NO
         showThoughts = false
         showValue = false
         index = 0
         total = 1
 
         paintImmediately(0, 0, preferredSize.width, preferredSize.height)
+    }
+
+    override fun setThumb(thumb: Thumb) {
+        if(thumb!=thumbAction) {
+            thumbAction = thumb
+
+            paintImmediately(HAND_RECTANGLE)
+        }
     }
 
     override fun setBubbleText(msg: String?) {
@@ -46,7 +56,6 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         showThoughts = show
         if(needsRepaint) {
             paintImmediately(THOUGHT_RECTANGLE)
-            paintImmediately(HAND_RECTANGLE)
         }
     }
 
@@ -65,7 +74,6 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         smileFactor = value.getHappinessLevel()
         this.value = value
 
-        paintImmediately(HAND_RECTANGLE)
         paintImmediately(MOUTH_RECTANGLE)
         paintImmediately(THOUGHT_CONTENT_RECTANGLE)
     }
@@ -149,7 +157,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
     private fun drawHand(g: Graphics) {
         g.color = Color.BLACK
 
-        if(smileFactor==HappinessLevel.BIG_GRIEF) {
+        if(thumbAction==Thumb.UP) {
             g.drawRect(HAND_START_X,                              // hand
                     HAND_START_Y,
                     HAND_WITH,
@@ -166,7 +174,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
                         HAND_START_X + FINGER_LINE_LENGTH,
                         HAND_START_Y + lineHeight)
             }
-        } else if(smileFactor==HappinessLevel.BIG_SMILE) {
+        } else if(thumbAction==Thumb.DOWN) {
             g.drawRect(HAND_START_X,                              // hand
                     HAND_START_Y,
                     HAND_WITH,
@@ -300,6 +308,10 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         private val THOUGHT_RECTANGLE = Rectangle(14, 28, 160, 95)
         private val SPEECH_BUBBLE_RECTANGLE = Rectangle(17, 308, 126, 60)
     }
+}
+
+enum class Thumb() {
+    UP, DOWN, NO
 }
 
 enum class HappinessLevel(val value: Int, val mouthCornerEffect: Int) {
