@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 public class Chess960Panel
         extends JPanel
         implements ActionListener {
-    private static final int CLASIC_CHESS_POSITION = 518;
+    private static final int CLASSIC_CHESS_POSITION = 518;
     private JButton classicButton, random960Button;
     private JTextField positionIndexField;
     private int positionIndex;
@@ -27,7 +27,7 @@ public class Chess960Panel
         this.gameUI = gameUI;
         designLayout();
 
-        setPosition(CLASIC_CHESS_POSITION);
+        setPosition(CLASSIC_CHESS_POSITION);
     }
 
     private void designLayout() {
@@ -53,7 +53,7 @@ public class Chess960Panel
     }
 
     public void setEnabled(boolean enabled) {
-        classicButton.setEnabled(enabled && positionIndex != CLASIC_CHESS_POSITION);
+        classicButton.setEnabled(enabled && positionIndex != CLASSIC_CHESS_POSITION);
         random960Button.setEnabled(enabled);
         positionIndexField.setEditable(enabled);
     }
@@ -61,7 +61,7 @@ public class Chess960Panel
     public void actionPerformed(ActionEvent event) {
         Object source = event.getSource();
         if (source == classicButton) {
-            setPosition(CLASIC_CHESS_POSITION);
+            setPosition(CLASSIC_CHESS_POSITION);
         } else if (source == random960Button) {
             setPosition(getRandomPosition());
         } else if (source == positionIndexField) {
@@ -86,15 +86,14 @@ public class Chess960Panel
                 pullPosition(positionIndex);
             }
         } catch (NumberFormatException e) {
-            setPosition(CLASIC_CHESS_POSITION);
+            setPosition(CLASSIC_CHESS_POSITION);
         }
     }
 
     private void pullPosition(int position) {
         assert position < 960 && position >= 0;
 
-        //Schachbutton wird ausgegraut, wenn die Klassikaufstellung bereits vorliegt
-        if (position == CLASIC_CHESS_POSITION) {
+        if (position == CLASSIC_CHESS_POSITION) {
             classicButton.setEnabled(false);
         } else {
             classicButton.setEnabled(true);

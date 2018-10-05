@@ -46,8 +46,6 @@ class ChessboardComponent constructor(private val game: BasicChessGameInterface,
                 BorderFactory.createBevelBorder(0, Color.gray, Color.darkGray)
         )
         adapter = ChessboardAdapter(this)
-        addMouseListener(adapter)
-        addMouseMotionListener(adapter)
         isDoubleBuffered = true
     }
 
@@ -75,8 +73,8 @@ class ChessboardComponent constructor(private val game: BasicChessGameInterface,
         repaintPositionAtOnce(move.to)
 
         if (extendedMove.isEnpassent) {
-            repaintPositionAtOnce(Position.get(move.from.row, move.to.column))
-            repaintPositionAtOnce(Position.get(move.to.row, move.from.column))
+            repaintPositionAtOnce(Position[move.from.row, move.to.column])
+            repaintPositionAtOnce(Position[move.to.row, move.from.column])
         } else if (extendedMove.isCastling) {
             repaintRowAtOnce(move.from.row)
         }
@@ -168,6 +166,9 @@ class ChessboardComponent constructor(private val game: BasicChessGameInterface,
 
     fun setPlayer(player: HumanPlayerInterface) {
         adapter.setPlayer(player)
+        // the adapter needs its HumanPlayerInterface before it can receive events (because of lateinit)
+        addMouseListener(adapter)
+        addMouseMotionListener(adapter)
     }
 
     fun markPosition(pos: Position, posType: PosType) {

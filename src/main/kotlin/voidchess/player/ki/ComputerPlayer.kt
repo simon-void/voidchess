@@ -41,7 +41,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
     override fun play() {
         ui.setBubbleText(null)
         ui.showThoughts(true)
-        val chosenMove = nextMove
+        val chosenMove = nextMove()
         ui.setValue(chosenMove.value)
         table.move(chosenMove.move)
 
@@ -49,8 +49,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
     }
 
     //lets see if the library contains a next move, else we compute the next move
-    private val nextMove: EvaluatedMove
-        get() = lookUpNextMove() ?: computeNextMove()
+    private fun nextMove() = lookUpNextMove() ?: computeNextMove()
 
     private fun lookUpNextMove(): EvaluatedMove? {
         fun wait(milliseconds: Int) = try {Thread.sleep(milliseconds.toLong())} catch (e: InterruptedException) {}
