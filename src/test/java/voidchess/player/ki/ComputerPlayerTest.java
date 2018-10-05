@@ -96,7 +96,7 @@ public class ComputerPlayerTest {
     }
 
     private void testTermination(ChessGame game) {
-        testTermination(game, new SimplePruner(1, 2, 2), new StaticEvaluation());
+        testTermination(game, new SimplePruner(1, 2, 2), StaticEvaluation.INSTANCE);
     }
 
     private void testTermination(ChessGame game, SearchTreePruner pruner, StaticEvaluationInterface staticEvaluation) {
@@ -127,7 +127,7 @@ public class ComputerPlayerTest {
 
     private void testTermination(ChessGame game, SearchTreePruner pruner, Move move) {
         final String initDescription = game.toString();
-        DynamicEvaluation dynamicEvaluation = new DynamicEvaluation(pruner, new StaticEvaluation());
+        DynamicEvaluation dynamicEvaluation = new DynamicEvaluation(pruner, StaticEvaluation.INSTANCE);
 
         List<Move> possibleMoves = new LinkedList<Move>();
         game.getPossibleMoves(possibleMoves);
@@ -174,7 +174,7 @@ public class ComputerPlayerTest {
 //    game.move(Move.byCode("b1-c3"));
 //    game.move(Move.byCode("c8-g4"));
         SearchTreePruner pruner = new SimplePruner(2, 3, 2);
-        StaticEvaluationInterface staticEvaluation = new StaticEvaluation();//new ConstantEvaluation();//
+        StaticEvaluationInterface staticEvaluation = StaticEvaluation.INSTANCE;//new ConstantEvaluation();//
         loadTest(game, pruner, staticEvaluation, "Benchmark");
     }
 
@@ -234,7 +234,7 @@ public class ComputerPlayerTest {
     private static void loadTest(String des) {
         ChessGame game = new ChessGame(des);
         SearchTreePruner pruner = new SimplePruner(2, 3, 2);
-        StaticEvaluationInterface staticEvaluation = new StaticEvaluation();
+        StaticEvaluationInterface staticEvaluation = StaticEvaluation.INSTANCE;
         loadTest(game, pruner, staticEvaluation, "Loadtest");
     }
 

@@ -13,7 +13,7 @@ import java.util.LinkedList
 
 class StaticSpaceEvaluation : StaticEvaluationInterface {
 
-    override fun getPrimaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Evaluated {
+    override fun getPrimaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Ongoing {
         val basicValue = 200
         var whiteKing: Figure? = null
         var blackKing: Figure? = null

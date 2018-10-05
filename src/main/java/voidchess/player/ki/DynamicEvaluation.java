@@ -23,7 +23,7 @@ public class DynamicEvaluation {
     }
 
     DynamicEvaluation() {
-        this(new SimplePruner(), new StaticEvaluation());
+        this(new SimplePruner(), StaticEvaluation.INSTANCE);
     }
 
     public Evaluated evaluateMove(final ChessGameInterface game, final Move move) {
@@ -33,13 +33,13 @@ public class DynamicEvaluation {
         boolean thisMove_isChess = game.isCheck(!forWhite);
 
         final ChessGameSupervisor interactiveSupervisor = game.suspendInteractiveSupervisor();
-        MoveResult endoption = game.move(move);
+        MoveResult endOption = game.move(move);
 
         Evaluated result;
-        if (endoption == MoveResult.NO_END) {
-            final List<Move> minPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
+        if (endOption == MoveResult.NO_END) {
+            final List<Move> minPossibleMovesBuffer = new ArrayList<>(possibleMovesBufferSize);
             result = getMin(game, forWhite, depth, thisMove_isChess, thisMove_hasHitFigure, minPossibleMovesBuffer);
-        } else if (endoption == MoveResult.CHECKMATE) {
+        } else if (endOption == MoveResult.CHECKMATE) {
             result = new CheckmateOther(depth + 1);
         } else {
             result = Draw.INSTANCE;
@@ -69,8 +69,8 @@ public class DynamicEvaluation {
 
         minPossibleMovesBuffer.clear();
         game.getPossibleMoves(minPossibleMovesBuffer);
-        final NavigableSet<EvaluatedMove> primaryEvaluations = new TreeSet<EvaluatedMove>();
-        final List<Move> maxPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
+        final NavigableSet<EvaluatedMove> primaryEvaluations = new TreeSet<>();
+        final List<Move> maxPossibleMovesBuffer = new ArrayList<>(possibleMovesBufferSize);
 
         for (Move move : minPossibleMovesBuffer) {
             Evaluated primaryEval;
@@ -81,16 +81,16 @@ public class DynamicEvaluation {
                     " hits King white Move " +
                     move.toString();
 
-            MoveResult endoption = game.move(move);
+            MoveResult endOption = game.move(move);
 
-            if (endoption == MoveResult.NO_END) {
+            if (endOption == MoveResult.NO_END) {
                 primaryEval = getMax(game,
                         forWhite,
                         depth,
                         thisMove_isChess,
                         thisMove_hasHitFigure,
                         maxPossibleMovesBuffer);
-            } else if (endoption == MoveResult.CHECKMATE) {
+            } else if (endOption == MoveResult.CHECKMATE) {
                 game.undo();
                 return new CheckmateSelf(depth + 1);
             } else {
@@ -146,8 +146,8 @@ public class DynamicEvaluation {
 
         maxPossibleMovesBuffer.clear();
         game.getPossibleMoves(maxPossibleMovesBuffer);
-        final NavigableSet<EvaluatedMove> primaryEvaluations = new TreeSet<EvaluatedMove>();
-        final List<Move> minPossibleMovesBuffer = new ArrayList<Move>(possibleMovesBufferSize);
+        final NavigableSet<EvaluatedMove> primaryEvaluations = new TreeSet<>();
+        final List<Move> minPossibleMovesBuffer = new ArrayList<>(possibleMovesBufferSize);
 
         for (Move move : maxPossibleMovesBuffer) {
             Evaluated primaryEval;
@@ -158,16 +158,16 @@ public class DynamicEvaluation {
                     " hits King white Move " +
                     move.toString();
 
-            MoveResult endoption = game.move(move);
+            MoveResult endOption = game.move(move);
 
-            if (endoption == MoveResult.NO_END) {
+            if (endOption == MoveResult.NO_END) {
                 primaryEval = getMin(game,
                         forWhite,
                         depth,
                         thisMove_isChess,
                         thisMove_hasHitFigure,
                         minPossibleMovesBuffer);
-            } else if (endoption == MoveResult.CHECKMATE) {
+            } else if (endOption == MoveResult.CHECKMATE) {
                 game.undo();
                 return new CheckmateOther(depth + 1);
             } else {

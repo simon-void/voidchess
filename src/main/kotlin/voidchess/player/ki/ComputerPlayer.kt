@@ -30,7 +30,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
 
     init {
         standardPruner = SimplePruner(1, 2, 2)
-        standardEvaluation = StaticEvaluation()
+        standardEvaluation = StaticEvaluation
         dynamicEvaluation = DynamicEvaluation(standardPruner, standardEvaluation)
         concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, 1)
         openingsLibrary = OpeningsLibrary("openings.txt")
