@@ -1,6 +1,7 @@
 optimizations:
 1)CheckStatus should contain a List<BoundLines>{Attacker, BoundFigure, King} stating explicitly which figures are bound!
 2)is isNotBound easier to compute than !isBound?? (migth be unimportant after 1) )
+-a StaticChessBoard with optimized and immutable data structure for StaticEvaluation
 
 features:
 - resizable interface (inclusive full-screen)

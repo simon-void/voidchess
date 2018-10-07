@@ -1,6 +1,9 @@
 package voidchess.player.ki.evaluation
 
+import voidchess.helper.signAsInt
+import java.lang.IllegalStateException
 import java.text.DecimalFormat
+import kotlin.math.sign
 
 
 sealed class Evaluated: Comparable<Evaluated> {
@@ -126,17 +129,23 @@ class CheckmateOther(val depth: Int) : Evaluated() {
 
 class Ongoing(val primaryEvaluation: Double) : Evaluated() {
 
-    private var needsSecondaryEvaluation = true
-    private var secondaryEval: Double = 0.0
+    constructor(primaryEvaluation: Double, secondaryEvaluation: Double): this(primaryEvaluation) {
+        setSecondaryEvaluation(secondaryEvaluation)
+    }
 
-    val combinedEvaluation: Double
-        get() = primaryEvaluation + secondaryEval
+    private var needsSecondaryEvaluation = true
+    private var combinedEval = primaryEvaluation
 
     override fun setSecondaryEvaluation(secondaryEvaluation: Double) {
         assert(needsSecondaryEvaluation)
 
-        secondaryEval = secondaryEvaluation
+        combinedEval += secondaryEvaluation
         needsSecondaryEvaluation = false
+    }
+
+    fun getCombinedEvaluation(): Double {
+        if(needsSecondaryEvaluation) throw IllegalStateException("no secondary evaluation provided")
+        return combinedEval
     }
 
     override fun needsSecondaryEvaluation() = needsSecondaryEvaluation
@@ -151,8 +160,11 @@ class Ongoing(val primaryEvaluation: Double) : Evaluated() {
 
     override fun isCloseToByCombined(other: Evaluated): Boolean {
         return when (other) {
-            is Ongoing -> isAbsValueEqualOrLess(combinedEvaluation - other.combinedEvaluation, FINAL_EQUALITY_CUTOFF_RADIUS)
-            is Draw -> isAbsValueEqualOrLess(combinedEvaluation, FINAL_EQUALITY_CUTOFF_RADIUS)
+            is Ongoing -> {
+                assert(!(needsSecondaryEvaluation||other.needsSecondaryEvaluation)) {"both Ongoing instances should have gotten a secondary evaluation"}
+                isAbsValueEqualOrLess(combinedEval - other.combinedEval, FINAL_EQUALITY_CUTOFF_RADIUS)
+            }
+            is Draw -> isAbsValueEqualOrLess(combinedEval, FINAL_EQUALITY_CUTOFF_RADIUS)
             else -> false
         }
     }
@@ -161,16 +173,18 @@ class Ongoing(val primaryEvaluation: Double) : Evaluated() {
 
     override fun compareTo(other: Evaluated): Int {
         return when (other) {
-            is Draw -> if(combinedEvaluation>=0) 1 else -1 // prefer Ongoing(0.0) to Draw
+            is Draw -> if(combinedEval>=0) 1 else -1 // prefer Ongoing(0.0) to Draw
             is Ongoing -> compareWith(other)
             else -> -other.compareTo(this)
         }
     }
 
-    private fun compareWith(other: Ongoing) = Math.signum(combinedEvaluation - other.combinedEvaluation).toInt()
+    private fun compareWith(other: Ongoing) =
+            if(!(needsSecondaryEvaluation||other.needsSecondaryEvaluation)) (combinedEval - other.combinedEval).signAsInt
+            else (primaryEvaluation - other.primaryEvaluation).signAsInt
 
     override fun toString(): String {
-        return format(combinedEvaluation)
+        return format(combinedEval)
     }
 
     companion object {

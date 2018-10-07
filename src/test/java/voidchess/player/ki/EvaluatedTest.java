@@ -9,9 +9,9 @@ import voidchess.player.ki.evaluation.*;
 
 import static org.testng.Assert.*;
 
-public class EvaluadedTest {
+public class EvaluatedTest {
     @Test
-    public void testChessvalueToString() {
+    public void testEvaluatedToString() {
         Evaluated value = new Ongoing(-1);
         assertEquals(value.toString().replace('.', ','), "-1,00");
         value = new Ongoing(5.49999999999);
@@ -30,23 +30,28 @@ public class EvaluadedTest {
     @Test
     public void testIsCloseToByCombined() {
         assertTrue(
-                new Ongoing(-0.25).isCloseToByCombined(
-                        new Ongoing(0.25)
+                new Ongoing(-0.85, 0.6).isCloseToByCombined(
+                        new Ongoing(1.25, -1.0)
+                )
+        );
+        assertTrue(
+                new Ongoing(0.0, 0.0).isCloseToByCombined(
+                        new Ongoing(0.5, 0.0)
                 )
         );
         assertTrue(
                 Draw.INSTANCE.isCloseToByCombined(
-                        new Ongoing(0.5)
+                        new Ongoing(-1.5, 1.0)
                 )
         );
         assertFalse(
-                new Ongoing(-0.3).isCloseToByCombined(
-                        new Ongoing(0.3)
+                new Ongoing(0.0, -0.3).isCloseToByCombined(
+                        new Ongoing(0.0, 0.3)
                 )
         );
         assertFalse(
-                new Ongoing(-0.2).isCloseToByCombined(
-                        new Ongoing(0.5)
+                new Ongoing(0.2, -0.5).isCloseToByCombined(
+                        new Ongoing(0.1, 0.3)
                 )
         );
         assertFalse(

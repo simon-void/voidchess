@@ -30,7 +30,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
 
     init {
         standardPruner = SimplePruner(1, 2, 2)
-        standardEvaluation = StaticEvaluation()
+        standardEvaluation = StaticEvaluation
         dynamicEvaluation = DynamicEvaluation(standardPruner, standardEvaluation)
         concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, 1)
         openingsLibrary = OpeningsLibrary("openings.txt")
@@ -141,8 +141,8 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
     private fun pickStaticSpaceEvaluationIfNecessary() {
         if (usesStandardEvaluation && StaticSpaceEvaluation.shouldUseStaticSpaceEvaluation(game)) {
             // once per game
-            dynamicEvaluation.setEvaluationStrategy(StaticSpaceEvaluation())
-            dynamicEvaluation.setSearchTreePruner(FullMovePruner(2, 2, 2))
+            dynamicEvaluation.strategy = StaticSpaceEvaluation()
+            dynamicEvaluation.pruner = FullMovePruner(3, 3, 3)
             usesStandardEvaluation = false
         }
     }
@@ -186,8 +186,8 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
 
     // initializes the default EvaluationStrategy
     private fun reset() {
-        dynamicEvaluation.setEvaluationStrategy(standardEvaluation)
-        dynamicEvaluation.setSearchTreePruner(standardPruner)
+        dynamicEvaluation.strategy = standardEvaluation
+        dynamicEvaluation.pruner = standardPruner
         usesStandardEvaluation = true
         //use the library only if the figures are used in the classical way (no Chess960)
         useLibrary = game.isStandardGame
@@ -195,7 +195,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
 
     fun setSearchTreePruner(pruner: SearchTreePruner) {
         standardPruner = pruner
-        dynamicEvaluation.setSearchTreePruner(pruner)
+        dynamicEvaluation.pruner = pruner
     }
 
     fun setNumberOfCoresToUse(numberOfCoresToUse: Int) {

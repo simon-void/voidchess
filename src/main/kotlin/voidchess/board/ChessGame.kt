@@ -3,6 +3,7 @@ package voidchess.board
 import voidchess.figures.*
 import voidchess.helper.*
 import voidchess.player.ki.SimplePruner
+import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -131,7 +132,14 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     /**
      * for unit-tests
      */
-    @JvmOverloads constructor(initialPosition: Int = 518) : this(ChessGameSupervisorDummy, initialPosition)
+    @JvmOverloads constructor(initialPosition: Int = 518, vararg moves: String) : this(ChessGameSupervisorDummy, initialPosition) {
+        for(move in moves) {
+            val result = move(Move.byCode(move))
+            if(result!=MoveResult.NO_END) {
+                throw IllegalStateException("game is not supposed to end via these moves but did. end by $result")
+            }
+        }
+    }
 
     /**
      * for unit-tests

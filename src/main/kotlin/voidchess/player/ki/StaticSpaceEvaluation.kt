@@ -13,7 +13,7 @@ import java.util.LinkedList
 
 class StaticSpaceEvaluation : StaticEvaluationInterface {
 
-    override fun getPrimaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Evaluated {
+    override fun getPrimaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Ongoing {
         val basicValue = 200
         var whiteKing: Figure? = null
         var blackKing: Figure? = null
@@ -60,7 +60,7 @@ class StaticSpaceEvaluation : StaticEvaluationInterface {
         return Ongoing(value / 10.0)
     }
 
-    override fun addSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean, withPrimaryEvaluation: Evaluated) {
+    override fun addSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean, evaluated: Evaluated) {
         //do nothing (keep the secondary value = 0)
         //TODO is there a good secondary matrix of success for space?
     }

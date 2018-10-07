@@ -14,12 +14,13 @@ public class EvaluatedMoveTest {
     @Test
     public void testGetter() {
         final Move move = Move.byCode("a2-a3");
-        final double value = -2.91;
+        final double primaryValue = -2.91;
+        final double secondaryValue = 1.2;
 
-        EvaluatedMove eMove = new EvaluatedMove(move, new Ongoing(value));
+        EvaluatedMove eMove = new EvaluatedMove(move, new Ongoing(primaryValue, secondaryValue));
 
         assertEquals(eMove.getMove(), move);
-        assertEquals(((Ongoing) (eMove.getValue())).getCombinedEvaluation(), value);
+        assertEquals(((Ongoing) (eMove.getValue())).getCombinedEvaluation(), primaryValue+secondaryValue);
     }
 
     @Test

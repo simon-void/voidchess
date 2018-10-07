@@ -4,6 +4,7 @@ import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
 import voidchess.helper.*
 import java.util.*
+import kotlin.math.sign
 
 
 abstract class Figure constructor(
@@ -70,8 +71,8 @@ abstract class Figure constructor(
             return false
         }
 
-        val rowStep = Integer.signum(kingPos.row - position.row)
-        val columnStep = Integer.signum(kingPos.column - position.column)
+        val rowStep = (kingPos.row - position.row).sign
+        val columnStep = (kingPos.column - position.column).sign
 
         var row = position.row + rowStep
         var column = position.column + columnStep

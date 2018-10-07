@@ -5,7 +5,7 @@ import voidchess.board.SimpleChessBoardInterface
 import voidchess.helper.CheckSearch
 import voidchess.helper.Move
 import voidchess.helper.Position
-import java.lang.Integer.signum
+import kotlin.math.sign
 
 /**
  * @author stephan
@@ -84,7 +84,7 @@ class King : CastlingFigure {
                 }
                 //kommt der Turm auf die d-Linie?
                 if (to.column != 3) {
-                    val step = signum(3 - to.column)
+                    val step = (3 - to.column).sign
                     var middlePosition: Position
                     var column = to.column + step
                     while (column != 3) {
@@ -118,19 +118,19 @@ class King : CastlingFigure {
             val column = if (to.column - position.column > 0) 6 else 2
             realTo = Position[to.row, column]
             if (CheckSearch.isCheck(game, position)) return true
-            if (isKingAtCheckInbetweenCastling(position, realTo, game)) return true
+            if (isKingAtCheckInBetweenCastling(position, realTo, game)) return true
         }
         return isKingCheckAt(realTo, game)
     }
 
-    private fun isKingAtCheckInbetweenCastling(
+    private fun isKingAtCheckInBetweenCastling(
             from: Position,
             to: Position,
             game: SimpleChessBoardInterface
     ): Boolean {
         assert(from.row == to.row)
 
-        val step = signum(to.column - from.column)
+        val step = (to.column - from.column).sign
         var column = from.column + step
         while (column != to.column) {
             if (isKingCheckAt(Position[from.row, column], game)) return true

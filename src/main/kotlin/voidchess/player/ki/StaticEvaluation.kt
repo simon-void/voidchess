@@ -1,28 +1,27 @@
 package voidchess.player.ki
 
 import voidchess.board.ChessGameInterface
+import voidchess.figures.Figure
 import voidchess.figures.King
 import voidchess.helper.Position
 import voidchess.player.ki.evaluation.CheckmateSelf
 import voidchess.player.ki.evaluation.Evaluated
 import voidchess.player.ki.evaluation.Ongoing
+object StaticEvaluation : StaticEvaluationInterface {
 
-
-class StaticEvaluation : StaticEvaluationInterface {
-
-    override fun getPrimaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Evaluated {
+    override fun getPrimaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Ongoing {
         val primaryEvaluation = evaluateFigures(game, forWhite)
         return Ongoing(primaryEvaluation)
     }
 
-    override fun addSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean, withPrimaryEvaluation: Evaluated) {
-        if (withPrimaryEvaluation.needsSecondaryEvaluation()) {
-            when (withPrimaryEvaluation) {
-                is Ongoing -> withPrimaryEvaluation.setSecondaryEvaluation(getSecondaryEvaluation(game, forWhite))
-                is CheckmateSelf -> withPrimaryEvaluation.setSecondaryEvaluation(
+    override fun addSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean, evaluated: Evaluated) {
+        if (evaluated.needsSecondaryEvaluation()) {
+            when (evaluated) {
+                is Ongoing -> evaluated.setSecondaryEvaluation(getSecondaryEvaluation(game, forWhite))
+                is CheckmateSelf -> evaluated.setSecondaryEvaluation(
                         evaluateFigures(game, forWhite) + getSecondaryEvaluation(game, forWhite)
                 )
-                else -> throw IllegalStateException("unexpected class which requests a secondary evaluation: " + withPrimaryEvaluation.javaClass.simpleName)
+                else -> throw IllegalStateException("unexpected class which requests a secondary evaluation: " + evaluated.javaClass.simpleName)
             }
         }
     }
@@ -77,25 +76,32 @@ class StaticEvaluation : StaticEvaluationInterface {
         for (figure in figures) {
             val pos = figure.position
             if (figure.isPawn()) {
-                if (figure.isWhite)
+                if (figure.isWhite) {
                     whiteEvaluation += evaluatePawn(game, pos, true)
-                else
+                }else{
                     blackEvaluation += evaluatePawn(game, pos, false)
+                }
             } else if (figure.isKnight()) {
-                if (figure.isWhite)
-                    whiteEvaluation += evaluateKnight(pos)
-                else
-                    blackEvaluation += evaluateKnight(pos)
+                val value = evaluateKnight(pos)
+                if (figure.isWhite) {
+                    whiteEvaluation += value
+                }else{
+                    blackEvaluation += value
+                }
             } else if (figure.isBishop()) {
-                if (figure.isWhite)
-                    whiteEvaluation += evaluateBishop(game, pos)
-                else
-                    blackEvaluation += evaluateBishop(game, pos)
+                val value = evaluateBishop(game, figure)
+                if (figure.isWhite) {
+                    whiteEvaluation += value
+                }else{
+                    blackEvaluation += value
+                }
             } else if (figure.isKing()) {
-                if (figure.isWhite)
-                    whiteEvaluation += evaluateKing(game, figure as King)
-                else
-                    blackEvaluation += evaluateKing(game, figure as King)
+                val value = evaluateKing(game, figure as King)
+                if (figure.isWhite) {
+                    whiteEvaluation += value
+                }else {
+                    blackEvaluation += value
+                }
             }
         }
 
@@ -105,26 +111,27 @@ class StaticEvaluation : StaticEvaluationInterface {
             blackEvaluation - whiteEvaluation
     }
 
-    private fun evaluateBishop(game: ChessGameInterface, pos: Position): Double {
-
-        val isWhite = game.getFigure(pos)!!.isWhite
+    private fun evaluateBishop(game: ChessGameInterface, bishop: Figure): Double {
+        val isWhite = bishop.isWhite
         val startRow = if (isWhite) 0 else 7
+        val bishopRow = bishop.position.row
 
-        if (pos.row == startRow && (pos.column == 2 || pos.column == 5)) {
+        if (bishopRow == startRow) {
             return BISHOP_ON_START_POSITION_PUNISHMENT
         }
 
 
         val blockingRow = if (isWhite) 2 else 5
-        val blockedPawnRow = if (isWhite) 1 else 6
-        val possiblePawn = Position[blockedPawnRow, pos.column]
+        val bishopColumn = bishop.position.column
 
-        return if (pos.row == blockingRow &&
-                (pos.column == 3 || pos.column == 4) &&
-                containsPawnOfColor(game, possiblePawn, isWhite)) {
-            BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT
-        } else 0.0
+        if (bishopRow == blockingRow && (bishopColumn == 3 || bishopColumn == 4)) {
+            val possiblePawnPos = Position[if (isWhite) 1 else 6, bishopColumn]
+            if(containsPawnOfColor(game, possiblePawnPos, isWhite)) {
+                return BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT
+            }
+        }
 
+        return 0.0
     }
 
     private fun evaluateKnight(pos: Position) =
@@ -134,8 +141,10 @@ class StaticEvaluation : StaticEvaluationInterface {
     private fun evaluatePawn(game: ChessGameInterface, pos: Position, isWhite: Boolean) =
             evaluatePawnPosition(pos, isWhite) + evaluatePawnDefense(game, pos, isWhite)
 
-    private fun evaluatePawnPosition(pos: Position, isWhite: Boolean) =
-            MOVES_GONE_VALUE * if( isWhite) pos.row-1 else 7-pos.row
+    private fun evaluatePawnPosition(pos: Position, isWhite: Boolean): Double {
+
+        return MOVES_GONE_VALUE * if( isWhite) pos.row-1 else 6-pos.row
+    }
 
     private fun evaluatePawnDefense(game: ChessGameInterface, pos: Position, isWhite: Boolean): Double {
 
@@ -214,51 +223,53 @@ class StaticEvaluation : StaticEvaluationInterface {
     private fun evaluateKingDefense(game: ChessGameInterface, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
         val isWhite = king.isWhite
         val kingsRow = king.position.row
-        var value = 0.0
         val groundRow = if (isWhite) 0 else 7
-        val secondRow = if (isWhite) 1 else 6
 
         if (king.didCastling() && kingsRow == groundRow) {
+            val kingsColumn = king.position.column
+            val secondRow = if (isWhite) 1 else 6
             val defenseValue = if (queenOfOppositeColorStillOnBoard) {
                 BIG_KING_DEFENSE_VALUE
             } else {
                 SMALL_KING_DEFENSE_VALUE
             }
-            val minColumn = Math.max(0, kingsRow - 1)
-            val maxColumn = Math.min(7, kingsRow + 1)
+            val minColumn = Math.max(0, kingsColumn - 1)
+            val maxColumn = Math.min(7, kingsColumn + 1)
+            var value = 0.0
             for (column in minColumn..maxColumn) {
                 if (containsPawnOfColor(game, Position[secondRow, column], isWhite)) {
                     value += defenseValue
                 }
             }
+            return value
         }
 
-        return value
+        return 0.0
     }
 
-    companion object {
-        private const val VALUE_OF_AREA = 0.015
+    private const val VALUE_OF_AREA = 0.015
 
-        private const val PAWN_VALUE = 1.0
-        private const val Rook_VALUE = 4.5
-        private const val KNIGHT_VALUE = 3.0
-        private const val BISHOP_VALUE = 3.0
-        private const val QUEEN_VALUE = 9.0
+    private const val PAWN_VALUE = 1.0
+    private const val Rook_VALUE = 4.5
+    private const val KNIGHT_VALUE = 3.0
+    private const val BISHOP_VALUE = 3.0
+    private const val QUEEN_VALUE = 9.0
 
-        private const val BISHOP_ON_START_POSITION_PUNISHMENT = -0.45
-        private const val BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT = -0.2
+    private const val BISHOP_ON_START_POSITION_PUNISHMENT = -0.45
+    private const val BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT = -0.2
 
-        private const val BORDER_KNIGHT_PUNISHMENT = -0.45
+    private const val BORDER_KNIGHT_PUNISHMENT = -0.45
 
-        private const val MOVES_GONE_VALUE = 0.2
+    private const val MOVES_GONE_VALUE = 0.2
 
-        private const val DEFENSE_VALUE = 0.10                 // bonus, if a pawn is covered by or is covering another pawn
-        private const val NEXT_TO_VALUE = 0.06                 // bonus, if a pawn has a neighbour
-        private const val UNPROTECTED_BORDER_PAWN_VALUE = -0.2 // malus for an uncovered pawn on the sideline (a or h)
+    private const val DEFENSE_VALUE = 0.10                 // bonus, if a pawn is covered by or is covering another pawn
+    private const val NEXT_TO_VALUE = 0.06                 // bonus, if a pawn has a neighbour
+    private const val UNPROTECTED_BORDER_PAWN_VALUE = -0.2 // malus for an uncovered pawn on the sideline (a or h)
 
-        private const val NOT_YET_CASTLED_PUNISHMENT = -0.4
+    private const val NOT_YET_CASTLED_PUNISHMENT = -0.4
 
-        private const val BIG_KING_DEFENSE_VALUE = 0.6
-        private const val SMALL_KING_DEFENSE_VALUE = 0.2
-    }
+    private const val BIG_KING_DEFENSE_VALUE = 0.6
+    private const val SMALL_KING_DEFENSE_VALUE = 0.2
 }
+
+

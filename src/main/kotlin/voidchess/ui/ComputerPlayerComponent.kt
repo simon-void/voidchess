@@ -332,7 +332,7 @@ private fun Evaluated.getHappinessLevel(): HappinessLevel {
         is CheckmateSelf -> return HappinessLevel.BIG_GRIEF
         is Draw -> return HappinessLevel.CONTENT
         is Ongoing -> {
-            val value = this.combinedEvaluation
+            val value = this.getCombinedEvaluation()
             return when {
                 value > HappinessLevel.MEDIUM_SMILE.value -> HappinessLevel.MEDIUM_SMILE
                 value > HappinessLevel.LIGHT_SMILE.value -> HappinessLevel.LIGHT_SMILE
