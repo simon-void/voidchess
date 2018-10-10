@@ -9,9 +9,8 @@ import java.util.*
 
 
 class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvaluationInterface) {
-    private val possibleMovesBufferSize = 40
 
-    constructor() : this(SimplePruner(), StaticEvaluation) {}
+    constructor() : this(SimplePruner(), StaticEvaluation)
 
     fun evaluateMove(game: ChessGameInterface, move: Move): Evaluated {
         val depth = 0
@@ -24,8 +23,7 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
 
         val result = when {
             endOption === MoveResult.NO_END -> {
-                val minPossibleMovesBuffer = ArrayList<Move>(possibleMovesBufferSize)
-                getMin(game, forWhite, depth, thisMoveIsChess, thisMoveHasHitFigure, minPossibleMovesBuffer)
+                getMin(game, forWhite, depth, thisMoveIsChess, thisMoveHasHitFigure)
             }
             endOption === MoveResult.CHECKMATE -> CheckmateOther(depth + 1)
             else -> Draw
@@ -40,8 +38,8 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
                        forWhite: Boolean,
                        depth: Int,
                        lastMove_isChess: Boolean,
-                       lastMove_hasHitFigure: Boolean,
-                       minPossibleMovesBuffer: MutableList<Move>): Evaluated {
+                       lastMove_hasHitFigure: Boolean
+    ): Evaluated {
         val thisMoveHasHitFigure = game.hasHitFigure()
         val thisMoveIsChess = game.isCheck(!forWhite)
 
@@ -53,10 +51,9 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
             return strategy.getPrimaryEvaluation(game, forWhite)
         }
 
-        minPossibleMovesBuffer.clear()
+        val minPossibleMovesBuffer = LinkedList<Move>()
         game.getPossibleMoves(minPossibleMovesBuffer)
         val primaryEvaluations = TreeSet<EvaluatedMove>()
-        val maxPossibleMovesBuffer = ArrayList<Move>(possibleMovesBufferSize)
 
         for (move in minPossibleMovesBuffer) {
 
@@ -67,12 +64,13 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
             val endOption = game.move(move)
 
             val primaryEval = when {
-                endOption === MoveResult.NO_END -> getMax(game,
+                endOption === MoveResult.NO_END -> getMax(
+                        game,
                         forWhite,
                         depth,
                         thisMoveIsChess,
-                        thisMoveHasHitFigure,
-                        maxPossibleMovesBuffer)
+                        thisMoveHasHitFigure
+                )
                 endOption === MoveResult.CHECKMATE -> {
                     game.undo()
                     return CheckmateSelf(depth + 1)
@@ -111,8 +109,8 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
                        forWhite: Boolean,
                        oldDepth: Int,
                        lastMove_isChess: Boolean,
-                       lastMove_hasHitFigure: Boolean,
-                       maxPossibleMovesBuffer: MutableList<Move>): Evaluated {
+                       lastMove_hasHitFigure: Boolean
+    ): Evaluated {
         val depth = oldDepth + 1
 
         val thisMoveHasHitFigure = game.hasHitFigure()
@@ -125,13 +123,9 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
             return strategy.getPrimaryEvaluation(game, forWhite)
         }
 
-        // TODO sort this out!
-        val movesWithPrimaryEvaluation = TreeSet<EvaluatedMove>()
-
-        maxPossibleMovesBuffer.clear()
+        val maxPossibleMovesBuffer = LinkedList<Move>()
         game.getPossibleMoves(maxPossibleMovesBuffer)
         val primaryEvaluations = TreeSet<EvaluatedMove>()
-        val minPossibleMovesBuffer = ArrayList<Move>(possibleMovesBufferSize)
 
         for (move in maxPossibleMovesBuffer) {
 
@@ -142,12 +136,13 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
             val endOption = game.move(move)
 
             val primaryEval = when {
-                endOption === MoveResult.NO_END -> getMin(game,
+                endOption === MoveResult.NO_END -> getMin(
+                        game,
                         forWhite,
                         depth,
                         thisMoveIsChess,
-                        thisMoveHasHitFigure,
-                        minPossibleMovesBuffer)
+                        thisMoveHasHitFigure
+                )
                 endOption === MoveResult.CHECKMATE -> {
                     game.undo()
                     return CheckmateOther(depth + 1)
