@@ -6,9 +6,6 @@ import voidchess.helper.Direction
 import voidchess.helper.Move
 import voidchess.helper.Position
 
-/**
- * @author stephan
- */
 
 class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.BISHOP) {
 

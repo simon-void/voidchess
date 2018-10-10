@@ -12,9 +12,7 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
 
-/**
- * @author stephan
- */
+
 public class SimpleBoardTest {
     private SimpleChessBoardInterface board;
     final private String initial = "Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 " +

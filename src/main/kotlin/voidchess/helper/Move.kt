@@ -1,8 +1,6 @@
 package voidchess.helper
 
-/**
- * @author stephan
- */
+
 class Move private constructor(@JvmField val from: Position, @JvmField val to: Position) {
     private val index = getMoveIndex(from.index, to.index)
 

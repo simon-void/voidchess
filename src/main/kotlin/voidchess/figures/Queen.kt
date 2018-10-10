@@ -6,9 +6,7 @@ import voidchess.helper.Direction
 import voidchess.helper.Move
 import voidchess.helper.Position
 
-/**
- * @author stephan
- */
+
 class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.QUEEN) {
 
     override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {

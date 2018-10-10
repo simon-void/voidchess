@@ -1,8 +1,5 @@
 package voidchess.helper
 
-/**
- * @author stephan
- */
 
 class CheckStatus private constructor(
         val isCheck: Boolean,

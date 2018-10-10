@@ -5,9 +5,7 @@ import voidchess.player.ki.evaluation.Evaluated
 
 import javax.swing.*
 
-/**
- * @author stephan
- */
+
 interface ComputerPlayerUI {
     fun reset()
     fun showThoughts(show: Boolean)

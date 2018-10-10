@@ -15,9 +15,7 @@ import java.util.stream.Collectors;
 
 import static org.testng.Assert.*;
 
-/**
- * @author stephan
- */
+
 public class ChessGameTest {
     private ChessGame game;
 

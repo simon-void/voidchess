@@ -7,9 +7,7 @@ import voidchess.helper.Move
 import voidchess.helper.Position
 import kotlin.math.sign
 
-/**
- * @author stephan
- */
+
 class King : CastlingFigure {
     private var didCastling: Boolean = false
     private val groundRow = if (isWhite) 0 else 7

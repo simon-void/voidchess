@@ -4,9 +4,7 @@ import voidchess.figures.Figure
 import voidchess.helper.CheckStatus
 import voidchess.helper.Position
 
-/**
- * @author stephan
- */
+
 interface SimpleChessBoardInterface : BasicChessGameInterface {
 
     fun init()

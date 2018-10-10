@@ -4,9 +4,7 @@ import voidchess.figures.Figure
 import voidchess.helper.Direction
 import voidchess.helper.Position
 
-/**
- * @author stephan
- */
+
 interface BasicChessGameInterface {
 
     fun getFigures(): List<Figure>

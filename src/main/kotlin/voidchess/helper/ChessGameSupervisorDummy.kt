@@ -1,8 +1,5 @@
 package voidchess.helper
 
-/**
- * @author stephan
- */
 
 object ChessGameSupervisorDummy : ChessGameSupervisor {
 

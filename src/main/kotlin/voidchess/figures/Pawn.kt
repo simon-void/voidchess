@@ -7,9 +7,7 @@ import voidchess.helper.Move
 import voidchess.helper.Position
 import java.util.*
 
-/**
- * @author stephan
- */
+
 class Pawn : Figure {
     private val forwardDirection = if(isWhite) Direction.UP else Direction.DOWN
     private val startingRow = if(isWhite) 1 else 6

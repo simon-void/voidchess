@@ -6,9 +6,7 @@ import voidchess.helper.Direction
 import voidchess.helper.Move
 import voidchess.helper.Position
 
-/**
- * @author stephan
- */
+
 class Rook : CastlingFigure {
 
     constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.ROOK)

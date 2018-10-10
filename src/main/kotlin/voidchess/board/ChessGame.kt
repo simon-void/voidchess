@@ -6,9 +6,7 @@ import voidchess.player.ki.SimplePruner
 import java.lang.IllegalStateException
 import java.util.*
 
-/**
- * @author stephan
- */
+
 class ChessGame : ChessGameInterface, LastMoveProvider {
     private val game: SimpleChessBoardInterface
     private val figureFactory: FigureFactory

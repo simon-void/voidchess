@@ -1,8 +1,6 @@
 package voidchess.helper
 
-/**
- * @author stephan
- */
+
 class Position private constructor(@JvmField val row: Int, @JvmField val column: Int) {
     val index = getIndex(row, column)
 

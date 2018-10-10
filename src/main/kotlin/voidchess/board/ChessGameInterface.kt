@@ -5,9 +5,7 @@ import voidchess.helper.ExtendedMove
 import voidchess.helper.Move
 import voidchess.helper.Position
 
-/**
- * @author stephan
- */
+
 interface ChessGameInterface : BasicChessGameInterface {
 
     /**

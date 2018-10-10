@@ -13,9 +13,7 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
 
-/**
- * @author stephan
- */
+
 public class PawnTest {
     @Test
     public void testCanBeHitByEnpasent() {

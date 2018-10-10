@@ -5,9 +5,7 @@ import voidchess.board.SimpleChessBoardInterface
 import voidchess.helper.Move
 import voidchess.helper.Position
 
-/**
- * @author stephan
- */
+
 class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.KNIGHT) {
 
     override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {

@@ -7,9 +7,7 @@ import voidchess.figures.Pawn;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-/**
- * @author stephan
- */
+
 public class ExtendedMoveTest {
     private ExtendedMove extendedMove;
 

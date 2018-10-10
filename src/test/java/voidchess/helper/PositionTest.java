@@ -5,9 +5,7 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
 
-/**
- * @author stephan
- */
+
 public class PositionTest {
     @Test
     public void testGet() {

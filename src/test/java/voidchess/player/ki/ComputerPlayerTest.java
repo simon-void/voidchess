@@ -13,9 +13,7 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-/**
- * @author stephan
- */
+
 public class ComputerPlayerTest {
     @Test
     public void testPlay() {
