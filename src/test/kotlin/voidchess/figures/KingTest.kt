@@ -127,7 +127,7 @@ class KingTest {
     @Test
     fun testGetReachableMoves() {
         val game = ChessGame(621)
-        var from = Position.byCode("e1")
+        val from = Position.byCode("e1")
         var king = game.getFigure(from)!!
 
         val moveIter = LinkedList<Move>()
@@ -269,7 +269,7 @@ class KingTest {
 
     @Test
     fun testDoesShortCastling() {
-        var game = ChessGame(518)
+        val game = ChessGame(518)
         with(game) {
             move(Move.byCode("g2-g3"))
             move(Move.byCode("g7-g6"))
@@ -292,7 +292,7 @@ class KingTest {
 
     @Test
     fun testDoesLongCastling() {
-        var game = ChessGame(518)
+        val game = ChessGame(518)
         with(game) {
             move(Move.byCode("e2-e4"))
             move(Move.byCode("e7-e5"))
@@ -318,7 +318,7 @@ class KingTest {
     }
 
     @Test
-    fun testImmidiatlyCastlingInChess960Positions() {
+    fun testImmediatelyCastlingInChess960Positions() {
         //siehe https://de.wikipedia.org/wiki/Chess960#Castlingregeln
 
         //Rook on a1, king on b1 so b1-a1 should be possible as a first move

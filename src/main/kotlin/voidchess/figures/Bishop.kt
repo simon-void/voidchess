@@ -12,7 +12,7 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
     override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val direction = position.getDirectionTo(to)
 
-        if (direction == null || direction.isHorizontalOrVertical) {
+        if (direction == null || direction.isStraight) {
             return false
         }
 
