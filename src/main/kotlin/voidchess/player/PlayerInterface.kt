@@ -1,8 +1,8 @@
 package voidchess.player
 
-import voidchess.board.MoveResult
-import voidchess.helper.PawnPromotion
-import voidchess.helper.Position
+import voidchess.board.move.MoveResult
+import voidchess.board.move.PawnPromotion
+import voidchess.board.move.Position
 
 
 interface PlayerInterface {

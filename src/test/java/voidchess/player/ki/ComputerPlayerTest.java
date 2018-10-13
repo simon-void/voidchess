@@ -2,9 +2,10 @@ package voidchess.player.ki;
 
 import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
-import voidchess.helper.ChessGameSupervisorDummy;
-import voidchess.helper.Move;
+import voidchess.board.ChessGameSupervisorDummy;
+import voidchess.board.move.Move;
 import voidchess.helper.RuntimeFacade;
+import voidchess.player.ki.evaluation.*;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

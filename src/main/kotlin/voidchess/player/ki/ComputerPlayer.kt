@@ -1,14 +1,14 @@
 package voidchess.player.ki
 
 import voidchess.board.ChessGameInterface
-import voidchess.board.MoveResult
-import voidchess.helper.PawnPromotion
-import voidchess.helper.Position
+import voidchess.board.move.MoveResult
+import voidchess.board.move.PawnPromotion
+import voidchess.board.move.Position
 import voidchess.helper.RuntimeFacade
 import voidchess.player.PlayerInterface
 import voidchess.player.ki.concurrent.ConcurrencyStrategy
 import voidchess.player.ki.concurrent.ConcurrencyStrategyFactory
-import voidchess.player.ki.evaluation.EvaluatedMove
+import voidchess.player.ki.evaluation.*
 import voidchess.player.ki.openings.OpeningsLibrary
 import voidchess.ui.ComputerPlayerUI
 import voidchess.ui.TableInterface

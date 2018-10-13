@@ -1,9 +1,9 @@
 package voidchess.player.ki.concurrent
 
 import voidchess.board.ChessGameInterface
-import voidchess.helper.Move
+import voidchess.board.move.Move
 import voidchess.ui.ComputerPlayerUI
-import voidchess.player.ki.DynamicEvaluation
+import voidchess.player.ki.evaluation.DynamicEvaluation
 import voidchess.player.ki.evaluation.EvaluatedMove
 
 import java.util.ArrayList

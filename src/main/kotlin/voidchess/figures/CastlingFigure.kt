@@ -1,7 +1,7 @@
 package voidchess.figures
 
-import voidchess.helper.Move
-import voidchess.helper.Position
+import voidchess.board.move.Move
+import voidchess.board.move.Position
 
 
 abstract class CastlingFigure(isWhite: Boolean, val initialPosition: Position, protected var stepsTaken: Int, type: FigureType) : Figure(isWhite, initialPosition, type) {

@@ -1,7 +1,7 @@
 package voidchess.ui
 
-import voidchess.helper.Position
-import voidchess.player.HumanPlayerInterface
+import voidchess.board.move.Position
+import voidchess.player.human.HumanPlayerInterface
 import java.awt.Point
 import java.awt.event.MouseEvent
 import javax.swing.event.MouseInputListener

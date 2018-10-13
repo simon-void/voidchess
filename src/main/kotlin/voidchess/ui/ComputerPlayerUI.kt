@@ -1,9 +1,6 @@
 package voidchess.ui
 
-import voidchess.helper.Move
 import voidchess.player.ki.evaluation.Evaluated
-
-import javax.swing.*
 
 
 interface ComputerPlayerUI {

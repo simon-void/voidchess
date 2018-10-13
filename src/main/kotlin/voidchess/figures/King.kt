@@ -2,9 +2,9 @@ package voidchess.figures
 
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
-import voidchess.helper.CheckSearch
-import voidchess.helper.Move
-import voidchess.helper.Position
+import voidchess.board.check.CheckSearch
+import voidchess.board.move.Move
+import voidchess.board.move.Position
 import kotlin.math.sign
 
 

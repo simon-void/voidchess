@@ -1,5 +1,10 @@
 package voidchess.board
 
+import voidchess.board.check.CheckSearch
+import voidchess.board.check.CheckStatus
+import voidchess.board.move.LastMoveProvider
+import voidchess.board.move.Move
+import voidchess.board.move.Position
 import voidchess.figures.Figure
 import voidchess.figures.FigureFactory
 import voidchess.helper.*

@@ -3,9 +3,10 @@ package voidchess.board;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import voidchess.board.move.LastMoveProvider;
 import voidchess.figures.Figure;
-import voidchess.helper.CheckStatus;
-import voidchess.helper.Position;
+import voidchess.board.check.CheckStatus;
+import voidchess.board.move.Position;
 
 import java.util.List;
 

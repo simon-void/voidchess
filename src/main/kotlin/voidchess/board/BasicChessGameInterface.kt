@@ -1,8 +1,8 @@
 package voidchess.board
 
 import voidchess.figures.Figure
-import voidchess.helper.Direction
-import voidchess.helper.Position
+import voidchess.board.move.Direction
+import voidchess.board.move.Position
 
 
 interface BasicChessGameInterface {

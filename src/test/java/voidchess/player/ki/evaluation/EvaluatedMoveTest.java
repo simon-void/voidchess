@@ -1,7 +1,7 @@
 package voidchess.player.ki.evaluation;
 
 import org.testng.annotations.Test;
-import voidchess.helper.Move;
+import voidchess.board.move.Move;
 
 import java.util.Iterator;
 import java.util.NavigableSet;

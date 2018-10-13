@@ -5,7 +5,7 @@
 package voidchess.ui
 
 import voidchess.player.ki.ComputerPlayer
-import voidchess.player.ki.SimplePruner
+import voidchess.player.ki.evaluation.SimplePruner
 
 import javax.swing.*
 import java.awt.*

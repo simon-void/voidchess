@@ -2,7 +2,7 @@ package voidchess.figures
 
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
-import voidchess.board.LastMoveProvider
+import voidchess.board.move.LastMoveProvider
 import voidchess.board.SimpleArrayBoard
 
 import java.util.LinkedList
@@ -10,8 +10,8 @@ import java.util.LinkedList
 import org.mockito.Mockito.mock
 import org.testng.Assert.*
 import org.testng.annotations.DataProvider
-import voidchess.helper.Move
-import voidchess.helper.Position
+import voidchess.board.move.Move
+import voidchess.board.move.Position
 
 
 class KingTest {

@@ -5,9 +5,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.board.ChessGameInterface;
-import voidchess.helper.Move;
-import voidchess.player.ki.*;
-import voidchess.player.ki.evaluation.EvaluatedMove;
+import voidchess.board.move.Move;
+import voidchess.player.ki.evaluation.*;
 import voidchess.ui.ComputerPlayerUI;
 
 import java.util.Iterator;

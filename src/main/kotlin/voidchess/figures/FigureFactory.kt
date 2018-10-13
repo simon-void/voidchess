@@ -1,6 +1,6 @@
 package voidchess.figures
 
-import voidchess.helper.Position
+import voidchess.board.move.Position
 
 
 class FigureFactory {

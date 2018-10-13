@@ -1,10 +1,10 @@
 package voidchess.ui
 
 import voidchess.board.BasicChessGameInterface
-import voidchess.helper.ExtendedMove
-import voidchess.helper.Position
+import voidchess.board.move.ExtendedMove
+import voidchess.board.move.Position
 import voidchess.image.FigureGallery
-import voidchess.player.HumanPlayerInterface
+import voidchess.player.human.HumanPlayerInterface
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics

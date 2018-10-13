@@ -1,6 +1,7 @@
 package voidchess.player.ki.openings
 
 import voidchess.board.ChessGame
+import voidchess.board.move.Move
 import voidchess.helper.*
 
 import java.io.BufferedReader

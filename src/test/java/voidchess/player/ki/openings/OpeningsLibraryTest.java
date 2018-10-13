@@ -2,7 +2,7 @@ package voidchess.player.ki.openings;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import voidchess.helper.Move;
+import voidchess.board.move.Move;
 
 import java.util.List;
 

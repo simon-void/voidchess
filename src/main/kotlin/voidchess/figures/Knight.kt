@@ -2,8 +2,8 @@ package voidchess.figures
 
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
-import voidchess.helper.Move
-import voidchess.helper.Position
+import voidchess.board.move.Move
+import voidchess.board.move.Position
 
 
 class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.KNIGHT) {

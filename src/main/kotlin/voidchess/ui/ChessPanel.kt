@@ -1,9 +1,9 @@
 package voidchess.ui
 
 import voidchess.board.ChessGame
-import voidchess.board.MoveResult
-import voidchess.helper.ChessGameSupervisorDummy
-import voidchess.player.HumanPlayer
+import voidchess.board.move.MoveResult
+import voidchess.board.ChessGameSupervisorDummy
+import voidchess.player.human.HumanPlayer
 import voidchess.player.ki.ComputerPlayer
 
 import javax.swing.*

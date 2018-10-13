@@ -1,8 +1,8 @@
 package voidchess.board
 
 import voidchess.figures.Figure
-import voidchess.helper.CheckStatus
-import voidchess.helper.Position
+import voidchess.board.check.CheckStatus
+import voidchess.board.move.Position
 
 
 interface SimpleChessBoardInterface : BasicChessGameInterface {

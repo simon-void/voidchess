@@ -3,10 +3,13 @@ package voidchess.board;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import voidchess.board.move.Move;
+import voidchess.board.move.MoveResult;
+import voidchess.board.move.PawnPromotion;
+import voidchess.board.move.Position;
 import voidchess.figures.Bishop;
 import voidchess.figures.Figure;
 import voidchess.figures.King;
-import voidchess.helper.*;
 
 import java.util.Arrays;
 import java.util.LinkedList;

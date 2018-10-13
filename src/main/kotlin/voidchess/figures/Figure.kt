@@ -2,7 +2,10 @@ package voidchess.figures
 
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
-import voidchess.helper.*
+import voidchess.board.check.CheckStatus
+import voidchess.board.move.Direction
+import voidchess.board.move.Move
+import voidchess.board.move.Position
 import java.util.*
 import kotlin.math.sign
 

@@ -1,9 +1,9 @@
 package voidchess.board
 
-import voidchess.helper.ChessGameSupervisor
-import voidchess.helper.ExtendedMove
-import voidchess.helper.Move
-import voidchess.helper.Position
+import voidchess.board.move.ExtendedMove
+import voidchess.board.move.Move
+import voidchess.board.move.MoveResult
+import voidchess.board.move.Position
 
 
 interface ChessGameInterface : BasicChessGameInterface {

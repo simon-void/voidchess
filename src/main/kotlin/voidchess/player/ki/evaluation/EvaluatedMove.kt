@@ -1,6 +1,6 @@
 package voidchess.player.ki.evaluation
 
-import voidchess.helper.Move
+import voidchess.board.move.Move
 
 class EvaluatedMove(val move: Move, val value: Evaluated) : Comparable<EvaluatedMove> {
 
