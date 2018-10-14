@@ -19,7 +19,7 @@ public class BishopTest {
     @Test
     public void testIsReachable() {
         String des = "white 0 Pawn-white-c2-false Bishop-white-d3- "
-                + "Knight-black-b5";
+                + "Knight-black-b5 King-white-e1-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
         Position from = Position.byCode("d3");
@@ -44,7 +44,7 @@ public class BishopTest {
 
     @Test
     public void testGetPossibleMoves() {
-        String des = "white 0 King-white-e1-0 Bishop-white-b2";
+        String des = "white 0 King-white-e1-0 Bishop-white-b2 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Figure bishop = game.getFigure(Position.byCode("b2"));
@@ -52,8 +52,7 @@ public class BishopTest {
         bishop.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 9);
 
-        des = "white 0 King-white-b3-3 Bishop-white-d5 "
-                + "Knight-black-f7";
+        des = "white 0 King-white-b3-3 Bishop-white-d5 Knight-black-f7 King-black-e8-0";
         game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         bishop = game.getFigure(Position.byCode("d5"));
@@ -61,8 +60,7 @@ public class BishopTest {
         bishop.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 10);
 
-        des = "white 0 King-white-f1-1 Bishop-white-c4 "
-                + "Bishop-black-b5 Knight-black-d5";
+        des = "white 0 King-white-f1-1 Bishop-white-c4 Bishop-black-b5 Knight-black-d5 King-black-e8-0";
         game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         bishop = game.getFigure(Position.byCode("c4"));
@@ -74,7 +72,7 @@ public class BishopTest {
     @Test
     public void testGetReachableMoves() {
         String des = "white 0 Knight-white-e1 Rook-black-b2-2 Bishop-white-d2 King-white-e2-1 "
-                + "Pawn-white-a5-false Knight-black-g5";
+                + "Pawn-white-a5-false Knight-black-g5 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Figure bishop = game.getFigure(Position.byCode("d2"));
@@ -86,7 +84,7 @@ public class BishopTest {
     @Test
     public void testCountReachableMoves() {
         String des = "white 0 Knight-white-e1 Rook-black-b2-2 Bishop-white-d2 King-white-e2-1 "
-                + "Pawn-white-a5-false Knight-black-g5";
+                + "Pawn-white-a5-false Knight-black-g5 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Figure bishop = game.getFigure(Position.byCode("d2"));
@@ -104,11 +102,11 @@ public class BishopTest {
     @DataProvider
     public Object[][] getTestIsSelectableData() {
         return new Object[][]{
-                new Object[]{"white 0 Bishop-white-c1 King-white-e1-0 Pawn-white-b2-false Pawn-white-d2-false", "c1", false},
-                new Object[]{"white 0 Bishop-white-c1 King-white-e1-0", "c1", true},
-                new Object[]{"white 0 Queen-black-a1 Bishop-white-c1 King-white-e1-0", "c1", false},
-                new Object[]{"white 0 Queen-black-h1 Bishop-white-c1 King-white-e1-0", "c1", false},
-                new Object[]{"white 0 Queen-black-a5 Bishop-white-d2 King-white-e1-0", "d2", true},
+                new Object[]{"white 0 Bishop-white-c1 King-white-e1-0 Pawn-white-b2-false Pawn-white-d2-false King-black-e8-0", "c1", false},
+                new Object[]{"white 0 Bishop-white-c1 King-white-e1-0 King-black-e8-0", "c1", true},
+                new Object[]{"white 0 Queen-black-a1 Bishop-white-c1 King-white-e1-0 King-black-e8-0", "c1", false},
+                new Object[]{"white 0 Queen-black-h1 Bishop-white-c1 King-white-e1-0 King-black-e8-0", "c1", false},
+                new Object[]{"white 0 Queen-black-a5 Bishop-white-d2 King-white-e1-0 King-black-e8-0", "d2", true},
         };
     }
 }

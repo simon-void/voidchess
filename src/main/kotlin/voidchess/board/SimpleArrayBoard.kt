@@ -7,6 +7,7 @@ import voidchess.board.move.Move
 import voidchess.board.move.Position
 import voidchess.figures.Figure
 import voidchess.figures.FigureFactory
+import voidchess.figures.King
 import voidchess.helper.*
 import java.util.*
 
@@ -14,9 +15,8 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
     private val game: Array<Figure?> = arrayOfNulls(64)
     private val figureFactory: FigureFactory = FigureFactory()
 
-    private val defaultKingPos = Position.byCode("a1")
-    private var whiteKingPosition: Position = defaultKingPos
-    private var blackKingPosition: Position = defaultKingPos
+    override lateinit var whiteKing: King
+    override lateinit var blackKing: King
 
     private var calculatedWhiteCheck: Boolean = false
     private var calculatedBlackCheck: Boolean = false
@@ -27,11 +27,15 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
 
     init {
         init()
+        requireNotNull(whiteKing) {"whiteKing"}
+        requireNotNull(blackKing) {"blackKing"}
     }
 
     //for testing
     constructor(des: String, lastMoveProvider: LastMoveProvider) : this(lastMoveProvider) {
         init(des)
+        requireNotNull(whiteKing) {"whiteKing"}
+        requireNotNull(blackKing) {"blackKing"}
     }
 
     private fun clearCheckComputation() {
@@ -44,13 +48,13 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
     override fun isCheck(isWhite: Boolean): Boolean {
         return if (isWhite) {
             if (!calculatedWhiteCheck) {
-                isWhiteCheck = CheckSearch.isCheck(this, whiteKingPosition)
+                isWhiteCheck = CheckSearch.isCheck(this, whiteKing)
                 calculatedWhiteCheck = true
             }
             isWhiteCheck
         } else {
             if (!calculatedBlackCheck) {
-                isBlackCheck = CheckSearch.isCheck(this, blackKingPosition)
+                isBlackCheck = CheckSearch.isCheck(this, blackKing)
                 calculatedBlackCheck = true
             }
             isBlackCheck
@@ -101,8 +105,8 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         pos = Position.byCode("d1")
         setFigure(pos, figureFactory.getQueen(pos, true))
         pos = Position.byCode("e1")
-        setFigure(pos, figureFactory.getKing(pos, true))
-        whiteKingPosition = pos
+        whiteKing = figureFactory.getKing(pos, true)
+        setFigure(pos, whiteKing)
 
         pos = Position.byCode("a8")
         setFigure(pos, figureFactory.getRook(pos, false))
@@ -119,11 +123,8 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         pos = Position.byCode("d8")
         setFigure(pos, figureFactory.getQueen(pos, false))
         pos = Position.byCode("e8")
-        setFigure(pos, figureFactory.getKing(pos, false))
-        blackKingPosition = pos
-
-        assert(whiteKingPosition== Position.byCode("e1")) {"expected kingPos e1 but was $whiteKingPosition"}
-        assert(blackKingPosition== Position.byCode("e8")) {"expected kingPos e8 but was $blackKingPosition"}
+        blackKing = figureFactory.getKing(pos, false)
+        setFigure(pos, blackKing)
     }
 
     override fun init(chess960: Int) {
@@ -178,23 +179,22 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
             pos = Position[0, row]
             var figure = createFigure(otherFigures[i], true, pos)
             setFigure(pos, figure)
-            if (figure.isKing()) {
-                whiteKingPosition = pos
+            if (figure is King) {
+                whiteKing = figure
             }
             pos = Position[7, row]
             figure = createFigure(otherFigures[i], false, pos)
             setFigure(pos, figure)
-            if (figure.isKing()) {
-                blackKingPosition = pos
+            if (figure is King) {
+                blackKing = figure
             }
         }
-
-        assert(whiteKingPosition!= defaultKingPos) {"kingPos is never a1 in chess960"}
-        assert(blackKingPosition!= defaultKingPos) {"kingPos is never a1 in chess960"}
     }
 
     override fun init(des: String) {
         clear()
+        var foundWhiteKing = false
+        var foundBlackKing = false
 
         val iter = des.splitAndTrim(' ').iterator()
         iter.next()
@@ -204,8 +204,24 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
             val figureDescription = iter.next()
             val pos = getPositionOfCodedFigure(figureDescription)
             val figure = figureFactory.getFigureByString(figureDescription)
+            if(figure is King) {
+                if(figure.isWhite) {
+                    whiteKing = figure
+
+                    require(!foundWhiteKing) {"more than one white king in description [$des]"}
+                    foundWhiteKing = true
+                }else{
+                    blackKing = figure
+
+                    require(!foundBlackKing) {"more than one black king in description [$des]"}
+                    foundBlackKing = true
+                }
+            }
+            require(getFigure(pos)==null) {"two figures at same position $pos"}
             setFigure(pos, figure)
         }
+        require(foundWhiteKing) {"no white king in description [$des]"}
+        require(foundBlackKing) {"no black king in description [$des]"}
     }
 
     private fun getPositionOfCodedFigure(figure_description: String): Position {
@@ -254,20 +270,11 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         for (linearIndex in 0..63) {
             game[linearIndex] = null
         }
-        whiteKingPosition = defaultKingPos
-        blackKingPosition = defaultKingPos
     }
 
     override fun setFigure(pos: Position, figure: Figure) {
         clearCheckComputation()
-
         game[pos.index] = figure
-        if (figure.isKing()) {
-            if (figure.isWhite)
-                whiteKingPosition = pos
-            else
-                blackKingPosition = pos
-        }
     }
 
     override fun clearFigure(pos: Position) {
@@ -305,10 +312,6 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         }
         return figureIter
     }
-
-    override fun getKingPosition(whiteKing: Boolean) =
-            if (whiteKing) whiteKingPosition
-            else blackKingPosition
 
     override fun toString(): String {
         val buffer = StringBuilder(512)

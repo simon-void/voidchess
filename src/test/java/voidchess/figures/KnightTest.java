@@ -18,7 +18,7 @@ public class KnightTest {
     @Test
     public void testIsReachable() {
         String des = "black 0 Pawn-white-c2-false Knight-black-d4 "
-                + "Knight-black-f5";
+                + "Knight-black-f5 King-white-e1-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
         Position from = Position.byCode("d4");
@@ -45,8 +45,7 @@ public class KnightTest {
 
     @Test
     public void testGetPossibleMoves() {
-        String des = "white 0 Knight-white-a1 King-white-e1-0 "
-                + "Knight-white-g6";
+        String des = "white 0 Knight-white-a1 King-white-e1-0 Knight-white-g6 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Figure knight1 = game.getFigure(Position.byCode("a1"));

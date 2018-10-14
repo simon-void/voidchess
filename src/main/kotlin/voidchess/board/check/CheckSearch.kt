@@ -2,16 +2,18 @@ package voidchess.board.check
 
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.getFirstFigureInDir
+import voidchess.board.getKing
 import voidchess.board.move.Direction
 import voidchess.board.move.ExtendedMove
 import voidchess.board.move.Move
 import voidchess.board.move.Position
+import voidchess.figures.King
 import java.util.*
 
 
 object CheckSearch {
     fun analyseCheck(game: BasicChessGameInterface, whiteInCheck: Boolean): CheckStatus {
-        val kingPos = game.getKingPosition(whiteInCheck)
+        val kingPos = game.getKing(whiteInCheck).position
         val attackPositions = LinkedList<Position>()
         val collectAttackPositions: (pos: Position) -> Unit = {
             attackPositions.add(it)
@@ -37,11 +39,11 @@ object CheckSearch {
         }
 
         val lastMove = lastExtMove.move
-        if (lastExtMove.isEnpassent) return analyseCheckAfterEnpassent(game, whiteInCheck, lastMove)
-        if (lastExtMove.isCastling) return analyseCheckAfterCastling(game, whiteInCheck, lastMove)
-        if (lastExtMove.isPawnTransformation) return analyseCheckAfterPawnTransform(game, whiteInCheck, lastMove)
+        val kingPos = game.getKing(whiteInCheck).position
+        if (lastExtMove.isEnpassent) return analyseCheckAfterEnpassent(game, kingPos, lastMove)
+        if (lastExtMove.isCastling) return analyseCheckAfterCastling(game, kingPos, lastMove)
+        if (lastExtMove.isPawnTransformation) return analyseCheckAfterPawnTransform(game, kingPos, lastMove)
 
-        val kingPos = game.getKingPosition(whiteInCheck)
         val attackPositions = ArrayList<Position>(2)
         val movedFigure = game.getFigure(lastMove.to)!!
 
@@ -59,8 +61,7 @@ object CheckSearch {
         }
     }
 
-    private fun analyseCheckAfterEnpassent(game: BasicChessGameInterface, whiteInCheck: Boolean, lastMove: Move): CheckStatus {
-        val kingPos = game.getKingPosition(whiteInCheck)
+    private fun analyseCheckAfterEnpassent(game: BasicChessGameInterface, kingPos: Position, lastMove: Move): CheckStatus {
 
         val attackPositions = ArrayList<Position>(2)
         val attackFigure = game.getFigure(lastMove.to)!!
@@ -85,8 +86,7 @@ object CheckSearch {
         }
     }
 
-    private fun analyseCheckAfterPawnTransform(game: BasicChessGameInterface, whiteInCheck: Boolean, lastMove: Move): CheckStatus {
-        val kingPos = game.getKingPosition(whiteInCheck)
+    private fun analyseCheckAfterPawnTransform(game: BasicChessGameInterface, kingPos: Position, lastMove: Move): CheckStatus {
         val transformedPawn = game.getFigure(lastMove.to)!!
         val attackPositions = ArrayList<Position>(2)
         val passiveAttacker = getPassiveAttacker(game, kingPos, lastMove.from)
@@ -106,9 +106,7 @@ object CheckSearch {
         }
     }
 
-    private fun analyseCheckAfterCastling(game: BasicChessGameInterface, whiteInCheck: Boolean, lastMove: Move): CheckStatus {
-        val kingPos = game.getKingPosition(whiteInCheck)
-
+    private fun analyseCheckAfterCastling(game: BasicChessGameInterface, kingPos: Position, lastMove: Move): CheckStatus {
         val rookRow = lastMove.to.row
         val rookColumn = if (lastMove.to.column == 2) 3 else 5
         val rookPos = Position[rookRow, rookColumn]
@@ -134,8 +132,9 @@ object CheckSearch {
 
     private val doNotCollectPositions: (pos: Position) -> Unit = {}
 
-    fun isCheck(game: BasicChessGameInterface, kingPos: Position): Boolean {
-        val isWhite = game.getFigure(kingPos)!!.isWhite
+    fun isCheck(game: BasicChessGameInterface, king: King): Boolean {
+        val isWhite = king.isWhite
+        val kingPos = king.position
 
         if (isCheckByBishopOrQueen(game, kingPos, isWhite, doNotCollectPositions)) return true
         if (isCheckByRookOrQueen(game, kingPos, isWhite, doNotCollectPositions)) return true

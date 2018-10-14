@@ -8,16 +8,16 @@ import voidchess.board.SimpleArrayBoard
 import java.util.LinkedList
 
 import org.mockito.Mockito.mock
-import org.testng.Assert.*
 import org.testng.annotations.DataProvider
 import voidchess.board.move.Move
 import voidchess.board.move.Position
+import kotlin.test.*
 
 
 class KingTest {
     @Test
     fun testIsReachable() {
-        var des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0"
+        var des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0"
         var game = ChessGame(des)
 
         var from = Position.byCode("e1")
@@ -42,7 +42,7 @@ class KingTest {
         assertTrue(king.isReachable(to8, game))
 
 
-        des = "black 0 Rook-black-a8-0 Knight-black-b8 King-black-c8-0 Rook-black-h8-0"
+        des = "black 0 Rook-black-a8-0 Knight-black-b8 King-black-c8-0 Rook-black-h8-0 King-white-e1-0"
         game = ChessGame(des)
 
         from = Position.byCode("c8")
@@ -87,58 +87,57 @@ class KingTest {
     @DataProvider
     fun getReachableByCastelingData(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf("white 0 Rook-white-a1-0 King-white-g1-0", "g1", "a1", true),
-                arrayOf("white 0 Rook-white-c1-0 King-white-g1-0", "g1", "c1", true),
-                arrayOf("white 0 Rook-white-f1-0 King-white-g1-0", "g1", "f1", true),
-                arrayOf("white 0 Rook-white-a1-0 Bishop-white-b1 King-white-g1-0", "g1", "a1", false),
-                arrayOf("white 0 Bishop-white-b1 Rook-white-c1-0 King-white-g1-0", "g1", "c1", true),
-                arrayOf("white 0 Bishop-white-b1 Rook-white-f1-0 King-white-g1-0", "g1", "f1", true),
-                arrayOf("white 0 Rook-white-a1-0 Bishop-white-e1 King-white-g1-0", "g1", "a1", false),
-                arrayOf("white 0 Rook-white-c1-0 Bishop-white-e1 King-white-g1-0", "g1", "c1", false),
-                arrayOf("white 0 Bishop-white-e1 Rook-white-f1-0 King-white-g1-0", "g1", "f1", false),
-                arrayOf("white 0 Rook-white-a1-0 Bishop-black-e1 King-white-g1-0", "g1", "a1", false),
-                arrayOf("white 0 Rook-white-c1-0 Bishop-black-e1 King-white-g1-0", "g1", "c1", false),
-                arrayOf("white 0 Bishop-black-e1 Rook-white-f1-0 King-white-g1-0", "g1", "f1", false),
-                arrayOf("white 0 Rook-white-a1-0 King-white-b1-0 Bishop-white-e1", "b1", "a1", true),
-                arrayOf("white 0 Rook-white-a1-0 King-white-b1-0 Bishop-white-d1", "b1", "a1", false),
-                arrayOf("white 0 Rook-white-a1-0 King-white-b1-0 Bishop-white-c1", "b1", "a1", false),
-                arrayOf("white 0 Bishop-white-a1 Rook-white-b1-0 King-white-c1-0", "c1", "b1", true),
-                arrayOf("white 0 Bishop-white-b1 Rook-white-c1-0 King-white-d1-0 Bishop-white-e1", "d1", "c1", true),
+                arrayOf("white 0 Rook-white-a1-0 King-white-g1-0 King-black-e8-0", "g1", "a1", true),
+                arrayOf("white 0 Rook-white-c1-0 King-white-g1-0 King-black-e8-0", "g1", "c1", true),
+                arrayOf("white 0 Rook-white-f1-0 King-white-g1-0 King-black-e8-0", "g1", "f1", true),
+                arrayOf("white 0 Rook-white-a1-0 Bishop-white-b1 King-white-g1-0 King-black-e8-0", "g1", "a1", false),
+                arrayOf("white 0 Bishop-white-b1 Rook-white-c1-0 King-white-g1-0 King-black-e8-0", "g1", "c1", true),
+                arrayOf("white 0 Bishop-white-b1 Rook-white-f1-0 King-white-g1-0 King-black-e8-0", "g1", "f1", true),
+                arrayOf("white 0 Rook-white-a1-0 Bishop-white-e1 King-white-g1-0 King-black-e8-0", "g1", "a1", false),
+                arrayOf("white 0 Rook-white-c1-0 Bishop-white-e1 King-white-g1-0 King-black-e8-0", "g1", "c1", false),
+                arrayOf("white 0 Bishop-white-e1 Rook-white-f1-0 King-white-g1-0 King-black-e8-0", "g1", "f1", false),
+                arrayOf("white 0 Rook-white-a1-0 Bishop-black-e1 King-white-g1-0 King-black-e8-0", "g1", "a1", false),
+                arrayOf("white 0 Rook-white-c1-0 Bishop-black-e1 King-white-g1-0 King-black-e8-0", "g1", "c1", false),
+                arrayOf("white 0 Bishop-black-e1 Rook-white-f1-0 King-white-g1-0 King-black-e8-0", "g1", "f1", false),
+                arrayOf("white 0 Rook-white-a1-0 King-white-b1-0 Bishop-white-e1 King-black-e8-0", "b1", "a1", true),
+                arrayOf("white 0 Rook-white-a1-0 King-white-b1-0 Bishop-white-d1 King-black-e8-0", "b1", "a1", false),
+                arrayOf("white 0 Rook-white-a1-0 King-white-b1-0 Bishop-white-c1 King-black-e8-0", "b1", "a1", false),
+                arrayOf("white 0 Bishop-white-a1 Rook-white-b1-0 King-white-c1-0 King-black-e8-0", "c1", "b1", true),
+                arrayOf("white 0 Bishop-white-b1 Rook-white-c1-0 King-white-d1-0 Bishop-white-e1 King-black-e8-0", "d1", "c1", true),
 
-                arrayOf("black 0 Rook-black-h8-0 King-black-b8-0", "b8", "h8", true),
-                arrayOf("black 0 Rook-black-g8-0 King-black-b8-0", "b8", "g8", true),
-                arrayOf("black 0 Rook-black-c8-0 King-black-b8-0", "b8", "c8", true),
-                arrayOf("black 0 Rook-black-h8-0 Bishop-black-g8 King-black-b8-0", "b8", "h8", false),
-                arrayOf("black 0 Bishop-black-h8 Rook-black-g8-0 King-black-b8-0", "b8", "g8", true),
-                arrayOf("black 0 Bishop-black-h8 Rook-black-c8-0 King-black-b8-0", "b8", "c8", true),
-                arrayOf("black 0 Rook-black-h8-0 Bishop-black-e8 King-black-b8-0", "b8", "h8", false),
-                arrayOf("black 0 Rook-black-f8-0 Bishop-black-e8 King-black-b8-0", "b8", "f8", false),
-                arrayOf("black 0 Bishop-black-e8 Rook-black-c8-0 King-black-b8-0", "b8", "c8", false),
-                arrayOf("black 0 Rook-black-h8-0 Bishop-white-e8 King-black-b8-0", "b8", "h8", false),
-                arrayOf("black 0 Rook-black-f8-0 Bishop-white-e8 King-black-b8-0", "b8", "f8", false),
-                arrayOf("black 0 Bishop-white-e8 Rook-black-c8-0 King-black-b8-0", "b8", "c8", false),
-                arrayOf("black 0 Rook-black-h8-0 King-black-g8-0 Bishop-black-e8", "g8", "h8", true),
-                arrayOf("black 0 Rook-black-h8-0 King-black-g8-0 Bishop-black-f8", "g8", "h8", false),
-                arrayOf("black 0 Bishop-black-h8 Rook-black-g8-0 King-black-f8-0", "f8", "g8", true),
-                arrayOf("black 0 Bishop-black-h8 Rook-black-g8-0 King-black-f8-0 Bishop-black-e8", "f8", "g8", true)
+                arrayOf("black 0 Rook-black-h8-0 King-black-b8-0 King-white-e1-0", "b8", "h8", true),
+                arrayOf("black 0 Rook-black-g8-0 King-black-b8-0 King-white-e1-0", "b8", "g8", true),
+                arrayOf("black 0 Rook-black-c8-0 King-black-b8-0 King-white-e1-0", "b8", "c8", true),
+                arrayOf("black 0 Rook-black-h8-0 Bishop-black-g8 King-black-b8-0 King-white-e1-0", "b8", "h8", false),
+                arrayOf("black 0 Bishop-black-h8 Rook-black-g8-0 King-black-b8-0 King-white-e1-0", "b8", "g8", true),
+                arrayOf("black 0 Bishop-black-h8 Rook-black-c8-0 King-black-b8-0 King-white-e1-0", "b8", "c8", true),
+                arrayOf("black 0 Rook-black-h8-0 Bishop-black-e8 King-black-b8-0 King-white-e1-0", "b8", "h8", false),
+                arrayOf("black 0 Rook-black-f8-0 Bishop-black-e8 King-black-b8-0 King-white-e1-0", "b8", "f8", false),
+                arrayOf("black 0 Bishop-black-e8 Rook-black-c8-0 King-black-b8-0 King-white-e1-0", "b8", "c8", false),
+                arrayOf("black 0 Rook-black-h8-0 Bishop-white-e8 King-black-b8-0 King-white-e1-0", "b8", "h8", false),
+                arrayOf("black 0 Rook-black-f8-0 Bishop-white-e8 King-black-b8-0 King-white-e1-0", "b8", "f8", false),
+                arrayOf("black 0 Bishop-white-e8 Rook-black-c8-0 King-black-b8-0 King-white-e1-0", "b8", "c8", false),
+                arrayOf("black 0 Rook-black-h8-0 King-black-g8-0 Bishop-black-e8 King-white-e1-0", "g8", "h8", true),
+                arrayOf("black 0 Rook-black-h8-0 King-black-g8-0 Bishop-black-f8 King-white-e1-0", "g8", "h8", false),
+                arrayOf("black 0 Bishop-black-h8 Rook-black-g8-0 King-black-f8-0 King-white-e1-0", "f8", "g8", true),
+                arrayOf("black 0 Bishop-black-h8 Rook-black-g8-0 King-black-f8-0 Bishop-black-e8 King-white-e1-0", "f8", "g8", true)
         )
     }
 
     @Test
     fun testGetReachableMoves() {
         val game = ChessGame(621)
-        val from = Position.byCode("e1")
-        var king = game.getFigure(from)!!
+        var king = game.whiteKing
 
         val moveIter = LinkedList<Move>()
         king.getReachableMoves(game, moveIter)
         assertEquals(0, moveIter.size)
 
 
-        val des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0"
+        val des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0"
         val board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
 
-        king = board.getFigure(Position.byCode("e1"))!!
+        king = board.whiteKing
         moveIter.clear()
         king.getReachableMoves(board, moveIter)
         assertEquals(moveIter.size, 7, "five regular king moves + long/short castling, therefor")
@@ -146,7 +145,7 @@ class KingTest {
 
     @Test
     fun testIsPassiveBound() {
-        var des = "black 0 Knight-white-b6 Rook-black-a8-0 King-black-e8-0 Rook-black-h8-0"
+        var des = "black 0 Knight-white-b6 Rook-black-a8-0 King-black-e8-0 Rook-black-h8-0 King-white-e1-0"
         val game = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
 
         var from = Position.byCode("e8")
@@ -162,7 +161,7 @@ class KingTest {
         assertFalse(king.isPassiveBound(to3, game))
         assertFalse(king.isPassiveBound(to4, game))
 
-        des = "black 0 Bishop-white-c6 Rook-black-a8-0 King-black-e8-0 Rook-black-h8-0"
+        des = "black 0 Bishop-white-c6 Rook-black-a8-0 King-black-e8-0 Rook-black-h8-0  King-white-e1-0"
         game.init(des)
         from = Position.byCode("e8")
         to1 = Position.byCode("a8")
@@ -180,57 +179,57 @@ class KingTest {
 
     @Test
     fun testGetPossibleMoves() {
-        var des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0"
+        var des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0"
         var board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        var king = board.getFigure(Position.byCode("e1"))!!
+        var king = board.whiteKing
         var moveIter: MutableList<Move> = LinkedList()
         king.getPossibleMoves(board, moveIter)
         assertEquals(moveIter.size, 7, "five regular king moves + long/short castling, therefor")
 
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e4"
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e4 King-black-e8-0"
         board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.getFigure(Position.byCode("e1"))!!
+        king = board.whiteKing
         moveIter.clear()
         king.getPossibleMoves(board, moveIter)
         assertEquals(moveIter.size, 7, "five regular king moves + long/short castling, therefor")
 
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e3"
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e3 King-black-e8-0"
         board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.getFigure(Position.byCode("e1"))!!
+        king = board.whiteKing
         moveIter.clear()
         king.getPossibleMoves(board, moveIter)
         assertEquals(moveIter.size, 3, "five regular king moves (long/short castling intercepted), therefor")
 
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e2"
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e2 King-black-e8-0"
         board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.getFigure(Position.byCode("e1"))!!
+        king = board.whiteKing
         moveIter.clear()
         king.getPossibleMoves(board, moveIter)
         assertEquals(moveIter.size, 3, "three king moves (long/short castling intercepted), therefor")
 
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e3"
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e3 King-black-e8-0"
         board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.getFigure(Position.byCode("e1"))!!
+        king = board.whiteKing
         moveIter.clear()
         king.getPossibleMoves(board, moveIter)
         assertEquals(moveIter.size, 3, "three king moves (long/short castling intercepted), therefor")
 
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e2"
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e2 King-black-e8-0"
         board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.getFigure(Position.byCode("e1"))!!
+        king = board.whiteKing
         moveIter.clear()
         king.getPossibleMoves(board, moveIter)
         assertEquals(moveIter.size, 5, "five king moves (long/short castling intercepted), therefor")
 
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Rook-black-f2-2"
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Rook-black-f2-2 King-black-e8-0"
         board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.getFigure(Position.byCode("e1"))!!
+        king = board.whiteKing
         moveIter.clear()
         king.getPossibleMoves(board, moveIter)
         assertEquals(moveIter.size, 3, "d1, f2 and long castling, therefor")
 
         board.init(621)
-        king = board.getFigure(board.getKingPosition(true))!!
+        king = board.whiteKing
         moveIter = LinkedList()
         king.getPossibleMoves(board, moveIter)
         assertEquals(moveIter.size, 0, "king shouldn't be able to castle because bishop blocks the king's end position")

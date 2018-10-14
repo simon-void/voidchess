@@ -27,6 +27,14 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     override val isWhiteTurn: Boolean
         get() = whiteTurn
 
+    override val whiteKing: King
+        get() = game.whiteKing
+
+    override val blackKing: King
+        get() = game.blackKing
+
+    override fun isCheck(isWhiteInCheck: Boolean) = CheckSearch.isCheck(game, game.getKing(isWhiteInCheck))
+
     private val isEnd: MoveResult
         get() {
             if (noMovesLeft(whiteTurn)) {
@@ -201,10 +209,6 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     override fun getLastMove() = if (extendedMoveStack.isEmpty()) null else extendedMoveStack.last
-
-    override fun getKingPosition(whiteKing: Boolean): Position {
-        return game.getKingPosition(whiteKing)
-    }
 
     override fun isFreeArea(pos: Position): Boolean {
         return game.isFreeArea(pos)
@@ -478,12 +482,10 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         return true
     }
 
-    override fun isCheck(isWhiteInCheck: Boolean) = CheckSearch.isCheck(game, game.getKingPosition(isWhiteInCheck))
-
     override fun getPossibleMoves(possibleMoves: MutableList<Move>) {
-        val kingPos = game.getKingPosition(whiteTurn)
+        val king = game.getKing(whiteTurn)
 
-        getFigure(kingPos)!!.getPossibleMoves(game, possibleMoves)
+        king.getPossibleMoves(game, possibleMoves)
 
         val figures = game.getFigures()
         for (figure in figures) {

@@ -115,7 +115,7 @@ class King : CastlingFigure {
         if (toFigure!=null && toFigure.canCastle()) {
             val column = if (to.column - position.column > 0) 6 else 2
             realTo = Position[to.row, column]
-            if (CheckSearch.isCheck(game, position)) return true
+            if (CheckSearch.isCheck(game, this)) return true
             if (isKingAtCheckInBetweenCastling(position, realTo, game)) return true
         }
         return isKingCheckAt(realTo, game)
@@ -140,7 +140,7 @@ class King : CastlingFigure {
     private fun isKingCheckAt(to: Position, game: SimpleChessBoardInterface): Boolean {
         val from = position
         val figureTaken = game.move(this, to)
-        val isCheck = CheckSearch.isCheck(game, to)
+        val isCheck = CheckSearch.isCheck(game, this)
         game.undoMove(this, from, figureTaken)
         return isCheck
     }

@@ -18,7 +18,7 @@ public class RookTest {
     @Test
     public void testIsReachable() {
         String des = "white 0 Pawn-white-c2-false Rook-white-c4-2 "
-                + "Knight-black-g4";
+                + "Knight-black-g4 King-white-e1-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
         Position from = Position.byCode("c4");

@@ -3,6 +3,7 @@ package voidchess.figures
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
 import voidchess.board.check.CheckStatus
+import voidchess.board.getKing
 import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -67,7 +68,7 @@ abstract class Figure constructor(
     }
 
     open fun isPassiveBound(to: Position, game: SimpleChessBoardInterface): Boolean {
-        val kingPos = game.getKingPosition(isWhite)
+        val kingPos = game.getKing(isWhite).position
         //falls diese Figur nicht mit dem König auf einer Vertikalen,Horizontalen oder
         //Diagonalen steht, ist sie nicht gebunden
         if (!kingPos.isStraightOrDiagonalTo(position)) {
@@ -83,7 +84,7 @@ abstract class Figure constructor(
 
         //falls eine Figure zwischen König und dieser steht, ist diese nicht gebunden
         while (row != kingPos.row || column != kingPos.column) {
-            val middlePos = Position.get(row, column)
+            val middlePos = Position[row, column]
             if (!game.isFreeArea(middlePos)) return false
             // TODO maybe return false on next if?!?!
             if (middlePos.equalsPosition(to)) isToPositionInBetweenKingAndAttacker = true
@@ -97,7 +98,7 @@ abstract class Figure constructor(
         //nur falls in Verlängerung der Königslinie eine feindliche Figur steht(Dame,Läufer,Turm)
         //und das Ziel des Zuges nicht auf dieser Linie liegt, ist diese Figur gebunden
         while (row in 0..7 && column in 0..7) {
-            val middlePos = Position.get(row, column)
+            val middlePos = Position[row, column]
             if (middlePos.equalsPosition(to)) isToPositionInBetweenKingAndAttacker = true
             val content = game.getContent(middlePos)
             if (!content.isFreeArea) {

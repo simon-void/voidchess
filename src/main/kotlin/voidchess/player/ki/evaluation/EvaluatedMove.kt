@@ -9,9 +9,9 @@ class EvaluatedMove(val move: Move, val value: Evaluated) : Comparable<Evaluated
         return value.compareTo(other.value)
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if(obj !is EvaluatedMove) return false
-        return move.equalsMove(obj.move)
+    override fun equals(other: Any?): Boolean {
+        if(other !is EvaluatedMove) return false
+        return move.equalsMove(other.move)
     }
 
     override fun hashCode() = move.hashCode()

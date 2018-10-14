@@ -102,7 +102,7 @@ public class FigureTest {
 
     @Test
     public void testIsPassivetBound() {
-        String des = "white 0 King-white-e1-0 Rook-white-e3-4 Queen-black-e5";
+        String des = "white 0 King-white-e1-0 Rook-white-e3-4 Queen-black-e5 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Position from = Position.byCode("e3");
@@ -123,7 +123,7 @@ public class FigureTest {
 
     @Test
     public void testIsBound() {
-        String des = "white 0 King-white-e1-0 Rook-white-e3-4 Queen-black-e5";
+        String des = "white 0 King-white-e1-0 Rook-white-e3-4 Queen-black-e5 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Position from1 = Position.byCode("e3");
@@ -147,7 +147,7 @@ public class FigureTest {
         assertFalse(king.isBound(to1, game));
         assertFalse(king.isBound(to6, game));
 
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-e3-4 Bishop-black-c3 Queen-black-e5";
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-e3-4 Bishop-black-c3 Queen-black-e5 King-black-e8-0";
         game.init(des);
 
         assertTrue(rook.isBound(to1, game));
@@ -159,7 +159,7 @@ public class FigureTest {
         assertTrue(king.isBound(to6, game));
         assertTrue(king.isBound(to7, game));
 
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Bishop-black-e2";
+        des = "white 0 Rook-white-a1-0 King-white-e1-0 Bishop-black-e2 King-black-e8-0";
         game.init(des);
 
         assertFalse(king.isBound(to1, game));
@@ -169,7 +169,7 @@ public class FigureTest {
 
     @Test
     public void testIsMoveable() {
-        String des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-h4";
+        String des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-h4 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Position from = Position.byCode("h2");

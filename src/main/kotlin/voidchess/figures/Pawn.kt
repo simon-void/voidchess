@@ -76,7 +76,7 @@ class Pawn : Figure {
         if (to.column != position.column) {
             return false
         }
-        val oneForwardPos = position.step(forwardDirection)!! // !! ok because pawns never stand on the last rank
+        val oneForwardPos = position.step(forwardDirection) ?: position // ?: ok because pawns never stand on the last rank
         val oneForwardFree = game.isFreeArea(oneForwardPos)
         if( !oneForwardFree) {
             return false
@@ -97,14 +97,14 @@ class Pawn : Figure {
         // now we know that to is one step diagonal to us
         game.getFigure(to)?.let { if (hasDifferentColor(it)) return true }
         // ok, so no simple diagonal strike, maybe enpassent
-        val sidePos = Position.get(position.row, to.column)
+        val sidePos = Position[position.row, to.column]
         game.getFigure(sidePos)?.let { if (it.canBeHitByEnpasent()) return true }
         return false
     }
 
     override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
         forEachReachablePos(game) {
-            result.add(Move.get(position, it))
+            result.add(Move[position, it])
         }
     }
 

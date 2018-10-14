@@ -31,7 +31,7 @@ public class PawnTest {
 
     @Test
     public void testIsReachable() {
-        String des = "white 0 Pawn-white-a2-false Pawn-white-b3-false";
+        String des = "white 0 Pawn-white-a2-false Pawn-white-b3-false King-white-e1-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
         Position from = Position.byCode("a2");
@@ -48,7 +48,7 @@ public class PawnTest {
         assertFalse(pawn.isReachable(from, game));
 
 
-        des = "black 0 Pawn-white-e4-true Pawn-white-c3-false Pawn-black-d4-false";
+        des = "black 0 Pawn-white-e4-true Pawn-white-c3-false Pawn-black-d4-false King-white-e1-0 King-black-e8-0";
         game = new ChessGame(des);
 
         from = Position.byCode("d4");
@@ -67,7 +67,7 @@ public class PawnTest {
     @Test
     public void testGetPossibleMoves() {
         String des = "black 0 Pawn-white-a4-true Pawn-black-b4-false "
-                + "King-black-e8-0 Pawn-black-h7-false";
+                + "King-black-e8-0 Pawn-black-h7-false King-white-e1-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
         Figure pawn1 = game.getFigure(Position.byCode("b4"));

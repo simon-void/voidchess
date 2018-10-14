@@ -66,7 +66,7 @@ public class SimpleBoardTest {
 
     @Test
     public void testInitByDescriptionWithToManySpaces() {
-        String des = "  white   0   Queen-white-d1     King-white-e1-0   ";
+        String des = "  white   0   Queen-white-d1     King-white-e1-0    King-black-e8-0     ";
         board.init(des);
         assertTrue(board.getFigure(Position.byCode("d1")).isQueen());
     }
@@ -97,7 +97,7 @@ public class SimpleBoardTest {
         CheckStatus status = board.getCheckStatus(true);
         assertFalse(status.isCheck());
 
-        String des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-b4";
+        String des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-b4 King-black-e8-0";
         board.init(des);
         status = board.getCheckStatus(true);
         assertTrue(status.isCheck());
@@ -144,8 +144,8 @@ public class SimpleBoardTest {
     @DataProvider
     public Object[][] getTestMoveUndoMoveInvarianceData() {
         return new Object[][] {
-                new Object[] {"e1", "d2", "white 0 King-white-e1-0 Queen-black-d2"},
-                new Object[] {"e1", "f1", "white 0 King-white-e1-0 Queen-black-d2"},
+                new Object[] {"e1", "d2", "white 0 King-white-e1-0 Queen-black-d2 King-black-e8-0"},
+                new Object[] {"e1", "f1", "white 0 King-white-e1-0 Queen-black-d2 King-black-e8-0"},
         };
     }
 
