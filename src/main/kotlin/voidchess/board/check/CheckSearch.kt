@@ -159,7 +159,7 @@ object CheckSearch {
     }
 
     private inline fun isCheckByPawn(game: BasicChessGameInterface, kingPos: Position, isWhite: Boolean, informOfAttackerPos: (Position) -> Unit): Boolean {
-        val forwardDir = if (isWhite) Direction.UP else Direction.DOWN
+        val forwardDir = Direction.getForward(isWhite)
 
         kingPos.step(Direction.getDiagonal(forwardDir, Direction.RIGHT))?.let { pos ->
             game.getFigure(pos)?.let { figure ->

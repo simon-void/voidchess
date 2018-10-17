@@ -11,5 +11,4 @@ enum class FigureType constructor(
     KNIGHT(4, "Knight"),
     QUEEN(5, "Queen"),
     KING(6, "King");
-
 }

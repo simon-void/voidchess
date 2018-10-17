@@ -15,7 +15,9 @@ abstract class Figure constructor(
         //Farbe der Figur
         val isWhite: Boolean,
         var position: Position,
-        val type: FigureType
+        val type: FigureType,
+        val attacksDiagonalLine: Boolean,
+        val attacksStraightLine: Boolean
 ) {
 
     //kodiert Name der Klasse + Farbe
@@ -140,12 +142,10 @@ abstract class Figure constructor(
     }
 
     protected inline fun forEachReachablePos(game: BasicChessGameInterface, direction: Direction, informOf: (Position) -> Unit) {
-        var currentPos: Position? = position
+        var currentPos: Position = position
 
         while (true) {
-            // the initial currentPos is not null and after every assignment it is checked if currentPos is null, so !!. is fine
-            currentPos = currentPos!!.step(direction)
-            if (currentPos==null) return
+            currentPos = currentPos.step(direction) ?: return
             val figure = game.getFigure(currentPos)
             if (figure == null) {
                 informOf(currentPos)

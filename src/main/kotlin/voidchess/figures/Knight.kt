@@ -6,7 +6,7 @@ import voidchess.board.move.Move
 import voidchess.board.move.Position
 
 
-class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.KNIGHT) {
+class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.KNIGHT, false, false) {
 
     override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val horizontalDifference = Math.abs(position.row - to.row)

@@ -19,6 +19,12 @@ enum class Direction(internal val posIndexDiff: Int, val isDiagonal: Boolean) {
         }
     }
 
+    fun isForwardDiagonal(isWhite: Boolean) = if(isWhite) {
+        this==UP_LEFT || this==UP_RIGHT
+    } else {
+        this==DOWN_LEFT || this==DOWN_RIGHT
+    }
+
     companion object {
         val straightDirs = setOf(UP, LEFT, RIGHT, DOWN)
         val diagonalDirs = setOf(UP_LEFT, UP_RIGHT, DOWN_RIGHT, DOWN_LEFT)
@@ -35,5 +41,6 @@ enum class Direction(internal val posIndexDiff: Int, val isDiagonal: Boolean) {
             }
             else -> throw IllegalArgumentException("upOrDown parameter isn't UP or DOWN but $upOrDown")
         }
+        fun getForward(isWhite: Boolean) = if(isWhite) { UP } else { DOWN }
     }
 }

@@ -1,5 +1,8 @@
 package voidchess.board.move
 
+import kotlin.math.abs
+import kotlin.math.max
+
 
 class Position private constructor(@JvmField val row: Int, @JvmField val column: Int) {
     val index = getIndex(row, column)
@@ -40,18 +43,18 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
         val columnDifference = to.column - column
 
         if (rowDifference == 0) {
-            if (columnDifference > 0) {
-                return Direction.RIGHT
+            return if (columnDifference > 0) {
+                Direction.RIGHT
             } else {
-                return Direction.LEFT
+                Direction.LEFT
             }
         }
 
         if (columnDifference == 0) {
-            if (rowDifference > 0) {
-                return Direction.UP
+            return if (rowDifference > 0) {
+                Direction.UP
             } else {
-                return Direction.DOWN
+                Direction.DOWN
             }
         }
 
@@ -74,6 +77,11 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
             }
         }
     }
+
+    /**
+     * the number of moves a king would need to move from this position to [other]
+     */
+    fun distanceTo(other: Position) = max(abs(row-other.row), abs(column-other.column))
 
     fun offset(rowOffset: Int, columnOffset: Int): Position? {
         val toRow = row + rowOffset
@@ -121,8 +129,7 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
     }
 
     inline fun forEachMiddlePosInLine(other: Position, informOf: (Position) -> Unit) {
-        val directionTo = getDirectionTo(other)
-        if(directionTo==null) throw IllegalArgumentException("there is no line between $this and $other")
+        val directionTo = getDirectionTo(other) ?: throw IllegalArgumentException("there is no line between $this and $other")
 
         var oldPos = this
         while (true) {

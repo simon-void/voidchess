@@ -4,9 +4,20 @@ import voidchess.board.move.Move
 import voidchess.board.move.Position
 
 
-abstract class CastlingFigure(isWhite: Boolean, val initialPosition: Position, protected var stepsTaken: Int, type: FigureType) : Figure(isWhite, initialPosition, type) {
+abstract class CastlingFigure(
+        isWhite: Boolean,
+        val initialPosition: Position,
+        protected var stepsTaken: Int,
+        type: FigureType
+) : Figure(
+        isWhite,
+        initialPosition,
+        type,
+        false,
+        type==FigureType.ROOK ) {
 
-    constructor(isWhite: Boolean, startPosition: Position, type: FigureType) : this(isWhite, startPosition, 0, type)
+    constructor(isWhite: Boolean, startPosition: Position, type: FigureType)
+            : this(isWhite, startPosition, 0, type)
 
     override fun undoMove(oldPosition: Position) {
         stepsTaken--

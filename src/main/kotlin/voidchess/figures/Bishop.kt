@@ -7,7 +7,7 @@ import voidchess.board.move.Move
 import voidchess.board.move.Position
 
 
-class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.BISHOP) {
+class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.BISHOP, true, false) {
 
     override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val direction = position.getDirectionTo(to)

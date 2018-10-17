@@ -7,7 +7,7 @@ import voidchess.board.move.Move
 import voidchess.board.move.Position
 
 
-class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.QUEEN) {
+class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.QUEEN, true, true) {
 
     override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
         val direction = position.getDirectionTo(to)

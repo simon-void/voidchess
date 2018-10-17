@@ -238,4 +238,22 @@ public class PositionTest {
         Position newPos = expectedPosCode == null ? null : Position.byCode(expectedPosCode);
         return new Object[]{pos, direction, newPos};
     }
+
+    @Test(dataProvider = "getTestDistanceToData")
+    public void testDistanceTo(String posCode1, String posCode2, int expectedDistance) {
+        Position pos1 = Position.byCode(posCode1);
+        Position pos2 = Position.byCode(posCode2);
+
+        assertEquals(pos1.distanceTo(pos2), expectedDistance, "distance");
+        assertEquals(pos2.distanceTo(pos1), expectedDistance, "reverse distance");
+    }
+
+    @DataProvider
+    private Object[][] getTestDistanceToData() {
+        return new Object[][]{
+                new Object[]{"a1", "h8", 7},
+                new Object[]{"b3", "c8", 5},
+                new Object[]{"b7", "h3", 6},
+        };
+    }
 }

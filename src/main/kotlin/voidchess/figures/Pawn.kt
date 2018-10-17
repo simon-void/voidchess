@@ -9,15 +9,16 @@ import java.util.*
 
 
 class Pawn : Figure {
-    private val forwardDirection = if(isWhite) Direction.UP else Direction.DOWN
+    private val forwardDirection = Direction.getForward(isWhite)
     private val startingRow = if(isWhite) 1 else 6
     private var canBeHitByEnpasent: Boolean = false
 
-    constructor(isWhite: Boolean, position: Position) : super(isWhite, position, FigureType.PAWN) {
+    constructor(isWhite: Boolean, position: Position) : super(isWhite, position, FigureType.PAWN, false, false) {
         canBeHitByEnpasent = false
     }
 
-    constructor(isWhite: Boolean, position: Position, canBeHitByEnpasent: Boolean) : super(isWhite, position, FigureType.PAWN) {
+    constructor(isWhite: Boolean, position: Position, canBeHitByEnpasent: Boolean)
+            : super(isWhite, position, FigureType.PAWN, false, false) {
         this.canBeHitByEnpasent = canBeHitByEnpasent
     }
 
