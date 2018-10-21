@@ -2,8 +2,6 @@ package voidchess.board.move;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import voidchess.board.move.Direction;
-import voidchess.board.move.Position;
 
 import static org.testng.Assert.*;
 
