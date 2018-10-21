@@ -145,8 +145,11 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
 
     companion object {
         private val positions = Array(64) {
-            val column = it % 8
-            val row = it / 8
+            // optimized from: reverse (row * 8) + column
+            // val column = it % 8
+            // val row = it / 8
+            val column = it and 7
+            val row = it shr 3
             return@Array Position(row, column)
         }
 
@@ -171,8 +174,8 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
             return positions[getIndex(row, column)]
         }
 
-        // optimized from: column + row * 8
-        private fun getIndex(row: Int, column: Int) = column + (row shl 3)
+        // optimized from: (row * 8) + column
+        private fun getIndex(row: Int, column: Int) = (row shl 3) or column
 
         @JvmStatic
         fun inBounds(row: Int, column: Int): Boolean = row in 0..7 && column in 0..7

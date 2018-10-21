@@ -4,7 +4,6 @@ import voidchess.board.check.CheckSearch
 import voidchess.board.move.*
 import voidchess.figures.*
 import voidchess.player.ki.evaluation.SimplePruner
-import java.lang.IllegalStateException
 import java.util.*
 
 
@@ -60,6 +59,9 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
 
     private val isDrawBecauseOfLowMaterial: Boolean
         get() {
+            if (mementoStack.last.figureCount > 6) {
+                return false
+            }
             var numberOfWhiteBishops = 0
             var numberOfBlackBishops = 0
             var numberOfWhiteKnights = 0
@@ -551,7 +553,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
 }
 
 private class Memento constructor(game: BasicChessGameInterface, private val isWhite: Boolean) {
-    private val figureCount: Int
+    internal val figureCount: Int
     private val compressedBoard: LongArray
 
     init {
@@ -567,7 +569,12 @@ private class Memento constructor(game: BasicChessGameInterface, private val isW
 
         // compress the board by exploiting that typeInfo is smaller than 16
         // and therefore only 4 bits are needed -> pack 15 typeInfos into 1 long
-        compressedBoard = longArrayOf(compressBoardSlicesToLong(board, 0, 15), compressBoardSlicesToLong(board, 15, 30), compressBoardSlicesToLong(board, 30, 45), compressBoardSlicesToLong(board, 45, 60), compressBoardSlicesToLong(board, 60, 64))
+        compressedBoard = longArrayOf(
+                compressBoardSlicesToLong(board, 0, 15),
+                compressBoardSlicesToLong(board, 15, 30),
+                compressBoardSlicesToLong(board, 30, 45),
+                compressBoardSlicesToLong(board, 45, 60),
+                compressBoardSlicesToLong(board, 60, 64))
         figureCount = count
     }
 
@@ -586,8 +593,10 @@ private class Memento constructor(game: BasicChessGameInterface, private val isW
         var compressedValue: Long = 0
         for (i in startIndex until endIndexMinusOne) {
             assert(board[i] in 0..15) // board[i] (=figure==null?0:figure.typeInfo) out of Bounds, it has to fit into 4 bits with 0->no figure!
-            compressedValue += board[i].toLong()
-            compressedValue = compressedValue shl 4
+            // optimized form of
+//            compressedValue += board[i].toLong()
+//            compressedValue = compressedValue shl 4
+            compressedValue = (compressedValue or board[i].toLong()) shl 4
         }
         compressedValue += board[endIndexMinusOne].toLong()
         return compressedValue

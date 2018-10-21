@@ -47,6 +47,15 @@ public class PositionTest {
     }
 
     @Test
+    public void testIndexConversion() {
+        for (int i = 0; i < 64; i++) {
+            Position posByIndex = Position.byIndex(i);
+            Position posByRowColumn = Position.get(posByIndex.row, posByIndex.column);
+            assertEquals(posByRowColumn.getIndex(), i, "recomputed index");
+        }
+    }
+
+    @Test
     public void testToString() {
         Position pos1 = Position.get(0, 0);
         assertEquals(pos1.toString(), "a1");

@@ -11,8 +11,11 @@ class Move private constructor(@JvmField val from: Position, @JvmField val to: P
 
     companion object {
         private val moves = Array(64 * 64) {
-            val fromIndex = it % 64
-            val toIndex = it / 64
+            // optimized from: reverse (toIndex * 64) + fromIndex
+            // val fromIndex = it % 64
+            // val toIndex = it / 64
+            val fromIndex = it and 63
+            val toIndex = it shr 6
             return@Array Move(
                     Position.byIndex(fromIndex),
                     Position.byIndex(toIndex)
@@ -52,7 +55,7 @@ class Move private constructor(@JvmField val from: Position, @JvmField val to: P
                     toRow in 0..7
         }
 
-        // optimized from: fromIndex + toIndex * 64
-        private fun getMoveIndex(fromIndex: Int, toIndex: Int) = fromIndex + (toIndex shl 6)
+        // optimized from: (toIndex * 64) + fromIndex
+        private fun getMoveIndex(fromIndex: Int, toIndex: Int) =  (toIndex shl 6) or fromIndex
     }
 }
