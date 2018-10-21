@@ -1,6 +1,7 @@
 package voidchess.player.ki.evaluation
 
 import voidchess.board.ChessGameInterface
+import voidchess.board.forAllFigures
 import voidchess.figures.Figure
 import voidchess.figures.King
 import voidchess.board.move.Position
@@ -30,7 +31,7 @@ object StaticEvaluation : StaticEvaluationInterface {
         var whiteFigures = 0.0
         var blackFigures = 0.0
 
-        for (figure in game.getFigures()) {
+        game.forAllFigures {figure->
             if (figure.isWhite) {
                 when {
                     figure.isPawn() -> whiteFigures += PAWN_VALUE
@@ -70,8 +71,7 @@ object StaticEvaluation : StaticEvaluationInterface {
         var whiteEvaluation = 0.0
         var blackEvaluation = 0.0
 
-        val figures = game.getFigures()
-        for (figure in figures) {
+        game.forAllFigures {figure->
             val pos = figure.position
             if (figure.isPawn()) {
                 if (figure.isWhite) {
@@ -207,11 +207,19 @@ object StaticEvaluation : StaticEvaluationInterface {
 
 
     private fun evaluateKing(game: ChessGameInterface, king: King): Double {
-        val colorOfOppositeQueen = !king.isWhite
-        val queenOfOppositeColorStillOnBoard = game.getFigures().any { figure -> figure.isQueen() && figure.isWhite==colorOfOppositeQueen }
+        val queenOfOppositeColorStillOnBoard = isQueenOfColorStillOnBoard(game, !king.isWhite)
         var value = evaluateCastling(king, queenOfOppositeColorStillOnBoard)
         value += evaluateKingDefense(game, king, queenOfOppositeColorStillOnBoard)
         return value
+    }
+
+    private fun isQueenOfColorStillOnBoard(game: ChessGameInterface, isWhite: Boolean): Boolean {
+        game.forAllFigures { figure ->
+            if (figure.isQueen() && figure.isWhite == isWhite) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun evaluateCastling(king: King, queenOfOppositeColorStillOnBoard: Boolean) =

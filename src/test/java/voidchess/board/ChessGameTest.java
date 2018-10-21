@@ -104,14 +104,6 @@ public class ChessGameTest {
     }
 
     @Test
-    public void testGetFigures() {
-        String des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 "
-                + "Knight-white-c2 Knight-white-e7 King-black-e8-0";
-        ChessGame game = new ChessGame(des);
-        assertEquals(game.getFigures().size(), 6);
-    }
-
-    @Test
     public void testMove() {
         String des = "white 0 King-white-e1-0 Pawn-white-c2-false King-black-e8-0";
         ChessGame game = new ChessGame(des);

@@ -9,7 +9,6 @@ import voidchess.figures.King
 interface BasicChessGameInterface {
     val whiteKing: King
     val blackKing: King
-    fun getFigures(): List<Figure>
     fun isFreeArea(pos: Position): Boolean
     fun getFigure(pos: Position): Figure?
     fun getContent(pos: Position): BoardContent
@@ -28,3 +27,6 @@ fun BasicChessGameInterface.getFirstFigureInDir(direction: Direction, startPos: 
 }
 
 fun BasicChessGameInterface.getKing(isWhiteKing: Boolean): King = if (isWhiteKing) { whiteKing } else { blackKing }
+inline fun BasicChessGameInterface.forAllFigures(informOfFigure: (Figure)->Unit) {
+    for (linearIndex in 0..63) getFigure(Position.byIndex(linearIndex))?.let(informOfFigure)
+}

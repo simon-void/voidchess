@@ -67,8 +67,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
             var numberOfWhiteKnights = 0
             var numberOfBlackKnights = 0
 
-            val figures = game.getFigures()
-            for (figure in figures) {
+            game.forAllFigures { figure ->
                 if (figure.isPawn()
                         || figure.isRook()
                         || figure.isQueen()) {
@@ -95,7 +94,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
             if (numberOfWhiteBishops == 1 && numberOfWhiteKnights > 0) {
                 return false
             }
-            return !(numberOfBlackBishops == 1 && numberOfBlackKnights > 0)
+            return numberOfBlackBishops == 0 || numberOfBlackKnights == 0
         }
 
     private val isDrawBecauseOfThreeTimesSamePosition: Boolean
@@ -232,10 +231,6 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         }
     }
 
-    override fun getFigures(): List<Figure> {
-        return game.getFigures()
-    }
-
     override fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean {
         if (isFreeArea(pos)) return false
         val figure = getFigure(pos)
@@ -369,8 +364,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     private fun informFiguresOfMove(move: Move) {
-        val figures = game.getFigures()
-        for (figure in figures) {
+        game.forAllFigures { figure ->
             figure.figureMoved(move)
         }
     }
@@ -475,8 +469,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     private fun noMovesLeft(caseWhite: Boolean): Boolean {
-        val figures = game.getFigures()
-        for (figure in figures) {
+        game.forAllFigures { figure ->
             if (figure.isWhite == caseWhite && figure.isSelectable(game)) {
                 return false
             }
@@ -489,8 +482,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
 
         king.getPossibleMoves(game, possibleMoves)
 
-        val figures = game.getFigures()
-        for (figure in figures) {
+        game.forAllFigures {figure ->
             if (figure.isWhite == whiteTurn && !figure.isKing()) {
                 figure.getPossibleMoves(game, possibleMoves)
             }
@@ -500,8 +492,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     override fun countReachableMoves(forWhite: Boolean): Int {
         var count = 0
 
-        val figures = game.getFigures()
-        for (figure in figures) {
+        game.forAllFigures {figure->
             if (figure.isWhite == forWhite) {
                 count += figure.countReachableMoves(game)
             }

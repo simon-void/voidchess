@@ -15,7 +15,7 @@ import static org.testng.Assert.*;
 
 
 public class SimpleBoardTest {
-    private SimpleChessBoardInterface board;
+    private SimpleArrayBoard board;
     final private String initial = "Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 " +
             "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 " +
             "Pawn-white-a2-false Pawn-white-b2-false Pawn-white-c2-false Pawn-white-d2-false " +
@@ -86,13 +86,6 @@ public class SimpleBoardTest {
     }
 
     @Test
-    public void testGetFigures() {
-        board.clearFigure(Position.byCode("c2"));
-        List<Figure> figures = board.getFigures();
-        assertEquals(figures.size(), 31);
-    }
-
-    @Test
     public void testGetCheckStatus() {
         CheckStatus status = board.getCheckStatus(true);
         assertFalse(status.isCheck());
@@ -116,7 +109,7 @@ public class SimpleBoardTest {
     public void testMoveUndoMoveInvariance(String fromCode, String toCode, String gameDes) {
         board.init(gameDes);
         String initialLongGameDescription = board.toString();
-        int initialFigureCount = board.getFigures().size();
+        int initialFigureCount = board.getFigureCount();
         Position from = Position.byCode(fromCode);
         Position to = Position.byCode(toCode);
 
@@ -129,7 +122,7 @@ public class SimpleBoardTest {
 
         boolean wasFigureTaken = figureTaken != null;
         assertEquals(wasFigureTaken, willTakeFigure, "figure taken");
-        assertEquals(board.getFigures().size(), wasFigureTaken?initialFigureCount-1:initialFigureCount);
+        assertEquals(board.getFigureCount(), wasFigureTaken?initialFigureCount-1:initialFigureCount);
         assertEquals(board.getFigure(to), figure, "figure after move");
         assertEquals(figure.getPosition(), to, "figure position after move");
         assertFalse(figure.canCastle(), "after a move, yuo can't do castling garanteed");

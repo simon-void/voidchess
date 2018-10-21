@@ -1,6 +1,7 @@
 package voidchess.ui
 
 import voidchess.board.BasicChessGameInterface
+import voidchess.board.forAllFigures
 import voidchess.board.move.ExtendedMove
 import voidchess.board.move.Position
 import voidchess.image.FigureGallery
@@ -122,7 +123,7 @@ class ChessboardComponent constructor(private val game: BasicChessGameInterface,
     }
 
     private fun paintFigures(g: Graphics) {
-        for (figure in game.getFigures()) {
+        game.forAllFigures {figure->
             val pos = figure.position
             val xPos = borderSize + areaSize * if (isWhiteView) pos.column else 7 - pos.column
             val yPos = borderSize + areaSize * if (isWhiteView) 7 - pos.row else pos.row

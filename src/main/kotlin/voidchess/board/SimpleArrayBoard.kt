@@ -25,6 +25,13 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
     private var whiteCheckStatus: CheckStatus? = null
     private var blackCheckStatus: CheckStatus? = null
 
+    val figureCount: Int
+        get() {
+            var count = 0
+            forAllFigures { count++ }
+            return count
+        }
+
     init {
         init()
         requireNotNull(whiteKing) {"whiteKing"}
@@ -300,18 +307,6 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
     override fun getFigure(pos: Position) = game[pos.index]
     override fun isFreeArea(pos: Position) = game[pos.index] == null
     override fun getContent(pos: Position) = BoardContent.get(game[pos.index])
-
-    override fun getFigures(): List<Figure> {
-        val figureIter = LinkedList<Figure>()
-
-        for (linearIndex in 0..63) {
-            val figure = game[linearIndex]
-            if (figure != null) {
-                figureIter.add(figure)
-            }
-        }
-        return figureIter
-    }
 
     override fun toString(): String {
         val buffer = StringBuilder(512)
