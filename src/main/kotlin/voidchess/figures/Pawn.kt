@@ -13,6 +13,9 @@ class Pawn : Figure {
     private val startingRow = if(isWhite) 1 else 6
     private var canBeHitByEnpasent: Boolean = false
 
+    /**
+     * attacksDiagonalLine set to false because while the pawn attacks diagonally, he doesn't attack a line
+     */
     constructor(isWhite: Boolean, position: Position) : super(isWhite, position, FigureType.PAWN, false, false) {
         canBeHitByEnpasent = false
     }
@@ -96,10 +99,10 @@ class Pawn : Figure {
         val oneForwardRow = if (isWhite) position.row + 1 else position.row - 1
         if(to.row!=oneForwardRow || Math.abs(to.column-position.column)!=1) return false
         // now we know that to is one step diagonal to us
-        game.getFigure(to)?.let { if (hasDifferentColor(it)) return true }
+        game.getFigureOrNull(to)?.let { if (hasDifferentColor(it)) return true }
         // ok, so no simple diagonal strike, maybe enpassent
         val sidePos = Position[position.row, to.column]
-        game.getFigure(sidePos)?.let { if (it.canBeHitByEnpasent()) return true }
+        game.getFigureOrNull(sidePos)?.let { if (it.canBeHitByEnpasent()) return true }
         return false
     }
 

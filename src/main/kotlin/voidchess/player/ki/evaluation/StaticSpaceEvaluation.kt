@@ -1,6 +1,7 @@
 package voidchess.player.ki.evaluation
 
 import voidchess.board.ChessGameInterface
+import voidchess.board.forAllFigures
 import voidchess.figures.Figure
 import voidchess.board.move.Direction
 import voidchess.board.move.Position
@@ -13,31 +14,18 @@ class StaticSpaceEvaluation : StaticEvaluationInterface {
 
     override fun getPrimaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Ongoing {
         val basicValue = 200
-        var whiteKing: Figure? = null
-        var blackKing: Figure? = null
+        val whiteKing = game.whiteKing
+        val blackKing = game.blackKing
 
         var colorOfWinnerIsWhite = true
         val figuresPos = LinkedList<Position>()
 
-        for (index in 0..63) {
-            val pos = Position.byIndex(index)
-            val content = game.getContent(pos)
-            if (!content.isFreeArea) {
-                val figure = content.figure
-                if (figure.isKing()) {
-                    if (figure.isWhite)
-                        whiteKing = figure
-                    else
-                        blackKing = figure
-                } else {
-                    colorOfWinnerIsWhite = figure.isWhite
-                    figuresPos.add(pos)
-                }
+        game.forAllFigures { figure ->
+            if (!figure.isKing()) {
+                colorOfWinnerIsWhite = figure.isWhite
+                figuresPos.add(figure.position)
             }
         }
-        // verify that white and black king where found
-        whiteKing!!
-        blackKing!!
 
         var value: Double
         val king = if (colorOfWinnerIsWhite) blackKing else whiteKing
@@ -128,17 +116,13 @@ class StaticSpaceEvaluation : StaticEvaluationInterface {
         fun shouldUseStaticSpaceEvaluation(game: ChessGameInterface): Boolean {
             var whiteFigures = 0
             var blackFigures = 0
-            for (index in 0..63) {
-                val content = game.getContent(Position.byIndex(index))
-                if (!content.isFreeArea) {
-                    val figure = content.figure
-                    if (figure.isWhite) {
-                        whiteFigures++
-                    } else {
-                        blackFigures++
-                    }
-                    if (figure.isPawn() || whiteFigures > 1 && blackFigures > 1) return false
+            game.forAllFigures { figure ->
+                if (figure.isWhite) {
+                    whiteFigures++
+                } else {
+                    blackFigures++
                 }
+                if (figure.isPawn() || whiteFigures > 1 && blackFigures > 1) return false
             }
             return true
         }

@@ -1,7 +1,8 @@
 package voidchess.board
 
+import voidchess.board.check.AttackLines
 import voidchess.board.check.CheckSearch
-import voidchess.board.check.CheckStatus
+import voidchess.board.check.checkAttackLines
 import voidchess.board.move.LastMoveProvider
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -9,7 +10,6 @@ import voidchess.figures.Figure
 import voidchess.figures.FigureFactory
 import voidchess.figures.King
 import voidchess.helper.*
-import java.util.*
 
 class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvider) : SimpleChessBoardInterface {
     private val game: Array<Figure?> = arrayOfNulls(64)
@@ -22,8 +22,8 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
     private var calculatedBlackCheck: Boolean = false
     private var isWhiteCheck: Boolean = false
     private var isBlackCheck: Boolean = false
-    private var whiteCheckStatus: CheckStatus? = null
-    private var blackCheckStatus: CheckStatus? = null
+    private var whiteCheckStatus: AttackLines? = null
+    private var blackCheckStatus: AttackLines? = null
 
     val figureCount: Int
         get() {
@@ -68,19 +68,18 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         }
     }
 
-    override fun getCheckStatus(isWhite: Boolean): CheckStatus {
-        val lastMove = lastMoveProvider.getLastMove()
+    override fun getAttackLines(isWhite: Boolean): AttackLines {
         return if (isWhite) {
             var scopedWhiteCheckStatus = whiteCheckStatus
             if (scopedWhiteCheckStatus == null) {
-                scopedWhiteCheckStatus = CheckSearch.analyseCheck(this, true, lastMove)
+                scopedWhiteCheckStatus = checkAttackLines(this, true)
                 whiteCheckStatus = scopedWhiteCheckStatus
             }
             scopedWhiteCheckStatus
         } else {
             var scopedBlackCheckStatus = blackCheckStatus
             if (scopedBlackCheckStatus == null) {
-                scopedBlackCheckStatus = CheckSearch.analyseCheck(this, false, lastMove)
+                scopedBlackCheckStatus = checkAttackLines(this, false)
                 blackCheckStatus = scopedBlackCheckStatus
             }
             scopedBlackCheckStatus
@@ -224,7 +223,7 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
                     foundBlackKing = true
                 }
             }
-            require(getFigure(pos)==null) {"two figures at same position $pos"}
+            require(getFigureOrNull(pos)==null) {"two figures at same position $pos"}
             setFigure(pos, figure)
         }
         require(foundWhiteKing) {"no white king in description [$des]"}
@@ -304,19 +303,16 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         figure.undoMove(from)
     }
 
-    override fun getFigure(pos: Position) = game[pos.index]
+    override fun getFigureOrNull(pos: Position) = game[pos.index]
     override fun isFreeArea(pos: Position) = game[pos.index] == null
-    override fun getContent(pos: Position) = BoardContent.get(game[pos.index])
 
     override fun toString(): String {
         val buffer = StringBuilder(512)
         for (row in 0..7) {
             for (column in 0..7) {
                 val pos = Position[row, column]
-                val content = getContent(pos)
-                if (!content.isFreeArea) {
-                    buffer.append(content.figure.toString())
-                    buffer.append(" ")
+                getFigureOrNull(pos)?.let {figure ->
+                    buffer.append("$figure ")
                 }
             }
         }

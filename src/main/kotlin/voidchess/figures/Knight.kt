@@ -16,7 +16,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
             return false
         }
 
-        val figure = game.getFigure(to)
+        val figure = game.getFigureOrNull(to)
         return figure == null || hasDifferentColor(figure)
     }
 
@@ -48,7 +48,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
     }
 
     private fun isAccessible(game: BasicChessGameInterface, position: Position): Boolean {
-        val figure = game.getFigure(position)
+        val figure = game.getFigureOrNull(position)
         return if (figure == null) true else hasDifferentColor(figure)
     }
 }

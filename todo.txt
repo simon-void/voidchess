@@ -1,7 +1,9 @@
 optimizations:
-1)CheckStatus should contain a List<BoundLines>{Attacker, BoundFigure, King} stating explicitly which figures are bound!
-2)is isNotBound easier to compute than !isBound?? (migth be unimportant after 1) )
+-is isNotBound easier to compute than !isBound??
+-get possibleMoves shouldn't iterate over every reachable move in case of checkLines or boundLines
 -a StaticChessBoard with optimized and immutable data structure for StaticEvaluation
+-are type checks (e.g. is King) slower that isKing(), isQueen, ... calls?? If not remove those functions
+
 
 features:
 - resizable interface (inclusive full-screen)

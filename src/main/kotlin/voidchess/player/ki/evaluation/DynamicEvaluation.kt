@@ -56,8 +56,8 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
 
         for (move in minPossibleMovesBuffer) {
 
-            assert(game.isFreeArea(move.to) || !game.getFigure(move.to)!!.isKing()) {
-                "getMin: ${game.getFigure(move.from)} hits King white Move $move"
+            assert(game.isFreeArea(move.to) || !game.getFigureOrNull(move.to)!!.isKing()) {
+                "getMin: ${game.getFigureOrNull(move.from)} hits King white Move $move"
             }
 
             val endOption = game.move(move)
@@ -128,8 +128,8 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
 
         for (move in maxPossibleMovesBuffer) {
 
-            assert(game.isFreeArea(move.to) || !game.getFigure(move.to)!!.isKing()) {
-                "getMax: ${game.getFigure(move.from)} hits King white Move $move"
+            assert(game.isFreeArea(move.to) || !game.getFigureOrNull(move.to)!!.isKing()) {
+                "getMax: ${game.getFigureOrNull(move.from)} hits King white Move $move"
             }
 
             val endOption = game.move(move)

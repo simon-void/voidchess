@@ -40,7 +40,7 @@ public class PawnTest {
         Position to3 = Position.byCode("b3");
         Position to4 = Position.byCode("a1");
 
-        Figure pawn = game.getFigure(from);
+        Figure pawn = game.getFigureOrNull(from);
         assertTrue(pawn.isReachable(to1, game));
         assertTrue(pawn.isReachable(to2, game));
         assertFalse(pawn.isReachable(to3, game));
@@ -57,7 +57,7 @@ public class PawnTest {
         to3 = Position.byCode("c3");
         to4 = Position.byCode("d2");
 
-        pawn = game.getFigure(from);
+        pawn = game.getFigureOrNull(from);
         assertTrue(pawn.isReachable(to1, game));
         assertTrue(pawn.isReachable(to2, game));
         assertTrue(pawn.isReachable(to3, game));
@@ -70,7 +70,7 @@ public class PawnTest {
                 + "King-black-e8-0 Pawn-black-h7-false King-white-e1-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure pawn1 = game.getFigure(Position.byCode("b4"));
+        Figure pawn1 = game.getFigureOrNull(Position.byCode("b4"));
         List<Move> moveIter1 = new LinkedList<>();
         pawn1.getPossibleMoves(game, moveIter1);
         assertEquals(moveIter1.size(), 2);

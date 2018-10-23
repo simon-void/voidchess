@@ -7,8 +7,6 @@ package voidchess.player.ki.evaluation;
 import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.board.move.Position;
-import voidchess.player.ki.evaluation.Evaluated;
-import voidchess.player.ki.evaluation.StaticSpaceEvaluation;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -59,7 +57,7 @@ public class StaticSpaceEvaluationTest {
         otherPositions.add(Position.byCode("a8"));
         Position kingPos = Position.byCode("e1");
 
-        assertEquals(evaluation.countRestSpace(game, game.getFigure(kingPos), otherPositions), 48);
+        assertEquals(evaluation.countRestSpace(game, game.getFigureOrNull(kingPos), otherPositions), 48);
 
         des = "black 0 King-white-e1-0 Rook-black-e7-0 King-black-e8-0";
         game = new ChessGame(des);
@@ -68,6 +66,6 @@ public class StaticSpaceEvaluationTest {
         otherPositions.add(Position.byCode("e8"));
         otherPositions.add(Position.byCode("e7"));
 
-        assertEquals(evaluation.countRestSpace(game, game.getFigure(kingPos), otherPositions), 43);
+        assertEquals(evaluation.countRestSpace(game, game.getFigureOrNull(kingPos), otherPositions), 43);
     }
 }

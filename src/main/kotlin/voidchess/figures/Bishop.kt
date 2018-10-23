@@ -32,7 +32,7 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
 
     override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
         forEachReachablePos(game) {
-            result.add(Move.get(position, it))
+            result.add(Move[position, it])
         }
     }
 

@@ -48,11 +48,11 @@ public class KnightTest {
         String des = "white 0 Knight-white-a1 King-white-e1-0 Knight-white-g6 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure knight1 = game.getFigure(Position.byCode("a1"));
+        Figure knight1 = game.getFigureOrNull(Position.byCode("a1"));
         List<Move> moveIter1 = new LinkedList<>();
         knight1.getPossibleMoves(game, moveIter1);
         assertEquals(moveIter1.size(), 2);
-        Figure knight2 = game.getFigure(Position.byCode("g6"));
+        Figure knight2 = game.getFigureOrNull(Position.byCode("g6"));
         List<Move> moveIter2 = new LinkedList<>();
         knight2.getPossibleMoves(game, moveIter2);
         assertEquals(moveIter2.size(), 6);

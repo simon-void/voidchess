@@ -1,7 +1,7 @@
 package voidchess.board
 
+import voidchess.board.check.AttackLines
 import voidchess.figures.Figure
-import voidchess.board.check.CheckStatus
 import voidchess.board.move.Position
 
 
@@ -17,5 +17,5 @@ interface SimpleChessBoardInterface : BasicChessGameInterface {
     fun move(figure: Figure, to: Position): Figure?
     fun undoMove(figure: Figure, from: Position, figureTaken: Figure?)
     fun isCheck(isWhite: Boolean): Boolean
-    fun getCheckStatus(isWhite: Boolean): CheckStatus
+    fun getAttackLines(isWhite: Boolean): AttackLines
 }

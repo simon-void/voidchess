@@ -55,7 +55,7 @@ public class RookTest {
                 + "Rook-white-e4-2 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure Rook = game.getFigure(Position.byCode("e4"));
+        Figure Rook = game.getFigureOrNull(Position.byCode("e4"));
         List<Move> moveIter = new LinkedList<>();
         Rook.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 11);

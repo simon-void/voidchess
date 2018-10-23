@@ -2,17 +2,15 @@ package voidchess.figures
 
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
-import voidchess.board.check.CheckStatus
-import voidchess.board.getKing
+import voidchess.board.check.AttackLines
 import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
 import java.util.*
-import kotlin.math.sign
 
 
 abstract class Figure constructor(
-        //Farbe der Figur
+        // a figure's color
         val isWhite: Boolean,
         var position: Position,
         val type: FigureType,
@@ -20,7 +18,7 @@ abstract class Figure constructor(
         val attacksStraightLine: Boolean
 ) {
 
-    //kodiert Name der Klasse + Farbe
+    // encodes type of class + color
     val typeInfo: Int = if (isWhite) type.index else (type.index + 7)
     private val reachableMoves = LinkedList<Move>()
 
@@ -47,19 +45,20 @@ abstract class Figure constructor(
         position = oldPosition
     }
 
-    abstract fun isReachable(to: Position, game: BasicChessGameInterface): Boolean
+    abstract fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean
     abstract fun countReachableMoves(game: BasicChessGameInterface): Int
     abstract fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>)
     abstract fun isSelectable(game: SimpleChessBoardInterface): Boolean
 
-    fun isMovable(to: Position, game: SimpleChessBoardInterface): Boolean {
-        return isReachable(to, game) && !isBound(to, game)
+    fun isMovable(toPos: Position, game: SimpleChessBoardInterface): Boolean {
+        return isReachable(toPos, game) && !isBound(toPos, game)
     }
 
+    //TODO rewrite with BoundLines in Mind!
     fun getPossibleMoves(game: SimpleChessBoardInterface, result: MutableList<Move>) {
         reachableMoves.clear()
         getReachableMoves(game, reachableMoves)
-        val checkStatus = game.getCheckStatus(isWhite)
+        val checkStatus = game.getAttackLines(isWhite)
 
         for (move in reachableMoves) {
             val checkPosition = move.to
@@ -69,76 +68,41 @@ abstract class Figure constructor(
         }
     }
 
-    open fun isPassiveBound(to: Position, game: SimpleChessBoardInterface): Boolean {
-        val kingPos = game.getKing(isWhite).position
-        //falls diese Figur nicht mit dem König auf einer Vertikalen,Horizontalen oder
-        //Diagonalen steht, ist sie nicht gebunden
-        if (!kingPos.isStraightOrDiagonalTo(position)) {
+    internal fun isBound(toPos: Position, game: SimpleChessBoardInterface): Boolean {
+        assert(isReachable(toPos, game)) { "the assumption of isBound is that toPos is confirmed reachable" }
+        val attackLinesStatus = game.getAttackLines(isWhite)
+        return isBound(toPos, game, attackLinesStatus)
+    }
+
+    private fun isBound(toPos: Position, game: SimpleChessBoardInterface, attackLines: AttackLines): Boolean {
+        if( isKing()) {
+            return (this as King).canNotMoveThereBecauseOfCheck(toPos, game, attackLines)
+        }
+
+        if(attackLines.noCheck) {
+            attackLines.boundLineByBoundFigurePos[position]?.let { boundLine->
+                val proposedDirection = position.getDirectionTo(toPos)
+                val isProposedDirectionOnBindingLine = proposedDirection==boundLine.boundFigureToAttackerDirection
+                        || proposedDirection==boundLine.boundFigureToAttackerDirection.reverse
+                return if(isProposedDirectionOnBindingLine) {
+                    !(boundLine.possibleMovesToAttacker.contains(toPos) || boundLine.possibleMovesToKing.contains(toPos))
+                } else {
+                    true
+                }
+            }
             return false
         }
 
-        val rowStep = (kingPos.row - position.row).sign
-        val columnStep = (kingPos.column - position.column).sign
-
-        var row = position.row + rowStep
-        var column = position.column + columnStep
-        var isToPositionInBetweenKingAndAttacker = false
-
-        //falls eine Figure zwischen König und dieser steht, ist diese nicht gebunden
-        while (row != kingPos.row || column != kingPos.column) {
-            val middlePos = Position[row, column]
-            if (!game.isFreeArea(middlePos)) return false
-            // TODO maybe return false on next if?!?!
-            if (middlePos.equalsPosition(to)) isToPositionInBetweenKingAndAttacker = true
-            row += rowStep
-            column += columnStep
-        }
-
-        row = position.row - rowStep
-        column = position.column - columnStep
-
-        //nur falls in Verlängerung der Königslinie eine feindliche Figur steht(Dame,Läufer,Turm)
-        //und das Ziel des Zuges nicht auf dieser Linie liegt, ist diese Figur gebunden
-        while (row in 0..7 && column in 0..7) {
-            val middlePos = Position[row, column]
-            if (middlePos.equalsPosition(to)) isToPositionInBetweenKingAndAttacker = true
-            val content = game.getContent(middlePos)
-            if (!content.isFreeArea) {
-                val figure = content.figure
-                if (hasDifferentColor(figure)) {
-                    if (figure.isQueen() ||
-                            (rowStep == 0 || columnStep == 0) && figure.isRook() ||
-                            rowStep != 0 && columnStep != 0 && figure.isBishop()) {
-                        return !isToPositionInBetweenKingAndAttacker
-                    }
-                }
-                return false
+        if (attackLines.isSingleCheck) {
+            val checkLine = attackLines.checkLines.first()
+            if(!checkLine.contains(toPos)) {
+                return true
             }
-            row -= rowStep
-            column -= columnStep
+            return attackLines.boundLineByBoundFigurePos.containsKey(position)
         }
-        return false
-    }
 
-    //isReachalble=true wird vorrausgesetzt
-    fun isBound(to: Position, game: SimpleChessBoardInterface): Boolean {
-        val checkStatus = game.getCheckStatus(isWhite)
-        return isBound(to, game, checkStatus)
-    }
-
-    private fun isBound(to: Position, game: SimpleChessBoardInterface, checkStatus: CheckStatus): Boolean {
-        if (checkStatus.isDoubleCheck) { //Doppelschach
-            return !isKing() || isPassiveBound(to, game)
-        }
-        return if (checkStatus.isCheck) {     //einfaches Schach
-            if (isKing()) {
-                isPassiveBound(to, game)
-            } else {
-                !checkStatus.checkInterceptPositions.contains(to) || isPassiveBound(to, game)
-            }
-        } else {                 //kein Schach
-            isPassiveBound(to, game)
-        }
+        // isDoubleCheck!
+        return true
     }
 
     protected inline fun forEachReachablePos(game: BasicChessGameInterface, direction: Direction, informOf: (Position) -> Unit) {
@@ -146,7 +110,7 @@ abstract class Figure constructor(
 
         while (true) {
             currentPos = currentPos.step(direction) ?: return
-            val figure = game.getFigure(currentPos)
+            val figure = game.getFigureOrNull(currentPos)
             if (figure == null) {
                 informOf(currentPos)
             } else {

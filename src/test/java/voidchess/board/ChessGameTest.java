@@ -36,11 +36,11 @@ public class ChessGameTest {
 
     @Test
     public void testGetFigure() {
-        assertTrue(game.getFigure(Position.byCode("e3")) == null);
-        Figure king = game.getFigure(Position.byCode("e1"));
+        assertTrue(game.getFigureOrNull(Position.byCode("e3")) == null);
+        Figure king = game.getFigureOrNull(Position.byCode("e1"));
         assertTrue(king instanceof King);
         assertTrue(king.isWhite());
-        Figure bishop = game.getFigure(Position.byCode("c8"));
+        Figure bishop = game.getFigureOrNull(Position.byCode("c8"));
         assertTrue(bishop instanceof Bishop);
         assertFalse(bishop.isWhite());
     }

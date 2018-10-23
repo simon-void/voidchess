@@ -201,7 +201,7 @@ object StaticEvaluation : StaticEvaluationInterface {
     }
 
     private fun containsPawnOfColor(game: ChessGameInterface, pos: Position, white: Boolean): Boolean {
-        val figure = game.getFigure(pos)
+        val figure = game.getFigureOrNull(pos)
         return figure!=null && figure.isWhite == white && figure.isPawn()
     }
 

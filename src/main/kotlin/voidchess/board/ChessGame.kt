@@ -215,12 +215,8 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         return game.isFreeArea(pos)
     }
 
-    override fun getFigure(pos: Position): Figure? {
-        return game.getFigure(pos)
-    }
-
-    override fun getContent(pos: Position): BoardContent {
-        return BoardContent.get(game.getFigure(pos))
+    override fun getFigureOrNull(pos: Position): Figure? {
+        return game.getFigureOrNull(pos)
     }
 
     private fun setFigure(pos: Position, figure: Figure?) {
@@ -233,13 +229,13 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
 
     override fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean {
         if (isFreeArea(pos)) return false
-        val figure = getFigure(pos)
+        val figure = getFigureOrNull(pos)
         return figure!!.isWhite == whitePlayer && figure.isSelectable(game)
     }
 
     override fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean {
         if (isFreeArea(from)) return false
-        val figure = getFigure(from)
+        val figure = getFigureOrNull(from)
         return figure!!.isWhite == whitePlayer && figure.isMovable(to, game)
     }
 
@@ -250,7 +246,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     override fun move(move: Move): MoveResult {
         var rewritableMove = move
         assert(!isFreeArea(rewritableMove.from)) { "the move moves a null value:" + rewritableMove.toString() }
-        assert(getFigure(rewritableMove.from)!!.isWhite == whiteTurn) { "figure to be moved has wrong color" }
+        assert(getFigureOrNull(rewritableMove.from)!!.isWhite == whiteTurn) { "figure to be moved has wrong color" }
 
         val castlingRook = extractCastlingRook(rewritableMove)
         //im Fall der Castling wird der Zug jetzt so umgebogen,
@@ -278,7 +274,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     private fun moveFigure(move: Move): Figure? {
         val toNotEqualsFrom = move.to.notEqualsPosition(move.from)//für manche Schach960castlingn true
         hasHitFigure = !isFreeArea(move.to) && toNotEqualsFrom  //Enpasent wird nicht beachtet
-        val fromFigure = getFigure(move.from)
+        val fromFigure = getFigureOrNull(move.from)
 
         if (hasHitFigure) {
             numberStack.figureHit()
@@ -291,7 +287,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
 
         var hitFigure: Figure? = null
         if (toNotEqualsFrom) {
-            hitFigure = getFigure(move.to)
+            hitFigure = getFigureOrNull(move.to)
             setFigure(move.to, fromFigure)
             setFigure(move.from, null)
         }
@@ -306,11 +302,11 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     private fun handleEnpasent(move: Move): Pawn? {
-        if (getFigure(move.from)!!.isPawn()
+        if (getFigureOrNull(move.from)!!.isPawn()
                 && move.from.column != move.to.column
                 && isFreeArea(move.to)) {
             val pawnToBeHit = Position[move.from.row, move.to.column]
-            val pawn = getFigure(pawnToBeHit) as Pawn?
+            val pawn = getFigureOrNull(pawnToBeHit) as Pawn?
             setFigure(pawnToBeHit, null)
             figureCount--
             numberOfMovesWithoutHit = -1            //die Variable wird dann von move Figure auf 0 gesetzt
@@ -320,10 +316,10 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     private fun extractCastlingRook(move: Move): Rook? {
-        val movingFigure = getFigure(move.from)
+        val movingFigure = getFigureOrNull(move.from)
         if (!movingFigure!!.isKing()) return null
 
-        val castlingRook = getFigure(move.to)
+        val castlingRook = getFigureOrNull(move.to)
         if (castlingRook != null && castlingRook.isWhite == movingFigure.isWhite) {
             setFigure(move.to, null)    // the rook is taken off the board temporarily
             (movingFigure as King).performCastling()
@@ -345,7 +341,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     private fun handlePawnTransformation(move: Move): Boolean {
-        if (getFigure(move.to)!!.isPawn()) {
+        if (getFigureOrNull(move.to)!!.isPawn()) {
             if (move.to.row == 0 || move.to.row == 7) {
                 val figure = supervisor.askForPawnChange(move.to)
                 val isWhite = move.to.row == 7
@@ -376,7 +372,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
 
         val lastExtMove = extendedMoveStack.removeLast()
         val lastMove = lastExtMove.move
-        val activeFigure = getFigure(lastMove.to)
+        val activeFigure = getFigureOrNull(lastMove.to)
         setFigure(lastMove.from, activeFigure)
         if (!lastExtMove.isCastling || lastMove.from.notEqualsPosition(lastMove.to)) {
             setFigure(lastMove.to, lastExtMove.figureTaken)
@@ -422,7 +418,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         if (extendedMoveStack.isEmpty()) return
 
         val newLatestMove = extendedMoveStack.last
-        val figure = getFigure(newLatestMove.move.to)!!
+        val figure = getFigureOrNull(newLatestMove.move.to)!!
         if (figure.isPawn() && Math.abs(newLatestMove.move.from.row - newLatestMove.move.to.row) == 2) {
             (figure as Pawn).setCanBeHitByEnpasent()
         }
@@ -455,13 +451,10 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
 
         for (index in 0..63) {
             val pos = Position.byIndex(index)
-            val content = getContent(pos)
-            val otherContent = other.getContent(pos)
-            if (content.isFreeArea != otherContent.isFreeArea) return false
-            if (!content.isFreeArea) {
-                val figure1 = content.figure
-                val figure2 = otherContent.figure
-                if (figure1 != figure2) return false
+            val content = getFigureOrNull(pos)
+            val otherContent = other.getFigureOrNull(pos)
+            if (content!=otherContent) {
+                return false
             }
         }
 
@@ -551,7 +544,7 @@ private class Memento constructor(game: BasicChessGameInterface, private val isW
         var count = 0
         val board = IntArray(64)
         for (index in 0..63) {
-            val figure = game.getFigure(Position.byIndex(index))
+            val figure = game.getFigureOrNull(Position.byIndex(index))
             if (figure != null) {
                 board[index] = figure.typeInfo
                 count++

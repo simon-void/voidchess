@@ -41,7 +41,7 @@ public class QueenTest {
         String des = "white 0 Queen-white-d1 King-white-e1-0 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure queen = game.getFigure(Position.byCode("d1"));
+        Figure queen = game.getFigureOrNull(Position.byCode("d1"));
         List<Move> moveIter = new LinkedList<>();
         queen.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 17);
@@ -49,7 +49,7 @@ public class QueenTest {
         des = "white 0 Rook-black-a1-1 Queen-white-d1 King-white-e1-0  King-black-e8-0";
         game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        queen = game.getFigure(Position.byCode("d1"));
+        queen = game.getFigureOrNull(Position.byCode("d1"));
         moveIter = new LinkedList<>();
         queen.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 3);
@@ -57,7 +57,7 @@ public class QueenTest {
         des = "white 0 King-white-e1-0 Bishop-black-c3 Queen-white-b4 King-black-e8-0";
         game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        queen = game.getFigure(Position.byCode("b4"));
+        queen = game.getFigureOrNull(Position.byCode("b4"));
         moveIter = new LinkedList<>();
         queen.getPossibleMoves(game, moveIter);
         assertEquals(moveIter.size(), 1);
@@ -68,13 +68,13 @@ public class QueenTest {
         String des = "white 0 King-white-e1-0 Bishop-black-c3 Queen-white-b4 King-black-e8-0";
         SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        Figure queen = game.getFigure(Position.byCode("b4"));
+        Figure queen = game.getFigureOrNull(Position.byCode("b4"));
         assertTrue(queen.isSelectable(game), "isSelectable");
 
         des = "white 0 King-white-e1-0 Bishop-black-c3 Queen-white-b5 King-black-f8-1";
         game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
 
-        queen = game.getFigure(Position.byCode("b5"));
+        queen = game.getFigureOrNull(Position.byCode("b5"));
         assertFalse(queen.isSelectable(game), "isSelectable");
     }
 }

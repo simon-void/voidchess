@@ -2,9 +2,11 @@ package voidchess.figures
 
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
+import voidchess.board.check.AttackLines
 import voidchess.board.check.CheckSearch
 import voidchess.board.move.Move
 import voidchess.board.move.Position
+import java.lang.IllegalArgumentException
 import kotlin.math.sign
 
 
@@ -24,7 +26,7 @@ class King : CastlingFigure {
         val horizontalDifference = Math.abs(position.row - to.row)
         val verticalDifference = Math.abs(position.column - to.column)
         if (horizontalDifference <= 1 && verticalDifference <= 1) {
-            val figure = game.getFigure(to)
+            val figure = game.getFigureOrNull(to)
             if (figure==null || hasDifferentColor(figure)) return true
         }
         if (isShortCastlingReachable(to, game)) return true
@@ -32,7 +34,7 @@ class King : CastlingFigure {
     }
 
     private fun isShortCastlingReachable(to: Position, game: BasicChessGameInterface): Boolean {
-        val toFigure = game.getFigure(to)
+        val toFigure = game.getFigureOrNull(to)
         if (canCastle() &&
                 toFigure!=null &&
                 to.column > position.column) {
@@ -45,7 +47,7 @@ class King : CastlingFigure {
                     //Die Felder bis zur g-Spalte müssen bis auf den Turm leer sein
                     for (column in position.column + 1..6) {
                         val middlePosition = Position[groundRow, column]
-                        val middleFigure = game.getFigure(middlePosition)
+                        val middleFigure = game.getFigureOrNull(middlePosition)
                         if (middleFigure!=null && !middleFigure.canCastle()) {
                             return false
                         }
@@ -58,7 +60,7 @@ class King : CastlingFigure {
     }
 
     private fun isLongCastlingReachable(to: Position, game: BasicChessGameInterface): Boolean {
-        val toFigure = game.getFigure(to)
+        val toFigure = game.getFigureOrNull(to)
         if (canCastle() &&
                 toFigure!=null &&
                 to.column < position.column) {
@@ -74,7 +76,7 @@ class King : CastlingFigure {
                     //Die Felder bis zur c-Spalte müssen bis auf den Turm leer sein
                     for (column in position.column - 1 downTo 2) {
                         val middlePosition = Position[groundRow, column]
-                        val middleFigure = game.getFigure(middlePosition)
+                        val middleFigure = game.getFigureOrNull(middlePosition)
                         if (middleFigure!=null && !middleFigure.canCastle()) {
                             return false
                         }
@@ -87,7 +89,7 @@ class King : CastlingFigure {
                     var column = to.column + step
                     while (column != 3) {
                         middlePosition = Position[groundRow, column]
-                        val middleFigure = game.getFigure(middlePosition)
+                        val middleFigure = game.getFigureOrNull(middlePosition)
                         if (middleFigure!=null) {
                             if (!middleFigure.canCastle() || middleFigure.isRook()) {
                                 return false
@@ -96,7 +98,7 @@ class King : CastlingFigure {
                         column += step
                     }
                     middlePosition = Position[groundRow, 3]
-                    val middleFigure = game.getFigure(middlePosition)
+                    val middleFigure = game.getFigureOrNull(middlePosition)
                     if (middleFigure!=null) {
                         if (!middleFigure.canCastle() || middleFigure.isRook()) {
                             return false
@@ -109,16 +111,34 @@ class King : CastlingFigure {
         return false
     }
 
-    override fun isPassiveBound(to: Position, game: SimpleChessBoardInterface): Boolean {
-        var realTo = to
-        val toFigure = game.getFigure(to)
-        if (toFigure!=null && toFigure.canCastle()) {
+    fun canNotMoveThereBecauseOfCheck(to: Position, game: SimpleChessBoardInterface, attackLines: AttackLines): Boolean {
+        val toFigure = game.getFigureOrNull(to)
+        val wantsToCastle = toFigure!=null && toFigure.canCastle()
+        if (wantsToCastle) {
+            if(attackLines.isCheck) {
+                return true
+            }
             val column = if (to.column - position.column > 0) 6 else 2
-            realTo = Position[to.row, column]
+            val realTo = Position[to.row, column]
             if (CheckSearch.isCheck(game, this)) return true
             if (isKingAtCheckInBetweenCastling(position, realTo, game)) return true
+            return isKingCheckAt(realTo, game)
         }
-        return isKingCheckAt(realTo, game)
+
+        // normal move, castling has been taken care of
+        if(attackLines.noCheck) {
+            return isKingCheckAt(to, game)
+        }
+        val directionTo = position.getDirectionTo(to) ?: throw IllegalArgumentException(
+                "$to is not next to king's position on: $position"
+        )
+        for (checkLine in attackLines.checkLines) {
+            //TODO maybe rewrite/invert method's return value in source (if this is only user of method)
+            if(!checkLine.doesNotKeepKingInCheckIfHeMovesTo(directionTo)) {
+                return true
+            }
+        }
+        return isKingCheckAt(to, game)
     }
 
     private fun isKingAtCheckInBetweenCastling(
@@ -155,7 +175,7 @@ class King : CastlingFigure {
             for (column in minColumn..maxColumn) {
                 val checkPosition = Position[row, column]
                 if (checkPosition.notEqualsPosition(position)) {
-                    val figure = game.getFigure(checkPosition)
+                    val figure = game.getFigureOrNull(checkPosition)
                     if (figure==null || figure.isWhite != isWhite) {
                         result.add(Move[position, checkPosition])
                     }
@@ -166,7 +186,7 @@ class King : CastlingFigure {
         if (canCastle()) {
             for (column in position.column + 1..7) {
                 val pos = Position[position.row, column]
-                val figure = game.getFigure(pos)
+                val figure = game.getFigureOrNull(pos)
                 if (figure!=null && figure.canCastle() && isShortCastlingReachable(pos, game)) {
                     result.add(Move[position, pos])
                     break
@@ -174,7 +194,7 @@ class King : CastlingFigure {
             }
             for (column in position.column - 1 downTo 0) {
                 val pos = Position[position.row, column]
-                val figure = game.getFigure(pos)
+                val figure = game.getFigureOrNull(pos)
                 if (figure!=null && figure.canCastle() && isLongCastlingReachable(pos, game)) {
                     result.add(Move[position, pos])
                     break
