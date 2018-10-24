@@ -486,6 +486,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         var count = 0
 
         game.forAllFigures {figure->
+            // TODO add condition: && !figure.isPawn() && !figure.isKing()
             if (figure.isWhite == forWhite) {
                 count += figure.countReachableMoves(game)
             }

@@ -1,15 +1,14 @@
 package voidchess.figures
 
-import org.mockito.Mockito.mock
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
-import voidchess.board.SimpleArrayBoard
 import voidchess.board.getFigure
-import voidchess.board.move.LastMoveProvider
 import voidchess.board.move.Move
 import voidchess.board.move.Position
-import java.util.*
+import voidchess.getPossibleMovesFrom
+import voidchess.initChessBoard
+import voidchess.initSimpleChessBoard
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -123,109 +122,49 @@ class KingTest {
             arrayOf("black 0 Bishop-black-h8 Rook-black-g8-0 King-black-f8-0 Bishop-black-e8 King-white-e1-0", "f8", "g8", true)
     )
 
-    @Test
-    fun testGetReachableMoves() {
-        val game = ChessGame(621)
-        var king = game.whiteKing
-
-        val moveIter = LinkedList<Move>()
-        king.getReachableMoves(game, moveIter)
-        assertEquals(0, moveIter.size)
-
-
-        val des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0"
-        val board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-
-        king = board.whiteKing
-        moveIter.clear()
-        king.getReachableMoves(board, moveIter)
-        assertEquals(moveIter.size, 7, "five regular king moves + long/short castling, therefor")
+    @Test(dataProvider = "getGetPossibleMovesData")
+    fun testGetPossibleMoves(gameDes: String, posCode: String, expectedPossibleMoveCodes: Set<String>) {
+        val game = initSimpleChessBoard(gameDes)
+        val possibleMoves = game.getPossibleMovesFrom(posCode)
+        val actualPossibleMoveCodes = possibleMoves.asSequence().map { move-> move.to.toString() }.toSet()
+        assertEquals(expectedPossibleMoveCodes, actualPossibleMoveCodes, "expected# ${expectedPossibleMoveCodes.size}, actual# ${actualPossibleMoveCodes.size} - king can move to")
     }
 
-    @Test
-    fun testGetPossibleMoves() {
-        var des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0"
-        var board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        var king = board.whiteKing
-        var moveIter: MutableList<Move> = LinkedList()
-        king.getPossibleMoves(board, moveIter)
-        assertEquals(moveIter.size, 7, "five regular king moves + long/short castling, therefor")
+    @DataProvider
+    fun getGetPossibleMovesData(): Array<Array<Any>> = arrayOf(
+            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0", "e1", setOf("a1", "d1", "d2", "e2", "f2", "f1", "h1")),
+            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e4 King-black-e8-0", "e1", setOf("a1", "d1", "d2", "e2", "f2", "f1", "h1")),
+            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e3 King-black-e8-0", "e1", setOf("d1", "e2", "f1")),
+            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e2 King-black-e8-0", "e1", setOf("d2", "e2", "f2")),
+            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e3 King-black-e8-0", "e1", setOf("d2", "e2", "f2")),
+            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e2 King-black-e8-0", "e1", setOf("d1", "d2", "e2", "f2", "f1")),
+            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Rook-black-f2-2 Pawn-black-e3-false King-black-e8-0", "e1", setOf("d1", "a1")),
+            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Rook-black-d2-2 Pawn-black-e3-false King-black-e8-0", "e1", setOf("f1", "h1")),
+            arrayOf("white 0 Rook-white-a1-0 King-white-b3-8 Pawn-black-c5-false King-black-d5-8 Knight-black-e1", "b3", setOf("c3", "b2", "a2", "a3", "a4")),
+            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4", "d3", setOf("c4", "c3", "c2", "e3", "e4")),
+            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-b5", "d3", setOf("c3", "c2", "e3", "e4")),
+            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4 Pawn-black-b5-false", "d3", setOf("c3", "c2", "e3", "e4")),
+            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4 Pawn-black-b5-false Knight-black-d1", "d3", setOf("c2", "e4")),
+            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4 Pawn-black-b5-false Knight-black-d1 Knight-black-e3", "d3", setOf("e4")),
+            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4 Pawn-black-b5-false Knight-black-d1 Pawn-white-c2-false", "d3", setOf("e4"))
+    )
 
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e4 King-black-e8-0"
-        board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.whiteKing
-        moveIter.clear()
-        king.getPossibleMoves(board, moveIter)
-        assertEquals(moveIter.size, 7, "five regular king moves + long/short castling, therefor")
-
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e3 King-black-e8-0"
-        board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.whiteKing
-        moveIter.clear()
-        king.getPossibleMoves(board, moveIter)
-        assertEquals(moveIter.size, 3, "five regular king moves (long/short castling intercepted), therefor")
-
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e2 King-black-e8-0"
-        board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.whiteKing
-        moveIter.clear()
-        king.getPossibleMoves(board, moveIter)
-        assertEquals(moveIter.size, 3, "three king moves (long/short castling intercepted), therefor")
-
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e3 King-black-e8-0"
-        board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.whiteKing
-        moveIter.clear()
-        king.getPossibleMoves(board, moveIter)
-        assertEquals(moveIter.size, 3, "three king moves (long/short castling intercepted), therefor")
-
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e2 King-black-e8-0"
-        board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.whiteKing
-        moveIter.clear()
-        king.getPossibleMoves(board, moveIter)
-        assertEquals(moveIter.size, 5, "five king moves (long/short castling intercepted), therefor")
-
-        des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Rook-black-f2-2 King-black-e8-0"
-        board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.whiteKing
-        moveIter.clear()
-        king.getPossibleMoves(board, moveIter)
-        assertEquals(moveIter.size, 3, "d1, f2 and long castling, therefor")
-
-        des = "white 0 Rook-white-a1-0 King-white-b3-8 Pawn-black-c5-false King-black-d5-8 Knight-black-e1"
-        board = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
-        king = board.whiteKing
-        moveIter.clear()
-        king.getPossibleMoves(board, moveIter)
-        assertEquals(moveIter.size, 5, "pawn, king and knight take each one field away, therefor")
-
-        board.init(621)
-        king = board.whiteKing
-        moveIter = LinkedList()
-        king.getPossibleMoves(board, moveIter)
-        assertEquals(moveIter.size, 0, "king shouldn't be able to castle because bishop blocks the king's end position")
-
-        var game = ChessGame(621)
-        game.move(Move.byCode("f2-f3"))
-        game.move(Move.byCode("f7-f6"))
-        game.move(Move.byCode("g1-f2"))
-        game.move(Move.byCode("g8-f7"))
-        var movesFrom = FigureTest.getPossibleMovesFrom("e1", game)
-        assertEquals(movesFrom.size, 1, "king should be able to short castle")
-        game.move(Move.byCode("e1-f1"))
-        movesFrom = FigureTest.getPossibleMovesFrom("e8", game)
-        assertEquals(movesFrom.size, 1, "king should be able to short castle")
-
-        game = ChessGame(621)
-        game.move(Move.byCode("c2-c3"))
-        game.move(Move.byCode("f7-f6"))
-        game.move(Move.byCode("d1-c2"))
-        game.move(Move.byCode("g8-c4"))
-        game.move(Move.byCode("c2-h7"))
-        movesFrom = FigureTest.getPossibleMovesFrom("e8", game)
-        assertEquals(movesFrom.size, 1, "king shouldn't be able to castle because queen could attack the king's end position")
+    @Test(dataProvider = "getGetPossibleMovesAfterInitialMovesData")
+    fun testGetPossibleMovesAfterInitialMoves(chess960: Int, moveCodes: List<String>, posCode: String, expectedMoveToCodes: Set<String>) {
+        val game1 = initChessBoard(chess960)
+        for(moveCode in moveCodes) game1.move(Move.byCode(moveCode))
+        val moveFrom1 = game1.getPossibleMovesFrom(posCode)
+        val actualMoveToCodes = moveFrom1.asSequence().map { move -> move.to.toString() }.toSet()
+        assertEquals(expectedMoveToCodes, actualMoveToCodes, "king can move to")
     }
+
+    @DataProvider
+    fun getGetPossibleMovesAfterInitialMovesData(): Array<Array<Any>> = arrayOf(
+            arrayOf(621, listOf("f2-f3", "f7-f6", "g1-f2", "g8-f7"), "e1", setOf("f1")),
+            arrayOf(621, listOf("f2-f3", "f7-f6", "g1-f2", "g8-f7", "e1-f1"), "e8", setOf("f8")),
+            arrayOf(621, listOf("c2-c3", "f7-f6", "d1-c2", "g8-c4", "c2-h7"), "e8", setOf("f7")),
+            arrayOf(621, listOf<String>(), "e1", setOf<String>())
+    )
 
     @Test
     fun testDidCastling() {
@@ -251,12 +190,12 @@ class KingTest {
         }
 
         assertTrue(game.isMovable(Position.byCode("e1"), Position.byCode("h1"), true), "isMovable: king can move to h1 (short castling)")
-        val whiteKingMoves = FigureTest.getPossibleMovesFrom("e1", game)
+        val whiteKingMoves = game.getPossibleMovesFrom("e1")
         assertEquals(whiteKingMoves.size,2, "king can go to f1 and h1 (short castling), therefore getPossibleMoves#")
         assertTrue(whiteKingMoves.contains(Move.byCode("e1-h1")), "possible move e1-h1")
         game.move(Move.byCode("e1-h1"))
         assertTrue(game.isMovable(Position.byCode("e8"), Position.byCode("h8"), false), "isMovable: king can move to h8 (short castling)")
-        val blackKingMoves = FigureTest.getPossibleMovesFrom("e8", game)
+        val blackKingMoves = game.getPossibleMovesFrom("e8")
         assertEquals(blackKingMoves.size, 2, "king can go to f8 and h8 (short castling), therefore getPossibleMoves#")
         assertTrue(blackKingMoves.contains(Move.byCode("e8-h8")), "possible move e8-h8")
     }
@@ -264,7 +203,7 @@ class KingTest {
     @Test
     fun testDoesLongCastling() {
         val game = ChessGame(518)
-        with(game) {
+        game.apply {
             move(Move.byCode("e2-e4"))
             move(Move.byCode("e7-e5"))
             move(Move.byCode("d1-e2"))
@@ -278,19 +217,19 @@ class KingTest {
         }
 
         assertTrue(game.isMovable(Position.byCode("e1"), Position.byCode("a1"), true), "isMovable: king can move to a1 (long castling)")
-        val whiteKingMoves = FigureTest.getPossibleMovesFrom("e1", game)
-        assertEquals(whiteKingMoves.size, 2, "king can go to d1 and a1 (long castling), therefore getPossibleMoves#")
+        val whiteKingMoves = game.getPossibleMovesFrom("e1")
+        assertEquals(2, whiteKingMoves.size, "king can go to d1 and a1 (long castling), therefore getPossibleMoves#")
         assertTrue(whiteKingMoves.contains(Move.byCode("e1-a1")), "possible move e1-a1")
         game.move(Move.byCode("e1-a1"))
         assertTrue(game.isMovable(Position.byCode("e8"), Position.byCode("a8"), false), "isMovable: king can move to a8 (long castling)")
-        val blackKingMoves = FigureTest.getPossibleMovesFrom("e8", game)
-        assertEquals(blackKingMoves.size, 2, "king can go to d8 and a8 (long castling), therefore getPossibleMoves#")
+        val blackKingMoves = game.getPossibleMovesFrom("e8")
+        assertEquals(2, blackKingMoves.size, "king can go to d8 and a8 (long castling), therefore getPossibleMoves#")
         assertTrue(blackKingMoves.contains(Move.byCode("e8-a8")), "possible move e8-a8")
     }
 
     @Test
     fun testImmediatelyCastlingInChess960Positions() {
-        //siehe https://de.wikipedia.org/wiki/Chess960#Castlingregeln
+        //check out https://de.wikipedia.org/wiki/Chess960#Castlingregeln
 
         //Rook on a1, king on b1 so b1-a1 should be possible as a first move
         var game = ChessGame(314)

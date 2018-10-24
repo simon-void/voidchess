@@ -2,6 +2,8 @@ package voidchess.figures
 
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
+import voidchess.board.check.BoundLine
+import voidchess.board.check.CheckLine
 import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -9,15 +11,11 @@ import voidchess.board.move.Position
 
 class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.QUEEN, true, true) {
 
-    override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
-        val direction = position.getDirectionTo(to)
-
-        if (direction == null) {
-            return false
-        }
+    override fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean {
+        val direction = position.getDirectionTo(toPos) ?: return false
 
         forEachReachablePos(game, direction) {
-            if (it.equalsPosition(to)) return true
+            if (it.equalsPosition(toPos)) return true
         }
 
         return false
@@ -36,7 +34,23 @@ class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPo
 
     override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
         forEachReachablePos(game) {
-            result.add(Move.get(position, it))
+            result.add(Move[position, it])
+        }
+    }
+
+    override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) {
+        // a queen can intersect a check at up to three positions. but the overhead to check this upper bound is probably to high
+        for(checkInterceptPos in checkLine) {
+            addMoveIfReachable(checkInterceptPos, game, result)
+        }
+    }
+
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) {
+        for(posBetweenThisAndAttacker in boundLine.possibleMovesToAttacker) {
+            result.add(Move[position, posBetweenThisAndAttacker])
+        }
+        for(posBetweenThisAndKing in boundLine.possibleMovesToKing) {
+            result.add(Move[position, posBetweenThisAndKing])
         }
     }
 

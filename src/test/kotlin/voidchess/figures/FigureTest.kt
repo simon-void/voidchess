@@ -1,15 +1,13 @@
 package voidchess.figures
 
-import org.mockito.Mockito.mock
 import org.testng.Assert.*
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.ChessGameInterface
-import voidchess.board.SimpleArrayBoard
 import voidchess.board.getFigure
-import voidchess.board.move.LastMoveProvider
 import voidchess.board.move.Move
 import voidchess.board.move.Position
+import voidchess.initSimpleChessBoard
 import java.util.*
 
 
@@ -101,7 +99,7 @@ class FigureTest {
 
     @Test(dataProvider = "getIsBoundData")
     fun testIsBound(gameDes: String, figurePos: String, isNotBoundPosCodes: List<String>, isBoundPosCodes: List<String>) {
-        val game = SimpleArrayBoard(gameDes, mock(LastMoveProvider::class.java))
+        val game = initSimpleChessBoard(gameDes)
         val figure = game.getFigure(Position.byCode(figurePos))
         for(isNotBoundPosCode in isNotBoundPosCodes) {
             val isNotBoundPos = Position.byCode(isNotBoundPosCode)
@@ -128,7 +126,7 @@ class FigureTest {
     @Test(dependsOnMethods = ["testIsBound"])
     fun testIsMovable() {
         val des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-h4 King-black-e8-0"
-        val game = SimpleArrayBoard(des, mock(LastMoveProvider::class.java))
+        val game = initSimpleChessBoard(des)
 
         val from = Position.byCode("h2")
         val to1 = Position.byCode("f2")
@@ -198,21 +196,5 @@ class FigureTest {
                 figureByteList.contains(kingByte),
                 "Bytewert sollte noch nicht in der Liste sein"
         )
-    }
-
-    companion object {
-
-        internal fun getPossibleMovesFrom(posCode: String, game: ChessGameInterface): List<Move> {
-            val from = Position.byCode(posCode)
-            val moveIter = LinkedList<Move>()
-            val allMoves = LinkedList<Move>()
-            game.getPossibleMoves(allMoves)
-            for (move in allMoves) {
-                if (move.from.equalsPosition(from)) {
-                    moveIter.add(move)
-                }
-            }
-            return moveIter
-        }
     }
 }

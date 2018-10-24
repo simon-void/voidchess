@@ -3,7 +3,7 @@ optimizations:
 -get possibleMoves shouldn't iterate over every reachable move in case of checkLines or boundLines
 -a StaticChessBoard with optimized and immutable data structure for StaticEvaluation
 -are type checks (e.g. is King) slower that isKing(), isQueen, ... calls?? If not remove those functions
-
+-is there an efficient way to compute if a pawn is a passed pawn?? (because there should be a passed-pawn bonus)
 
 features:
 - resizable interface (inclusive full-screen)

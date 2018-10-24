@@ -3,10 +3,14 @@ package voidchess.figures
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
 import voidchess.board.check.AttackLines
+import voidchess.board.check.BoundLine
+import voidchess.board.check.CheckLine
 import voidchess.board.check.CheckSearch
+import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
 import java.lang.IllegalArgumentException
+import java.lang.UnsupportedOperationException
 import kotlin.math.sign
 
 
@@ -22,15 +26,15 @@ class King : CastlingFigure {
         this.didCastling = didCastling
     }
 
-    override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
-        val horizontalDifference = Math.abs(position.row - to.row)
-        val verticalDifference = Math.abs(position.column - to.column)
+    override fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean {
+        val horizontalDifference = Math.abs(position.row - toPos.row)
+        val verticalDifference = Math.abs(position.column - toPos.column)
         if (horizontalDifference <= 1 && verticalDifference <= 1) {
-            val figure = game.getFigureOrNull(to)
+            val figure = game.getFigureOrNull(toPos)
             if (figure==null || hasDifferentColor(figure)) return true
         }
-        if (isShortCastlingReachable(to, game)) return true
-        return isLongCastlingReachable(to, game)
+        if (isShortCastlingReachable(toPos, game)) return true
+        return isLongCastlingReachable(toPos, game)
     }
 
     private fun isShortCastlingReachable(to: Position, game: BasicChessGameInterface): Boolean {
@@ -118,11 +122,7 @@ class King : CastlingFigure {
             if(attackLines.isCheck) {
                 return true
             }
-            val column = if (to.column - position.column > 0) 6 else 2
-            val realTo = Position[to.row, column]
-            if (CheckSearch.isCheck(game, this)) return true
-            if (isKingAtCheckInBetweenCastling(position, realTo, game)) return true
-            return isKingCheckAt(realTo, game)
+            return isKingAtCheckWhileOrAfterCastling(position, to, game)
         }
 
         // normal move, castling has been taken care of
@@ -133,26 +133,30 @@ class King : CastlingFigure {
                 "$to is not next to king's position on: $position"
         )
         for (checkLine in attackLines.checkLines) {
-            //TODO maybe rewrite/invert method's return value in source (if this is only user of method)
-            if(!checkLine.doesNotKeepKingInCheckIfHeMovesTo(directionTo)) {
+            if(checkLine.keepsKingInCheckIfHeMovesTo(directionTo)) {
                 return true
             }
         }
         return isKingCheckAt(to, game)
     }
 
-    private fun isKingAtCheckInBetweenCastling(
-            from: Position,
-            to: Position,
+    private fun isKingAtCheckWhileOrAfterCastling(
+            kingPos: Position,
+            rookPos: Position,
             game: SimpleChessBoardInterface
     ): Boolean {
-        assert(from.row == to.row)
+        assert(kingPos.row == rookPos.row)
 
-        val step = (to.column - from.column).sign
-        var column = from.column + step
-        while (column != to.column) {
-            if (isKingCheckAt(Position[from.row, column], game)) return true
-            column += step
+        // king doesn't move to rookPosition so let's determine the real column target
+        val updatedToColumn = if (rookPos.column - kingPos.column > 0) 6 else 2
+
+        val columnRange =
+                if(updatedToColumn>kingPos.column)
+                    (kingPos.column+1)..updatedToColumn
+                else updatedToColumn..(kingPos.column-1)
+
+        for (column in columnRange) {
+            if (isKingCheckAt(Position[kingPos.row, column], game)) return true
         }
         return false
     }
@@ -165,40 +169,58 @@ class King : CastlingFigure {
         return isCheck
     }
 
-    override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
-        val minRow = Math.max(position.row - 1, 0)
-        val minColumn = Math.max(position.column - 1, 0)
-        val maxRow = Math.min(position.row + 1, 7)
-        val maxColumn = Math.min(position.column + 1, 7)
+    override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
+    override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
 
-        for (row in minRow..maxRow) {
-            for (column in minColumn..maxColumn) {
-                val checkPosition = Position[row, column]
-                if (checkPosition.notEqualsPosition(position)) {
-                    val figure = game.getFigureOrNull(checkPosition)
-                    if (figure==null || figure.isWhite != isWhite) {
-                        result.add(Move[position, checkPosition])
+    override fun getPossibleMoves(game: SimpleChessBoardInterface, result: MutableList<Move>) {
+        val attackLines = game.getAttackLines(isWhite)
+
+        if(attackLines.noCheck) {
+            for(direction in Direction.values()) {
+                position.step(direction)?.let { possibleKingPos->
+                    if(isAccessible(game, possibleKingPos) && !isKingCheckAt(possibleKingPos, game)) {
+                        result.add(Move[position, possibleKingPos])
                     }
                 }
             }
-        }
 
-        if (canCastle()) {
-            for (column in position.column + 1..7) {
-                val pos = Position[position.row, column]
-                val figure = game.getFigureOrNull(pos)
-                if (figure!=null && figure.canCastle() && isShortCastlingReachable(pos, game)) {
-                    result.add(Move[position, pos])
-                    break
+            if(canCastle()) {
+                for (column in position.column + 1..7) {
+                    val pos = Position[position.row, column]
+                    val figure = game.getFigureOrNull(pos)
+                    if (figure!=null && figure.canCastle() && isShortCastlingReachable(pos, game)) {
+                        if(!isKingAtCheckWhileOrAfterCastling(position, pos, game)) {
+                            result.add(Move[position, pos])
+                        }
+                        break
+                    }
+                }
+                for (column in position.column - 1 downTo 0) {
+                    val pos = Position[position.row, column]
+                    val figure = game.getFigureOrNull(pos)
+                    if (figure!=null && figure.canCastle() && isLongCastlingReachable(pos, game)) {
+                        if(!isKingAtCheckWhileOrAfterCastling(position, pos, game)) {
+                            result.add(Move[position, pos])
+                        }
+                        break
+                    }
                 }
             }
-            for (column in position.column - 1 downTo 0) {
-                val pos = Position[position.row, column]
-                val figure = game.getFigureOrNull(pos)
-                if (figure!=null && figure.canCastle() && isLongCastlingReachable(pos, game)) {
-                    result.add(Move[position, pos])
-                    break
+        } else {
+            // isSingleCheck || isDoubleCheck
+            Direction.values().forEach directionLoop@ {direction ->
+                position.step(direction)?.let { possibleKingPos->
+                    for(checkLine in attackLines.checkLines) {
+                        if(checkLine.keepsKingInCheckIfHeMovesTo(direction)) {
+                            return@directionLoop
+                        }
+                    }
+                    if (isAccessible(game, possibleKingPos) && !isKingCheckAt(possibleKingPos, game)) {
+                        result.add(Move[position, possibleKingPos])
+                    }
                 }
+
             }
         }
     }

@@ -6,6 +6,18 @@ enum class Direction(internal val posIndexDiff: Int, val isDiagonal: Boolean) {
     DOWN_LEFT(-9, true), DOWN(-8, false), DOWN_RIGHT(-7, true);
 
     val isStraight = !isDiagonal
+    val isVertical: Boolean by lazy {
+        when (this) {
+            UP, DOWN -> true
+            else -> false
+        }
+    }
+    val isHorizontal: Boolean by lazy {
+        when (this) {
+            LEFT, RIGHT -> true
+            else -> false
+        }
+    }
     val reverse: Direction by lazy {
         when (this) {
             UP -> DOWN

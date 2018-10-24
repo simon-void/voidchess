@@ -6,6 +6,7 @@ import voidchess.board.move.Position
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
+import voidchess.board.move.PositionProgression
 
 class PositionProgressionTest {
     @Test(dataProvider = "getIteratorData")

@@ -36,16 +36,17 @@ class CheckLineTest {
     )
 
     @Test(dataProvider = "getTestDoesNotKeepKingInCheckIfHeMovesToData")
-    fun testDoesNotKeepKingInCheckIfHeMovesTo(checkLine: CheckLine, inCheckDirections: List<Direction>) {
+    fun testKeepsKingInCheckIfHeMovesTo(checkLine: CheckLine, inCheckDirections: List<Direction>) {
         for(direction in Direction.values()) {
-            val actualNotInCheck = checkLine.doesNotKeepKingInCheckIfHeMovesTo(direction)
-            assertEquals(actualNotInCheck, !inCheckDirections.contains(direction), "no check in direction $direction")
+            val actualInCheck = checkLine.keepsKingInCheckIfHeMovesTo(direction)
+            assertEquals(actualInCheck, inCheckDirections.contains(direction), "no check in direction $direction")
         }
     }
 
     @DataProvider
     fun getTestDoesNotKeepKingInCheckIfHeMovesToData() :Array<Array<Any>> = arrayOf(
-            arrayOf<Any>(KnightOrPawnCheck(Position.byCode("g3")), listOf<Direction>()),
+            arrayOf<Any>(PawnCheck(Position.byCode("g3"), Position.byCode("f2")), listOf<Direction>()),
+            arrayOf<Any>(KnightCheck(Position.byCode("g3"), Position.byCode("f1")), listOf<Direction>()),
             arrayOf<Any>(getActualCheckLine("g3", "h3"), listOf(Direction.LEFT)),
             arrayOf<Any>(getActualCheckLine("g3", "h2"), listOf(Direction.UP_LEFT)),
             arrayOf<Any>(getActualCheckLine("g3", "g1"), listOf(Direction.DOWN, Direction.UP))

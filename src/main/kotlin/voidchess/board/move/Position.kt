@@ -6,6 +6,7 @@ import kotlin.math.max
 
 class Position private constructor(@JvmField val row: Int, @JvmField val column: Int) {
     val index = getIndex(row, column)
+    private val isWhiteField = (row+column)%2==1
 
     fun equalsPosition(pos: Position) = this === pos //index == pos.index
     fun notEqualsPosition(pos: Position) = this !== pos
@@ -16,6 +17,7 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
     fun isStraightTo(pos: Position) = row == pos.row || column == pos.column
     fun isDiagonalTo(pos: Position) = Math.abs(row - pos.row) == Math.abs(column - pos.column)
     fun isStraightOrDiagonalTo(pos: Position) = isStraightTo(pos) || isDiagonalTo(pos)
+    fun hasSameColor(pos: Position) = isWhiteField==pos.isWhiteField
 
     fun step(direction: Direction): Position? {
 
@@ -125,21 +127,6 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
             val newPos = oldPos.step(direction)
             if (newPos == null || shouldBreak(newPos)) break
             oldPos = newPos
-        }
-    }
-
-    inline fun forEachMiddlePosInLine(other: Position, informOf: (Position) -> Unit) {
-        val directionTo = getDirectionTo(other) ?: throw IllegalArgumentException("there is no line between $this and $other")
-
-        var oldPos = this
-        while (true) {
-            val middlePos = oldPos.step(directionTo)!!
-            if (middlePos.notEqualsPosition(other)) {
-                informOf(middlePos)
-            } else {
-                break
-            }
-            oldPos = middlePos
         }
     }
 

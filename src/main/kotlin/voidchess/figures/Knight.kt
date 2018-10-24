@@ -2,28 +2,47 @@ package voidchess.figures
 
 import voidchess.board.BasicChessGameInterface
 import voidchess.board.SimpleChessBoardInterface
+import voidchess.board.check.BoundLine
+import voidchess.board.check.CheckLine
 import voidchess.board.move.Move
 import voidchess.board.move.Position
 
 
 class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.KNIGHT, false, false) {
 
-    override fun isReachable(to: Position, game: BasicChessGameInterface): Boolean {
-        val horizontalDifference = Math.abs(position.row - to.row)
-        val verticalDifference = Math.abs(position.column - to.column)
+    override fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean {
+        val horizontalDifference = Math.abs(position.row - toPos.row)
+        val verticalDifference = Math.abs(position.column - toPos.column)
 
         if (horizontalDifference + verticalDifference != 3 || horizontalDifference == 0 || verticalDifference == 0) {
             return false
         }
 
-        val figure = game.getFigureOrNull(to)
+        val figure = game.getFigureOrNull(toPos)
         return figure == null || hasDifferentColor(figure)
     }
 
     override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
         forEachReachablePos(game) {
-            result.add(Move.get(position, it))
+            result.add(Move[position, it])
         }
+    }
+
+    override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) {
+        // the accessibility of the target field doesn't need to be checked because
+        // all checkInterceptPositions are guaranteed to be either empty
+        // or to contain the attacker (who has a different color)
+        for(checkInterceptPos in checkLine) {
+            val horizontalDifference = Math.abs(position.row - checkInterceptPos.row)
+            val verticalDifference = Math.abs(position.column - checkInterceptPos.column)
+            if(horizontalDifference+verticalDifference==3 && horizontalDifference!=0 && verticalDifference!=0) {
+                result.add(Move[position, checkInterceptPos])
+            }
+        }
+    }
+
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) {
+        // a bound move can't move at all!
     }
 
     override fun isSelectable(game: SimpleChessBoardInterface): Boolean {
@@ -45,10 +64,5 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         position.forEachKnightPos { pos ->
             if(isAccessible(game, pos)) informOf(pos)
         }
-    }
-
-    private fun isAccessible(game: BasicChessGameInterface, position: Position): Boolean {
-        val figure = game.getFigureOrNull(position)
-        return if (figure == null) true else hasDifferentColor(figure)
     }
 }

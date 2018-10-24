@@ -24,68 +24,6 @@ data class AttackLines(val checkLines: List<CheckLine>, val boundLineByBoundFigu
         get() = checkLines.size == 2
 }
 
-/**
- * the iterator contains all Positions that can be used to break the check (starting with the position of the attacker)
- */
-sealed class CheckLine(
-        internal val attackerPos: Position
-) : Iterable<Position> {
-    abstract fun doesNotKeepKingInCheckIfHeMovesTo(direction: Direction): Boolean
-}
-
-class KnightOrPawnCheck(
-        knightOrPawnPos: Position
-): CheckLine(knightOrPawnPos) {
-    override fun iterator() = listOf(attackerPos).iterator()
-    override fun doesNotKeepKingInCheckIfHeMovesTo(direction: Direction) = true
-}
-class ActualCheckLine(
-        kingPos: Position,
-        attackerPos: Position,
-        private val kingToAttackerDirection: Direction
-): CheckLine(attackerPos) {
-
-    init {
-        assert(kingPos.getDirectionTo(attackerPos)==kingToAttackerDirection) {"actualDir: $kingToAttackerDirection, expectedDir: ${kingPos.getDirectionTo(attackerPos)}"}
-    }
-
-    private val posProgression = PositionProgression(attackerPos, attackerPos.distanceTo(kingPos), kingToAttackerDirection.reverse)
-    override fun iterator() = posProgression.iterator()
-    override fun doesNotKeepKingInCheckIfHeMovesTo(direction: Direction) = when (direction) {
-        kingToAttackerDirection -> posProgression.size==1
-        kingToAttackerDirection.reverse -> false
-        else -> true
-    }
-}
-
-data class BoundLine(
-        private val kingPos: Position,
-        private val boundFigurePos: Position,
-        private val attackerPos: Position,
-        val boundFigureToAttackerDirection: Direction
-) {
-    init {
-        assert(kingPos.getDirectionTo(boundFigurePos)==boundFigureToAttackerDirection)
-        assert(boundFigurePos.getDirectionTo(attackerPos)==boundFigureToAttackerDirection)
-    }
-
-    /**
-     * All positions from bound figure to attacker (exclusive bound figure's position, inclusive attacker's position).
-     */
-    val possibleMovesToAttacker = PositionProgression(
-            boundFigurePos.step(boundFigureToAttackerDirection)!!,
-            boundFigurePos.distanceTo(attackerPos),
-            boundFigureToAttackerDirection)
-    /**
-     * All positions from bound figure to king (exclusive bound figure's position, exclusive king's position).
-     */
-    val possibleMovesToKing = PositionProgression(
-            boundFigurePos.step(boundFigureToAttackerDirection.reverse)!!,
-            boundFigurePos.distanceTo(kingPos)-1,
-            boundFigureToAttackerDirection.reverse)
-}
-
-
 fun checkAttackLines(game: BasicChessGameInterface, isWhite: Boolean): AttackLines {
     val king = game.getKing(isWhite)
     val kingPos = king.position
@@ -127,7 +65,7 @@ fun checkAttackLines(game: BasicChessGameInterface, isWhite: Boolean): AttackLin
         kingPos.step(forwardDiagonalDir)?.let { forwardDiagonalPos ->
             game.getFigureOrNull(forwardDiagonalPos)?.let { possiblyPawn ->
                 if(possiblyPawn.isWhite!=isWhite && possiblyPawn.isPawn()) {
-                    checkLines.add(KnightOrPawnCheck(forwardDiagonalPos))
+                    checkLines.add(PawnCheck(forwardDiagonalPos, kingPos))
                 }
             }
         }
@@ -136,37 +74,10 @@ fun checkAttackLines(game: BasicChessGameInterface, isWhite: Boolean): AttackLin
     kingPos.forEachKnightPos {possibleKnightPos->
         game.getFigureOrNull(possibleKnightPos)?.let { figure ->
             if(figure.isKnight()&&figure.isWhite!=isWhite) {
-                checkLines.add(KnightOrPawnCheck(possibleKnightPos))
+                checkLines.add(KnightCheck(possibleKnightPos, kingPos))
             }
         }
     }
 
     return AttackLines(checkLines, boundLineByBoundFigurePos)
-}
-
-data class PositionProgression(
-        private val inclusiveStartPos: Position,
-        val size: Int,
-        val direction: Direction
-): Iterable<Position> {
-    init {
-        assert(size in 0..7)
-    }
-    val isEmpty = size==0
-
-    override fun iterator(): Iterator<Position> {
-        if(isEmpty) {
-            return emptyList<Position>().iterator()
-        }
-        var numberOfElementsLeftToIterateOver = size
-        val sequence = generateSequence({ inclusiveStartPos.takeUnless { isEmpty } }) { currentPos: Position ->
-            if(--numberOfElementsLeftToIterateOver==0) {
-                return@generateSequence null
-            } else {
-                return@generateSequence currentPos.step(direction)
-            }
-        }
-        return sequence.iterator()
-    }
-
 }
