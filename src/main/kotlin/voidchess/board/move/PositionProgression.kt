@@ -1,28 +1,41 @@
 package voidchess.board.move
 
+import java.lang.IllegalStateException
+
 data class PositionProgression(
-        private val inclusiveStartPos: Position,
+        val inclusiveStartPos: Position,
         val size: Int,
         val direction: Direction
-): Iterable<Position> {
+) {
     init {
         assert(size in 0..7)
     }
 
     val isEmpty = size==0
+    val hasSinglePos = size==1
 
-    override fun iterator(): Iterator<Position> {
-        if(isEmpty) {
-            return emptyList<Position>().iterator()
-        }
-        var numberOfElementsLeftToIterateOver = size
-        val sequence = generateSequence({ inclusiveStartPos.takeUnless { isEmpty } }) { currentPos: Position ->
-            if(--numberOfElementsLeftToIterateOver==0) {
-                return@generateSequence null
-            } else {
-                return@generateSequence currentPos.step(direction)
+    inline fun forEachReachablePos(informOf: (Position) -> Unit) {
+        var index = 1;
+        var currentPos = inclusiveStartPos
+        if(size!=0) {
+            informOf(currentPos)
+            while(index!=size) {
+                currentPos = currentPos.step(direction) ?: throw IllegalStateException("PositionProgression left the board! startPos: $inclusiveStartPos, size: $size, direction: $direction")
+                informOf(currentPos)
+                index++
             }
         }
-        return sequence.iterator()
+    }
+
+    fun contains(pos: Position): Boolean {
+        when(size) {
+            0->return false
+            1->return pos==inclusiveStartPos
+            else ->{
+                if(pos==inclusiveStartPos) return true
+                val dirToPos = inclusiveStartPos.getDirectionTo(pos) ?: return false
+                return if(dirToPos==direction) inclusiveStartPos.distanceTo(pos)<size else false
+            }
+        }
     }
 }

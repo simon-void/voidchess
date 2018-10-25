@@ -43,12 +43,12 @@ class Rook : CastlingFigure {
 
     override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) {
         when {
-            checkLine.hasSingleInterceptPos -> {
+            checkLine.posProgression.hasSinglePos -> {
                 addMoveIfReachable(checkLine.attackerPos, game, result)
             }
             checkLine.isDiagonalCheck -> {
                 var hasAlreadyAddedAPosition = false
-                for(diagonalPos in checkLine) {
+                checkLine.posProgression.forEachReachablePos {diagonalPos->
                     if(addMoveIfReachable(diagonalPos, game, result)) {
                         // a rook can only intersect with a diagonal attacker at max two points
                         if(hasAlreadyAddedAPosition) return
@@ -57,7 +57,7 @@ class Rook : CastlingFigure {
                 }
             }
             else -> { // isStraightCheck!
-                for(straightPos in checkLine) {
+                checkLine.posProgression.forEachReachablePos {straightPos->
                     if(addMoveIfReachable(straightPos, game, result)) {
                         // a rook can only intersect with a straight attacker at one point
                         return
@@ -69,10 +69,10 @@ class Rook : CastlingFigure {
 
     override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) {
         if(boundLine.boundFigureToAttackerDirection.isStraight) {
-            for(posBetweenThisAndAttacker in boundLine.possibleMovesToAttacker) {
+            boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
                 result.add(Move[position, posBetweenThisAndAttacker])
             }
-            for(posBetweenThisAndKing in boundLine.possibleMovesToKing) {
+            boundLine.possibleMovesToKing.forEachReachablePos {posBetweenThisAndKing->
                 result.add(Move[position, posBetweenThisAndKing])
             }
         }

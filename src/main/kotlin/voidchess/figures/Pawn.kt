@@ -140,12 +140,8 @@ class Pawn : Figure {
         // or/and by stepping forward into the line
         if (checkLinePassesThroughPawnColumn(checkLine.attackerPos, checkLine.kingPos)) {
             // try to stop check by moving forward
-            if (!checkLine.hasSingleInterceptPos) {
-                val interceptPosIter = checkLine.iterator()
-                // remove the first position, because that's the attacker's position
-                interceptPosIter.next()
-                while (interceptPosIter.hasNext()) {
-                    val interceptPos = interceptPosIter.next()
+            if (!checkLine.posProgression.hasSinglePos) {
+                checkLine.posProgression.forEachReachablePos { interceptPos->
                     if (isStraightReachable(interceptPos, game)) {
                         result.add(Move[position, interceptPos])
                         return

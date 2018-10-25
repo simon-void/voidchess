@@ -2,10 +2,7 @@ package voidchess
 
 import org.mockito.Mockito
 import voidchess.board.*
-import voidchess.board.move.LastMoveProvider
-import voidchess.board.move.Move
-import voidchess.board.move.PawnPromotion
-import voidchess.board.move.Position
+import voidchess.board.move.*
 import java.util.*
 
 
@@ -44,4 +41,10 @@ fun ChessGameInterface.moves(moveCodes: Iterable<String>) {
     for(moveCode in moveCodes) {
         move(Move.byCode(moveCode))
     }
+}
+
+fun PositionProgression.toList(): List<Position> {
+    val list = LinkedList<Position>()
+    forEachReachablePos { position -> list.add(position) }
+    return list
 }

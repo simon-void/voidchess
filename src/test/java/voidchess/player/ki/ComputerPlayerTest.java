@@ -102,7 +102,7 @@ public class ComputerPlayerTest {
         final NumberFormat numberFormat = NumberFormat.getPercentInstance();
         DynamicEvaluation dynamicEvaluation = new DynamicEvaluation(pruner, staticEvaluation);
 
-        List<Move> possibleMoves = new LinkedList<Move>();
+        List<Move> possibleMoves = new LinkedList();
         game.getPossibleMoves(possibleMoves);
         final double numberOfPossibleMoves = possibleMoves.size();
         int moveIndex = 0;
@@ -112,11 +112,11 @@ public class ComputerPlayerTest {
                 System.out.println(numberFormat.format((++moveIndex) / numberOfPossibleMoves));
             }
         } catch (Exception e) {
-            String gamestring = game.toString();
+            String gameString = game.toString();
             throw new RuntimeException(
                     e.toString() + "-after Moves:"
                             + game.getHistory() + " -leading to position:"
-                            + gamestring);
+                            + gameString);
         } catch (AssertionError e) {
             AssertionError extendedE = new AssertionError(e.getMessage() + " History:" + game.getHistory());
             extendedE.setStackTrace(e.getStackTrace());
@@ -128,7 +128,7 @@ public class ComputerPlayerTest {
         final String initDescription = game.toString();
         DynamicEvaluation dynamicEvaluation = new DynamicEvaluation(pruner, StaticEvaluation.INSTANCE);
 
-        List<Move> possibleMoves = new LinkedList<Move>();
+        List<Move> possibleMoves = new LinkedList();
         game.getPossibleMoves(possibleMoves);
 
         if (!possibleMoves.contains(move)) {
@@ -154,13 +154,20 @@ public class ComputerPlayerTest {
 
     public static void main(String[] args) {
         if (args.length == 1 && args[0].equals("benchmark")) {
-            benchmark();
+            switch (args[0]) {
+                case "benchmark":
+                    benchmark(true);
+                    break;
+                case "benchmark2":
+                    benchmark(false);
+                    break;
+            }
         } else {
             loadTest();
         }
     }
 
-    private static void benchmark() {
+    private static void benchmark(boolean useFasterPruner) {
         ChessGame game = new ChessGame();
         game.move(Move.byCode("e2-e4"));
         game.move(Move.byCode("e7-e5"));
@@ -168,13 +175,14 @@ public class ComputerPlayerTest {
         game.move(Move.byCode("b8-c6"));
         game.move(Move.byCode("f1-b5"));
         game.move(Move.byCode("f8-c5"));
-//    game.move(Move.byCode("d2-d3"));
-//    game.move(Move.byCode("d7-d6"));
-//    game.move(Move.byCode("b1-c3"));
-//    game.move(Move.byCode("c8-g4"));
-        SearchTreePruner pruner = new SimplePruner(2, 3, 2);
+//        game.move(Move.byCode("d2-d3"));
+//        game.move(Move.byCode("d7-d6"));
+//        game.move(Move.byCode("b1-c3"));
+//        game.move(Move.byCode("c8-g4"));
+        SearchTreePruner prunerL2 = new SimplePruner(2, 3, 2);
+        SearchTreePruner prunerL3 = new SimplePruner(2, 4, 3);
         StaticEvaluationInterface staticEvaluation = StaticEvaluation.INSTANCE;//new ConstantEvaluation();//
-        loadTest(game, pruner, staticEvaluation, "Benchmark");
+        loadTest(game, useFasterPruner ? prunerL2 : prunerL3, staticEvaluation, "Benchmark"+(useFasterPruner?"L2":"L3"));
     }
 
     private static void loadTest() {

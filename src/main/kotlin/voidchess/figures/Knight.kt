@@ -32,7 +32,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         // the accessibility of the target field doesn't need to be checked because
         // all checkInterceptPositions are guaranteed to be either empty
         // or to contain the attacker (who has a different color)
-        for(checkInterceptPos in checkLine) {
+        checkLine.posProgression.forEachReachablePos {checkInterceptPos->
             val horizontalDifference = Math.abs(position.row - checkInterceptPos.row)
             val verticalDifference = Math.abs(position.column - checkInterceptPos.column)
             if(horizontalDifference+verticalDifference==3 && horizontalDifference!=0 && verticalDifference!=0) {

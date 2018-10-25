@@ -101,14 +101,22 @@ class FigureTest {
     fun testIsBound(gameDes: String, figurePos: String, isNotBoundPosCodes: List<String>, isBoundPosCodes: List<String>) {
         val game = initSimpleChessBoard(gameDes)
         val figure = game.getFigure(Position.byCode(figurePos))
+
+        val shouldNotBeBoundButAre = LinkedList<String>()
+        val shouldBeBoundButAreNot = LinkedList<String>()
         for(isNotBoundPosCode in isNotBoundPosCodes) {
             val isNotBoundPos = Position.byCode(isNotBoundPosCode)
-            assertFalse(figure.isBound(isNotBoundPos, game), "$figurePos.isBound($isNotBoundPos, game)")
+            if(figure.isBound(isNotBoundPos, game)) {
+                shouldNotBeBoundButAre.add(isNotBoundPosCode)
+            }
         }
         for(isBoundPosCode in isBoundPosCodes) {
             val isBoundPos = Position.byCode(isBoundPosCode)
-            assertTrue(figure.isBound(isBoundPos, game), "$figurePos.isBound($isBoundPos, game)")
+            if(!figure.isBound(isBoundPos, game)) {
+                shouldBeBoundButAreNot.add(isBoundPosCode)
+            }
         }
+        assertTrue(shouldBeBoundButAreNot.isEmpty()&&shouldNotBeBoundButAre.isEmpty(),"$figurePos should be bound but isn't for $shouldBeBoundButAreNot and shouldn't be bound but is for $shouldNotBeBoundButAre.")
     }
 
     @DataProvider

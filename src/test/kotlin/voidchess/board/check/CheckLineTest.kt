@@ -6,6 +6,7 @@ import voidchess.board.move.Position
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
+import voidchess.toList
 
 class CheckLineTest {
     @Test(dataProvider = "getTestActualCheckLineIteratorData")
@@ -17,7 +18,7 @@ class CheckLineTest {
 
         val actualCheckLine = getActualCheckLine(kingPosCode, attackerPosCode)
 
-        val posIter = actualCheckLine.iterator()
+        val posIter = actualCheckLine.posProgression.toList().iterator()
         var index = 0
 
         while (posIter.hasNext()) {

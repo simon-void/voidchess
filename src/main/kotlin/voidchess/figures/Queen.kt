@@ -40,16 +40,16 @@ class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPo
 
     override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) {
         // a queen can intersect a check at up to three positions. but the overhead to check this upper bound is probably to high
-        for(checkInterceptPos in checkLine) {
+        checkLine.posProgression.forEachReachablePos {checkInterceptPos->
             addMoveIfReachable(checkInterceptPos, game, result)
         }
     }
 
     override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) {
-        for(posBetweenThisAndAttacker in boundLine.possibleMovesToAttacker) {
+        boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
             result.add(Move[position, posBetweenThisAndAttacker])
         }
-        for(posBetweenThisAndKing in boundLine.possibleMovesToKing) {
+        boundLine.possibleMovesToKing.forEachReachablePos {posBetweenThisAndKing->
             result.add(Move[position, posBetweenThisAndKing])
         }
     }

@@ -5,7 +5,9 @@ import voidchess.board.move.Position
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
+import voidchess.board.move.PositionProgression
 import voidchess.initSimpleChessBoard
+import voidchess.toList
 import kotlin.test.assertTrue
 
 class AttackLinesTest {
@@ -62,13 +64,13 @@ class AttackLinesTest {
         assertEquals(attackLines.checkLines.size, 1, "#checkLines")
         assertEquals(attackLines.boundLineByBoundFigurePos.size, 1, "#boundLines")
 
-        fun assertIteratorOrder(actualIterable: Iterable<Position>, vararg posCodes: String) {
-            assertEquals(actualIterable.toList(), posCodes.map {Position.byCode(it)}, "ordered")
+        fun assertIteratorOrder(positionProgression: PositionProgression, vararg posCodes: String) {
+            assertEquals(positionProgression.toList(), posCodes.map {Position.byCode(it)}, "ordered")
         }
 
         // the attackIterator should start at the attacker
-        val checkInterceptPosIter = attackLines.checkLines.first()
-        assertIteratorOrder(checkInterceptPosIter, "h4", "g3", "f2")
+        val checkLine = attackLines.checkLines.first()
+        assertIteratorOrder(checkLine.posProgression, "h4", "g3", "f2")
 
         // both boundLine iterator should start at the bound figure
         // (well, not the bound figure's position itself, but neighboring it)

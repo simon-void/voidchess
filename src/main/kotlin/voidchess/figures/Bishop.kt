@@ -12,6 +12,9 @@ import voidchess.board.move.Position
 class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.BISHOP, true, false) {
 
     override fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean {
+        if(!position.hasSameColor(toPos)) {
+            return false
+        }
         val direction = position.getDirectionTo(toPos)
 
         if (direction == null || direction.isStraight) {
@@ -40,14 +43,14 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
 
     override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) {
         when {
-            checkLine.hasSingleInterceptPos -> {
+            checkLine.posProgression.hasSinglePos -> {
                 if(position.hasSameColor(checkLine.attackerPos)) {
                     addMoveIfReachable(checkLine.attackerPos, game, result)
                 }
             }
             checkLine.isDiagonalCheck -> {
                 if(position.hasSameColor(checkLine.attackerPos)) {
-                    for(diagonalPos in checkLine) {
+                    checkLine.posProgression.forEachReachablePos { diagonalPos->
                         if(addMoveIfReachable(diagonalPos, game, result)) {
                             // a bishop can only intersect with a diagonal attacker at a single point
                             return
@@ -57,7 +60,7 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
             }
             else -> { // isStraightCheck!
                 var hasAlreadyAddedAPosition = false
-                for(straightPos in checkLine) {
+                checkLine.posProgression.forEachReachablePos { straightPos->
                     if(position.hasSameColor(straightPos)) {
                         if(addMoveIfReachable(straightPos, game, result)) {
                             // a bishop can only intersect with a straight attacker at max two points
@@ -72,10 +75,10 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
 
     override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) {
         if(boundLine.boundFigureToAttackerDirection.isDiagonal) {
-            for(posBetweenThisAndAttacker in boundLine.possibleMovesToAttacker) {
+            boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
                 result.add(Move[position, posBetweenThisAndAttacker])
             }
-            for(posBetweenThisAndKing in boundLine.possibleMovesToKing) {
+            boundLine.possibleMovesToKing.forEachReachablePos {posBetweenThisAndKing->
                 result.add(Move[position, posBetweenThisAndKing])
             }
         }

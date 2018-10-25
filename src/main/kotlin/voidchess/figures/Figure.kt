@@ -108,7 +108,7 @@ abstract class Figure constructor(
 
         if (attackLines.isSingleCheck) {
             val checkLine = attackLines.checkLines.first()
-            if(!checkLine.contains(toPos)) {
+            if(!checkLine.posProgression.contains(toPos)) {
                 return true
             }
             return attackLines.boundLineByBoundFigurePos.containsKey(position)
