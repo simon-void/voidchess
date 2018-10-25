@@ -33,8 +33,8 @@ class Move private constructor(@JvmField val from: Position, @JvmField val to: P
             val toRow = code[4].toInt() - 49
 
             return get(
-                    Position.get(fromRow, fromColumn),
-                    Position.get(toRow, toColumn)
+                    Position[fromRow, fromColumn],
+                    Position[toRow, toColumn]
             )
         }
 

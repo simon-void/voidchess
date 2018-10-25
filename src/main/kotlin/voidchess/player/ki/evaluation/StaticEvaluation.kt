@@ -70,6 +70,8 @@ object StaticEvaluation : StaticEvaluationInterface {
     private fun evaluatePosition(game: ChessGameInterface, forWhite: Boolean): Double {
         var whiteEvaluation = 0.0
         var blackEvaluation = 0.0
+        var foundWhiteQueen = false
+        var foundBlackQueen = false
 
         game.forAllFigures {figure->
             val pos = figure.position
@@ -93,15 +95,17 @@ object StaticEvaluation : StaticEvaluationInterface {
                 }else{
                     blackEvaluation += value
                 }
-            } else if (figure.isKing()) {
-                val value = evaluateKing(game, figure as King)
+            } else if (figure.isQueen()) {
                 if (figure.isWhite) {
-                    whiteEvaluation += value
+                    foundWhiteQueen = true
                 }else {
-                    blackEvaluation += value
+                    foundBlackQueen = true
                 }
             }
         }
+
+        whiteEvaluation += evaluateKing(game, game.whiteKing, foundBlackQueen)
+        blackEvaluation += evaluateKing(game, game.blackKing, foundWhiteQueen)
 
         return if (forWhite)
             whiteEvaluation - blackEvaluation
@@ -206,20 +210,10 @@ object StaticEvaluation : StaticEvaluationInterface {
     }
 
 
-    private fun evaluateKing(game: ChessGameInterface, king: King): Double {
-        val queenOfOppositeColorStillOnBoard = isQueenOfColorStillOnBoard(game, !king.isWhite)
+    private fun evaluateKing(game: ChessGameInterface, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
         var value = evaluateCastling(king, queenOfOppositeColorStillOnBoard)
         value += evaluateKingDefense(game, king, queenOfOppositeColorStillOnBoard)
         return value
-    }
-
-    private fun isQueenOfColorStillOnBoard(game: ChessGameInterface, isWhite: Boolean): Boolean {
-        game.forAllFigures { figure ->
-            if (figure.isQueen() && figure.isWhite == isWhite) {
-                return true
-            }
-        }
-        return false
     }
 
     private fun evaluateCastling(king: King, queenOfOppositeColorStillOnBoard: Boolean) =
