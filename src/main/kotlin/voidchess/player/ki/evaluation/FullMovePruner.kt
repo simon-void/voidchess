@@ -1,7 +1,3 @@
-/*
- * Created on 08.11.2006
- */
-
 package voidchess.player.ki.evaluation
 
 class FullMovePruner constructor(no_hit_radius: Int, figure_hit_radius: Int, chess_radius: Int): SimplePruner(no_hit_radius, figure_hit_radius, chess_radius) {

@@ -1,7 +1,3 @@
-/*
- * Created on 01.11.2006
- */
-
 package voidchess.ui
 
 import voidchess.player.ki.ComputerPlayer

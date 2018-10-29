@@ -1,7 +1,3 @@
-/*
- * Created on 20.10.2006
- */
-
 package voidchess.ui
 
 import voidchess.board.ChessGameInterface

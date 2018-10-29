@@ -88,9 +88,9 @@ class Table constructor(
         whitePlayer.play()
     }
 
-    override fun stopGame(endoption: MoveResult) {
-        whitePlayer.gameEnds(endoption, !whitePlayersTurn)
-        blackPlayer.gameEnds(endoption, !whitePlayersTurn)
+    override fun stopGame(endOption: MoveResult) {
+        whitePlayer.gameEnds(endOption, !whitePlayersTurn)
+        blackPlayer.gameEnds(endOption, !whitePlayersTurn)
         parent.stop()
     }
 }

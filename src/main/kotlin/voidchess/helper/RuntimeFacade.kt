@@ -1,7 +1,3 @@
-/*
- * Created on 27.09.2006
- */
-
 package voidchess.helper
 
 import java.text.NumberFormat

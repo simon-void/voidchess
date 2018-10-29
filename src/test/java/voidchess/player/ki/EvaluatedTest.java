@@ -1,7 +1,3 @@
-/*
- * Created on 03.10.2006
- */
-
 package voidchess.player.ki;
 
 import org.testng.annotations.Test;

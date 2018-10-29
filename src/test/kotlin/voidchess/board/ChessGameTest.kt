@@ -31,14 +31,14 @@ class ChessGameTest {
     }
 
     @Test
-    fun testGetFigure() {
+    fun testGetFigureOrNull() {
         assertNull(game.getFigureOrNull(Position.byCode("e3")))
         val king = game.getFigureOrNull(Position.byCode("e1"))
         assertTrue(king is King)
-        assertTrue(king!!.isWhite)
+        assertTrue(king.isWhite)
         val bishop = game.getFigureOrNull(Position.byCode("c8"))
         assertTrue(bishop is Bishop)
-        assertFalse(bishop!!.isWhite)
+        assertFalse(bishop.isWhite)
     }
 
     @Test
