@@ -5,7 +5,7 @@ import voidchess.image.ImageLoader
 import javax.swing.*
 import java.awt.*
 
-fun main(args: Array<String>) {
+fun main() {
     try {
         //Swing UI updates have to come from the SwingHandler or something
         SwingUtilities.invokeLater { ChessFrame() }
