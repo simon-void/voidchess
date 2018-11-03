@@ -93,11 +93,13 @@ class Pawn : Figure {
         if(oneForwardPos.equalsPosition(to)) {
             return true
         }
-        val pawnDoubleStepRow = if (isWhite) 3 else 4
-        if(to.row!=pawnDoubleStepRow) {
-            return false
+        if(position.row==startingRow) {
+            val twoForwardPos = oneForwardPos.step(forwardDirection)!!
+            if(twoForwardPos.equalsPosition(to) && game.isFreeArea(to)) {
+                return true
+            }
         }
-        return game.isFreeArea(to)
+        return false
     }
 
     private fun isDiagonalReachable(to: Position, game: BasicChessGameInterface): Boolean {
