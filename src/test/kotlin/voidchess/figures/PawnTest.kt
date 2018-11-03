@@ -7,10 +7,12 @@ import voidchess.board.move.Position
 
 import java.util.LinkedList
 
-import org.testng.Assert.*
 import org.testng.annotations.DataProvider
 import voidchess.board.getFigure
 import voidchess.initSimpleChessBoard
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 
 class PawnTest {
@@ -39,8 +41,8 @@ class PawnTest {
         var to3 = Position.byCode("b3")
         var to4 = Position.byCode("a1")
 
-        var pawn = game.getFigureOrNull(from)
-        assertTrue(pawn!!.isReachable(to1, game))
+        var pawn = game.getFigure(from)
+        assertTrue(pawn.isReachable(to1, game))
         assertTrue(pawn.isReachable(to2, game))
         assertFalse(pawn.isReachable(to3, game))
         assertFalse(pawn.isReachable(to4, game))
@@ -56,8 +58,8 @@ class PawnTest {
         to3 = Position.byCode("c3")
         to4 = Position.byCode("d2")
 
-        pawn = game.getFigureOrNull(from)
-        assertTrue(pawn!!.isReachable(to1, game))
+        pawn = game.getFigure(from)
+        assertTrue(pawn.isReachable(to1, game))
         assertTrue(pawn.isReachable(to2, game))
         assertTrue(pawn.isReachable(to3, game))
         assertFalse(pawn.isReachable(to4, game))
@@ -71,7 +73,7 @@ class PawnTest {
         val moveIter1 = LinkedList<Move>()
         pawn.getPossibleMoves(game, moveIter1)
         val actualPossibleToCodes = moveIter1.asSequence().map { it.to.toString() }.toSet()
-        assertEquals(actualPossibleToCodes, expectedPossibleToCodes, "possible positions the pawn can move to")
+        assertEquals(expectedPossibleToCodes, actualPossibleToCodes, "possible positions the pawn can move to")
     }
 
     @DataProvider
@@ -88,6 +90,7 @@ class PawnTest {
             arrayOf("black 0 King-black-h7-2 Pawn-black-g7-false Queen-white-a7 King-white-e1-0", "g7", setOf<String>()),
             arrayOf("white 0 King-black-h7-2 Pawn-white-a4-false Pawn-black-b5-true King-white-c4-8", "a4", setOf("b5")),
             arrayOf("white 0 King-black-h7-2 Pawn-white-a5-false Pawn-black-b5-true King-white-c4-8", "a5", setOf("b6")),
-            arrayOf("white 0 Pawn-white-b2-false King-white-d3-2 Rook-black-a3-1 King-black-e8-0", "b2", setOf("a3", "b3"))
+            arrayOf("white 0 Pawn-white-b2-false King-white-d3-2 Rook-black-a3-1 King-black-e8-0", "b2", setOf("a3", "b3")),
+            arrayOf("black 0 King-black-g7-2 Pawn-black-e4-false Queen-white-d4 King-white-e1-0", "e4", setOf<String>())
     )
 }

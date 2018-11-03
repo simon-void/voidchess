@@ -5,7 +5,7 @@ import kotlin.math.max
 
 
 class Position private constructor(@JvmField val row: Int, @JvmField val column: Int) {
-    val index = getIndex(row, column)
+    @JvmField val index = getIndex(row, column)
     private val isWhiteField = (row+column)%2==1
 
     fun equalsPosition(pos: Position) = this === pos //index == pos.index
@@ -131,6 +131,7 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
     }
 
     companion object {
+        @JvmStatic
         private val positions = Array(64) {
             // optimized from: reverse (row * 8) + column
             // val column = it % 8
@@ -162,6 +163,7 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
         }
 
         // optimized from: (row * 8) + column
+        @JvmStatic
         private fun getIndex(row: Int, column: Int) = (row shl 3) or column
 
         @JvmStatic

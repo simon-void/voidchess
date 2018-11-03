@@ -4,7 +4,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import voidchess.board.ChessGame;
 import voidchess.board.check.CheckSearch;
-import voidchess.board.move.LastMoveProvider;
 import voidchess.board.SimpleArrayBoard;
 import voidchess.board.move.ExtendedMove;
 import voidchess.board.move.Move;
@@ -26,7 +25,7 @@ public class CheckSearchTest {
 //    @Test
 //    public void testAnalyseCheck() {
 //        String des = "white 0 King-white-e4-4 King-black-e5-4";
-//        SimpleArrayBoard game = new SimpleArrayBoard(des, mock(LastMoveProvider.class));
+//        SimpleArrayBoard game = new SimpleArrayBoard(des);
 //        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, true);
 //
 //        assertTrue(status.isCheck());

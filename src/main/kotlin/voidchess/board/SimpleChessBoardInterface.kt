@@ -17,5 +17,5 @@ interface SimpleChessBoardInterface : BasicChessGameInterface {
     fun move(figure: Figure, to: Position): Figure?
     fun undoMove(figure: Figure, from: Position, figureTaken: Figure?)
     fun isCheck(isWhite: Boolean): Boolean
-    fun getAttackLines(isWhite: Boolean): AttackLines
+    fun getCachedAttackLines(isWhite: Boolean): AttackLines
 }

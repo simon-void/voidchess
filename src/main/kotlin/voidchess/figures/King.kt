@@ -174,8 +174,7 @@ class King : CastlingFigure {
     override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
 
     override fun getPossibleMoves(game: SimpleChessBoardInterface, result: MutableList<Move>) {
-        val attackLines = game.getAttackLines(isWhite)
-
+        val attackLines = game.getCachedAttackLines(isWhite)
         if(attackLines.noCheck) {
             for(direction in Direction.values()) {
                 position.step(direction)?.let { possibleKingPos->

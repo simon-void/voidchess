@@ -10,6 +10,7 @@ class Move private constructor(@JvmField val from: Position, @JvmField val to: P
     override fun hashCode() = index
 
     companion object {
+        @JvmStatic
         private val moves = Array(64 * 64) {
             // optimized from: reverse (toIndex * 64) + fromIndex
             // val fromIndex = it % 64
@@ -56,6 +57,7 @@ class Move private constructor(@JvmField val from: Position, @JvmField val to: P
         }
 
         // optimized from: (toIndex * 64) + fromIndex
+        @JvmStatic
         private fun getMoveIndex(fromIndex: Int, toIndex: Int) =  (toIndex shl 6) or fromIndex
     }
 }

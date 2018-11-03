@@ -7,7 +7,7 @@ import voidchess.player.ki.evaluation.SimplePruner
 import java.util.*
 
 
-class ChessGame : ChessGameInterface, LastMoveProvider {
+class ChessGame : ChessGameInterface {
     private val game: SimpleChessBoardInterface
     private val figureFactory: FigureFactory
     private val mementoStack: LinkedList<Memento>
@@ -110,7 +110,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         mementoStack = LinkedList()
         extendedMoveStack = LinkedList()
         numberStack = NumberStack()
-        game = SimpleArrayBoard(this)
+        game = SimpleArrayBoard()
 
         initGame()
     }
@@ -118,14 +118,14 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     /**
      * copy-constructor
      */
-    constructor(other: ChessGame, desc: String) {
+    private constructor(other: ChessGame, desc: String) {
         hasHitFigure = other.hasHitFigure
         supervisor = ChessGameSupervisorDummy
         figureFactory = FigureFactory()
         mementoStack = other.mementoStack.shallowCopy()
         extendedMoveStack = other.extendedMoveStack.shallowCopy()
         numberStack = NumberStack(other.numberStack)
-        game = SimpleArrayBoard(desc, this)
+        game = SimpleArrayBoard(desc)
 
         whiteTurn = other.whiteTurn
         numberOfMovesWithoutHit = other.numberOfMovesWithoutHit
@@ -170,7 +170,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
             st.nextToken()
         }
 
-        game = SimpleArrayBoard(this)
+        game = SimpleArrayBoard()
         game.init(game_description)
 
         memorizeGame()
@@ -193,7 +193,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         numberOfMovesWithoutHit = 0
         figureCount = 32
 
-        game = SimpleArrayBoard(this)
+        game = SimpleArrayBoard()
         game.init(initialPosition)
 
         memorizeGame()
@@ -209,7 +209,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         return normalSupervisor
     }
 
-    override fun getLastMove() = if (extendedMoveStack.isEmpty()) null else extendedMoveStack.last
+    fun getLastMove() = if (extendedMoveStack.isEmpty()) null else extendedMoveStack.last
 
     override fun isFreeArea(pos: Position): Boolean {
         return game.isFreeArea(pos)
@@ -228,15 +228,13 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     override fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean {
-        if (isFreeArea(pos)) return false
         val figure = getFigureOrNull(pos)
-        return figure!!.isWhite == whitePlayer && figure.isSelectable(game)
+        return figure!=null && figure.isWhite == whitePlayer && figure.isSelectable(game)
     }
 
     override fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean {
-        if (isFreeArea(from)) return false
         val figure = getFigureOrNull(from)
-        return figure!!.isWhite == whitePlayer && figure.isMovable(to, game)
+        return figure!=null && figure.isWhite == whitePlayer && figure.isMovable(to, game)
     }
 
     override fun countFigures(): Int {
@@ -246,7 +244,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     override fun move(move: Move): MoveResult {
         var rewritableMove = move
         assert(!isFreeArea(rewritableMove.from)) { "the move moves a null value:" + rewritableMove.toString() }
-        assert(getFigureOrNull(rewritableMove.from)!!.isWhite == whiteTurn) { "figure to be moved has wrong color" }
+        assert(game.getFigure(rewritableMove.from).isWhite == whiteTurn) { "figure to be moved has wrong color" }
 
         val castlingRook = extractCastlingRook(rewritableMove)
         //im Fall der Castling wird der Zug jetzt so umgebogen,
@@ -302,7 +300,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     private fun handleEnpasent(move: Move): Pawn? {
-        if (getFigureOrNull(move.from)!!.isPawn()
+        if (game.getFigure(move.from).isPawn()
                 && move.from.column != move.to.column
                 && isFreeArea(move.to)) {
             val pawnToBeHit = Position[move.from.row, move.to.column]
@@ -316,8 +314,8 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     private fun extractCastlingRook(move: Move): Rook? {
-        val movingFigure = getFigureOrNull(move.from)
-        if (!movingFigure!!.isKing()) return null
+        val movingFigure = game.getFigure(move.from)
+        if (!movingFigure.isKing()) return null
 
         val castlingRook = getFigureOrNull(move.to)
         if (castlingRook != null && castlingRook.isWhite == movingFigure.isWhite) {
@@ -341,7 +339,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     private fun handlePawnTransformation(move: Move): Boolean {
-        if (getFigureOrNull(move.to)!!.isPawn()) {
+        if (game.getFigure(move.to).isPawn()) {
             if (move.to.row == 0 || move.to.row == 7) {
                 val figure = supervisor.askForPawnChange(move.to)
                 val isWhite = move.to.row == 7
@@ -372,12 +370,12 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
 
         val lastExtMove = extendedMoveStack.removeLast()
         val lastMove = lastExtMove.move
-        val activeFigure = getFigureOrNull(lastMove.to)
+        val activeFigure = game.getFigure(lastMove.to)
         setFigure(lastMove.from, activeFigure)
         if (!lastExtMove.isCastling || lastMove.from.notEqualsPosition(lastMove.to)) {
             setFigure(lastMove.to, lastExtMove.figureTaken)
         }
-        activeFigure!!.undoMove(lastMove.from)
+        activeFigure.undoMove(lastMove.from)
 
         if (lastExtMove.wasFigureTaken) {
             figureCount++
@@ -402,10 +400,10 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
     }
 
     private fun undoEnpassent(lastExtMove: ExtendedMove) {
-        val hitPawn = lastExtMove.enpassentPawnOrCastlingRook as Pawn?
+        val hitPawn = lastExtMove.enpassentPawnOrCastlingRook as Pawn
         val pawnPos = Position[lastExtMove.move.from.row, lastExtMove.move.to.column]
         setFigure(pawnPos, hitPawn)
-        hitPawn!!.setCanBeHitByEnpasent()
+        hitPawn.setCanBeHitByEnpasent()
     }
 
     private fun undoPawnTransformation(lastExtMove: ExtendedMove) {
@@ -418,7 +416,7 @@ class ChessGame : ChessGameInterface, LastMoveProvider {
         if (extendedMoveStack.isEmpty()) return
 
         val newLatestMove = extendedMoveStack.last
-        val figure = getFigureOrNull(newLatestMove.move.to)!!
+        val figure = game.getFigure(newLatestMove.move.to)
         if (figure.isPawn() && Math.abs(newLatestMove.move.from.row - newLatestMove.move.to.row) == 2) {
             (figure as Pawn).setCanBeHitByEnpasent()
         }

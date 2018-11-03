@@ -41,9 +41,9 @@ public class PositionTest {
     @Test
     public void testIndex() {
         Position pos1 = Position.byCode("a1");
-        assertEquals(pos1.getIndex(), 0);
+        assertEquals(pos1.index, 0);
         Position pos2 = Position.byCode("h8");
-        assertEquals(pos2.getIndex(), 63);
+        assertEquals(pos2.index, 63);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class PositionTest {
         for (int i = 0; i < 64; i++) {
             Position posByIndex = Position.byIndex(i);
             Position posByRowColumn = Position.get(posByIndex.row, posByIndex.column);
-            assertEquals(posByRowColumn.getIndex(), i, "recomputed index");
+            assertEquals(posByRowColumn.index, i, "recomputed index");
         }
     }
 
@@ -182,7 +182,7 @@ public class PositionTest {
     @Test
     public void testPositionByIndex() {
         Position b3 = Position.byCode("b3");
-        Position actualPos = Position.byIndex(b3.getIndex());
+        Position actualPos = Position.byIndex(b3.index);
         assertEquals(actualPos, b3);
     }
 

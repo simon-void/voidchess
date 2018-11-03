@@ -8,7 +8,6 @@ import voidchess.board.check.CheckLine
 import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
-import java.util.*
 
 
 abstract class Figure constructor(
@@ -48,7 +47,7 @@ abstract class Figure constructor(
 
     abstract fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean
     abstract fun countReachableMoves(game: BasicChessGameInterface): Int
-    protected abstract fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>)
+    internal abstract fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>)
     abstract fun isSelectable(game: SimpleChessBoardInterface): Boolean
 
     fun isMovable(toPos: Position, game: SimpleChessBoardInterface): Boolean {
@@ -56,7 +55,7 @@ abstract class Figure constructor(
     }
 
     open fun getPossibleMoves(game: SimpleChessBoardInterface, result: MutableList<Move>) {
-        val attackLines = game.getAttackLines(isWhite)
+        val attackLines = game.getCachedAttackLines(isWhite)
         if(attackLines.noCheck) {
             val boundLine = attackLines.boundLineByBoundFigurePos[position]
             if(boundLine==null) {
@@ -83,7 +82,7 @@ abstract class Figure constructor(
 
     internal fun isBound(toPos: Position, game: SimpleChessBoardInterface): Boolean {
         assert(isReachable(toPos, game)) { "the assumption of isBound is that toPos is confirmed reachable" }
-        val attackLinesStatus = game.getAttackLines(isWhite)
+        val attackLinesStatus = game.getCachedAttackLines(isWhite)
         return isBound(toPos, game, attackLinesStatus)
     }
 

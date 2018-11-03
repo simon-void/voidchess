@@ -1,8 +1,8 @@
 package voidchess
 
-import org.mockito.Mockito
 import voidchess.board.*
 import voidchess.board.move.*
+import voidchess.figures.Figure
 import java.util.*
 
 
@@ -13,9 +13,9 @@ class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPromotion) :
     }
 }
 
-fun initSimpleChessBoard(gameDes: String): SimpleChessBoardInterface = SimpleArrayBoard(gameDes, Mockito.mock(LastMoveProvider::class.java))
+fun initSimpleChessBoard(gameDes: String): SimpleChessBoardInterface = SimpleArrayBoard(gameDes)
 
-fun initSimpleChessBoard(chess960: Int): SimpleChessBoardInterface = SimpleArrayBoard(Mockito.mock(LastMoveProvider::class.java)).apply { init(chess960) }
+fun initSimpleChessBoard(chess960: Int): SimpleChessBoardInterface = SimpleArrayBoard().apply { init(chess960) }
 
 fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessGameInterface = ChessGame(chess960).apply {
     for(moveCode in moveCodes) {

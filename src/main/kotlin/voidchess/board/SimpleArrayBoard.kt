@@ -3,7 +3,6 @@ package voidchess.board
 import voidchess.board.check.AttackLines
 import voidchess.board.check.CheckSearch
 import voidchess.board.check.checkAttackLines
-import voidchess.board.move.LastMoveProvider
 import voidchess.board.move.Move
 import voidchess.board.move.Position
 import voidchess.figures.Figure
@@ -11,19 +10,20 @@ import voidchess.figures.FigureFactory
 import voidchess.figures.King
 import voidchess.helper.*
 
-class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvider) : SimpleChessBoardInterface {
+class SimpleArrayBoard constructor() : SimpleChessBoardInterface {
     private val game: Array<Figure?> = arrayOfNulls(64)
     private val figureFactory: FigureFactory = FigureFactory()
 
-    override lateinit var whiteKing: King
-    override lateinit var blackKing: King
+    // the alternative to creating dummy instances for white and black king is 'lateinit'
+    // but that would come with a null-check on each access
+    override var whiteKing: King = figureFactory.getKing(Position.byCode("a1"), true)
+    override var blackKing: King = figureFactory.getKing(Position.byCode("a8"), false)
 
     private var calculatedWhiteCheck: Boolean = false
     private var calculatedBlackCheck: Boolean = false
     private var isWhiteCheck: Boolean = false
     private var isBlackCheck: Boolean = false
-    private var whiteCheckStatus: AttackLines? = null
-    private var blackCheckStatus: AttackLines? = null
+    private var cachedAttackLines: AttackLines? = null
 
     val figureCount: Int
         get() {
@@ -39,7 +39,7 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
     }
 
     //for testing
-    constructor(des: String, lastMoveProvider: LastMoveProvider) : this(lastMoveProvider) {
+    constructor(des: String) : this() {
         init(des)
         requireNotNull(whiteKing) {"whiteKing"}
         requireNotNull(blackKing) {"blackKing"}
@@ -48,8 +48,7 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
     private fun clearCheckComputation() {
         calculatedWhiteCheck = false
         calculatedBlackCheck = false
-        whiteCheckStatus = null
-        blackCheckStatus = null
+        cachedAttackLines = null
     }
 
     override fun isCheck(isWhite: Boolean): Boolean {
@@ -68,22 +67,13 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         }
     }
 
-    override fun getAttackLines(isWhite: Boolean): AttackLines {
-        return if (isWhite) {
-            var scopedWhiteCheckStatus = whiteCheckStatus
-            if (scopedWhiteCheckStatus == null) {
-                scopedWhiteCheckStatus = checkAttackLines(this, true)
-                whiteCheckStatus = scopedWhiteCheckStatus
+    override fun getCachedAttackLines(isWhite: Boolean): AttackLines {
+            var scopedAttackLines = cachedAttackLines
+            if (scopedAttackLines == null) {
+                scopedAttackLines = checkAttackLines(this, isWhite)
+                cachedAttackLines = scopedAttackLines
             }
-            scopedWhiteCheckStatus
-        } else {
-            var scopedBlackCheckStatus = blackCheckStatus
-            if (scopedBlackCheckStatus == null) {
-                scopedBlackCheckStatus = checkAttackLines(this, false)
-                blackCheckStatus = scopedBlackCheckStatus
-            }
-            scopedBlackCheckStatus
-        }
+            return scopedAttackLines
     }
 
     override fun init() {
@@ -134,10 +124,12 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
     }
 
     override fun init(chess960: Int) {
-        var code960 = chess960
-        assert(code960 in 0..959) { "chess960 out of bounds. Should be 0-959, is $code960" }
+        var code960Code = chess960
+        assert(code960Code in 0..959) { "chess960 out of bounds. Should be 0-959, is $code960Code" }
 
         clear()
+        var foundWhiteKing = false
+        var foundBlackKing = false
         var pos: Position
 
         // pawn positions is always the same
@@ -149,9 +141,9 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         }
 
         // first bishop
-        var rest = code960 % 4
+        var rest = code960Code % 4
         var row = rest * 2 + 1
-        code960 /= 4
+        code960Code /= 4
 
         pos = Position[0, row]
         setFigure(pos, figureFactory.getBishop(pos, true))
@@ -159,9 +151,9 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         setFigure(pos, figureFactory.getBishop(pos, false))
 
         // second bishop
-        rest = code960 % 4
+        rest = code960Code % 4
         row = rest * 2
-        code960 /= 4
+        code960Code /= 4
 
         pos = Position[0, row]
         setFigure(pos, figureFactory.getBishop(pos, true))
@@ -169,32 +161,38 @@ class SimpleArrayBoard constructor(private val lastMoveProvider: LastMoveProvide
         setFigure(pos, figureFactory.getBishop(pos, false))
 
         // queen
-        rest = code960 % 6
+        rest = code960Code % 6
         row = getFreeRow(rest)
-        code960 /= 6
+        code960Code /= 6
 
         pos = Position[0, row]
         setFigure(pos, figureFactory.getQueen(pos, true))
         pos = Position[7, row]
         setFigure(pos, figureFactory.getQueen(pos, false))
 
-        val otherFigures = getFigureArray(code960)
-        for (i in 0..4) {
+        val otherFigures = getFigureArray(code960Code)
+
+        for (figureName in otherFigures) {
             // always into the first free column
             row = getFreeRow(0)
             pos = Position[0, row]
-            var figure = createFigure(otherFigures[i], true, pos)
+            var figure = createFigure(figureName, true, pos)
             setFigure(pos, figure)
             if (figure is King) {
                 whiteKing = figure
+                foundWhiteKing = true
             }
             pos = Position[7, row]
-            figure = createFigure(otherFigures[i], false, pos)
+            figure = createFigure(figureName, false, pos)
             setFigure(pos, figure)
             if (figure is King) {
                 blackKing = figure
+                foundBlackKing = true
             }
         }
+
+        require(foundWhiteKing) {"no white king for chess960 configuration $chess960"}
+        require(foundBlackKing) {"no black king for chess960 configuration $chess960"}
     }
 
     override fun init(des: String) {
