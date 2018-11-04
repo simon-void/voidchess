@@ -12,7 +12,7 @@ import voidchess.helper.*
 
 class SimpleArrayBoard constructor() : SimpleChessBoardInterface {
     private val game: Array<Figure?> = arrayOfNulls(64)
-    private val figureFactory: FigureFactory = FigureFactory()
+    private val figureFactory = FigureFactory
 
     // the alternative to creating dummy instances for white and black king is 'lateinit'
     // but that would come with a null-check on each access

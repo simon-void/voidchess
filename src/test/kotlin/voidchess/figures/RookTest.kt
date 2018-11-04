@@ -39,8 +39,7 @@ class RookTest {
 
     @Test
     fun testUndoMove() {
-        val figureFactory = FigureFactory()
-        val rook = figureFactory.getRook(Position.byCode("a1"), false)
+        val rook = FigureFactory.getRook(Position.byCode("a1"), false)
 
         assertTrue(rook.canCastle())
         rook.figureMoved(Move.byCode("a1-b1"))

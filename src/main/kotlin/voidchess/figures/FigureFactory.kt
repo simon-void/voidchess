@@ -3,7 +3,7 @@ package voidchess.figures
 import voidchess.board.move.Position
 
 
-class FigureFactory {
+object FigureFactory {
 
     fun getKing(pos: Position, isWhite: Boolean) = King(isWhite, pos)
     fun getQueen(pos: Position, isWhite: Boolean) = Queen(isWhite, pos)

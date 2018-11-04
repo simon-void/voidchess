@@ -6,18 +6,19 @@ import voidchess.player.ki.evaluation.SimplePruner
 import java.util.*
 
 
-class ChessGame : ChessGameInterface {
-    private val game: SimpleChessBoardInterface
-    private val figureFactory: FigureFactory
-    private val mementoStack: LinkedList<Memento>
-    private val extendedMoveStack: LinkedList<ExtendedMove>
-    private val numberStack: NumberStack
+class ChessGame private constructor(
+        private val board: SimpleChessBoardInterface,
+        private val mementoStack: LinkedList<Memento>,
+        private val extendedMoveStack: LinkedList<ExtendedMove>,
+        private val numberStack: NumberStack,
+        private var supervisor: ChessGameSupervisor
+): ChessGameInterface, BasicChessGameInterface by board {
+    private val figureFactory = FigureFactory
     private var numberOfMovesWithoutHit: Int = 0
-    private var figureCount: Int = 0
+    private var figureCount: Int = 32
     private var hasHitFigure: Boolean = false
-    private var supervisor: ChessGameSupervisor
+    private var whiteTurn: Boolean = true
     private var standardGame = false
-    private var whiteTurn: Boolean = false
 
     override val isStandardGame: Boolean
         get() = standardGame
@@ -25,13 +26,7 @@ class ChessGame : ChessGameInterface {
     override val isWhiteTurn: Boolean
         get() = whiteTurn
 
-    override val whiteKing: King
-        get() = game.whiteKing
-
-    override val blackKing: King
-        get() = game.blackKing
-
-    override fun isCheck(isWhiteInCheck: Boolean) = game.getCachedAttackLines(isWhiteInCheck).isCheck
+    override fun isCheck(isWhiteInCheck: Boolean) = board.getCachedAttackLines(isWhiteInCheck).isCheck
 
     private val isEnd: MoveResult
         get() {
@@ -66,7 +61,7 @@ class ChessGame : ChessGameInterface {
             var numberOfWhiteKnights = 0
             var numberOfBlackKnights = 0
 
-            game.forAllFigures { figure ->
+            board.forAllFigures { figure ->
                 if (figure.isPawn()
                         || figure.isRook()
                         || figure.isQueen()) {
@@ -102,30 +97,27 @@ class ChessGame : ChessGameInterface {
     /**
      * the normal constructor
      */
-    constructor(supervisor: ChessGameSupervisor) {
-        hasHitFigure = false
-        this.supervisor = supervisor
-        figureFactory = FigureFactory()
-        mementoStack = LinkedList()
-        extendedMoveStack = LinkedList()
-        numberStack = NumberStack()
-        game = SimpleArrayBoard()
-
+    constructor(supervisor: ChessGameSupervisor): this(
+            SimpleArrayBoard(),
+            LinkedList<Memento>(),
+            LinkedList<ExtendedMove>(),
+            NumberStack(),
+            supervisor
+    ) {
         initGame()
     }
 
     /**
      * copy-constructor
      */
-    private constructor(other: ChessGame, desc: String) {
+    private constructor(other: ChessGame, desc: String): this(
+            SimpleArrayBoard(desc),
+            other.mementoStack.shallowCopy(),
+            other.extendedMoveStack.shallowCopy(),
+            NumberStack(other.numberStack),
+            ChessGameSupervisorDummy
+    ) {
         hasHitFigure = other.hasHitFigure
-        supervisor = ChessGameSupervisorDummy
-        figureFactory = FigureFactory()
-        mementoStack = other.mementoStack.shallowCopy()
-        extendedMoveStack = other.extendedMoveStack.shallowCopy()
-        numberStack = NumberStack(other.numberStack)
-        game = SimpleArrayBoard(desc)
-
         whiteTurn = other.whiteTurn
         numberOfMovesWithoutHit = other.numberOfMovesWithoutHit
         figureCount = other.figureCount
@@ -143,7 +135,7 @@ class ChessGame : ChessGameInterface {
         for(move in moves) {
             val result = move(Move.byCode(move))
             if(result!= MoveResult.NO_END) {
-                throw IllegalStateException("game is not supposed to end via these moves but did. end by $result")
+                throw IllegalStateException("board is not supposed to end via these moves but did. end by $result")
             }
         }
     }
@@ -151,13 +143,13 @@ class ChessGame : ChessGameInterface {
     /**
      * for unit-tests
      */
-    private constructor(supervisor: ChessGameSupervisor, game_description: String) {
-        this.supervisor = supervisor
-        figureFactory = FigureFactory()
-        mementoStack = LinkedList()
-        extendedMoveStack = LinkedList()
-        numberStack = NumberStack()
-
+    private constructor(supervisor: ChessGameSupervisor, game_description: String): this(
+            SimpleArrayBoard(game_description),
+            LinkedList<Memento>(),
+            LinkedList<ExtendedMove>(),
+            NumberStack(),
+            supervisor
+    ) {
         val st = StringTokenizer(game_description, " ", false)
         whiteTurn = st.nextToken() == "white"
         numberOfMovesWithoutHit = Integer.parseInt(st.nextToken())
@@ -169,9 +161,6 @@ class ChessGame : ChessGameInterface {
             st.nextToken()
         }
 
-        game = SimpleArrayBoard()
-        game.init(game_description)
-
         memorizeGame()
         hasHitFigure = numberOfMovesWithoutHit == 0
     }
@@ -180,21 +169,13 @@ class ChessGame : ChessGameInterface {
      * for unit-tests
      */
     private constructor(supervisor: ChessGameSupervisor,
-                        initialPosition: Int) {
-        this.supervisor = supervisor
-        figureFactory = FigureFactory()
-        mementoStack = LinkedList()
-        extendedMoveStack = LinkedList()
-        numberStack = NumberStack()
-
-        whiteTurn = true
-        hasHitFigure = false
-        numberOfMovesWithoutHit = 0
-        figureCount = 32
-
-        game = SimpleArrayBoard()
-        game.init(initialPosition)
-
+                        initialPosition: Int): this(
+            SimpleArrayBoard().apply { init(initialPosition) },
+            LinkedList<Memento>(),
+            LinkedList<ExtendedMove>(),
+            NumberStack(),
+            supervisor
+    ) {
         memorizeGame()
     }
 
@@ -210,30 +191,22 @@ class ChessGame : ChessGameInterface {
 
     fun getLastMove() = if (extendedMoveStack.isEmpty()) null else extendedMoveStack.last
 
-    override fun isFreeArea(pos: Position): Boolean {
-        return game.isFreeArea(pos)
-    }
-
-    override fun getFigureOrNull(pos: Position): Figure? {
-        return game.getFigureOrNull(pos)
-    }
-
     private fun setFigure(pos: Position, figure: Figure?) {
         if (figure == null) {
-            game.clearFigure(pos)
+            board.clearFigure(pos)
         } else {
-            game.setFigure(pos, figure)
+            board.setFigure(pos, figure)
         }
     }
 
     override fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean {
         val figure = getFigureOrNull(pos)
-        return figure!=null && figure.isWhite == whitePlayer && figure.isSelectable(game)
+        return figure!=null && figure.isWhite == whitePlayer && figure.isSelectable(board)
     }
 
     override fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean {
         val figure = getFigureOrNull(from)
-        return figure!=null && figure.isWhite == whitePlayer && figure.isMovable(to, game)
+        return figure!=null && figure.isWhite == whitePlayer && figure.isMovable(to, board)
     }
 
     override fun countFigures(): Int {
@@ -243,7 +216,7 @@ class ChessGame : ChessGameInterface {
     override fun move(move: Move): MoveResult {
         var rewritableMove = move
         assert(!isFreeArea(rewritableMove.from)) { "the move moves a null value:" + rewritableMove.toString() }
-        assert(game.getFigure(rewritableMove.from).isWhite == whiteTurn) { "figure to be moved has wrong color" }
+        assert(board.getFigure(rewritableMove.from).isWhite == whiteTurn) { "figure to be moved has wrong color" }
 
         val castlingRook = extractCastlingRook(rewritableMove)
         //im Fall der Castling wird der Zug jetzt so umgebogen,
@@ -271,7 +244,7 @@ class ChessGame : ChessGameInterface {
 
     private fun moveFigure(move: Move): Figure? {
         val toNotEqualsFrom = move.to.notEqualsPosition(move.from)//für manche Schach960castlingn true
-        hasHitFigure = !isFreeArea(move.to) && toNotEqualsFrom  //Enpasent wird nicht beachtet
+        hasHitFigure = !board.isFreeArea(move.to) && toNotEqualsFrom  //Enpasent wird nicht beachtet
         val fromFigure = getFigureOrNull(move.from)
 
         if (hasHitFigure) {
@@ -300,7 +273,7 @@ class ChessGame : ChessGameInterface {
     }
 
     private fun handleEnpasent(move: Move): Pawn? {
-        if (game.getFigure(move.from).isPawn()
+        if (board.getFigure(move.from).isPawn()
                 && move.from.column != move.to.column
                 && isFreeArea(move.to)) {
             val pawnToBeHit = Position[move.from.row, move.to.column]
@@ -314,7 +287,7 @@ class ChessGame : ChessGameInterface {
     }
 
     private fun extractCastlingRook(move: Move): Rook? {
-        val movingFigure = game.getFigure(move.from)
+        val movingFigure = board.getFigure(move.from)
         if (!movingFigure.isKing()) return null
 
         val castlingRook = getFigureOrNull(move.to)
@@ -339,7 +312,7 @@ class ChessGame : ChessGameInterface {
     }
 
     private fun handlePawnTransformation(move: Move): Boolean {
-        if (game.getFigure(move.to).isPawn()) {
+        if (board.getFigure(move.to).isPawn()) {
             if (move.to.row == 0 || move.to.row == 7) {
                 val figure = supervisor.askForPawnChange(move.to)
                 val isWhite = move.to.row == 7
@@ -358,7 +331,7 @@ class ChessGame : ChessGameInterface {
     }
 
     private fun informFiguresOfMove(whiteTurn: Boolean, move: Move) {
-        game.forAllFiguresOfColor(whiteTurn) { figure ->
+        board.forAllFiguresOfColor(whiteTurn) { figure ->
             figure.figureMoved(move)
         }
     }
@@ -370,7 +343,7 @@ class ChessGame : ChessGameInterface {
 
         val lastExtMove = extendedMoveStack.removeLast()
         val lastMove = lastExtMove.move
-        val activeFigure = game.getFigure(lastMove.to)
+        val activeFigure = board.getFigure(lastMove.to)
         setFigure(lastMove.from, activeFigure)
         if (!lastExtMove.isCastling || lastMove.from.notEqualsPosition(lastMove.to)) {
             setFigure(lastMove.to, lastExtMove.figureTaken)
@@ -416,13 +389,13 @@ class ChessGame : ChessGameInterface {
         if (extendedMoveStack.isEmpty()) return
 
         val newLatestMove = extendedMoveStack.last
-        val figure = game.getFigure(newLatestMove.move.to)
+        val figure = board.getFigure(newLatestMove.move.to)
         if (figure.isPawn() && Math.abs(newLatestMove.move.from.row - newLatestMove.move.to.row) == 2) {
             (figure as Pawn).setCanBeHitByEnpasent()
         }
     }
 
-    override fun toString() = "${if (whiteTurn) "white" else "black"} $numberOfMovesWithoutHit $game"
+    override fun toString() = "${if (whiteTurn) "white" else "black"} $numberOfMovesWithoutHit $board"
 
     private fun getHistory(numberOfHalfMoves: Int) = extendedMoveStack.getLatestMoves(numberOfHalfMoves)
 
@@ -439,7 +412,7 @@ class ChessGame : ChessGameInterface {
         extendedMoveStack.clear()
         numberStack.init()
 
-        game.init(chess960)
+        board.init(chess960)
 
         memorizeGame()
     }
@@ -460,17 +433,17 @@ class ChessGame : ChessGameInterface {
     }
 
     private fun noMovesLeft(caseWhite: Boolean): Boolean {
-        game.forAllFiguresOfColor(caseWhite) { figure ->
-            if (!figure.isKing() && figure.isSelectable(game)) {
+        board.forAllFiguresOfColor(caseWhite) { figure ->
+            if (!figure.isKing() && figure.isSelectable(board)) {
                 return false
             }
         }
-        return !game.getKing(caseWhite).isSelectable(game)
+        return !board.getKing(caseWhite).isSelectable(board)
     }
 
     override fun getPossibleMoves(possibleMoves: MutableList<Move>) {
-        game.forAllFiguresOfColor(whiteTurn) {figure ->
-            figure.getPossibleMoves(game, possibleMoves)
+        board.forAllFiguresOfColor(whiteTurn) { figure ->
+            figure.getPossibleMoves(board, possibleMoves)
         }
     }
 
@@ -478,8 +451,8 @@ class ChessGame : ChessGameInterface {
         var whiteCount = 0
         var blackCount = 0
 
-        game.forAllFigures {figure->
-            val count = figure.countReachableMoves(game)
+        board.forAllFigures { figure->
+            val count = figure.countReachableMoves(board)
             if(figure.isWhite) {
                 whiteCount += count
             }else{
@@ -504,7 +477,7 @@ class ChessGame : ChessGameInterface {
         return gameInstances
     }
 
-    private fun memorizeGame() = mementoStack.addLast(Memento(game, whiteTurn))
+    private fun memorizeGame() = mementoStack.addLast(Memento(board, whiteTurn))
 
     private fun memorizeMove(move: Move,
                              whiteMove: Boolean,
