@@ -3,6 +3,7 @@ package voidchess.figures
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
+import voidchess.board.SimpleChessBoardInterface
 import voidchess.board.getFigure
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -15,6 +16,21 @@ import kotlin.test.assertTrue
 
 
 class KingTest {
+    @Test(dataProvider = "getIsSelectableData")
+    fun testIsSelectable(game: SimpleChessBoardInterface, kingPosCode: String, expectedIsSelectable: Boolean) {
+        val king = game.getFigure(Position.byCode(kingPosCode)) as King
+        assertEquals(expectedIsSelectable, king.isSelectable(game), "isSelectable")
+    }
+
+    @DataProvider
+    fun getIsSelectableData(): Array<Array<Any>> = arrayOf(
+            arrayOf(initSimpleChessBoard(518), "e1", false),
+            arrayOf(initSimpleChessBoard(518).apply { clearFigure(Position.byCode("f2")) }, "e1", true),
+            arrayOf(initSimpleChessBoard(613), "f1", true),
+            arrayOf(initSimpleChessBoard(613).apply { setFigure(Position.byCode("h3"), Knight(false, Position.byCode("h3"))) }, "f1", false),
+            arrayOf(initSimpleChessBoard(380), "d1", true)
+    )
+
     @Test
     fun testIsReachable() {
         var des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0"

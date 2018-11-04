@@ -225,31 +225,32 @@ class King : CastlingFigure {
     }
 
     override fun isSelectable(game: SimpleChessBoardInterface): Boolean {
-        val minRow = Math.max(position.row - 1, 0)
-        val minColumn = Math.max(position.column - 1, 0)
-        val maxRow = Math.min(position.row + 1, 7)
-        val maxColumn = Math.min(position.column + 1, 7)
-
-        for (row in minRow..maxRow) {
-            for (column in minColumn..maxColumn) {
-                val checkPosition = Position[row, column]
-                if (isMovable(checkPosition, game)) {
+        val attackLines = game.getCachedAttackLines(isWhite)
+        directionLoop@ for(direction in Direction.values()) {
+            val directKingNeighbourPos = position.step(direction) ?: continue@directionLoop
+            for (checkLine in attackLines.checkLines) {
+                if(checkLine.keepsKingInCheckIfHeMovesTo(direction)) {
+                    continue@directionLoop
+                }
+            }
+            val figureAtNeighbourPos = game.getFigureOrNull(directKingNeighbourPos)
+            if(figureAtNeighbourPos==null || hasDifferentColor(figureAtNeighbourPos)) {
+                if(!isKingCheckAt(directKingNeighbourPos, game)) {
                     return true
                 }
             }
         }
 
-        if (position.column + 2 < 8) {
-            val shortCastling = Position[position.row, position.column + 2]
-            if (isMovable(shortCastling, game)) {
-                return true
-            }
-        }
-
-        if (position.column - 2 >= 0) {
-            val longCastling = Position[position.row, position.column - 2]
-            if (isMovable(longCastling, game)) {
-                return true
+        // in some chess960 positions with the king directly next to a rook, there might be no normal moves but castling is still possible
+        // (the king has to be directly next to the king because otherwise a normal move would be possible if castling to a side was possible)
+        if(canCastle()) {
+            for(side in listOf(Direction.LEFT, Direction.RIGHT)) {
+                val sidePos = position.step(side) ?: throw IllegalStateException("king shouldn't be at outer side ($position) and be able to castle")
+                game.getFigureOrNull(sidePos)?.let { figure ->
+                    if(figure.canCastle() && !isKingAtCheckWhileOrAfterCastling(position, sidePos, game)) {
+                        return true
+                    }
+                }
             }
         }
 

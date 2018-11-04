@@ -1,6 +1,5 @@
 package voidchess.board
 
-import voidchess.board.check.CheckSearch
 import voidchess.board.move.*
 import voidchess.figures.*
 import voidchess.player.ki.evaluation.SimplePruner
@@ -462,11 +461,11 @@ class ChessGame : ChessGameInterface {
 
     private fun noMovesLeft(caseWhite: Boolean): Boolean {
         game.forAllFiguresOfColor(caseWhite) { figure ->
-            if (figure.isSelectable(game)) {
+            if (!figure.isKing() && figure.isSelectable(game)) {
                 return false
             }
         }
-        return true
+        return !game.getKing(caseWhite).isSelectable(game)
     }
 
     override fun getPossibleMoves(possibleMoves: MutableList<Move>) {
