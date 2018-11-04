@@ -1,7 +1,7 @@
 package voidchess.figures
 
-import voidchess.board.BasicChessGameInterface
-import voidchess.board.SimpleChessBoardInterface
+import voidchess.board.BasicChessBoard
+import voidchess.board.ChessBoard
 import voidchess.board.check.AttackLines
 import voidchess.board.check.BoundLine
 import voidchess.board.check.CheckLine
@@ -26,7 +26,7 @@ class King : CastlingFigure {
         this.didCastling = didCastling
     }
 
-    override fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean {
+    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
         val horizontalDifference = Math.abs(position.row - toPos.row)
         val verticalDifference = Math.abs(position.column - toPos.column)
         if (horizontalDifference <= 1 && verticalDifference <= 1) {
@@ -37,7 +37,7 @@ class King : CastlingFigure {
         return isLongCastlingReachable(toPos, game)
     }
 
-    private fun isShortCastlingReachable(to: Position, game: BasicChessGameInterface): Boolean {
+    private fun isShortCastlingReachable(to: Position, game: BasicChessBoard): Boolean {
         val toFigure = game.getFigureOrNull(to)
         if (canCastle() &&
                 toFigure!=null &&
@@ -63,7 +63,7 @@ class King : CastlingFigure {
         return false
     }
 
-    private fun isLongCastlingReachable(to: Position, game: BasicChessGameInterface): Boolean {
+    private fun isLongCastlingReachable(to: Position, game: BasicChessBoard): Boolean {
         val toFigure = game.getFigureOrNull(to)
         if (canCastle() &&
                 toFigure!=null &&
@@ -115,7 +115,7 @@ class King : CastlingFigure {
         return false
     }
 
-    fun canNotMoveThereBecauseOfCheck(to: Position, game: SimpleChessBoardInterface, attackLines: AttackLines): Boolean {
+    fun canNotMoveThereBecauseOfCheck(to: Position, game: ChessBoard, attackLines: AttackLines): Boolean {
         val toFigure = game.getFigureOrNull(to)
         val wantsToCastle = toFigure!=null && toFigure.canCastle()
         if (wantsToCastle) {
@@ -143,7 +143,7 @@ class King : CastlingFigure {
     private fun isKingAtCheckWhileOrAfterCastling(
             kingPos: Position,
             rookPos: Position,
-            game: SimpleChessBoardInterface
+            game: ChessBoard
     ): Boolean {
         assert(kingPos.row == rookPos.row)
 
@@ -161,7 +161,7 @@ class King : CastlingFigure {
         return false
     }
 
-    private fun isKingCheckAt(to: Position, game: SimpleChessBoardInterface): Boolean {
+    private fun isKingCheckAt(to: Position, game: ChessBoard): Boolean {
         val from = position
         val figureTaken = game.move(this, to)
         val isCheck = CheckSearch.isCheck(game, this)
@@ -169,11 +169,11 @@ class King : CastlingFigure {
         return isCheck
     }
 
-    override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
-    override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
+    override fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
+    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
 
-    override fun getPossibleMoves(game: SimpleChessBoardInterface, result: MutableList<Move>) {
+    override fun getPossibleMoves(game: ChessBoard, result: MutableList<Move>) {
         val attackLines = game.getCachedAttackLines(isWhite)
         if(attackLines.noCheck) {
             for(direction in Direction.values()) {
@@ -224,7 +224,7 @@ class King : CastlingFigure {
         }
     }
 
-    override fun isSelectable(game: SimpleChessBoardInterface): Boolean {
+    override fun isSelectable(game: ChessBoard): Boolean {
         val attackLines = game.getCachedAttackLines(isWhite)
         directionLoop@ for(direction in Direction.values()) {
             val directKingNeighbourPos = position.step(direction) ?: continue@directionLoop
@@ -257,7 +257,7 @@ class King : CastlingFigure {
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessGameInterface): Int {
+    override fun countReachableMoves(game: BasicChessBoard): Int {
         var count = 0
         val minRow = Math.max(position.row - 1, 0)
         val minColumn = Math.max(position.column - 1, 0)

@@ -1,7 +1,7 @@
 package voidchess.figures
 
-import voidchess.board.BasicChessGameInterface
-import voidchess.board.SimpleChessBoardInterface
+import voidchess.board.BasicChessBoard
+import voidchess.board.ChessBoard
 import voidchess.board.check.AttackLines
 import voidchess.board.check.BoundLine
 import voidchess.board.check.CheckLine
@@ -45,16 +45,16 @@ abstract class Figure constructor(
         position = oldPosition
     }
 
-    abstract fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean
-    abstract fun countReachableMoves(game: BasicChessGameInterface): Int
-    internal abstract fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>)
-    abstract fun isSelectable(game: SimpleChessBoardInterface): Boolean
+    abstract fun isReachable(toPos: Position, game: BasicChessBoard): Boolean
+    abstract fun countReachableMoves(game: BasicChessBoard): Int
+    internal abstract fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>)
+    abstract fun isSelectable(game: ChessBoard): Boolean
 
-    fun isMovable(toPos: Position, game: SimpleChessBoardInterface): Boolean {
+    fun isMovable(toPos: Position, game: ChessBoard): Boolean {
         return isReachable(toPos, game) && !isBound(toPos, game)
     }
 
-    open fun getPossibleMoves(game: SimpleChessBoardInterface, result: MutableList<Move>) {
+    open fun getPossibleMoves(game: ChessBoard, result: MutableList<Move>) {
         val attackLines = game.getCachedAttackLines(isWhite)
         if(attackLines.noCheck) {
             val boundLine = attackLines.boundLineByBoundFigurePos[position]
@@ -73,20 +73,20 @@ abstract class Figure constructor(
         }
     }
 
-    protected abstract fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>)
-    protected abstract fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>)
+    protected abstract fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>)
+    protected abstract fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>)
 
-    protected fun addMoveIfReachable(pos: Position, game: BasicChessGameInterface, result: MutableList<Move>) =
+    protected fun addMoveIfReachable(pos: Position, game: BasicChessBoard, result: MutableList<Move>) =
             if(isReachable(pos, game)) result.add(Move[position, pos])
             else false
 
-    internal fun isBound(toPos: Position, game: SimpleChessBoardInterface): Boolean {
+    internal fun isBound(toPos: Position, game: ChessBoard): Boolean {
         assert(isReachable(toPos, game)) { "the assumption of isBound is that toPos is confirmed reachable" }
         val attackLinesStatus = game.getCachedAttackLines(isWhite)
         return isBound(toPos, game, attackLinesStatus)
     }
 
-    private fun isBound(toPos: Position, game: SimpleChessBoardInterface, attackLines: AttackLines): Boolean {
+    private fun isBound(toPos: Position, game: ChessBoard, attackLines: AttackLines): Boolean {
         if( isKing()) {
             return (this as King).canNotMoveThereBecauseOfCheck(toPos, game, attackLines)
         }
@@ -117,7 +117,7 @@ abstract class Figure constructor(
         return true
     }
 
-    protected inline fun forEachReachablePos(game: BasicChessGameInterface, direction: Direction, informOf: (Position) -> Unit) {
+    protected inline fun forEachReachablePos(game: BasicChessBoard, direction: Direction, informOf: (Position) -> Unit) {
         var currentPos: Position = position
 
         while (true) {
@@ -134,7 +134,7 @@ abstract class Figure constructor(
         }
     }
 
-    protected fun isAccessible(game: BasicChessGameInterface, position: Position): Boolean {
+    protected fun isAccessible(game: BasicChessBoard, position: Position): Boolean {
         val figure = game.getFigureOrNull(position)
         return if (figure == null) true else hasDifferentColor(figure)
     }

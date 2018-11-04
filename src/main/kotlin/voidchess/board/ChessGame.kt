@@ -7,12 +7,12 @@ import java.util.*
 
 
 class ChessGame private constructor(
-        private val board: SimpleChessBoardInterface,
+        private val board: ChessBoard,
         private val mementoStack: LinkedList<Memento>,
         private val extendedMoveStack: LinkedList<ExtendedMove>,
         private val numberStack: NumberStack,
         private var supervisor: ChessGameSupervisor
-): ChessGameInterface, BasicChessGameInterface by board {
+): ChessGameInterface, BasicChessBoard by board {
     private val figureFactory = FigureFactory
     private var numberOfMovesWithoutHit: Int = 0
     private var figureCount: Int = 32
@@ -98,7 +98,7 @@ class ChessGame private constructor(
      * the normal constructor
      */
     constructor(supervisor: ChessGameSupervisor): this(
-            SimpleArrayBoard(),
+            ArrayChessBoard(),
             LinkedList<Memento>(),
             LinkedList<ExtendedMove>(),
             NumberStack(),
@@ -111,7 +111,7 @@ class ChessGame private constructor(
      * copy-constructor
      */
     private constructor(other: ChessGame, desc: String): this(
-            SimpleArrayBoard(desc),
+            ArrayChessBoard(desc),
             other.mementoStack.shallowCopy(),
             other.extendedMoveStack.shallowCopy(),
             NumberStack(other.numberStack),
@@ -144,7 +144,7 @@ class ChessGame private constructor(
      * for unit-tests
      */
     private constructor(supervisor: ChessGameSupervisor, game_description: String): this(
-            SimpleArrayBoard(game_description),
+            ArrayChessBoard(game_description),
             LinkedList<Memento>(),
             LinkedList<ExtendedMove>(),
             NumberStack(),
@@ -170,7 +170,7 @@ class ChessGame private constructor(
      */
     private constructor(supervisor: ChessGameSupervisor,
                         initialPosition: Int): this(
-            SimpleArrayBoard().apply { init(initialPosition) },
+            ArrayChessBoard().apply { init(initialPosition) },
             LinkedList<Memento>(),
             LinkedList<ExtendedMove>(),
             NumberStack(),
@@ -505,7 +505,7 @@ class ChessGame private constructor(
     override fun getLastExtendedMove(): ExtendedMove = extendedMoveStack.last
 }
 
-private class Memento constructor(game: BasicChessGameInterface, private val isWhite: Boolean) {
+private class Memento constructor(game: BasicChessBoard, private val isWhite: Boolean) {
     internal val figureCount: Int
     private val compressedBoard: LongArray
 

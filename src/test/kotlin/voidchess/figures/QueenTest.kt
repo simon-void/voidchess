@@ -3,7 +3,7 @@ package voidchess.figures
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
-import voidchess.board.SimpleArrayBoard
+import voidchess.board.ArrayChessBoard
 import voidchess.board.getFigure
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -39,7 +39,7 @@ class QueenTest {
 
     @Test(dataProvider = "getTestGetPossibleMovesData")
     fun testGetPossibleMoves(des: String, queenPosCode: String, expectedNumberOfMoves: Int) {
-        val game = SimpleArrayBoard(des)
+        val game = ArrayChessBoard(des)
 
         val queen = game.getFigure(Position.byCode(queenPosCode))
         val moveIter = LinkedList<Move>()
@@ -56,7 +56,7 @@ class QueenTest {
 
     @Test(dataProvider = "getTestIsSelectableData")
     fun testIsSelectable(des: String, figurePos: String, expectedIsSelectable: Boolean) {
-        val game = SimpleArrayBoard(des)
+        val game = ArrayChessBoard(des)
         val queen = game.getFigure(Position.byCode(figurePos))
         assertEquals(expectedIsSelectable, queen.isSelectable(game), "isSelectable")
     }

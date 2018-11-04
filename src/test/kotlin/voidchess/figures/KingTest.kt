@@ -3,7 +3,7 @@ package voidchess.figures
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
-import voidchess.board.SimpleChessBoardInterface
+import voidchess.board.ChessBoard
 import voidchess.board.getFigure
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 
 class KingTest {
     @Test(dataProvider = "getIsSelectableData")
-    fun testIsSelectable(game: SimpleChessBoardInterface, kingPosCode: String, expectedIsSelectable: Boolean) {
+    fun testIsSelectable(game: ChessBoard, kingPosCode: String, expectedIsSelectable: Boolean) {
         val king = game.getFigure(Position.byCode(kingPosCode)) as King
         assertEquals(expectedIsSelectable, king.isSelectable(game), "isSelectable")
     }

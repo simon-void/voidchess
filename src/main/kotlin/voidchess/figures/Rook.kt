@@ -1,7 +1,7 @@
 package voidchess.figures
 
-import voidchess.board.BasicChessGameInterface
-import voidchess.board.SimpleChessBoardInterface
+import voidchess.board.BasicChessBoard
+import voidchess.board.ChessBoard
 import voidchess.board.check.BoundLine
 import voidchess.board.check.CheckLine
 import voidchess.board.move.Direction
@@ -14,7 +14,7 @@ class Rook : CastlingFigure {
     constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.ROOK)
     constructor(isWhite: Boolean, startPosition: Position, stepsTaken: Int) : super(isWhite, startPosition, stepsTaken, FigureType.ROOK)
 
-    override fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean {
+    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
         val direction = position.getDirectionTo(toPos)
 
         if (direction == null || direction.isDiagonal) {
@@ -28,20 +28,20 @@ class Rook : CastlingFigure {
         return false
     }
 
-    private inline fun forEachReachablePos(game: BasicChessGameInterface, informOf: (Position) -> Unit) {
+    private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
         forEachReachablePos(game, Direction.UP, informOf)
         forEachReachablePos(game, Direction.LEFT, informOf)
         forEachReachablePos(game, Direction.DOWN, informOf)
         forEachReachablePos(game, Direction.RIGHT, informOf)
     }
 
-    override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
+    override fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) {
+    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>) {
         when {
             checkLine.posProgression.hasSinglePos -> {
                 addMoveIfReachable(checkLine.attackerPos, game, result)
@@ -67,7 +67,7 @@ class Rook : CastlingFigure {
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) {
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>) {
         if(boundLine.boundFigureToAttackerDirection.isStraight) {
             boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
                 result.add(Move[position, posBetweenThisAndAttacker])
@@ -78,14 +78,14 @@ class Rook : CastlingFigure {
         }
     }
 
-    override fun isSelectable(game: SimpleChessBoardInterface): Boolean {
+    override fun isSelectable(game: ChessBoard): Boolean {
         forEachReachablePos(game) {
             if (!isBound(it, game)) return true
         }
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessGameInterface): Int {
+    override fun countReachableMoves(game: BasicChessBoard): Int {
         var reachableMovesCount = 0
         forEachReachablePos(game) {
             reachableMovesCount++

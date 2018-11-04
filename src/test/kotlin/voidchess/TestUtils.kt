@@ -2,7 +2,6 @@ package voidchess
 
 import voidchess.board.*
 import voidchess.board.move.*
-import voidchess.figures.Figure
 import java.util.*
 
 
@@ -13,9 +12,9 @@ class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPromotion) :
     }
 }
 
-fun initSimpleChessBoard(gameDes: String): SimpleChessBoardInterface = SimpleArrayBoard(gameDes)
+fun initSimpleChessBoard(gameDes: String): ChessBoard = ArrayChessBoard(gameDes)
 
-fun initSimpleChessBoard(chess960: Int): SimpleChessBoardInterface = SimpleArrayBoard().apply { init(chess960) }
+fun initSimpleChessBoard(chess960: Int): ChessBoard = ArrayChessBoard().apply { init(chess960) }
 
 fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessGameInterface = ChessGame(chess960).apply {
     for(moveCode in moveCodes) {
@@ -23,7 +22,7 @@ fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessGameInterface 
     }
 }
 
-fun SimpleChessBoardInterface.getPossibleMovesFrom(posCode: String): List<Move> {
+fun ChessBoard.getPossibleMovesFrom(posCode: String): List<Move> {
     val moveList = LinkedList<Move>()
     val figure = getFigure(Position.byCode(posCode))
     figure.getPossibleMoves(this, moveList)

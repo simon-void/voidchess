@@ -2,7 +2,7 @@ package voidchess.figures
 
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
-import voidchess.board.SimpleArrayBoard
+import voidchess.board.ArrayChessBoard
 import voidchess.board.getFigure
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -45,7 +45,7 @@ class KnightTest {
     @Test
     fun testGetPossibleMoves() {
         val des = "white 0 Knight-white-a1 King-white-e1-0 Knight-white-g6 King-black-e8-0"
-        val game = SimpleArrayBoard(des)
+        val game = ArrayChessBoard(des)
 
         val knight1 = game.getFigure(Position.byCode("a1"))
         val moveIter1 = LinkedList<Move>()

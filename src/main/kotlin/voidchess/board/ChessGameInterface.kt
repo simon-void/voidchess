@@ -6,7 +6,7 @@ import voidchess.board.move.MoveResult
 import voidchess.board.move.Position
 
 
-interface ChessGameInterface : BasicChessGameInterface {
+interface ChessGameInterface : BasicChessBoard {
 
     /**
      * returns true if this game was started with the standard distribution of figures

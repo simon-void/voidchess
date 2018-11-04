@@ -18,7 +18,7 @@ class SimpleBoardTest {
 
     @Test
     fun testInit() {
-        val board = SimpleArrayBoard()
+        val board = ArrayChessBoard()
         var figure = board.getFigure(Position.byCode("a1"))
         assertTrue(figure.isRook())
         assertTrue(figure.isWhite)
@@ -33,7 +33,7 @@ class SimpleBoardTest {
 
     @Test
     fun testInit960() {
-        val board = SimpleArrayBoard()
+        val board = ArrayChessBoard()
         board.init(518)
         assertEquals(initial, board.toString())
 
@@ -56,7 +56,7 @@ class SimpleBoardTest {
 
     @Test
     fun testInitByDescriptionWithToManySpaces() {
-        val board = SimpleArrayBoard()
+        val board = ArrayChessBoard()
         val des = "  white   0   Queen-white-c1     King-white-e1-0    King-black-e8-0     "
         board.init(des)
         assertTrue(board.getFigure(Position.byCode("c1")).isQueen())
@@ -64,14 +64,14 @@ class SimpleBoardTest {
 
     @Test
     fun testIsFreeArea() {
-        val board = SimpleArrayBoard()
+        val board = ArrayChessBoard()
         assertTrue(board.isFreeArea(Position.byCode("a3")))
         assertFalse(board.isFreeArea(Position.byCode("a2")))
     }
 
     @Test
     fun testSetFigure() {
-        val board = SimpleArrayBoard()
+        val board = ArrayChessBoard()
         val figure = board.getFigure(Position.byCode("b1"))
         val to = Position.byCode("e4")
         board.setFigure(to, figure)
@@ -80,7 +80,7 @@ class SimpleBoardTest {
 
     @Test
     fun testGetCachedAttackLines() {
-        val board = SimpleArrayBoard()
+        val board = ArrayChessBoard()
         var attackLines = board.getCachedAttackLines(true)
         assertFalse(attackLines.isCheck)
 
@@ -100,7 +100,7 @@ class SimpleBoardTest {
 
     @Test(dataProvider = "getTestMoveUndoMoveInvarianceData")
     fun testMoveUndoMoveInvariance(fromCode: String, toCode: String, gameDes: String) {
-        val board = SimpleArrayBoard()
+        val board = ArrayChessBoard()
         board.init(gameDes)
         val initialLongGameDescription = board.toString()
         val initialFigureCount = board.figureCount
@@ -136,7 +136,7 @@ class SimpleBoardTest {
 
     @Test
     fun testToString() {
-        val board = SimpleArrayBoard()
+        val board = ArrayChessBoard()
         assertEquals(board.toString(), initial)
     }
 }

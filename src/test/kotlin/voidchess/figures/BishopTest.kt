@@ -3,7 +3,7 @@ package voidchess.figures
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
-import voidchess.board.SimpleArrayBoard
+import voidchess.board.ArrayChessBoard
 import voidchess.board.move.Move
 import voidchess.board.move.Position
 
@@ -43,7 +43,7 @@ class BishopTest {
 
     @Test(dataProvider = "getTestGetPossibleMovesData")
     fun testGetPossibleMoves(des: String, bishopPosCode: String, expectedNumberOfMoves: Int) {
-        val game = SimpleArrayBoard(des)
+        val game = ArrayChessBoard(des)
 
         val bishop = game.getFigure(Position.byCode(bishopPosCode))
         val moveIter = LinkedList<Move>()
@@ -61,7 +61,7 @@ class BishopTest {
     @Test
     fun testGetReachableMoves() {
         val des = "white 0 Knight-white-e1 Rook-black-b2-2 Bishop-white-d2 King-white-e2-1 " + "Pawn-white-a5-false Knight-black-g5 King-black-e8-0"
-        val game = SimpleArrayBoard(des)
+        val game = ArrayChessBoard(des)
 
         val bishop = game.getFigure(Position.byCode("d2"))
         val moveIter = LinkedList<Move>()
@@ -72,7 +72,7 @@ class BishopTest {
     @Test
     fun testCountReachableMoves() {
         val des = "white 0 Knight-white-e1 Rook-black-b2-2 Bishop-white-d2 King-white-e2-1 " + "Pawn-white-a5-false Knight-black-g5 King-black-e8-0"
-        val game = SimpleArrayBoard(des)
+        val game = ArrayChessBoard(des)
 
         val bishop = game.getFigure(Position.byCode("d2"))
         assertEquals(6, bishop.countReachableMoves(game))
@@ -80,7 +80,7 @@ class BishopTest {
 
     @Test(dataProvider = "getTestIsSelectableData")
     fun testIsSelectable(des: String, figurePos: String, expectedIsSelectable: Boolean) {
-        val game = SimpleArrayBoard(des)
+        val game = ArrayChessBoard(des)
 
         val bishop = game.getFigure(Position.byCode(figurePos))
         val actualIsSelectable = bishop.isSelectable(game)

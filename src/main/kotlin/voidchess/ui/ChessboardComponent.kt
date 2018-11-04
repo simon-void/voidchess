@@ -1,6 +1,6 @@
 package voidchess.ui
 
-import voidchess.board.BasicChessGameInterface
+import voidchess.board.BasicChessBoard
 import voidchess.board.forAllFigures
 import voidchess.board.move.ExtendedMove
 import voidchess.board.move.Position
@@ -15,7 +15,7 @@ import javax.swing.BorderFactory
 import javax.swing.JComponent
 
 
-class ChessboardComponent constructor(private val game: BasicChessGameInterface, imageObserver: ImageObserver) : JComponent() {
+class ChessboardComponent constructor(private val game: BasicChessBoard, imageObserver: ImageObserver) : JComponent() {
     val areaSize: Int = 50
     val borderSize: Int = 25
     private val adapter: ChessboardAdapter

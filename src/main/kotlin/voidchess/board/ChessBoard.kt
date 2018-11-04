@@ -5,7 +5,7 @@ import voidchess.figures.Figure
 import voidchess.board.move.Position
 
 
-interface SimpleChessBoardInterface : BasicChessGameInterface {
+interface ChessBoard : BasicChessBoard {
 
     fun init()
     fun init(chess960: Int)

@@ -1,22 +1,6 @@
 package voidchess.board.check;
 
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-import voidchess.board.ChessGame;
-import voidchess.board.check.CheckSearch;
-import voidchess.board.SimpleArrayBoard;
-import voidchess.board.move.ExtendedMove;
-import voidchess.board.move.Move;
-import voidchess.board.move.Position;
-import voidchess.figures.Pawn;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
 
 
 public class CheckSearchTest {
@@ -25,7 +9,7 @@ public class CheckSearchTest {
 //    @Test
 //    public void testAnalyseCheck() {
 //        String des = "white 0 King-white-e4-4 King-black-e5-4";
-//        SimpleArrayBoard game = new SimpleArrayBoard(des);
+//        ArrayChessBoard game = new ArrayChessBoard(des);
 //        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, true);
 //
 //        assertTrue(status.isCheck());
@@ -121,7 +105,7 @@ public class CheckSearchTest {
 //        ExtendedMove extendedMove = getEnpassentMove(Move.byCode("e5-f6"));
 //        LastMoveProvider moveProvider = mock(LastMoveProvider.class);
 //        when(moveProvider.getLastMove()).thenReturn(extendedMove);
-//        SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
+//        ArrayChessBoard game = new ArrayChessBoard(des, moveProvider);
 //        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, false, extendedMove);
 //
 //        assertTrue(status.isCheck());
@@ -138,7 +122,7 @@ public class CheckSearchTest {
 //        ExtendedMove extendedMove = getEnpassentMove(Move.byCode("e5-f6"));
 //        LastMoveProvider moveProvider = mock(LastMoveProvider.class);
 //        when(moveProvider.getLastMove()).thenReturn(extendedMove);
-//        SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
+//        ArrayChessBoard game = new ArrayChessBoard(des, moveProvider);
 //        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, false, extendedMove);
 //
 //        assertTrue(status.isCheck());
@@ -155,7 +139,7 @@ public class CheckSearchTest {
 //        ExtendedMove extendedMove = getEnpassentMove(Move.byCode("e5-f6"));
 //        LastMoveProvider moveProvider = mock(LastMoveProvider.class);
 //        when(moveProvider.getLastMove()).thenReturn(extendedMove);
-//        SimpleArrayBoard game = new SimpleArrayBoard(des, moveProvider);
+//        ArrayChessBoard game = new ArrayChessBoard(des, moveProvider);
 //        CheckStatus status = CheckSearch.INSTANCE.analyseCheck(game, false, extendedMove);
 //
 //        assertTrue(status.isCheck());

@@ -10,7 +10,7 @@ import voidchess.figures.FigureFactory
 import voidchess.figures.King
 import voidchess.helper.*
 
-class SimpleArrayBoard constructor() : SimpleChessBoardInterface {
+class ArrayChessBoard constructor() : ChessBoard {
     private val game: Array<Figure?> = arrayOfNulls(64)
     private val figureFactory = FigureFactory
 

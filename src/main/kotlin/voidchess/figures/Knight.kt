@@ -1,7 +1,7 @@
 package voidchess.figures
 
-import voidchess.board.BasicChessGameInterface
-import voidchess.board.SimpleChessBoardInterface
+import voidchess.board.BasicChessBoard
+import voidchess.board.ChessBoard
 import voidchess.board.check.BoundLine
 import voidchess.board.check.CheckLine
 import voidchess.board.move.Move
@@ -10,7 +10,7 @@ import voidchess.board.move.Position
 
 class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.KNIGHT, false, false) {
 
-    override fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean {
+    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
         val horizontalDifference = Math.abs(position.row - toPos.row)
         val verticalDifference = Math.abs(position.column - toPos.column)
 
@@ -22,13 +22,13 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         return figure == null || hasDifferentColor(figure)
     }
 
-    override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
+    override fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) {
+    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>) {
         // the accessibility of the target field doesn't need to be checked because
         // all checkInterceptPositions are guaranteed to be either empty
         // or to contain the attacker (who has a different color)
@@ -41,18 +41,18 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) {
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>) {
         // a bound move can't move at all!
     }
 
-    override fun isSelectable(game: SimpleChessBoardInterface): Boolean {
+    override fun isSelectable(game: ChessBoard): Boolean {
         forEachReachablePos(game) {
             if (!isBound(it, game)) return true
         }
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessGameInterface): Int {
+    override fun countReachableMoves(game: BasicChessBoard): Int {
         var reachableMovesCount = 0
         forEachReachablePos(game) {
             reachableMovesCount++
@@ -60,7 +60,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         return reachableMovesCount
     }
 
-    private inline fun forEachReachablePos(game: BasicChessGameInterface, informOf: (Position) -> Unit) {
+    private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
         position.forEachKnightPos { pos ->
             if(isAccessible(game, pos)) informOf(pos)
         }

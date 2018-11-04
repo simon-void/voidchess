@@ -1,7 +1,7 @@
 package voidchess.figures
 
-import voidchess.board.BasicChessGameInterface
-import voidchess.board.SimpleChessBoardInterface
+import voidchess.board.BasicChessBoard
+import voidchess.board.ChessBoard
 import voidchess.board.check.BoundLine
 import voidchess.board.check.CheckLine
 import voidchess.board.getFigure
@@ -47,12 +47,12 @@ class Pawn : Figure {
         canBeHitByEnpasent = false
     }
 
-    private inline fun forEachReachablePos(game: BasicChessGameInterface, informOf: (Position) -> Unit) {
+    private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
         forEachDiagonalReachablePos(game, informOf)
         forEachVerticalReachablePos(game, informOf)
     }
 
-    private inline fun forEachDiagonalReachablePos(game: BasicChessGameInterface, informOf: (Position) -> Unit) {
+    private inline fun forEachDiagonalReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
         Arrays.asList(Direction.LEFT, Direction.RIGHT).forEach { side: Direction ->
             val diagonal = Direction.getDiagonal(forwardDirection, side)
             position.step(diagonal)?.let { diagonalPos ->
@@ -63,7 +63,7 @@ class Pawn : Figure {
         }
     }
 
-    private inline fun forEachVerticalReachablePos(game: BasicChessGameInterface, informOf: (Position) -> Unit) {
+    private inline fun forEachVerticalReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
         val oneForwardPos = position.step(forwardDirection)!! // !! ok because pawns never stand on the last rank
         if(game.isFreeArea(oneForwardPos)) {
             informOf(oneForwardPos)
@@ -77,11 +77,11 @@ class Pawn : Figure {
         }
     }
 
-    override fun isReachable(toPos: Position, game: BasicChessGameInterface): Boolean {
+    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
         return isStraightReachable(toPos, game) || isDiagonalReachable(toPos, game)
     }
 
-    private fun isStraightReachable(to: Position, game: BasicChessGameInterface): Boolean {
+    private fun isStraightReachable(to: Position, game: BasicChessBoard): Boolean {
         if (to.column != position.column) {
             return false
         }
@@ -102,7 +102,7 @@ class Pawn : Figure {
         return false
     }
 
-    private fun isDiagonalReachable(to: Position, game: BasicChessGameInterface): Boolean {
+    private fun isDiagonalReachable(to: Position, game: BasicChessBoard): Boolean {
         if (!isOneStepForwardDiagonally(to)) return false
         // now we know that to is one step diagonal to us
         game.getFigureOrNull(to)?.let { if (hasDifferentColor(it)) return true }
@@ -117,13 +117,13 @@ class Pawn : Figure {
         return to.row == oneForwardRow && Math.abs(to.column - position.column) == 1
     }
 
-    override fun getReachableMoves(game: BasicChessGameInterface, result: MutableList<Move>) {
+    override fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: SimpleChessBoardInterface, checkLine: CheckLine, result: MutableList<Move>) {
+    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>) {
         fun checkLinePassesThroughPawnColumn(attackerPos: Position, kingPos: Position): Boolean {
             val attackerColumnSign = (position.column - attackerPos.column).sign
             val kingColumnSign = (position.column - kingPos.column).sign
@@ -153,7 +153,7 @@ class Pawn : Figure {
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: SimpleChessBoardInterface, boundLine: BoundLine, result: MutableList<Move>) {
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>) {
         when {
             boundLine.boundFigureToAttackerDirection.isDiagonal -> {
                 if(isOneStepForwardDiagonally(boundLine.attackerPos)) {
@@ -176,14 +176,14 @@ class Pawn : Figure {
         }
     }
 
-    override fun isSelectable(game: SimpleChessBoardInterface): Boolean {
+    override fun isSelectable(game: ChessBoard): Boolean {
         forEachReachablePos(game) {
             if (!isBound(it, game)) return true
         }
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessGameInterface): Int {
+    override fun countReachableMoves(game: BasicChessBoard): Int {
         var reachableMovesCount = 0
         forEachReachablePos(game) {
             reachableMovesCount++

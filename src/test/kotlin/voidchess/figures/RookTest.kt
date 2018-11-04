@@ -3,7 +3,7 @@ package voidchess.figures
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
-import voidchess.board.SimpleArrayBoard
+import voidchess.board.ArrayChessBoard
 import voidchess.board.getFigure
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -50,7 +50,7 @@ class RookTest {
 
     @Test(dataProvider = "getTestGetPossibleMovesData")
     fun testGetPossibleMoves(des: String, rookPosCode: String, expectedNumberOfMoves: Int) {
-        val game = SimpleArrayBoard(des)
+        val game = ArrayChessBoard(des)
 
         val rook = game.getFigure(Position.byCode(rookPosCode))
         val moveIter = LinkedList<Move>()
