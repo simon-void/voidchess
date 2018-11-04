@@ -32,7 +32,7 @@ class ChessGame : ChessGameInterface {
     override val blackKing: King
         get() = game.blackKing
 
-    override fun isCheck(isWhiteInCheck: Boolean) = CheckSearch.isCheck(game, game.getKing(isWhiteInCheck))
+    override fun isCheck(isWhiteInCheck: Boolean) = game.getCachedAttackLines(isWhiteInCheck).isCheck
 
     private val isEnd: MoveResult
         get() {
