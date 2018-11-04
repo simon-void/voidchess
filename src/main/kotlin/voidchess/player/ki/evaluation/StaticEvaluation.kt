@@ -58,8 +58,7 @@ object StaticEvaluation : StaticEvaluationInterface {
     }
 
     private fun evaluateRuledArea(game: ChessGameInterface, forWhite: Boolean): Double {
-        val whiteMoves = game.countReachableMoves(true).toDouble()
-        val blackMoves = game.countReachableMoves(false).toDouble()
+        val (whiteMoves, blackMoves) = game.countReachableMoves()
 
         return VALUE_OF_AREA * if (forWhite)
             whiteMoves - blackMoves

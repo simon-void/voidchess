@@ -258,13 +258,14 @@ class ChessGame : ChessGameInterface {
 
         val hitPawn = handleEnpasent(rewritableMove)
         val hitFigure = moveFigure(rewritableMove)
+        val wasWhiteTurn = !whiteTurn
 
-        informFiguresOfMove(rewritableMove)
+        informFiguresOfMove(wasWhiteTurn, rewritableMove)
         reinsertCastlingRook(castlingRook, rewritableMove.to)
         val pawnTransformed = handlePawnTransformation(rewritableMove)
 
         memorizeGame()
-        memorizeMove(rewritableMove, !whiteTurn, pawnTransformed, hitPawn, castlingRook, hitFigure)
+        memorizeMove(rewritableMove, wasWhiteTurn, pawnTransformed, hitPawn, castlingRook, hitFigure)
 
         return isEnd
     }
@@ -357,8 +358,8 @@ class ChessGame : ChessGameInterface {
         return false
     }
 
-    private fun informFiguresOfMove(move: Move) {
-        game.forAllFigures { figure ->
+    private fun informFiguresOfMove(whiteTurn: Boolean, move: Move) {
+        game.forAllFiguresOfColor(whiteTurn) { figure ->
             figure.figureMoved(move)
         }
     }
@@ -460,8 +461,8 @@ class ChessGame : ChessGameInterface {
     }
 
     private fun noMovesLeft(caseWhite: Boolean): Boolean {
-        game.forAllFigures { figure ->
-            if (figure.isWhite == caseWhite && figure.isSelectable(game)) {
+        game.forAllFiguresOfColor(caseWhite) { figure ->
+            if (figure.isSelectable(game)) {
                 return false
             }
         }
@@ -469,28 +470,25 @@ class ChessGame : ChessGameInterface {
     }
 
     override fun getPossibleMoves(possibleMoves: MutableList<Move>) {
-        val king = game.getKing(whiteTurn)
-
-        king.getPossibleMoves(game, possibleMoves)
-
-        game.forAllFigures {figure ->
-            if (figure.isWhite == whiteTurn && !figure.isKing()) {
-                figure.getPossibleMoves(game, possibleMoves)
-            }
+        game.forAllFiguresOfColor(whiteTurn) {figure ->
+            figure.getPossibleMoves(game, possibleMoves)
         }
     }
 
-    override fun countReachableMoves(forWhite: Boolean): Int {
-        var count = 0
+    override fun countReachableMoves(): Pair<Int, Int> {
+        var whiteCount = 0
+        var blackCount = 0
 
         game.forAllFigures {figure->
-            // TODO add condition: && !figure.isPawn() && !figure.isKing()
-            if (figure.isWhite == forWhite) {
-                count += figure.countReachableMoves(game)
+            val count = figure.countReachableMoves(game)
+            if(figure.isWhite) {
+                whiteCount += count
+            }else{
+                blackCount += count
             }
         }
 
-        return count
+        return Pair(whiteCount, blackCount)
     }
 
     override fun copyGame(neededInstances: Int): List<ChessGameInterface> {

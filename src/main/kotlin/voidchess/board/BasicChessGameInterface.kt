@@ -33,3 +33,19 @@ fun BasicChessGameInterface.getFigure(pos: Position) = getFigureOrNull(pos) ?: t
 inline fun BasicChessGameInterface.forAllFigures(informOfFigure: (Figure)->Unit) {
     for (linearIndex in 0..63) getFigureOrNull(Position.byIndex(linearIndex))?.let(informOfFigure)
 }
+
+inline fun BasicChessGameInterface.forAllFiguresOfColor(isWhite: Boolean, informOfFigure: (Figure)->Unit) {
+    if(isWhite) {
+        for (linearIndex in 0..63) getFigureOrNull(Position.byIndex(linearIndex))?.let {
+            if (it.isWhite) {
+                informOfFigure(it)
+            }
+        }
+    }else{
+        for (linearIndex in 63 downTo 0) getFigureOrNull(Position.byIndex(linearIndex))?.let {
+            if (!it.isWhite) {
+                informOfFigure(it)
+            }
+        }
+    }
+}

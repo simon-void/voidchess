@@ -38,7 +38,7 @@ public class DynamicEvaluationTest {
         // expected sequence (after e7-e6) g5-d8 e8-d8 d1-d2
         double combinedValue = ((Ongoing)value).getCombinedEvaluation();
         assertTrue(
-                combinedValue<-6.0 && combinedValue>-7,  // the queen mobility isn't worth a pawn so combined value shouldn't be worse than -7
-                "Min-Max-computation out of bounds. expected value [-6, -7] but is: " + combinedValue);
+                combinedValue<-6.0 && combinedValue>-7.5,  // the queen mobility isn't worth a pawn so combined value shouldn't be worse than -7
+                "Min-Max-computation out of bounds. expected value [-6, -7.5] but is: " + combinedValue);
     }
 }
