@@ -14,7 +14,8 @@ class Chess960Panel internal constructor(private val game: ChessGameInterface, p
     private var random960Button: JButton = JButton("shuffle setup")
     private var positionIndexField: JTextField = JTextField(positionCode.toString(), 3)
 
-    private val randomPosition = Math.floor(Math.random() * 960).toInt()
+    private val randomPosition: Int
+            get() = Math.floor(Math.random() * 960).toInt()
 
     init {
         designLayout()
