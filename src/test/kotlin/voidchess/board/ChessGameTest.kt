@@ -11,7 +11,6 @@ import voidchess.board.move.Position
 import voidchess.figures.Bishop
 import voidchess.figures.King
 import voidchess.moves
-import java.util.*
 import kotlin.test.*
 
 
@@ -503,7 +502,7 @@ class ChessGameTest {
             assertTrue(isMovable, move.toString() + " should be valid")
             game.move(move)
         }
-        val possibleMoves = getPossibleMoves(game)
+        val possibleMoves = game.getAllMoves()
         assertEquals(expectedPossibleMovesCount, possibleMoves.size, "possible move count")
     }
 
@@ -546,8 +545,8 @@ class ChessGameTest {
     @Test
     fun testGetPossibleMovesAfterIndirectChessAfterEnpassent() {
         game.moves(listOf("e2-e4", "d7-d5", "e4-e5", "e8-d7", "d1-g4", "f7-f5", "e5-f6")) //en-passant creates indirect chess path
-        assertTrue(game.getLastMove()!!.isEnpassent)
-        val possibleMoves = getPossibleMoves(game)
+        assertTrue(game.getLastMove()!!.isEnPassant)
+        val possibleMoves = game.getAllMoves()
         val actualMoveCodes = possibleMoves.asSequence().map { move -> move.toString() }.toSet()
         val expectedMoveCodes = setOf("d7-e8", "d7-c6", "d7-d6", "e7-e6")
         assertEquals(expectedMoveCodes, actualMoveCodes, "expected#: ${expectedMoveCodes.size}, actual#: ${possibleMoves.size}")
@@ -588,11 +587,5 @@ class ChessGameTest {
         game.move(Move.byCode("a7-a6"))
         game.move(Move.byCode("c2-h7"))
         assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6,c2-c3,g8-f7,d1-c2,a7-a6,c2-h7")
-    }
-
-    private fun getPossibleMoves(game: ChessGame): List<Move> {
-        val possibleMoves = LinkedList<Move>()
-        game.getPossibleMoves(possibleMoves)
-        return possibleMoves
     }
 }

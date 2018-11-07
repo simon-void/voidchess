@@ -2,9 +2,6 @@ package voidchess.board.move
 
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import voidchess.board.move.ExtendedMove
-import voidchess.board.move.Move
-import voidchess.board.move.Position
 import voidchess.figures.Pawn
 
 import org.testng.Assert.assertFalse
@@ -52,7 +49,7 @@ class ExtendedMoveTest {
 
     @Test
     fun testIsEnpassent() {
-        assertFalse(extendedMove!!.isEnpassent)
+        assertFalse(extendedMove!!.isEnPassant)
     }
 
     @Test

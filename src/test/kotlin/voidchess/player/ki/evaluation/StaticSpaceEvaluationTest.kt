@@ -42,12 +42,6 @@ class StaticSpaceEvaluationTest {
     }
 
     @Test
-    fun testGetMaxFigureDistance() {
-        assertEquals(evaluation.getKingDistance(Position.byCode("e1"), Position.byCode("e8")), 7)
-        assertEquals(evaluation.getKingDistance(Position.byCode("b7"), Position.byCode("e8")), 4)
-    }
-
-    @Test
     fun testCountRestSpace() {
         var des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0"
         var game = ChessGame(des)

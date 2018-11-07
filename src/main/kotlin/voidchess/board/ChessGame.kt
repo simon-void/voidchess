@@ -2,7 +2,7 @@ package voidchess.board
 
 import voidchess.board.move.*
 import voidchess.figures.*
-import voidchess.player.ki.evaluation.SimplePruner
+import voidchess.player.ki.evaluation.SearchTreePruner
 import java.util.*
 
 
@@ -215,7 +215,7 @@ class ChessGame private constructor(
 
     override fun move(move: Move): MoveResult {
         var rewritableMove = move
-        assert(!isFreeArea(rewritableMove.from)) { "the move moves a null value:" + rewritableMove.toString() }
+        assert(!isFreeArea(rewritableMove.from)) { "the move moves a null value:$rewritableMove" }
         assert(board.getFigure(rewritableMove.from).isWhite == whiteTurn) { "figure to be moved has wrong color" }
 
         val castlingRook = extractCastlingRook(rewritableMove)
@@ -355,13 +355,13 @@ class ChessGame private constructor(
         }
 
         if (lastExtMove.isCastling) undoCastling(lastExtMove)
-        if (lastExtMove.isEnpassent) undoEnpassent(lastExtMove)
+        if (lastExtMove.isEnPassant) undoEnPassant(lastExtMove)
         if (lastExtMove.isPawnTransformation) undoPawnTransformation(lastExtMove)
-        rebuildPawnEnpassentCapability()
+        rebuildPawnEnPassantCapability()
     }
 
     private fun undoCastling(lastExtMove: ExtendedMove) {
-        val rook = lastExtMove.enpassentPawnOrCastlingRook as Rook
+        val rook = lastExtMove.enpassantPawnOrCastlingRook as Rook
         val rookStartPos = rook.initialPosition
         val rookCurrentPos = rook.position
 
@@ -372,8 +372,8 @@ class ChessGame private constructor(
         rook.undoMove(rookStartPos)
     }
 
-    private fun undoEnpassent(lastExtMove: ExtendedMove) {
-        val hitPawn = lastExtMove.enpassentPawnOrCastlingRook as Pawn
+    private fun undoEnPassant(lastExtMove: ExtendedMove) {
+        val hitPawn = lastExtMove.enpassantPawnOrCastlingRook as Pawn
         val pawnPos = Position[lastExtMove.move.from.row, lastExtMove.move.to.column]
         setFigure(pawnPos, hitPawn)
         hitPawn.setCanBeHitByEnpasent()
@@ -385,7 +385,7 @@ class ChessGame private constructor(
         setFigure(pawnPos, pawn)
     }
 
-    private fun rebuildPawnEnpassentCapability() {
+    private fun rebuildPawnEnPassantCapability() {
         if (extendedMoveStack.isEmpty()) return
 
         val newLatestMove = extendedMoveStack.last
@@ -441,11 +441,30 @@ class ChessGame private constructor(
         return !board.getKing(caseWhite).isSelectable(board)
     }
 
-    override fun getPossibleMoves(possibleMoves: MutableList<Move>) {
+    override fun getAllMoves(): List<Move> {
+        val possibleMoves = LinkedList<Move>()
         board.forAllFiguresOfColor(whiteTurn) { figure ->
             figure.getPossibleMoves(board, possibleMoves)
         }
+        return possibleMoves
     }
+
+    override fun getCriticalMoves(): Collection<Move> {
+        val criticalMoves = TreeSet<Move>()
+        board.forAllFiguresOfColor(whiteTurn) { figure ->
+            figure.getCriticalMoves(board, criticalMoves)
+        }
+        return criticalMoves
+    }
+
+    override fun getTakingMoves(): List<Move> {
+        val takingMoves = LinkedList<Move>()
+        board.forAllFiguresOfColor(whiteTurn) { figure ->
+            figure.getPossibleTakingMoves(board, takingMoves)
+        }
+        return takingMoves
+    }
+
 
     override fun countReachableMoves(): Pair<Int, Int> {
         var whiteCount = 0
@@ -485,19 +504,19 @@ class ChessGame private constructor(
                              hitPawn: Pawn?,
                              castlingRook: Rook?,
                              hitFigure: Figure?) {
-        val hitsEnpassent = hitPawn != null
+        val hitsEnPassant = hitPawn != null
         val isCastling = castlingRook != null
-        var castlingRookOrEnpassentPawn: Figure? = hitPawn
+        var castlingRookOrEnPassantPawn: Figure? = hitPawn
         if (isCastling) {
-            castlingRookOrEnpassentPawn = castlingRook
+            castlingRookOrEnPassantPawn = castlingRook
         }
         val extendedMove = ExtendedMove(
                 move,
                 hitFigure,
-                castlingRookOrEnpassentPawn,
+                castlingRookOrEnPassantPawn,
                 whiteMove,
                 isCastling,
-                hitsEnpassent,
+                hitsEnPassant,
                 pawnTransformed)
         extendedMoveStack.addLast(extendedMove)
     }
@@ -567,7 +586,7 @@ private class NumberStack {
 
     //copy-Constructor
     internal constructor(other: NumberStack) {
-        numberStack = IntArray(other.index + SimplePruner.MAX_SEARCH_DEPTH)
+        numberStack = IntArray(other.index + SearchTreePruner.MAX_SEARCH_DEPTH)
         System.arraycopy(other.numberStack, 0, numberStack, 0, numberStack.size)
         index = other.index
     }

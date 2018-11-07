@@ -30,8 +30,7 @@ fun ChessBoard.getPossibleMovesFrom(posCode: String): List<Move> {
 }
 
 fun ChessGameInterface.getPossibleMovesFrom(posCode: String): List<Move> {
-    val allMovesList = LinkedList<Move>()
-    getPossibleMoves(allMovesList)
+    val allMovesList = getAllMoves()
     val fromPos = Position.byCode(posCode)
     return allMovesList.filter { move -> move.from==fromPos }
 }
@@ -47,3 +46,6 @@ fun PositionProgression.toList(): List<Position> {
     forEachReachablePos { position -> list.add(position) }
     return list
 }
+
+fun Collection<Move>.toFromPosAsStringSet(): Set<String> = asSequence().map { it.from.toString() }.toSet()
+fun Collection<Move>.toTargetPosAsStringSet(): Set<String> = asSequence().map { it.to.toString() }.toSet()

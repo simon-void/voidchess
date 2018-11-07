@@ -27,7 +27,6 @@ class StaticSpaceEvaluation : StaticEvaluationInterface {
             }
         }
 
-        var value: Double
         val king = if (colorOfWinnerIsWhite) blackKing else whiteKing
         if (colorOfWinnerIsWhite) {
             figuresPos.add(whiteKing.position)
@@ -35,9 +34,9 @@ class StaticSpaceEvaluation : StaticEvaluationInterface {
             figuresPos.add(blackKing.position)
         }
 
-        value = countRestSpace(game, king, figuresPos).toDouble()
+        var value = countRestSpace(game, king, figuresPos).toDouble()
         value += 3 * borderMalus(king.position)
-        value += (5 * getKingDistance(whiteKing.position, blackKing.position)).toDouble()
+        value += (5 * whiteKing.position.distanceTo(blackKing.position)).toDouble()
         value -= basicValue.toDouble()
 
         if (colorOfWinnerIsWhite == forWhite) value = -value
@@ -49,11 +48,6 @@ class StaticSpaceEvaluation : StaticEvaluationInterface {
     override fun addSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean, evaluated: Evaluated) {
         //do nothing (keep the secondary value = 0)
         //TODO is there a good secondary matrix of success for space?
-    }
-
-    fun getKingDistance(pos1: Position, pos2: Position): Int {
-        //return	Math.max( Math.abs(pos1.row-pos2.row),Math.abs(pos1.column-pos2.column) );
-        return Math.abs(pos1.row - pos2.row) + Math.abs(pos1.column - pos2.column)
     }
 
     private fun borderMalus(kingPos: Position): Double {

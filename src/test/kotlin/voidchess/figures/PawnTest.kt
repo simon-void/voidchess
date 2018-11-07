@@ -5,12 +5,11 @@ import voidchess.board.ChessGame
 import voidchess.board.move.Move
 import voidchess.board.move.Position
 
-import java.util.LinkedList
-
 import org.testng.annotations.DataProvider
 import voidchess.board.getFigure
-import voidchess.board.move.Position.Companion.byCode
 import voidchess.initSimpleChessBoard
+import voidchess.toTargetPosAsStringSet
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -24,11 +23,11 @@ class PawnTest {
 
 
         val pawn = Pawn(true, move.from)
-        assertFalse(pawn.canBeHitByEnpasent())
+        assertFalse(pawn.canBeHitEnPassant())
         pawn.figureMoved(move)
-        assertTrue(pawn.canBeHitByEnpasent())
+        assertTrue(pawn.canBeHitEnPassant())
         pawn.figureMoved(otherMove)
-        assertFalse(pawn.canBeHitByEnpasent())
+        assertFalse(pawn.canBeHitEnPassant())
     }
 
     @Test(dataProvider = "getIsReachableData")
@@ -100,5 +99,38 @@ class PawnTest {
             arrayOf("white 0 King-white-g2-2 Pawn-white-e7-false Queen-black-d5 King-black-e8-0", "e7", setOf<String>()),
             arrayOf("black 0 King-black-g7-2 Pawn-black-e4-false Queen-white-d4 King-white-e1-0", "e4", setOf<String>()),
             arrayOf("black 0 King-black-g7-2 Pawn-black-e3-false Queen-white-d4 King-white-e1-0", "e3", setOf<String>())
+    )
+
+    @Test(dataProvider = "getGetCriticalMovesData")
+    fun testGetPossibleIrreversibleMoves(gameDes: String, posCode: String) {
+        val game = initSimpleChessBoard(gameDes)
+        val pawn = game.getFigure(Position.byCode(posCode))
+        val actualResults = TreeSet<Move>()
+        pawn.getCriticalMoves(game, actualResults)
+        val expectedResults = LinkedList<Move>()
+        pawn.getPossibleMoves(game, expectedResults)
+        assertEquals(expectedResults.toTargetPosAsStringSet(), actualResults.toTargetPosAsStringSet(), "pawn can move to irreversibly")
+    }
+
+    @DataProvider
+    fun getGetCriticalMovesData(): Array<Array<Any>> = arrayOf(
+            arrayOf<Any>("white 0 King-black-e8-0 King-white-e1-0 Pawn-white-d5-false Pawn-black-e5-true Pawn-black-c6-false", "d5"),
+            arrayOf<Any>("white 0 King-black-e8-0 King-white-e1-0 Pawn-white-a2-false", "a2")
+    )
+
+    @Test(dataProvider = "getGetPossibleTakingMovesData")
+    fun testGetPossibleTakingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
+        val game = initSimpleChessBoard(gameDes)
+        val pawn = game.getFigure(Position.byCode(posCode))
+        val results = LinkedList<Move>()
+        pawn.getPossibleTakingMoves(game, results)
+        val actualMoveToCodes = results.toTargetPosAsStringSet()
+        assertEquals(expectedMoveToCodes, actualMoveToCodes, "pawn can take on")
+    }
+
+    @DataProvider
+    fun getGetPossibleTakingMovesData(): Array<Array<Any>> = arrayOf(
+            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Pawn-white-d5-false Pawn-black-e5-true Pawn-black-c6-false", "d5", setOf("c6", "e6")),
+            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Pawn-white-a2-false", "a2", setOf<String>())
     )
 }

@@ -1,13 +1,15 @@
 package voidchess.board.move
 
 
-class Move private constructor(@JvmField val from: Position, @JvmField val to: Position) {
+class Move private constructor(@JvmField val from: Position, @JvmField val to: Position): Comparable<Move> {
     private val index = getMoveIndex(from.index, to.index)
 
     fun equalsMove(move: Move) = this === move //index == move.index
     override fun equals(other: Any?) = this === other //other is Move && index == other.index
     override fun toString() = "$from-$to"
     override fun hashCode() = index
+
+    override fun compareTo(other: Move) = index.compareTo(other.index)
 
     companion object {
         @JvmStatic

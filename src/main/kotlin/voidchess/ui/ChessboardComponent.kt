@@ -73,7 +73,7 @@ class ChessboardComponent constructor(private val game: BasicChessBoard, imageOb
         repaintPositionAtOnce(move.from)
         repaintPositionAtOnce(move.to)
 
-        if (extendedMove.isEnpassent) {
+        if (extendedMove.isEnPassant) {
             repaintPositionAtOnce(Position[move.from.row, move.to.column])
             repaintPositionAtOnce(Position[move.to.row, move.from.column])
         } else if (extendedMove.isCastling) {

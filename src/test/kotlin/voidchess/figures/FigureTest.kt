@@ -3,7 +3,6 @@ package voidchess.figures
 import org.testng.Assert.*
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import voidchess.board.ChessGameInterface
 import voidchess.board.getFigure
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -29,7 +28,7 @@ class FigureTest {
                 Knight(
                         true,
                         Position[0, 0]
-                ).canBeHitByEnpasent(),
+                ).canBeHitEnPassant(),
                 "should be false for all voidchess.figures but pawns"
         )
     }

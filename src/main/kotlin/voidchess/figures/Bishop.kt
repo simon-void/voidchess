@@ -4,6 +4,7 @@ import voidchess.board.BasicChessBoard
 import voidchess.board.ChessBoard
 import voidchess.board.check.BoundLine
 import voidchess.board.check.CheckLine
+import voidchess.board.getKing
 import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -35,13 +36,49 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         forEachReachablePos(game, Direction.DOWN_LEFT, informOf)
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>) {
+    private inline fun forEachReachableTakeableOrCheckEndPos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+        forReachableTakeableEndPos(game, Direction.UP_RIGHT, informOf)
+        forReachableTakeableEndPos(game, Direction.UP_LEFT, informOf)
+        forReachableTakeableEndPos(game, Direction.DOWN_RIGHT, informOf)
+        forReachableTakeableEndPos(game, Direction.DOWN_LEFT, informOf)
+    }
+
+    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>) {
+    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+        forEachReachableTakeableOrCheckEndPos(game) {
+            result.add(Move[position, it])
+        }
+    }
+
+    override fun getReachableCheckingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+        val opponentKingPos = game.getKing(!isWhite).position
+        val currentPos = position
+        if(!currentPos.hasSameColor(opponentKingPos)) {
+            return
+        }
+        fun checkReachOf(row: Int, column:Int) {
+            if(Position.inBounds(row, column)) {
+                val checkPos = Position[row, column]
+                if(isReachable(checkPos, game)) {
+                    val figureTaken = game.move(this, checkPos)
+                    if(isReachable(opponentKingPos, game)) {
+                        result.add(Move[currentPos, checkPos])
+                    }
+                    game.undoMove(this, currentPos, figureTaken)
+                }
+            }
+        }
+        val halfSum = (currentPos.row + currentPos.column + opponentKingPos.row + opponentKingPos.column) shr 1
+        checkReachOf(halfSum-currentPos.column, halfSum-currentPos.row)
+        checkReachOf(halfSum-opponentKingPos.column, halfSum-opponentKingPos.row)
+    }
+
+    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) {
         when {
             checkLine.posProgression.hasSinglePos -> {
                 if(position.hasSameColor(checkLine.attackerPos)) {
@@ -73,7 +110,7 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>) {
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) {
         if(boundLine.boundFigureToAttackerDirection.isDiagonal) {
             boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
                 result.add(Move[position, posBetweenThisAndAttacker])

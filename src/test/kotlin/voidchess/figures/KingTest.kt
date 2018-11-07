@@ -10,6 +10,8 @@ import voidchess.board.move.Position
 import voidchess.getPossibleMovesFrom
 import voidchess.initChessBoard
 import voidchess.initSimpleChessBoard
+import voidchess.toTargetPosAsStringSet
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -165,21 +167,52 @@ class KingTest {
             arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4 Pawn-black-b5-false Knight-black-d1 Pawn-white-c2-false", "d3", setOf("e4"))
     )
 
-    @Test(dataProvider = "getGetPossibleMovesAfterInitialMovesData")
+    @Test(dataProvider = "getPossibleMovesAfterInitialMovesData")
     fun testGetPossibleMovesAfterInitialMoves(chess960: Int, moveCodes: List<String>, posCode: String, expectedMoveToCodes: Set<String>) {
         val game1 = initChessBoard(chess960)
         for(moveCode in moveCodes) game1.move(Move.byCode(moveCode))
         val moveFrom1 = game1.getPossibleMovesFrom(posCode)
-        val actualMoveToCodes = moveFrom1.asSequence().map { move -> move.to.toString() }.toSet()
+        val actualMoveToCodes = moveFrom1.toTargetPosAsStringSet()
         assertEquals(expectedMoveToCodes, actualMoveToCodes, "king can move to")
     }
 
     @DataProvider
-    fun getGetPossibleMovesAfterInitialMovesData(): Array<Array<Any>> = arrayOf(
+    fun getPossibleMovesAfterInitialMovesData(): Array<Array<Any>> = arrayOf(
             arrayOf(621, listOf("f2-f3", "f7-f6", "g1-f2", "g8-f7"), "e1", setOf("f1")),
             arrayOf(621, listOf("f2-f3", "f7-f6", "g1-f2", "g8-f7", "e1-f1"), "e8", setOf("f8")),
             arrayOf(621, listOf("c2-c3", "f7-f6", "d1-c2", "g8-c4", "c2-h7"), "e8", setOf("f7")),
             arrayOf(621, listOf<String>(), "e1", setOf<String>())
+    )
+
+    @Test(dataProvider = "getGetCriticalMovesData")
+    fun testGetPossibleIrreversibleMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
+        val game = initSimpleChessBoard(gameDes)
+        val king = game.getFigure(Position.byCode(posCode))
+        val results = TreeSet<Move>()
+        king.getCriticalMoves(game, results)
+        val actualMoveToCodes = results.toTargetPosAsStringSet()
+        assertEquals(expectedMoveToCodes, actualMoveToCodes, "king can move to irreversibly")
+    }
+
+    @DataProvider
+    fun getGetCriticalMovesData(): Array<Array<Any>> = arrayOf(
+            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Rook-white-a1-0 Rook-white-h1-0", "e1", setOf("a1", "h1")),
+            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Rook-white-a1-0 Rook-white-h1-0 Knight-black-f2", "e1", setOf("f2", "h1"))
+    )
+
+    @Test(dataProvider = "getGetPossibleTakingMovesData")
+    fun testGetPossibleTakingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
+        val game = initSimpleChessBoard(gameDes)
+        val king = game.getFigure(Position.byCode(posCode))
+        val results = LinkedList<Move>()
+        king.getPossibleTakingMoves(game, results)
+        val actualMoveToCodes = results.toTargetPosAsStringSet()
+        assertEquals(expectedMoveToCodes, actualMoveToCodes, "king can take on")
+    }
+
+    @DataProvider
+    fun getGetPossibleTakingMovesData(): Array<Array<Any>> = arrayOf(
+            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Rook-white-a1-0 Rook-white-h1-0 Knight-black-f2", "e1", setOf("f2"))
     )
 
     @Test

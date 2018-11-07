@@ -28,7 +28,9 @@ interface ChessGameInterface : BasicChessBoard {
     fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean
     fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean
     fun move(move: Move): MoveResult
-    fun getPossibleMoves(possibleMoves: MutableList<Move>)
+    fun getAllMoves(): Collection<Move>
+    fun getCriticalMoves(): Collection<Move>
+    fun getTakingMoves(): Collection<Move>
     /**
      * @return a pair of ints with the first int denoting the reachable sum of moves of all white figures
      * while the second int is the same for all black figures.

@@ -28,7 +28,7 @@ sealed class Evaluated: Comparable<Evaluated> {
 }
 
 private const val PRIMARY_EQUALITY_CUTOFF_RADIUS = 1.0
-private const val FINAL_EQUALITY_CUTOFF_RADIUS = 0.5
+private const val FINAL_EQUALITY_CUTOFF_RADIUS = 0.2
 
 object Draw: Evaluated() {
 

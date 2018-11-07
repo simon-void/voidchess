@@ -47,21 +47,25 @@ class ChessPanel : JPanel(), ActionListener {
         startButton.preferredSize = prefSize
         startButton.addActionListener(this)
         switchButton.addActionListener(this)
-        val buttonPanel = JPanel(FlowLayout())
-        buttonPanel.background = Color.WHITE
-        buttonPanel.add(startButton)
-        buttonPanel.add(switchButton)
+
+        val buttonPanel = JPanel(FlowLayout()).apply {
+            background = Color.WHITE
+            add(startButton)
+            add(switchButton)
+        }
 
         val computerPlayerOptionsPanel = getComputerPlayerSettingsPanel()
 
-        val computerUIPanel = JPanel(BorderLayout())
-        computerUIPanel.background = Color.WHITE
-        computerUIPanel.add(computerPlayerUI, BorderLayout.CENTER)
-        computerUIPanel.add(computerPlayerOptionsPanel, BorderLayout.SOUTH)
+        val computerUIPanel = JPanel(BorderLayout()).apply {
+            background = Color.WHITE
+            add(computerPlayerUI, BorderLayout.CENTER)
+            add(computerPlayerOptionsPanel, BorderLayout.SOUTH)
+        }
 
-        val gameUIPanel = JPanel()
-        gameUIPanel.background = Color.WHITE
-        gameUIPanel.add(chessboardComponent)
+        val gameUIPanel = JPanel().apply {
+            background = Color.WHITE
+            add(chessboardComponent)
+        }
 
         background = Color.WHITE
         val layout = GridBagLayout()
@@ -77,29 +81,28 @@ class ChessPanel : JPanel(), ActionListener {
             return difficultyPanel
         }
 
-        val panel = JPanel(GridLayout(2, 2))
-        panel.background = Color.WHITE
-        panel.border = LineBorder(Color.LIGHT_GRAY)
-        panel.background = Color.WHITE
-        panel.add(difficultyPanel.label)
-        panel.add(difficultyPanel)
-        panel.add(coresPanel.label)
-        panel.add(coresPanel)
-
-        return panel
+        return JPanel(GridLayout(2, 2)).apply {
+            background = Color.WHITE
+            border = LineBorder(Color.LIGHT_GRAY)
+            background = Color.WHITE
+            add(difficultyPanel.label)
+            add(difficultyPanel)
+            add(coresPanel.label)
+            add(coresPanel)
+        }
     }
 
     private fun add(component: JComponent, layout: GridBagLayout, x: Int, y: Int) {
-        val constraints = GridBagConstraints()
-        constraints.gridx = x
-        constraints.gridy = y
+        val constraints = GridBagConstraints().apply {
+            gridx = x
+            gridy = y
+        }
         layout.setConstraints(component, constraints)
         add(component)
     }
 
     override fun actionPerformed(e: ActionEvent) {
-        val com = e.actionCommand
-        when (com) {
+        when (e.actionCommand) {
             startString -> start()
             switchString -> table.switchPlayer()
             resignString -> table.stopGame(MoveResult.RESIGN)

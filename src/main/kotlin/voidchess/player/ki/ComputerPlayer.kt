@@ -29,7 +29,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
     private var isWhite = false
 
     init {
-        standardPruner = SimplePruner(1, 2, 2)
+        standardPruner = PrunerWithIrreversibleMoves(1, 2, 2)
         standardEvaluation = StaticEvaluation
         dynamicEvaluation = DynamicEvaluation(standardPruner, standardEvaluation)
         concurrencyStrategy = getConcurrencyStrategy(ui::setProgress, 1)
@@ -139,12 +139,13 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
      * So the Evaluation strategy has to be changed.
      */
     private fun pickStaticSpaceEvaluationIfNecessary() {
-        if (usesStandardEvaluation && StaticSpaceEvaluation.shouldUseStaticSpaceEvaluation(game)) {
-            // once per game
-            dynamicEvaluation.strategy = StaticSpaceEvaluation()
-            dynamicEvaluation.pruner = FullMovePruner(3, 3, 3)
-            usesStandardEvaluation = false
-        }
+        // TODO implement better endgame engine
+//        if (usesStandardEvaluation && StaticSpaceEvaluation.shouldUseStaticSpaceEvaluation(game)) {
+//            // once per game
+//            dynamicEvaluation.strategy = StaticSpaceEvaluation()
+//            dynamicEvaluation.pruner = FullMovePruner(3, 3, 3)
+//            usesStandardEvaluation = false
+//        }
     }
 
     override fun askForPawnPromotionType(pawnPosition: Position) = PawnPromotion.QUEEN

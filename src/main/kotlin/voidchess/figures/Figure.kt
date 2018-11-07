@@ -5,6 +5,7 @@ import voidchess.board.ChessBoard
 import voidchess.board.check.AttackLines
 import voidchess.board.check.BoundLine
 import voidchess.board.check.CheckLine
+import voidchess.board.getFirstFigureInDir
 import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -31,7 +32,7 @@ abstract class Figure constructor(
 
     fun hasDifferentColor(other: Figure) = isWhite != other.isWhite
 
-    open fun canBeHitByEnpasent() = false
+    open fun canBeHitEnPassant() = false
 
     open fun canCastle(): Boolean {
         return false
@@ -47,14 +48,16 @@ abstract class Figure constructor(
 
     abstract fun isReachable(toPos: Position, game: BasicChessBoard): Boolean
     abstract fun countReachableMoves(game: BasicChessBoard): Int
-    internal abstract fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>)
     abstract fun isSelectable(game: ChessBoard): Boolean
+    internal open fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
+    internal open fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
+    internal open fun getReachableCheckingMoves(game: ChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
 
     fun isMovable(toPos: Position, game: ChessBoard): Boolean {
         return isReachable(toPos, game) && !isBound(toPos, game)
     }
 
-    open fun getPossibleMoves(game: ChessBoard, result: MutableList<Move>) {
+    open fun getPossibleMoves(game: ChessBoard, result: MutableCollection<Move>) {
         val attackLines = game.getCachedAttackLines(isWhite)
         if(attackLines.noCheck) {
             val boundLine = attackLines.boundLineByBoundFigurePos[position]
@@ -73,10 +76,56 @@ abstract class Figure constructor(
         }
     }
 
-    protected abstract fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>)
-    protected abstract fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>)
+    /**
+     * let's only look for checks to give if our king is not in check.
+     * (for minimizing the code complexity)
+     */
+    open fun getPossibleTakingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+        val attackLines = game.getCachedAttackLines(isWhite)
+        if(attackLines.noCheck) {
+            val boundLine = attackLines.boundLineByBoundFigurePos[position]
+            if(boundLine==null) {
+                getReachableTakingMoves(game, result)
+            }else{
+                if(isReachable(boundLine.attackerPos, game)) {
+                    result.add(Move[position, boundLine.attackerPos])
+                }
+            }
+        } else if(attackLines.isSingleCheck) {
+            val checkLine = attackLines.checkLines.first()
+            val boundLine = attackLines.boundLineByBoundFigurePos[position]
+            if(boundLine==null && isReachable(checkLine.attackerPos, game)) {
+                result.add(Move[position, checkLine.attackerPos])
+            }
+            // no need for else, a figure that is bound can't intercept a check
+        }
+    }
 
-    protected fun addMoveIfReachable(pos: Position, game: BasicChessBoard, result: MutableList<Move>) =
+    /**
+     * moves are critical if they
+     * 1) can't be reversed (e.g. a figure is taken, a king castles or a pawn move)
+     * 2) if a knight forks
+     * 3) if a check is given
+     */
+    open fun getCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
+        getPossibleTakingMoves(game, result)
+
+        // this doesn't make sense for king; and pawn and knight overwrite getCriticalMoves altogether.
+        if(isPawn()||isKnight()||isKing()) return
+
+        // for simplicity lets only consider checks while not in check and figure unbound
+        val attackLines = game.getCachedAttackLines(isWhite)
+        if(attackLines.noCheck) {
+            if(attackLines.boundLineByBoundFigurePos[position]==null) {
+                getReachableCheckingMoves(game, result)
+            }
+        }
+    }
+
+    protected abstract fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>)
+    protected abstract fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>)
+
+    protected fun addMoveIfReachable(pos: Position, game: BasicChessBoard, result: MutableCollection<Move>) =
             if(isReachable(pos, game)) result.add(Move[position, pos])
             else false
 
@@ -134,10 +183,23 @@ abstract class Figure constructor(
         }
     }
 
-    protected fun isAccessible(game: BasicChessBoard, position: Position): Boolean {
-        val figure = game.getFigureOrNull(position)
-        return if (figure == null) true else hasDifferentColor(figure)
+    protected inline fun forReachableTakeableEndPos(game: BasicChessBoard, direction: Direction, informOf: (Position) -> Unit) {
+        game.getFirstFigureInDir(direction, position)?.let { figure ->
+            if(figure.isWhite!=isWhite) {
+                informOf(figure.position)
+            }
+        }
     }
+
+    protected fun isAccessible(game: BasicChessBoard, position: Position) =
+            game.getFigureOrNull(position).let { figure ->
+                figure == null || hasDifferentColor(figure)
+            }
+
+    protected fun containsFigureToTake(game: BasicChessBoard, position: Position) =
+            game.getFigureOrNull(position).let { figure ->
+                figure != null && hasDifferentColor(figure)
+            }
 
     override fun toString() = "${type.label}-${if (isWhite) "white" else "black"}-$position"
     override fun equals(other: Any?) = other is Figure && typeInfo == other.typeInfo && position.equalsPosition(other.position)

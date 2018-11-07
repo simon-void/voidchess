@@ -5,14 +5,14 @@ import voidchess.figures.Figure
 
 class ExtendedMove(val move: Move,
                    val figureTaken: Figure?,
-                   val enpassentPawnOrCastlingRook: Figure?,
+                   val enpassantPawnOrCastlingRook: Figure?,
                    val colorOfMove: Boolean,
                    val isCastling: Boolean,
-                   val isEnpassent: Boolean,
+                   val isEnPassant: Boolean,
                    val isPawnTransformation: Boolean) {
 
     @get:JvmName("wasFigureTaken")
-    val wasFigureTaken = figureTaken != null || isEnpassent
+    val wasFigureTaken = figureTaken != null || isEnPassant
 
     override fun toString() = move.toString()
 }

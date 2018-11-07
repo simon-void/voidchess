@@ -32,18 +32,18 @@ class EvaluatedTest {
     @Test
     fun testIsCloseToByCombined() {
         assertTrue(
-                Ongoing(-0.85, 0.6).isCloseToByCombined(
-                        Ongoing(1.25, -1.0)
+                Ongoing(-0.65, 0.6).isCloseToByCombined(
+                        Ongoing(1.15, -1.0)
                 )
         )
         assertTrue(
                 Ongoing(0.0, 0.0).isCloseToByCombined(
-                        Ongoing(0.5, 0.0)
+                        Ongoing(0.2, 0.0)
                 )
         )
         assertTrue(
                 Draw.isCloseToByCombined(
-                        Ongoing(-1.5, 1.0)
+                        Ongoing(-1.2, 1.0)
                 )
         )
         assertFalse(

@@ -4,6 +4,7 @@ import voidchess.board.BasicChessBoard
 import voidchess.board.ChessBoard
 import voidchess.board.check.BoundLine
 import voidchess.board.check.CheckLine
+import voidchess.board.getKing
 import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
@@ -35,13 +36,49 @@ class Rook : CastlingFigure {
         forEachReachablePos(game, Direction.RIGHT, informOf)
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>) {
+    private inline fun forEachReachableTakeableEndPos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+        forReachableTakeableEndPos(game, Direction.UP, informOf)
+        forReachableTakeableEndPos(game, Direction.LEFT, informOf)
+        forReachableTakeableEndPos(game, Direction.DOWN, informOf)
+        forReachableTakeableEndPos(game, Direction.RIGHT, informOf)
+    }
+
+    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>) {
+    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+        forEachReachableTakeableEndPos(game) {
+            result.add(Move[position, it])
+        }
+    }
+
+    override fun getReachableCheckingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+        val opponentKingPos = game.getKing(!isWhite).position
+        val currentPos = position
+        val possiblePos1 = Position[currentPos.row, opponentKingPos.column]
+        val possiblePos2 = Position[opponentKingPos.row, currentPos.column]
+        // check position 1
+        if(isReachable(possiblePos1, game)) {
+            val figureTaken = game.move(this, possiblePos1)
+            if(isReachable(opponentKingPos, game)) {
+                result.add(Move[currentPos, possiblePos1])
+            }
+            game.undoMove(this, currentPos, figureTaken)
+        }
+        // check position 2
+        if(isReachable(possiblePos2, game)) {
+            val figureTaken = game.move(this, possiblePos2)
+            if(isReachable(opponentKingPos, game)) {
+                result.add(Move[currentPos, possiblePos2])
+            }
+            game.undoMove(this, currentPos, figureTaken)
+        }
+    }
+
+    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) {
         when {
             checkLine.posProgression.hasSinglePos -> {
                 addMoveIfReachable(checkLine.attackerPos, game, result)
@@ -67,7 +104,7 @@ class Rook : CastlingFigure {
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>) {
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) {
         if(boundLine.boundFigureToAttackerDirection.isStraight) {
             boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
                 result.add(Move[position, posBetweenThisAndAttacker])

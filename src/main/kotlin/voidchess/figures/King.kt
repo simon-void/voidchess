@@ -153,7 +153,7 @@ class King : CastlingFigure {
         val columnRange =
                 if(updatedToColumn>kingPos.column)
                     (kingPos.column+1)..updatedToColumn
-                else updatedToColumn..(kingPos.column-1)
+                else updatedToColumn until kingPos.column
 
         for (column in columnRange) {
             if (isKingCheckAt(Position[kingPos.row, column], game)) return true
@@ -169,11 +169,12 @@ class King : CastlingFigure {
         return isCheck
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleKingMoves(..)")
+    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
+    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleTakingMoves(..)")
+    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
 
-    override fun getPossibleMoves(game: ChessBoard, result: MutableList<Move>) {
+    override fun getPossibleMoves(game: ChessBoard, result: MutableCollection<Move>) {
         val attackLines = game.getCachedAttackLines(isWhite)
         if(attackLines.noCheck) {
             for(direction in Direction.values()) {
@@ -183,28 +184,8 @@ class King : CastlingFigure {
                     }
                 }
             }
-
             if(canCastle()) {
-                for (column in position.column + 1..7) {
-                    val pos = Position[position.row, column]
-                    val figure = game.getFigureOrNull(pos)
-                    if (figure!=null && figure.canCastle() && isShortCastlingReachable(pos, game)) {
-                        if(!isKingAtCheckWhileOrAfterCastling(position, pos, game)) {
-                            result.add(Move[position, pos])
-                        }
-                        break
-                    }
-                }
-                for (column in position.column - 1 downTo 0) {
-                    val pos = Position[position.row, column]
-                    val figure = game.getFigureOrNull(pos)
-                    if (figure!=null && figure.canCastle() && isLongCastlingReachable(pos, game)) {
-                        if(!isKingAtCheckWhileOrAfterCastling(position, pos, game)) {
-                            result.add(Move[position, pos])
-                        }
-                        break
-                    }
-                }
+                getPossibleCastlingMovesAssertNoCheckAndCanCastle(game, result)
             }
         } else {
             // isSingleCheck || isDoubleCheck
@@ -220,6 +201,63 @@ class King : CastlingFigure {
                     }
                 }
 
+            }
+        }
+    }
+
+    private fun getPossibleCastlingMovesAssertNoCheckAndCanCastle(game: ChessBoard, result: MutableCollection<Move>) {
+        if (canCastle()) {
+            for (column in position.column + 1..7) {
+                val pos = Position[position.row, column]
+                val figure = game.getFigureOrNull(pos)
+                if (figure != null && figure.canCastle() && isShortCastlingReachable(pos, game)) {
+                    if (!isKingAtCheckWhileOrAfterCastling(position, pos, game)) {
+                        result.add(Move[position, pos])
+                    }
+                    break
+                }
+            }
+            for (column in position.column - 1 downTo 0) {
+                val pos = Position[position.row, column]
+                val figure = game.getFigureOrNull(pos)
+                if (figure != null && figure.canCastle() && isLongCastlingReachable(pos, game)) {
+                    if (!isKingAtCheckWhileOrAfterCastling(position, pos, game)) {
+                        result.add(Move[position, pos])
+                    }
+                    break
+                }
+            }
+        }
+    }
+
+    // the king ignores the 'OrCheck'-part (because he can't go setting the other king in check)
+    override fun getPossibleTakingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+        val attackLines = game.getCachedAttackLines(isWhite)
+        Direction.values().forEach directionLoop@ {direction ->
+            position.step(direction)?.let { possibleKingPos->
+                for(checkLine in attackLines.checkLines) {
+                    if(checkLine.keepsKingInCheckIfHeMovesTo(direction)) {
+                        return@directionLoop
+                    }
+                }
+                game.getFigureOrNull(possibleKingPos)?.let { figure ->
+                    if (figure.isWhite!=isWhite && !isKingCheckAt(possibleKingPos, game)) {
+                        result.add(Move[position, possibleKingPos])
+                    }
+                }
+            }
+
+        }
+    }
+
+    override fun getCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
+        // taking moves
+        getPossibleTakingMoves(game, result)
+        // plus castling
+        if (canCastle()) {
+            val attackLines = game.getCachedAttackLines(isWhite)
+            if(attackLines.noCheck) {
+                getPossibleCastlingMovesAssertNoCheckAndCanCastle(game, result)
             }
         }
     }

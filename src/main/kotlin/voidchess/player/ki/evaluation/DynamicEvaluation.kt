@@ -1,15 +1,15 @@
 package voidchess.player.ki.evaluation
 
 import voidchess.board.ChessGameInterface
-import voidchess.board.move.MoveResult
+import voidchess.board.getFigure
 import voidchess.board.move.Move
-
+import voidchess.board.move.MoveResult
 import java.util.*
-
+import java.util.Collections.emptyList
 
 class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvaluationInterface) {
 
-    constructor() : this(SimplePruner(), StaticEvaluation)
+    constructor() : this(PrunerWithIrreversibleMoves(), StaticEvaluation)
 
     fun evaluateMove(game: ChessGameInterface, move: Move): Evaluated {
         val depth = 0
@@ -42,21 +42,28 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
         val thisMoveHasHitFigure = game.hasHitFigure()
         val thisMoveIsChess = game.isCheck(!forWhite)
 
-        if (pruner.stopMinDynamicEvaluation(depth,
+        val minPossibleMovesBuffer =
+                when (pruner.continueMinDynamicEvaluationBy(depth,
                         thisMoveIsChess,
                         thisMoveHasHitFigure,
                         lastMove_isChess,
-                        lastMove_hasHitFigure)) {
+                        lastMove_hasHitFigure
+                )) {
+                    ContinueEvalBy.StaticEval -> emptyMoveList
+                    ContinueEvalBy.AllMoves -> game.getAllMoves()
+                    ContinueEvalBy.IrreversibleMoves -> game.getCriticalMoves()
+                    ContinueEvalBy.TakingMoves -> game.getTakingMoves()
+                }
+
+        if(minPossibleMovesBuffer.isEmpty()) {
             return strategy.getPrimaryEvaluation(game, forWhite)
         }
 
-        val minPossibleMovesBuffer = LinkedList<Move>()
-        game.getPossibleMoves(minPossibleMovesBuffer)
         val primaryEvaluations = TreeSet<EvaluatedMove>()
 
         for (move in minPossibleMovesBuffer) {
 
-            assert(game.isFreeArea(move.to) || !game.getFigureOrNull(move.to)!!.isKing()) {
+            assert(game.isFreeArea(move.to) || !game.getFigure(move.to).isKing()) {
                 "getMin: ${game.getFigureOrNull(move.from)} hits King white Move $move"
             }
 
@@ -114,21 +121,29 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
 
         val thisMoveHasHitFigure = game.hasHitFigure()
         val thisMoveIsChess = game.isCheck(forWhite)
-        if (pruner.stopMaxDynamicEvaluation(depth,
+
+        val maxPossibleMovesBuffer =
+                when (pruner.continueMaxDynamicEvaluationBy(depth,
                         thisMoveIsChess,
                         thisMoveHasHitFigure,
                         lastMove_isChess,
-                        lastMove_hasHitFigure)) {
+                        lastMove_hasHitFigure
+                )) {
+                    ContinueEvalBy.StaticEval -> emptyMoveList
+                    ContinueEvalBy.AllMoves -> game.getAllMoves()
+                    ContinueEvalBy.IrreversibleMoves -> game.getCriticalMoves()
+                    ContinueEvalBy.TakingMoves -> game.getTakingMoves()
+                }
+
+        if(maxPossibleMovesBuffer.isEmpty()) {
             return strategy.getPrimaryEvaluation(game, forWhite)
         }
 
-        val maxPossibleMovesBuffer = LinkedList<Move>()
-        game.getPossibleMoves(maxPossibleMovesBuffer)
         val primaryEvaluations = TreeSet<EvaluatedMove>()
 
         for (move in maxPossibleMovesBuffer) {
 
-            assert(game.isFreeArea(move.to) || !game.getFigureOrNull(move.to)!!.isKing()) {
+            assert(game.isFreeArea(move.to) || !game.getFigure(move.to).isKing()) {
                 "getMax: ${game.getFigureOrNull(move.from)} hits King white Move $move"
             }
 
@@ -174,5 +189,9 @@ class DynamicEvaluation(var pruner: SearchTreePruner, var strategy: StaticEvalua
 
         //maxValue
         return combinedEvaluations.last()
+    }
+
+    companion object {
+        private val emptyMoveList: List<Move> = emptyList<Move>()
     }
 }

@@ -251,7 +251,7 @@ object StaticEvaluation : StaticEvaluationInterface {
     private const val PAWN_VALUE = 1.0
     private const val Rook_VALUE = 4.5
     private const val KNIGHT_VALUE = 3.0
-    private const val BISHOP_VALUE = 3.0
+    private const val BISHOP_VALUE = 3.1
     private const val QUEEN_VALUE = 9.0
 
     private const val BISHOP_ON_START_POSITION_PUNISHMENT = -0.45

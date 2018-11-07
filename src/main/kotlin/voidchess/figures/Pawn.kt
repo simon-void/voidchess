@@ -8,6 +8,7 @@ import voidchess.board.getFigure
 import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
+import java.lang.UnsupportedOperationException
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.sign
@@ -30,7 +31,7 @@ class Pawn : Figure {
         this.canBeHitByEnpasent = canBeHitByEnpasent
     }
 
-    override fun canBeHitByEnpasent() = canBeHitByEnpasent
+    override fun canBeHitEnPassant() = canBeHitByEnpasent
     fun setCanBeHitByEnpasent() {
         canBeHitByEnpasent = true
     }
@@ -108,7 +109,7 @@ class Pawn : Figure {
         game.getFigureOrNull(to)?.let { if (hasDifferentColor(it)) return true }
         // ok, so no simple diagonal strike, maybe enpassent
         val sidePos = Position[position.row, to.column]
-        game.getFigureOrNull(sidePos)?.let { if (it.canBeHitByEnpasent()) return true }
+        game.getFigureOrNull(sidePos)?.let { if (it.canBeHitEnPassant()) return true }
         return false
     }
 
@@ -117,13 +118,22 @@ class Pawn : Figure {
         return to.row == oneForwardRow && Math.abs(to.column - position.column) == 1
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableList<Move>) {
+    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableList<Move>) {
+    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+        forEachDiagonalReachablePos(game) {
+            result.add(Move[position, it])
+        }
+    }
+
+    override fun getCriticalMoves(game: ChessBoard, result: MutableSet<Move>) =
+            getPossibleMoves(game, result)
+
+    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) {
         fun checkLinePassesThroughPawnColumn(attackerPos: Position, kingPos: Position): Boolean {
             val attackerColumnSign = (position.column - attackerPos.column).sign
             val kingColumnSign = (position.column - kingPos.column).sign
@@ -132,7 +142,7 @@ class Pawn : Figure {
         // a pawn can only intercept a check by taking the attacker diagonally (possibly through enpassent)
         if (isOneStepForwardDiagonally(checkLine.attackerPos)) {
             result.add(Move[position, checkLine.attackerPos])
-        } else if (game.getFigure(checkLine.attackerPos).canBeHitByEnpasent()) {
+        } else if (game.getFigure(checkLine.attackerPos).canBeHitEnPassant()) {
             // now i only have to test if my pawn is to the side of the attacker pawn
             if (position.row == checkLine.attackerPos.row && abs(position.column - checkLine.attackerPos.column) == 1) {
                 val oneForwardRow = if (isWhite) position.row + 1 else position.row - 1
@@ -153,7 +163,7 @@ class Pawn : Figure {
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableList<Move>) {
+    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) {
         when {
             boundLine.boundFigureToAttackerDirection.isDiagonal -> {
                 if(isOneStepForwardDiagonally(boundLine.attackerPos)) {
