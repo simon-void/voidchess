@@ -3,13 +3,18 @@
 /.settings
 /.classpath
 /.directory
+/.gradle
 
 /bin
 /lib/*
 /test-output
 /out
 /target
+/build
 
 *.iml
 *.log
 dependency-reduced-pom.xml
+
+
+

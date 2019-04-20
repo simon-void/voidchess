@@ -3,15 +3,21 @@ package voidchess.player.ki;
 import org.testng.annotations.Test;
 import voidchess.player.ki.evaluation.*;
 
+import java.text.DecimalFormat;
+
 import static org.testng.Assert.*;
 
 public class EvaluatedTest {
     @Test
     public void testEvaluatedToString() {
+        DecimalFormat formatter = new DecimalFormat();
+        formatter.setMinimumFractionDigits(2);
+        formatter.setMinimumFractionDigits(2);
+
         Evaluated value = new Ongoing(-1);
-        assertEquals(value.toString().replace('.', ','), "-1,00");
+        assertEquals(value.toString().replace('.', ','), formatter.format(-1.0));
         value = new Ongoing(5.49999999999);
-        assertEquals(value.toString().replace('.', ','), "5,50");
+        assertEquals(value.toString().replace('.', ','), formatter.format(5.5));
 
         value = Draw.INSTANCE;
         assertEquals(value.toString(), "draw");

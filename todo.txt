@@ -6,5 +6,6 @@ optimizations:
 -is there an efficient way to compute if a pawn is a passed pawn?? (because there should be a passed-pawn bonus)
 
 features:
+- bundle with minimal JRE (see https://badass-runtime-plugin.beryx.org/releases/latest/)
 - resizable interface (inclusive full-screen)
 - pure chess engine module with 2-way channels (so different engines (written e.g. in Go, Rust, ...) can be used)

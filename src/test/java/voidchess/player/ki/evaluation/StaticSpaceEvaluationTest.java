@@ -11,7 +11,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 public class StaticSpaceEvaluationTest {
-    StaticSpaceEvaluation evaluation = new StaticSpaceEvaluation();
+    private StaticSpaceEvaluation evaluation = new StaticSpaceEvaluation();
 
     @Test
     public void testEvaluation() {
@@ -21,9 +21,12 @@ public class StaticSpaceEvaluationTest {
         Evaluated evaluateForWhite = evaluation.getPrimaryEvaluation(game, true);
         Evaluated evaluateForBlack = evaluation.getPrimaryEvaluation(game, false);
 
-        assertTrue(getCombinedEvaluation(evaluateForWhite) < 0);
-        assertTrue(getCombinedEvaluation(evaluateForBlack) > 0);
-        assertEquals(getCombinedEvaluation(evaluateForBlack), -getCombinedEvaluation(evaluateForWhite));
+        double combinedEvalForWhite = getCombinedEvaluation(evaluateForWhite);
+        double combinedEvalForBlack = getCombinedEvaluation(evaluateForBlack);
+
+        assertTrue(combinedEvalForWhite < 0);
+        assertTrue(combinedEvalForBlack > 0);
+        assertEquals(combinedEvalForBlack, -combinedEvalForWhite);
 
 
         des = "black 0 King-white-e1-0 Rook-black-b8-0 King-black-e8-0";
@@ -34,7 +37,9 @@ public class StaticSpaceEvaluationTest {
     }
 
     private double getCombinedEvaluation(Evaluated evaluated) {
-        return Double.parseDouble(evaluated.toString().replace(',', '.'));
+        Ongoing ongoing = (Ongoing)evaluated;
+        ongoing.setSecondaryEvaluation(0.0);
+        return ongoing.getCombinedEvaluation();
     }
 
     @Test
@@ -48,7 +53,7 @@ public class StaticSpaceEvaluationTest {
         String des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0";
         ChessGame game = new ChessGame(des);
 
-        List otherPositions = new LinkedList();
+        List<Position> otherPositions = new LinkedList<>();
         otherPositions.add(Position.byCode("e8"));
         otherPositions.add(Position.byCode("a8"));
         Position kingPos = Position.byCode("e1");
