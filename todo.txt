@@ -9,3 +9,7 @@ features:
 - bundle with minimal JRE (see https://badass-runtime-plugin.beryx.org/releases/latest/)
 - resizable interface (inclusive full-screen)
 - pure chess engine module with 2-way channels (so different engines (written e.g. in Go, Rust, ...) can be used)
+-> AWS lambda version of chess engine which computes each possible move in parallel (Step Functions)
+
+bugs:
+- fix on JDK>8 (can't read files from jar file, probably because of module stuff)
