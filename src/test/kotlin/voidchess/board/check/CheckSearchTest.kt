@@ -1,11 +1,11 @@
-package voidchess.board.check;
+package voidchess.board.check
 
-import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.mock
 
 
-public class CheckSearchTest {
-
+class CheckSearchTest {
     // TODO rewrite for checkAttackLines
+
 //    @Test
 //    public void testAnalyseCheck() {
 //        String des = "white 0 King-white-e4-4 King-black-e5-4";

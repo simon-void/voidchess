@@ -9,7 +9,7 @@ import voidchess.player.ki.evaluation.EvaluatedMove
 import java.util.*
 import java.util.concurrent.*
 
-internal class MultiThreadStrategy(ui: ComputerPlayerUI, private val numberOfThreads: Int) : AbstractConcurrencyStrategy(ui) {
+internal class MultiThreadStrategy(showProgress: (Int, Int)->Unit, private val numberOfThreads: Int) : AbstractConcurrencyStrategy(showProgress) {
     private val executorService: ExecutorService = Executors.newFixedThreadPool(numberOfThreads)
 
 

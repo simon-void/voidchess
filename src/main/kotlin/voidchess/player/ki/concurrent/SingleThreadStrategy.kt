@@ -1,13 +1,12 @@
 package voidchess.player.ki.concurrent
 
 import voidchess.board.ChessGameInterface
-import voidchess.ui.ComputerPlayerUI
 import voidchess.player.ki.evaluation.DynamicEvaluation
 import voidchess.player.ki.evaluation.EvaluatedMove
 import java.util.NavigableSet
 import java.util.TreeSet
 
-class SingleThreadStrategy(ui: ComputerPlayerUI) : AbstractConcurrencyStrategy(ui) {
+class SingleThreadStrategy(showProgress: (Int, Int)->Unit) : AbstractConcurrencyStrategy(showProgress) {
 
     override fun evaluatePossibleMoves(game: ChessGameInterface, dynamicEvaluation: DynamicEvaluation): NavigableSet<EvaluatedMove> {
         val possibleMoves = getPossibleMoves(game)

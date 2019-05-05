@@ -7,7 +7,7 @@ import voidchess.board.move.Position
 import voidchess.helper.RuntimeFacade
 import voidchess.player.PlayerInterface
 import voidchess.player.ki.concurrent.ConcurrencyStrategy
-import voidchess.player.ki.concurrent.ConcurrencyStrategyFactory
+import voidchess.player.ki.concurrent.getConcurrencyStrategy
 import voidchess.player.ki.evaluation.*
 import voidchess.player.ki.openings.OpeningsLibrary
 import voidchess.ui.ComputerPlayerUI
@@ -32,7 +32,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
         standardPruner = SimplePruner(1, 2, 2)
         standardEvaluation = StaticEvaluation
         dynamicEvaluation = DynamicEvaluation(standardPruner, standardEvaluation)
-        concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, 1)
+        concurrencyStrategy = getConcurrencyStrategy(ui::setProgress, 1)
         openingsLibrary = OpeningsLibrary("openings.txt")
         randomNumberGenerator = Random()
         reset()
@@ -199,6 +199,6 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
     }
 
     fun setNumberOfCoresToUse(numberOfCoresToUse: Int) {
-        concurrencyStrategy = ConcurrencyStrategyFactory.getConcurrencyStrategy(ui, numberOfCoresToUse)
+        concurrencyStrategy = getConcurrencyStrategy(ui::setProgress, numberOfCoresToUse)
     }
 }
