@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.30"
+    kotlin("jvm") version "1.3.31"
     application
     id("com.github.johnrengelman.shadow") version "5.0.0"
     id("edu.sc.seis.launch4j") version "2.4.5"
@@ -13,7 +13,7 @@ repositories {
 }
 
 group = "de.gmx.simonvoid"
-version = "3.0-beta"
+version = "3.0.0"
 
 application {
     mainClassName = "voidchess.ui.ChessFrameKt"
@@ -23,7 +23,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.apache.xmlgraphics:batik-transcoder:1.10")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.3.30")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.testng:testng:6.14.3")
     testImplementation("org.mockito:mockito-core:2.21.0")
 }
