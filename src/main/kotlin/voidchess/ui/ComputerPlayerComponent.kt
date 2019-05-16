@@ -1,9 +1,11 @@
 package voidchess.ui
 
 import voidchess.player.ki.evaluation.*
-
-import javax.swing.*
-import java.awt.*
+import java.awt.Color
+import java.awt.Dimension
+import java.awt.Graphics
+import java.awt.Rectangle
+import javax.swing.JComponent
 
 
 class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
@@ -11,7 +13,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
     private var bubbleText: String? = "let's play"
     private var smileFactor = HappinessLevel.CONTENT
     private var thumbAction = Thumb.NO
-    private var value: Evaluated = Draw
+    private var value: Evaluation = Draw
     private var showThoughts = false
     private var showValue = false
     private var index: Int = 0
@@ -69,7 +71,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
         paintImmediately(THOUGHT_CONTENT_RECTANGLE)
     }
 
-    override fun setValue(value: Evaluated) {
+    override fun setValue(value: Evaluation) {
         showValue = true
         smileFactor = value.getHappinessLevel()
         this.value = value
@@ -205,7 +207,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
                 g.color = Color.WHITE
                 g.fillRect(49, 46, 110, 20)
                 g.color = Color.BLACK
-                drawCenteredString(g, value.toString(), 100, 60)
+                drawCenteredString(g, value.msg, 100, 60)
             } else {
                 g.color = Color.WHITE
                 g.fillRect(49, 46, 110, 20)
@@ -233,15 +235,6 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
     }
 
     private fun drawSpeechBubble(g: Graphics) {
-
-//        HAND_RECTANGLE.apply {
-//            g.color = Color.BLUE
-//            g.drawRect(x, y, width, height)
-//        }
-//        SPEECH_BUBBLE_RECTANGLE.apply {
-//            g.color = Color.RED
-//            g.drawRect(x, y, width, height)
-//        }
         bubbleText?.let {text ->
             g.color = Color.BLACK
             val centeredX = 80
@@ -249,18 +242,18 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
             val textBorderUp = 2
             val textBorderDown = 5
             val bubbleY = 320
-            val lineHight = 13
+            val lineHeight = 13
             val lines = text.split('\n')
             var maxHalfTextWidth = 0
             // print the text
             lines.forEachIndexed { i, line ->
-                val halfTextWidth = drawCenteredString(g, line, centeredX, bubbleY+textBorderUp+(i+1)*lineHight)
+                val halfTextWidth = drawCenteredString(g, line, centeredX, bubbleY+textBorderUp+(i+1)*lineHeight)
                 if( halfTextWidth>maxHalfTextWidth) {
                     maxHalfTextWidth = halfTextWidth
                 }
             }
             // paint the bubble
-            val bubbleHeight = lines.size*lineHight+textBorderUp+textBorderDown
+            val bubbleHeight = lines.size*lineHeight+textBorderUp+textBorderDown
             val bubbleWidth = (maxHalfTextWidth+textBorderWidth)*2
             g.drawRect(centeredX-maxHalfTextWidth-textBorderWidth, bubbleY, bubbleWidth, bubbleHeight)
             g.drawLine(centeredX+5, bubbleY, centeredX-10, bubbleY-10)
@@ -310,7 +303,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
     }
 }
 
-enum class Thumb() {
+enum class Thumb {
     UP, DOWN, NO
 }
 
@@ -326,22 +319,20 @@ enum class HappinessLevel(val value: Int, val mouthCornerEffect: Int) {
     BIG_GRIEF(-8, -4)
 }
 
-private fun Evaluated.getHappinessLevel(): HappinessLevel {
-    when (this) {
-        is CheckmateOther -> return HappinessLevel.BIG_SMILE
-        is CheckmateSelf -> return HappinessLevel.BIG_GRIEF
-        is Draw -> return HappinessLevel.CONTENT
-        is Ongoing -> {
-            val value = this.getCombinedEvaluation()
-            return when {
-                value > HappinessLevel.MEDIUM_SMILE.value -> HappinessLevel.MEDIUM_SMILE
-                value > HappinessLevel.LIGHT_SMILE.value -> HappinessLevel.LIGHT_SMILE
-                value > HappinessLevel.SLIGHT_SMILE.value -> HappinessLevel.SLIGHT_SMILE
-                value < HappinessLevel.MEDIUM_GRIEF.value -> HappinessLevel.MEDIUM_GRIEF
-                value < HappinessLevel.LIGHT_GRIEF.value -> HappinessLevel.LIGHT_GRIEF
-                value < HappinessLevel.SLIGHT_GRIEF.value -> HappinessLevel.SLIGHT_GRIEF
-                else -> HappinessLevel.CONTENT
-            }
+private fun Evaluation.getHappinessLevel(): HappinessLevel = when (this) {
+    is CheckmateOther -> HappinessLevel.BIG_SMILE
+    is CheckmateSelf -> HappinessLevel.BIG_GRIEF
+    is Draw, is Stalemate, is ThreeFoldRepetition -> HappinessLevel.CONTENT
+    is Ongoing -> {
+        val value = this.fullEvaluation
+        when {
+            value > HappinessLevel.MEDIUM_SMILE.value -> HappinessLevel.MEDIUM_SMILE
+            value > HappinessLevel.LIGHT_SMILE.value -> HappinessLevel.LIGHT_SMILE
+            value > HappinessLevel.SLIGHT_SMILE.value -> HappinessLevel.SLIGHT_SMILE
+            value < HappinessLevel.MEDIUM_GRIEF.value -> HappinessLevel.MEDIUM_GRIEF
+            value < HappinessLevel.LIGHT_GRIEF.value -> HappinessLevel.LIGHT_GRIEF
+            value < HappinessLevel.SLIGHT_GRIEF.value -> HappinessLevel.SLIGHT_GRIEF
+            else -> HappinessLevel.CONTENT
         }
     }
 }

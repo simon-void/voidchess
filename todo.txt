@@ -4,7 +4,13 @@ optimizations:
 -a StaticChessBoard with optimized and immutable data structure for StaticEvaluation
 -are type checks (e.g. is King) slower that isKing(), isQueen, ... calls?? If not remove those functions
 -is there an efficient way to compute if a pawn is a passed pawn?? (because there should be a passed-pawn bonus)
--next to Draw there should be a Patt
+-CheckmateOther/Self's depth should be of type UInt
+-inline fun ChessGameInterface.simulateMove(move: Move, crossinline checkNewPosition(ChessGame)->Unit) {
+  this.move(move)
+  checkNewPosition(this)
+  this.undo()
+}
+
 
 features:
 - bundle with minimal JRE (see https://badass-runtime-plugin.beryx.org/releases/latest/)

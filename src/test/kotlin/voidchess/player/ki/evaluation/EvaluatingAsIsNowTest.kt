@@ -1,27 +1,27 @@
 package voidchess.player.ki.evaluation
 
+import org.testng.Assert.assertEquals
+import org.testng.Assert.assertNotEquals
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
-
-import org.testng.Assert.assertEquals
-import org.testng.Assert.assertNotEquals
+import voidchess.copyGameWithInvertedColors
 
 
-class StaticEvaluationTest {
+class EvaluatingAsIsNowTest {
 
     @Test(dataProvider = "symmetricPositionProvider")
     fun testSymmetricPositionLeadsToEqualEvaluation(game: ChessGame) {
-        val staticEval = StaticEvaluation
-        val evalForWhite = staticEval.getPrimaryEvaluation(game, true)
-        val evalForBlack = staticEval.getPrimaryEvaluation(game, false)
-        assertEquals(evalForWhite.primaryEvaluation, evalForBlack.primaryEvaluation)
-        assertEquals(evalForWhite.primaryEvaluation, 0.0)
+        val staticEval = EvaluatingAsIsNow
+        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true)
+        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false)
+        assertEquals(prelimEvalForWhite, prelimEvalForBlack)
+        assertEquals(prelimEvalForWhite, 0.0)
 
-        staticEval.addSecondaryEvaluation(game, true, evalForWhite)
-        staticEval.addSecondaryEvaluation(game, false, evalForBlack)
-        assertEquals(evalForWhite.getCombinedEvaluation(), evalForBlack.getCombinedEvaluation(), OK_DELTA)
-        assertEquals(evalForWhite.getCombinedEvaluation(), 0.0, OK_DELTA)
+        val evalForWhite = Ongoing(prelimEvalForWhite, prelimEvalForWhite + staticEval.getSecondaryEvaluation(game, true))
+        val evalForBlack = Ongoing(prelimEvalForBlack, prelimEvalForBlack + staticEval.getSecondaryEvaluation(game, false))
+        assertEquals(evalForWhite.fullEvaluation, evalForBlack.fullEvaluation, OK_DELTA)
+        assertEquals(evalForWhite.fullEvaluation, 0.0, OK_DELTA)
     }
 
     @DataProvider
@@ -45,21 +45,31 @@ class StaticEvaluationTest {
 
     @Test(dataProvider = "asymmetricPositionProvider")
     fun testAsymmetricPositionLeadsToInverseEvaluation(game: ChessGame) {
-        val staticEval = StaticEvaluation
-        val evalForWhite = staticEval.getPrimaryEvaluation(game, true)
-        val evalForBlack = staticEval.getPrimaryEvaluation(game, false)
-        val primaryEvalForWhite = evalForWhite.primaryEvaluation
-        val primaryEvalForBlack = evalForBlack.primaryEvaluation
-        if (primaryEvalForWhite != 0.0 || primaryEvalForBlack != 0.0)
-            assertEquals(primaryEvalForWhite, -primaryEvalForBlack)
+        val staticEval = EvaluatingAsIsNow
+        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true)
+        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false)
+        if (prelimEvalForWhite != 0.0 || prelimEvalForBlack != 0.0)
+            assertEquals(prelimEvalForWhite, -prelimEvalForBlack)
 
-        staticEval.addSecondaryEvaluation(game, true, evalForWhite)
-        staticEval.addSecondaryEvaluation(game, false, evalForBlack)
-        val combinedEvalForWhite = evalForWhite.getCombinedEvaluation()
-        val combinedEvalForBlack = evalForBlack.getCombinedEvaluation()
-        assertEquals(combinedEvalForWhite, -combinedEvalForBlack, OK_DELTA)
+        val evalForWhite = staticEval.addSecondaryEvaluationTo(prelimEvalForWhite, game, true)
+        val evalForBlack = staticEval.addSecondaryEvaluationTo(prelimEvalForBlack, game, false)
+        assertEquals(evalForWhite.fullEvaluation, -evalForBlack.fullEvaluation, OK_DELTA)
         // it's highly unlikely that an asymmetric position is considered equal
-        assertNotEquals(combinedEvalForWhite, 0.0, OK_DELTA)
+        assertNotEquals(evalForWhite.fullEvaluation, 0.0, OK_DELTA)
+    }
+
+    @Test(dataProvider = "asymmetricPositionProvider")
+    fun testInvertedAsymmetricPositionLeadsToSameEvaluation(game: ChessGame) {
+        val staticEval = EvaluatingAsIsNow
+        val invertedGame = game.copyGameWithInvertedColors()
+        val prelimEvalNormal = staticEval.getPreliminaryEvaluation(game, game.isWhiteTurn)
+        val prelimEvalInverted = staticEval.getPreliminaryEvaluation(invertedGame, invertedGame.isWhiteTurn)
+        if (prelimEvalNormal != 0.0 || prelimEvalInverted != 0.0)
+            assertEquals(prelimEvalNormal, prelimEvalInverted)
+
+        val evalNormal = staticEval.addSecondaryEvaluationTo(prelimEvalNormal, game, game.isWhiteTurn)
+        val evalInverted = staticEval.addSecondaryEvaluationTo(prelimEvalInverted, invertedGame, invertedGame.isWhiteTurn)
+        assertEquals(evalNormal.fullEvaluation, evalInverted.fullEvaluation, OK_DELTA)
     }
 
     @DataProvider
@@ -69,7 +79,8 @@ class StaticEvaluationTest {
                 arrayOf<Any>(ChessGame(518, "a2-a3")),
                 arrayOf<Any>(ChessGame(333, "d2-d4", "a8-b6", "e2-e4", "h8-g6")),
                 arrayOf<Any>(ChessGame(518, "e2-e4", "d7-d5", "e4-d5")),
-                arrayOf<Any>(ChessGame(518, "g2-g3", "g7-g6", "g1-f3", "g8-f6", "f1-g2", "f8-g7", "e1-h1")))
+                arrayOf<Any>(ChessGame(518, "g2-g3", "g7-g6", "g1-f3", "g8-f6", "f1-g2", "f8-g7", "e1-h1"))
+                )
     }
 
     companion object {

@@ -13,14 +13,13 @@ import voidchess.player.ki.openings.OpeningsLibrary
 import voidchess.ui.ComputerPlayerUI
 import voidchess.ui.TableInterface
 import voidchess.ui.Thumb
-import java.util.NavigableSet
-import java.util.Random
+import java.util.*
 
 
 class ComputerPlayer(private val table: TableInterface, private val game: ChessGameInterface, private val ui: ComputerPlayerUI) : PlayerInterface {
-    private val dynamicEvaluation: DynamicEvaluation
+    private val evaluatingMinMax: EvaluatingMinMax
     private var standardPruner: SearchTreePruner
-    private val standardEvaluation: StaticEvaluationInterface
+    private val standardEvaluation: EvaluatingStatically
     private var concurrencyStrategy: ConcurrencyStrategy
     private var usesStandardEvaluation: Boolean = false
     private val openingsLibrary: OpeningsLibrary
@@ -30,8 +29,8 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
 
     init {
         standardPruner = PrunerWithIrreversibleMoves(1, 2, 2)
-        standardEvaluation = StaticEvaluation
-        dynamicEvaluation = DynamicEvaluation(standardPruner, standardEvaluation)
+        standardEvaluation = EvaluatingAsIsNow
+        evaluatingMinMax = EvaluatingMinMax(standardPruner, standardEvaluation)
         concurrencyStrategy = getConcurrencyStrategy(ui::setProgress, 1)
         openingsLibrary = OpeningsLibrary("openings.txt")
         randomNumberGenerator = Random()
@@ -65,14 +64,15 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
                 //and evaluate it
                 val isWhitePlayer = game.isWhiteTurn
                 game.move(randomMove)
-                val evaluation = standardEvaluation.getPrimaryEvaluation(game, isWhitePlayer)
-                standardEvaluation.addSecondaryEvaluation(game, isWhitePlayer, evaluation)
+                val preliminaryEvaluation = standardEvaluation.getPreliminaryEvaluation(game, isWhitePlayer)
+                val fullEvaluation = preliminaryEvaluation + standardEvaluation.getSecondaryEvaluation(game, isWhitePlayer)
+
                 game.undo()
 
                 //wait before playing so that the user can clearly see the computer's move
                 wait(300)
 
-                return EvaluatedMove(randomMove, evaluation)
+                return EvaluatedMove(randomMove, Ongoing(preliminaryEvaluation, fullEvaluation))
             }
         }
         //the library has no more information on this sequence
@@ -89,9 +89,9 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
         //      TODO  real Timer
         //		long time = System.currentTimeMillis();
 
-        val sortedEvaluatedMoves = concurrencyStrategy.evaluatePossibleMoves(game, dynamicEvaluation)
+        val sortedEvaluatedMoves = concurrencyStrategy.evaluateMovesBestMoveFirst(game, evaluatingMinMax)
 
-        //		final int calls = StaticEvaluation.getCallCounter();
+        //		final int calls = EvaluatingAsIsNow.getCallCounter();
         //		final int totalNumberOfMoves = evaluation.totalNumberOfMoves();
         //		long duration = System.currentTimeMillis()-time;
         //		double timePerMove = duration/(double)totalNumberOfMoves;
@@ -114,16 +114,21 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
      * @param sortedEvaluatedMoves (set.first is the best move for the ki, set.last the worst)
      * @return the move the ki will make next
      */
-    private fun pickNextMoveByEvaluation(sortedEvaluatedMoves: NavigableSet<EvaluatedMove>): EvaluatedMove {
-        val evaluation = sortedEvaluatedMoves.descendingIterator()
-        val bestMove = evaluation.next()
+    private fun pickNextMoveByEvaluation(sortedEvaluatedMoves: List<EvaluatedMove>): EvaluatedMove {
+        val evaluation = sortedEvaluatedMoves.iterator()
+        val bestMove: EvaluatedMove = evaluation.next()
+
+        if (bestMove.value !is Ongoing) {
+            return bestMove
+        }
 
         //as long as the top moves are almost equally good, pick randomly one (with a higher chance for the better move)
+        val cutoffFullEvaluation = bestMove.value.fullEvaluation - 0.2
         var chosenMove = bestMove
         while (evaluation.hasNext()) {
             if (Math.random() < 0.6) break
             val tempMove = evaluation.next()
-            if (tempMove.value.isCloseToByCombined(bestMove.value)) {
+            if (tempMove.value is Ongoing && tempMove.value.fullEvaluation > cutoffFullEvaluation) {
                 chosenMove = tempMove
             } else {
                 break
@@ -140,10 +145,10 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
      */
     private fun pickStaticSpaceEvaluationIfNecessary() {
         // TODO implement better endgame engine
-//        if (usesStandardEvaluation && StaticSpaceEvaluation.shouldUseStaticSpaceEvaluation(game)) {
+//        if (usesStandardEvaluation && EvaluatingSpace.shouldUseStaticSpaceEvaluation(game)) {
 //            // once per game
-//            dynamicEvaluation.strategy = StaticSpaceEvaluation()
-//            dynamicEvaluation.pruner = FullMovePruner(3, 3, 3)
+//            evaluatingMinMax.strategy = EvaluatingSpace()
+//            evaluatingMinMax.pruner = FullMovePruner(3, 3, 3)
 //            usesStandardEvaluation = false
 //        }
     }
@@ -187,8 +192,8 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
 
     // initializes the default EvaluationStrategy
     private fun reset() {
-        dynamicEvaluation.strategy = standardEvaluation
-        dynamicEvaluation.pruner = standardPruner
+        evaluatingMinMax.strategy = standardEvaluation
+        evaluatingMinMax.pruner = standardPruner
         usesStandardEvaluation = true
         //use the library only if the figures are used in the classical way (no Chess960)
         useLibrary = game.isStandardGame
@@ -196,7 +201,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
 
     fun setSearchTreePruner(pruner: SearchTreePruner) {
         standardPruner = pruner
-        dynamicEvaluation.pruner = pruner
+        evaluatingMinMax.pruner = pruner
     }
 
     fun setNumberOfCoresToUse(numberOfCoresToUse: Int) {

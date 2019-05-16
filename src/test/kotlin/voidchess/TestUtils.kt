@@ -2,6 +2,7 @@ package voidchess
 
 import voidchess.board.*
 import voidchess.board.move.*
+import voidchess.helper.splitAndTrim
 import java.util.*
 
 
@@ -49,3 +50,27 @@ fun PositionProgression.toList(): List<Position> {
 
 fun Collection<Move>.toFromPosAsStringSet(): Set<String> = asSequence().map { it.from.toString() }.toSet()
 fun Collection<Move>.toTargetPosAsStringSet(): Set<String> = asSequence().map { it.to.toString() }.toSet()
+
+fun Position.mirrorRow() = Position[7-row, column]
+
+fun Move.mirrorRow() = Move[from.mirrorRow(), to.mirrorRow()]
+
+fun ChessGame.copyGameWithInvertedColors(): ChessGame {
+    val intermidiate = "switching"
+    val copyDef = toString()
+            // switch white and black
+            .replace("white", intermidiate)
+            .replace("black", "white")
+            .replace(intermidiate, "black")
+            // mirror positions
+            .splitAndTrim(' ')
+            .joinToString(" ") { token ->
+                if (token.contains('-')) {
+                    val figureDef = ArrayList<String>(token.splitAndTrim('-'))
+                    figureDef[2] = Position.byCode(figureDef[2]).mirrorRow().toString()
+                    figureDef.joinToString("-")
+                } else token
+            }
+
+    return ChessGame(copyDef)
+}

@@ -21,7 +21,7 @@ class ChessFrame : JFrame("  VoidChess960  ") {
 
     init {
         iconImage = ImageLoader.icon
-        defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        defaultCloseOperation = EXIT_ON_CLOSE
         contentPane = ChessPanel()
         pack()
         isResizable = false

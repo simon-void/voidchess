@@ -56,9 +56,9 @@ class ComputerPlayerTest {
         assertEquals(game.toString(), newDes)
     }
 
-    private fun testTermination(game: ChessGame, pruner: SearchTreePruner = PrunerWithIrreversibleMoves(1, 1, 2, 2), staticEvaluation: StaticEvaluationInterface = StaticEvaluation) {
+    private fun testTermination(game: ChessGame, pruner: SearchTreePruner = PrunerWithIrreversibleMoves(1, 1, 2, 2), staticEvaluation: EvaluatingStatically = EvaluatingAsIsNow) {
         val numberFormat = NumberFormat.getPercentInstance()
-        val dynamicEvaluation = DynamicEvaluation(pruner, staticEvaluation)
+        val dynamicEvaluation = EvaluatingMinMax(pruner, staticEvaluation)
 
         val possibleMoves = game.getAllMoves()
         val numberOfPossibleMoves = possibleMoves.size.toDouble()
@@ -84,7 +84,7 @@ class ComputerPlayerTest {
 
     internal fun testTermination(game: ChessGame, pruner: SearchTreePruner, move: Move) {
         val initDescription = game.toString()
-        val dynamicEvaluation = DynamicEvaluation(pruner, StaticEvaluation)
+        val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
 
         val possibleMoves = game.getAllMoves()
 
@@ -114,32 +114,36 @@ class ComputerPlayerTest {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            if (args.size == 1 && args[0] == "benchmark") {
+            if (args.size == 1) {
                 when (args[0]) {
-                    "benchmark" -> benchmark(true)
-                    "benchmark2" -> benchmark(false)
+                    "benchmark1" -> benchmark(false)
+                    "benchmark2" -> benchmark(true)
                 }
             } else {
                 loadTest()
             }
         }
 
-        private fun benchmark(useFasterPruner: Boolean) {
-            val game = ChessGame()
-            game.move(Move.byCode("e2-e4"))
-            game.move(Move.byCode("e7-e5"))
-            game.move(Move.byCode("g1-f3"))
-            game.move(Move.byCode("b8-c6"))
-            game.move(Move.byCode("f1-b5"))
-            game.move(Move.byCode("f8-c5"))
-            //        game.move(Move.byCode("d2-d3"));
-            //        game.move(Move.byCode("d7-d6"));
-            //        game.move(Move.byCode("b1-c3"));
-            //        game.move(Move.byCode("c8-g4"));
-            val prunerL2 = PrunerWithIrreversibleMoves(1, 2, 3, 2)
-            val prunerL3 = PrunerWithIrreversibleMoves(2, 3, 4, 3)
-            val staticEvaluation = StaticEvaluation//new ConstantEvaluation();//
-            loadTest(game, if (useFasterPruner) prunerL2 else prunerL3, staticEvaluation, "Benchmark" + if (useFasterPruner) "L2" else "L3")
+        private fun benchmark(longTest: Boolean) {
+            val game = ChessGame().apply {
+                move(Move.byCode("e2-e4"))
+                move(Move.byCode("e7-e5"))
+                move(Move.byCode("g1-f3"))
+                move(Move.byCode("b8-c6"))
+                move(Move.byCode("f1-b5"))
+                move(Move.byCode("f8-c5"))
+
+                if(longTest) {
+                    move(Move.byCode("d2-d3"))
+                    move(Move.byCode("d7-d6"))
+                    move(Move.byCode("b1-c3"))
+                    move(Move.byCode("c8-g4"))
+                }
+            }
+
+            val pruner = PrunerWithIrreversibleMoves(1, 2, 4, 2)
+            val staticEvaluation = EvaluatingAsIsNow//new EvaluatingToConstant();//
+            loadTest(game, pruner, staticEvaluation, "Benchmark" + if (longTest) "2" else "1")
         }
 
         private fun loadTest() {
@@ -198,11 +202,11 @@ class ComputerPlayerTest {
         private fun loadTest(des: String) {
             val game = ChessGame(des)
             val pruner = PrunerWithIrreversibleMoves(2, 3, 4, 3)
-            val staticEvaluation = StaticEvaluation
+            val staticEvaluation = EvaluatingAsIsNow
             loadTest(game, pruner, staticEvaluation, "Loadtest")
         }
 
-        private fun loadTest(game: ChessGame, pruner: SearchTreePruner, staticEvaluation: StaticEvaluationInterface, type: String) {
+        private fun loadTest(game: ChessGame, pruner: SearchTreePruner, staticEvaluation: EvaluatingStatically, type: String) {
             val decimalFormat = DecimalFormat("#.0")
             val computerPlayer = ComputerPlayerTest()
 

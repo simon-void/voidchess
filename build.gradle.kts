@@ -26,6 +26,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.testng:testng:6.14.3")
     testImplementation("org.mockito:mockito-core:2.21.0")
+    testImplementation("io.mockk:mockk:1.9.3")
 }
 
 tasks {

@@ -1,44 +1,36 @@
 package voidchess.player.ki.evaluation
 
+import org.testng.Assert.assertEquals
+import org.testng.Assert.assertTrue
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
 import voidchess.board.move.Position
+import java.util.*
 
-import java.util.LinkedList
-
-import org.testng.Assert.assertEquals
-import org.testng.Assert.assertTrue
-
-class StaticSpaceEvaluationTest {
-    private val evaluation = StaticSpaceEvaluation()
+class EvaluatingSpaceTest {
+    private val evaluation = EvaluatingSpace()
 
     @Test
     fun testEvaluation() {
         var des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0"
         val game = ChessGame(des)
 
-        val evaluateForWhite = evaluation.getPrimaryEvaluation(game, true)
-        val evaluateForBlack = evaluation.getPrimaryEvaluation(game, false)
+        val evaluateForWhite = evaluation.getPreliminaryEvaluation(game, true)
+        val evaluateForBlack = evaluation.getPreliminaryEvaluation(game, false)
 
-        val combinedEvalForWhite = getCombinedEvaluation(evaluateForWhite)
-        val combinedEvalForBlack = getCombinedEvaluation(evaluateForBlack)
+        val combinedEvalForWhite = evaluation.addSecondaryEvaluationTo(evaluateForWhite, game, true)
+        val combinedEvalForBlack = evaluation.addSecondaryEvaluationTo(evaluateForBlack, game, false)
 
-        assertTrue(combinedEvalForWhite < 0)
-        assertTrue(combinedEvalForBlack > 0)
-        assertEquals(combinedEvalForBlack, -combinedEvalForWhite)
+        assertTrue(combinedEvalForWhite.fullEvaluation < 0)
+        assertTrue(combinedEvalForBlack.fullEvaluation > 0)
+        assertEquals(combinedEvalForBlack.fullEvaluation, -combinedEvalForWhite.fullEvaluation)
 
 
         des = "black 0 King-white-e1-0 Rook-black-b8-0 King-black-e8-0"
         val game2 = ChessGame(des)
 
-        val evaluateForWhite2 = evaluation.getPrimaryEvaluation(game2, true)
+        val evaluateForWhite2 = evaluation.getPreliminaryEvaluation(game2, true)
         assertTrue(evaluateForWhite2 < evaluateForWhite)
-    }
-
-    private fun getCombinedEvaluation(evaluated: Evaluated): Double {
-        val ongoing = evaluated as Ongoing
-        ongoing.setSecondaryEvaluation(0.0)
-        return ongoing.getCombinedEvaluation()
     }
 
     @Test

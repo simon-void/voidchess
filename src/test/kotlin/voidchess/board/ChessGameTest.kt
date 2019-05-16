@@ -265,7 +265,19 @@ class ChessGameTest {
     }
 
     @Test
-    fun testHandleEnpasent() {
+    fun testWithMove() {
+        val game = ChessGame("white 0 King-white-e6-6 Rook-white-h1-0 King-black-e8-0")
+        val desc = game.toString()
+
+        game.withMove(Move.byCode("h1-h8")) {gameAfterMove ->
+            assertNotEquals(desc, gameAfterMove.toString())
+        }
+        assertEquals(desc, game.toString())
+
+    }
+
+    @Test
+    fun testHandleEnpassant() {
         val des = "black 0 Pawn-white-c4-true Pawn-black-b4-false " + "King-white-e1-0 King-black-e8-0"
         val game = ChessGame(des)
         val move = Move[Position.byCode("b4"), Position.byCode("c3")]

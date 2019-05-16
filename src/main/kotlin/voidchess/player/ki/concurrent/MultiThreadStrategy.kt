@@ -2,29 +2,29 @@ package voidchess.player.ki.concurrent
 
 import voidchess.board.ChessGameInterface
 import voidchess.board.move.Move
-import voidchess.ui.ComputerPlayerUI
-import voidchess.player.ki.evaluation.DynamicEvaluation
+import voidchess.player.ki.evaluation.EvaluatingMinMax
 import voidchess.player.ki.evaluation.EvaluatedMove
 
 import java.util.*
 import java.util.concurrent.*
+import kotlin.collections.ArrayList
 
 internal class MultiThreadStrategy(showProgress: (Int, Int)->Unit, private val numberOfThreads: Int) : AbstractConcurrencyStrategy(showProgress) {
     private val executorService: ExecutorService = Executors.newFixedThreadPool(numberOfThreads)
 
 
-    override fun evaluatePossibleMoves(game: ChessGameInterface, dynamicEvaluation: DynamicEvaluation): NavigableSet<EvaluatedMove> {
+    override fun evaluateMoves(game: ChessGameInterface, evaluatingMinMax: EvaluatingMinMax): MutableList<EvaluatedMove> {
         //as long as the first parameter is 0 and the second one is bigger
         //the progress bar will always show correctly 0% (so '1' as second parameter is fine)
         showProgress(0, 1)
 
-        val movesToEvaluate = getEvaluableMoves(game, dynamicEvaluation)
+        val movesToEvaluate = getEvaluableMoves(game, evaluatingMinMax)
 
-        var result = Collections.emptyNavigableSet<EvaluatedMove>()
-        try {
-            result = evaluate(movesToEvaluate)
+        var result = try {
+            evaluate(movesToEvaluate)
         } catch (e: Exception) {
             e.printStackTrace()
+            LinkedList<EvaluatedMove>()
         }
 
         assert(result.isNotEmpty()) { "no evaluation of a possible moves was successful" }
@@ -33,10 +33,9 @@ internal class MultiThreadStrategy(showProgress: (Int, Int)->Unit, private val n
     }
 
     @Throws(InterruptedException::class, ExecutionException::class)
-    private fun evaluate(movesToEvaluate: LinkedList<Callable<EvaluatedMove>>): NavigableSet<EvaluatedMove> {
-        val result = TreeSet<EvaluatedMove>()
-
+    private fun evaluate(movesToEvaluate: LinkedList<Callable<EvaluatedMove>>): MutableList<EvaluatedMove> {
         val totalNumberOfMoves = movesToEvaluate.size
+        val result = ArrayList<EvaluatedMove>(totalNumberOfMoves)
 
         val ecs = ExecutorCompletionService<EvaluatedMove>(executorService)
         submitCallables(movesToEvaluate, ecs, numberOfThreads)
@@ -57,8 +56,8 @@ internal class MultiThreadStrategy(showProgress: (Int, Int)->Unit, private val n
         return result
     }
 
-    private fun getEvaluableMoves(game: ChessGameInterface, dynamicEvaluation: DynamicEvaluation): LinkedList<Callable<EvaluatedMove>> {
-        val possibleMoves = getPossibleMoves(game)
+    private fun getEvaluableMoves(game: ChessGameInterface, evaluatingMinMax: EvaluatingMinMax): LinkedList<Callable<EvaluatedMove>> {
+        val possibleMoves = game.getAllMoves()
         assert(possibleMoves.isNotEmpty()) { "no moves were possible and therefore evaluable" }
 
         val totalNumberOfMoves = possibleMoves.size
@@ -69,7 +68,7 @@ internal class MultiThreadStrategy(showProgress: (Int, Int)->Unit, private val n
         for (move in possibleMoves) {
             movesToEvaluate.add(
                     MoveEvaluationCallable(
-                            gameInstances.next(), move, dynamicEvaluation
+                            gameInstances.next(), move, evaluatingMinMax
                     )
             )
         }
@@ -86,12 +85,12 @@ internal class MultiThreadStrategy(showProgress: (Int, Int)->Unit, private val n
         }
     }
 
-    private class MoveEvaluationCallable internal constructor(private val game: ChessGameInterface, private val move: Move, private val dynamicEvaluation: DynamicEvaluation) : Callable<EvaluatedMove> {
+    private class MoveEvaluationCallable internal constructor(private val game: ChessGameInterface, private val move: Move, private val evaluatingMinMax: EvaluatingMinMax) : Callable<EvaluatedMove> {
 
         @Throws(Exception::class)
         override fun call(): EvaluatedMove? {
             return try {
-                val value = dynamicEvaluation.evaluateMove(game, move)
+                val value = evaluatingMinMax.evaluateMove(game, move)
                 EvaluatedMove(move, value)
             } catch (e: Exception) {
                 //print out the error

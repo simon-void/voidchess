@@ -7,16 +7,51 @@ import voidchess.board.move.Move
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
 import org.testng.annotations.DataProvider
-import voidchess.board.move.MoveResult
-import java.util.*
+import voidchess.copyGameWithInvertedColors
+import voidchess.mirrorRow
 
 
-class DynamicEvaluationTest {
+class EvaluatingMinMaxTest {
+    @DataProvider(name = "gameWithObviousEvalProvider")
+    fun obviousEvalProvider(): Array<Array<Any>> {
+        val easyPruner = AllMovesOrNonePruner(1, 4, 3)
+        return arrayOf(
+                arrayOf(
+                        ChessGame("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false"),
+                        AllMovesOrNonePruner(1, 4, 3),
+                        Move.byCode("g6-g5"),
+                        -9.5..-8.0,
+                        "pawn promotion"),
+                arrayOf(
+                        ChessGame("white 0 King-white-h1-4 King-black-c8-6 Knight-white-d5 Rook-black-g8-8 Pawn-white-h2-false Pawn-black-h3-false"),
+                        easyPruner,
+                        Move.byCode("d5-e7"),
+                        2.7..3.3,
+                        "find knight fork with check")
+        )
+    }
+
+    @Test(dataProvider = "gameWithObviousEvalProvider")
+    fun testMinMaxEvaluatesToExpectedRange(game: ChessGame, pruner: SearchTreePruner, move: Move, expectedEvalRange: ClosedRange<Double>, msg: String) {
+        val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
+        val evaluation = dynamicEvaluation.evaluateMove(game, move) as Ongoing
+
+        assertTrue(
+                evaluation.preliminaryEvaluation in expectedEvalRange,
+                "eval should be in range $expectedEvalRange but was: ${evaluation.preliminaryEvaluation}. msg: $msg")
+
+        val evaluationOfColorInverted = dynamicEvaluation.evaluateMove(game.copyGameWithInvertedColors(), move.mirrorRow()) as Ongoing
+
+        assertTrue(
+                evaluationOfColorInverted.preliminaryEvaluation in expectedEvalRange,
+                "eval should be in range $expectedEvalRange but was: ${evaluationOfColorInverted.preliminaryEvaluation}. msg: $msg")
+    }
+
     @Test
     fun testEvaluateMoveHasNoSideEffects() {
         val des = "black 0 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false"
         val game = ChessGame(des)
-        val dynamicEvaluation = DynamicEvaluation()
+        val dynamicEvaluation = EvaluatingMinMax()
 
         dynamicEvaluation.evaluateMove(game, Move.byCode("a6-b6"))
         // invariance: evaluateMove must not change the game configuration
@@ -27,7 +62,7 @@ class DynamicEvaluationTest {
     fun testMinMaxScheme() {
         val game = ChessGame(518, "d2-d3", "d7-d6", "c1-g5")
 
-        val dynamicEvaluation = DynamicEvaluation()
+        val dynamicEvaluation = EvaluatingMinMax()
 
         val value = dynamicEvaluation.evaluateMove(game, Move.byCode("e7-e6")) // the queen can be taken via g5-d8
 
@@ -36,7 +71,7 @@ class DynamicEvaluationTest {
         // because a queen(9P) is exchanged against a bishop(3P).
         // Actually worse than than -6 because the white queen will probably move to d2 to gain space with the
         // expected sequence (after e7-e6) g5-d8 e8-d8 d1-d2
-        val combinedValue = (value as Ongoing).getCombinedEvaluation()
+        val combinedValue = (value as Ongoing).fullEvaluation
         assertTrue(
                 combinedValue < -6.0 && combinedValue > -7.5, // the queen mobility isn't worth a pawn so combined value shouldn't be worse than -7
                 "Min-Max-computation out of bounds. expected value [-6, -7.5] but is: $combinedValue")
@@ -47,7 +82,7 @@ class DynamicEvaluationTest {
 
 //    @Test(dataProvider = "provide moves to evaluate")
 //    fun `test evaluateMove`(game: ChessGame, move: Move, pruner: SearchTreePruner) {
-//        val dynamicEvaluation = DynamicEvaluation(pruner, StaticEvaluation)
+//        val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
 //        val root = dynamicEvaluation.evaluateMove(game, move)
 //
 //        assertEquals(root.latestMove, move)
@@ -84,7 +119,7 @@ class DynamicEvaluationTest {
 //        val minimalPruner = SimplePruner(1,2,2)
 //        return arrayOf(
 //                arrayOf( game1, move1, minimalPruner),
-//                arrayOf( game1.copyGameWithReverseColors(), move1.mirrorRow(), minimalPruner),
+//                arrayOf( game1.copyGameWithInvertedColors(), move1.mirrorRow(), minimalPruner),
 //                arrayOf( game2, move2, minimalPruner),
 //                arrayOf( game3, move3, minimalPruner),
 //                arrayOf( game4, move4, minimalPruner)
@@ -93,7 +128,7 @@ class DynamicEvaluationTest {
 //
 //    @Test(dataProvider = "provide games to check next moves in")
 //    fun `test expectedNextMoves`(game: ChessGame, move: Move, pruner: SearchTreePruner, expectedNextMoves: String) {
-//        val dynamicEvaluation = DynamicEvaluation(pruner, StaticEvaluation)
+//        val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
 //        val root = dynamicEvaluation.evaluateMove(game, move)
 //
 //        val actualExpectedMoves = root.expectedNextMoves().joinToString()

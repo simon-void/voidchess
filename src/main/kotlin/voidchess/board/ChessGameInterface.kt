@@ -40,3 +40,10 @@ interface ChessGameInterface : BasicChessBoard {
     fun useSupervisor(supervisor: ChessGameSupervisor)
     fun undo()
 }
+
+fun <T> ChessGameInterface.withMove(move: Move, workWithGameAfterMove: (ChessGameInterface)->T): T {
+    move(move)
+    return workWithGameAfterMove(this).apply {
+        undo()
+    }
+}

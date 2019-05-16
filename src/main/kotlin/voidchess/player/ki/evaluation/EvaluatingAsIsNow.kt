@@ -2,30 +2,27 @@ package voidchess.player.ki.evaluation
 
 import voidchess.board.ChessGameInterface
 import voidchess.board.forAllFigures
+import voidchess.board.move.Position
 import voidchess.figures.Figure
 import voidchess.figures.King
-import voidchess.board.move.Position
 
-object StaticEvaluation : StaticEvaluationInterface {
+interface EvaluatingStatically {
+    fun getPreliminaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Double
+    fun getSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Double
 
-    override fun getPrimaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Ongoing {
-        val primaryEvaluation = evaluateFigures(game, forWhite)
-        return Ongoing(primaryEvaluation)
-    }
+    fun getCheckmateMaterialEvaluation(game: ChessGameInterface, forWhite: Boolean): Double
 
-    override fun addSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean, evaluated: Evaluated) {
-        if (evaluated.needsSecondaryEvaluation()) {
-            when (evaluated) {
-                is Ongoing -> evaluated.setSecondaryEvaluation(getSecondaryEvaluation(game, forWhite))
-                is CheckmateSelf -> evaluated.setSecondaryEvaluation(
-                        evaluateFigures(game, forWhite) + getSecondaryEvaluation(game, forWhite)
-                )
-                else -> throw IllegalStateException("unexpected class which requests a secondary evaluation: " + evaluated.javaClass.simpleName)
-            }
-        }
-    }
+    fun addSecondaryEvaluationTo(prelimEval: Double, game: ChessGameInterface, forWhite: Boolean) = Ongoing(
+            prelimEval, prelimEval + getSecondaryEvaluation(game, forWhite)
+    )
+}
 
-    private fun getSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean) = evaluateRuledArea(game, forWhite) + evaluatePosition(game, forWhite)
+object EvaluatingAsIsNow : EvaluatingStatically {
+
+    override fun getPreliminaryEvaluation(game: ChessGameInterface, forWhite: Boolean) = evaluateFigures(game, forWhite)
+    override fun getCheckmateMaterialEvaluation(game: ChessGameInterface, forWhite: Boolean) = evaluateFigures(game, forWhite) + evaluatePosition(game, forWhite)
+
+    override fun getSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean) = evaluateRuledArea(game, forWhite) + evaluatePosition(game, forWhite)
 
     private fun evaluateFigures(game: ChessGameInterface, forWhite: Boolean): Double {
         var whiteFigures = 0.0

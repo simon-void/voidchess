@@ -10,9 +10,9 @@ import java.util.HashSet
 import java.util.LinkedList
 
 
-class StaticSpaceEvaluation : StaticEvaluationInterface {
+class EvaluatingSpace : EvaluatingStatically {
 
-    override fun getPrimaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Ongoing {
+    override fun getPreliminaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Double {
         val basicValue = 200
         val whiteKing = game.whiteKing
         val blackKing = game.blackKing
@@ -41,14 +41,13 @@ class StaticSpaceEvaluation : StaticEvaluationInterface {
 
         if (colorOfWinnerIsWhite == forWhite) value = -value
 
-        //TODO is there is better secondary evaluation that a static 0?
-        return Ongoing(value / 10.0)
+        return value / 10.0
     }
 
-    override fun addSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean, evaluated: Evaluated) {
-        //do nothing (keep the secondary value = 0)
-        //TODO is there a good secondary matrix of success for space?
-    }
+    //TODO is there a good secondary matrix of success for space?
+    override fun getSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean) = 0.0
+
+    override fun getCheckmateMaterialEvaluation(game: ChessGameInterface, forWhite: Boolean) = 0.0
 
     private fun borderMalus(kingPos: Position): Double {
         return -Math.max(Math.abs(kingPos.row - 3.5), Math.abs(kingPos.column - 3.5))
