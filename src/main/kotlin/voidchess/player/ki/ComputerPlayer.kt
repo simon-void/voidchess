@@ -1,6 +1,7 @@
 package voidchess.player.ki
 
 import voidchess.board.ChessGameInterface
+import voidchess.board.move.Move
 import voidchess.board.move.MoveResult
 import voidchess.board.move.PawnPromotion
 import voidchess.board.move.Position
@@ -13,6 +14,7 @@ import voidchess.player.ki.openings.OpeningsLibrary
 import voidchess.ui.ComputerPlayerUI
 import voidchess.ui.TableInterface
 import voidchess.ui.Thumb
+import java.text.DecimalFormat
 import java.util.*
 
 
@@ -115,26 +117,73 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
      * @return the move the ki will make next
      */
     private fun pickNextMoveByEvaluation(sortedEvaluatedMoves: List<EvaluatedMove>): EvaluatedMove {
-        val evaluation = sortedEvaluatedMoves.iterator()
-        val bestMove: EvaluatedMove = evaluation.next()
+        val bestMove: EvaluatedMove = sortedEvaluatedMoves.first()
 
-        if (bestMove.value !is Ongoing) {
+        if (bestMove.value !is NumericalEvaluation) {
             return bestMove
         }
 
-        //as long as the top moves are almost equally good, pick randomly one (with a higher chance for the better move)
-        val cutoffFullEvaluation = bestMove.value.fullEvaluation - 0.2
-        var chosenMove = bestMove
-        while (evaluation.hasNext()) {
-            if (Math.random() < 0.6) break
-            val tempMove = evaluation.next()
-            if (tempMove.value is Ongoing && tempMove.value.fullEvaluation > cutoffFullEvaluation) {
-                chosenMove = tempMove
-            } else {
-                break
+        fun pickEvaluateMoveBy(move: Move) = sortedEvaluatedMoves.first { it.move.equalsMove(move) }
+
+        val okDistanceToBest = .2
+
+        // the weight lies between (0-1]
+        // with bestMove will have a weight of 1
+        // and a move that is almost okDistanceToBest apart will have a weight of almost 0
+        val moveAndLinearWeight: List<Pair<Move, Double>> = LinkedList<Pair<Move, Double>>().apply {
+            val bestFullEvaluation = bestMove.value.fullEvaluation
+            for((move, evaluation) in sortedEvaluatedMoves) {
+                if(evaluation !is NumericalEvaluation) break
+                val distanceToBest = bestFullEvaluation-evaluation.fullEvaluation
+                if(distanceToBest>=okDistanceToBest) break
+                add(Pair(move, (okDistanceToBest-distanceToBest)/okDistanceToBest))
             }
         }
-        return chosenMove
+        println("considering: ${moveAndLinearWeight.map { it.first.toString() }.joinToString()}")
+
+        require(moveAndLinearWeight.isNotEmpty())
+        if(moveAndLinearWeight.size==1) {
+            return pickEvaluateMoveBy(moveAndLinearWeight.first().first)
+        }
+
+//        fun printMovesAndWeight(moveAndPercentage: List<Pair<Move, Double>>) {
+//            val formatter = DecimalFormat().apply {
+//                minimumFractionDigits = 2
+//                maximumFractionDigits = 2
+//            }
+//
+//            fun percentageToString(value: Double): String = formatter.format(value)
+//            println(moveAndPercentage.joinToString { "${it.first}:${percentageToString(it.second)}" })
+//        }
+//        printMovesAndWeight(moveAndLinearWeight)
+
+        // make it more than linear probable to pick a better move (the bigger the factor, the more preferable better solutions are)
+        val moveAndWeight = moveAndLinearWeight.map { Pair(it.first, Math.pow(it.second, 1.8)) }
+        val weightSum = moveAndWeight.map { it.second }.sum()
+        // the sum of all percentages will be 1.0 (or close to it because of rounding errors)
+        val moveAndPercentage = moveAndWeight.map { Pair(it.first, it.second/weightSum) }
+
+//        fun printMovesAndPercentages(moveAndPercentage: List<Pair<Move, Double>>) {
+//            val formatter = DecimalFormat().apply {
+//                minimumFractionDigits = 1
+//                maximumFractionDigits = 1
+//            }
+//
+//            fun percentageToString(value: Double): String = "${formatter.format(100*value)}%"
+//            println(moveAndPercentage.joinToString { "${it.first}:${percentageToString(it.second)}" })
+//        }
+//        printMovesAndPercentages(moveAndPercentage)
+
+
+        var randomValueInbetween0and1 = randomNumberGenerator.nextDouble()
+        val moveAndPercentageIter = moveAndPercentage.iterator()
+        var moveWithPercentage = moveAndPercentageIter.next()
+        while(moveAndPercentageIter.hasNext() && randomValueInbetween0and1>moveWithPercentage.second) {
+            randomValueInbetween0and1 -= moveWithPercentage.second
+            moveWithPercentage = moveAndPercentageIter.next()
+        }
+
+        return pickEvaluateMoveBy(moveWithPercentage.first)
     }
 
     /**
