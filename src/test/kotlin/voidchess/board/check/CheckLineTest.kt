@@ -46,11 +46,11 @@ class CheckLineTest {
 
     @DataProvider
     fun getTestDoesNotKeepKingInCheckIfHeMovesToData() :Array<Array<Any>> = arrayOf(
-            arrayOf<Any>(PawnCheck(Position.byCode("g3"), Position.byCode("f2")), listOf<Direction>()),
-            arrayOf<Any>(KnightCheck(Position.byCode("g3"), Position.byCode("f1")), listOf<Direction>()),
-            arrayOf<Any>(getActualCheckLine("g3", "h3"), listOf(Direction.LEFT)),
-            arrayOf<Any>(getActualCheckLine("g3", "h2"), listOf(Direction.UP_LEFT)),
-            arrayOf<Any>(getActualCheckLine("g3", "g1"), listOf(Direction.DOWN, Direction.UP))
+            arrayOf(PawnCheck(Position.byCode("g3"), Position.byCode("f2")), listOf<Direction>()),
+            arrayOf(KnightCheck(Position.byCode("g3"), Position.byCode("f1")), listOf<Direction>()),
+            arrayOf(getActualCheckLine("g3", "h3"), listOf(Direction.LEFT)),
+            arrayOf(getActualCheckLine("g3", "h2"), listOf(Direction.UP_LEFT)),
+            arrayOf(getActualCheckLine("g3", "g1"), listOf(Direction.DOWN, Direction.UP))
     )
 
     private fun getActualCheckLine(kingPosCode: String, attackerPosCode: String): ActualCheckLine {

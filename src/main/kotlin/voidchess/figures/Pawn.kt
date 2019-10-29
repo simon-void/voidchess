@@ -8,8 +8,6 @@ import voidchess.board.getFigure
 import voidchess.board.move.Direction
 import voidchess.board.move.Move
 import voidchess.board.move.Position
-import java.lang.UnsupportedOperationException
-import java.util.*
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -39,7 +37,7 @@ class Pawn : Figure {
     private fun hasNotMovedYet() = position.row == startingRow
 
     override fun figureMoved(move: Move) {
-        canBeHitByEnpasent = move.from.equalsPosition(position) && Math.abs(move.from.row - move.to.row) == 2
+        canBeHitByEnpasent = move.from.equalsPosition(position) && abs(move.from.row - move.to.row) == 2
         super.figureMoved(move)
     }
 
@@ -54,7 +52,7 @@ class Pawn : Figure {
     }
 
     private inline fun forEachDiagonalReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
-        Arrays.asList(Direction.LEFT, Direction.RIGHT).forEach { side: Direction ->
+        listOf(Direction.LEFT, Direction.RIGHT).forEach { side: Direction ->
             val diagonal = Direction.getDiagonal(forwardDirection, side)
             position.step(diagonal)?.let { diagonalPos ->
                 if(isDiagonalReachable(diagonalPos, game)) {
@@ -115,7 +113,7 @@ class Pawn : Figure {
 
     private fun isOneStepForwardDiagonally(to: Position): Boolean {
         val oneForwardRow = if (isWhite) position.row + 1 else position.row - 1
-        return to.row == oneForwardRow && Math.abs(to.column - position.column) == 1
+        return to.row == oneForwardRow && abs(to.column - position.column) == 1
     }
 
     override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {

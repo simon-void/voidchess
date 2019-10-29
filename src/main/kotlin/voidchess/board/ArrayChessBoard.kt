@@ -34,15 +34,11 @@ class ArrayChessBoard constructor() : ChessBoard {
 
     init {
         init()
-        requireNotNull(whiteKing) {"whiteKing"}
-        requireNotNull(blackKing) {"blackKing"}
     }
 
     //for testing
     constructor(des: String) : this() {
         init(des)
-        requireNotNull(whiteKing) {"whiteKing"}
-        requireNotNull(blackKing) {"blackKing"}
     }
 
     private fun clearCheckComputation() {

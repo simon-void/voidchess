@@ -9,9 +9,9 @@ import voidchess.player.ki.evaluation.*
 
 import java.text.DecimalFormat
 import java.text.NumberFormat
-import java.util.Arrays
 
 import org.testng.Assert.assertEquals
+import kotlin.system.exitProcess
 
 
 class ComputerPlayerTest {
@@ -24,12 +24,12 @@ class ComputerPlayerTest {
                 arrayOf("black 0 King-white-h1-3 Pawn-white-c7-false Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false Knight-black-a7 King-black-b7-3-false", emptyList<Any>()),
                 arrayOf("621", listOf("f2-f3")), arrayOf("black 0 Bishop-white-b1 King-white-h1-3 Pawn-black-f7-false King-black-e8-0 Rook-black-f8-0", emptyList<Any>()),
                 arrayOf("white 0 Rook-black-e1-8 Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 Knight-white-g4 Queen-black-e5 King-black-g7-3", emptyList<Any>()),
-                arrayOf("314", emptyList<Any>()), arrayOf("621", Arrays.asList("g2-g3", "f7-f6", "c2-c3", "g8-b3", "d1-c2")),
-                arrayOf("707", Arrays.asList("e1-f3", "b7-b6", "f1-e3", "g7-g6")))
+                arrayOf("314", emptyList<Any>()), arrayOf("621", listOf("g2-g3", "f7-f6", "c2-c3", "g8-b3", "d1-c2")),
+                arrayOf("707", listOf("e1-f3", "b7-b6", "f1-e3", "g7-g6")))
 
     @Test(dataProvider = "getPlayData")
     fun testPlay(chess960IndexOrDesc: String, moveDescs: List<String>) {
-        var game: ChessGame
+        val game: ChessGame
         game = try {
             val chess960 = Integer.parseInt(chess960IndexOrDesc)
             ChessGame(chess960)
@@ -196,7 +196,7 @@ class ComputerPlayerTest {
             // Grundaufstellung mit Bauern vor König und ohne Königsläufer
             // ist in etwa so groß wie
             // Grundaufstellung mit Bauern vor König und ohne Dame!!! Warum?
-            System.exit(0)
+            exitProcess(0)
         }
 
         private fun loadTest(des: String) {

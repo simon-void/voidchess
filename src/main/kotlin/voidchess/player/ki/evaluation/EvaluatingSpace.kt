@@ -8,6 +8,8 @@ import voidchess.board.move.Position
 
 import java.util.HashSet
 import java.util.LinkedList
+import kotlin.math.abs
+import kotlin.math.max
 
 
 class EvaluatingSpace : EvaluatingStatically {
@@ -50,7 +52,7 @@ class EvaluatingSpace : EvaluatingStatically {
     override fun getCheckmateMaterialEvaluation(game: ChessGameInterface, forWhite: Boolean) = 0.0
 
     private fun borderMalus(kingPos: Position): Double {
-        return -Math.max(Math.abs(kingPos.row - 3.5), Math.abs(kingPos.column - 3.5))
+        return -max(abs(kingPos.row - 3.5), abs(kingPos.column - 3.5))
     }
 
     fun countRestSpace(game: ChessGameInterface,

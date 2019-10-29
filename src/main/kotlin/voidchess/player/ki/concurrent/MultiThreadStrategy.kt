@@ -20,7 +20,7 @@ internal class MultiThreadStrategy(showProgress: (Int, Int)->Unit, private val n
 
         val movesToEvaluate = getEvaluableMoves(game, evaluatingMinMax)
 
-        var result = try {
+        val result = try {
             evaluate(movesToEvaluate)
         } catch (e: Exception) {
             e.printStackTrace()

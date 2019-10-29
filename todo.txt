@@ -10,6 +10,8 @@ optimizations:
   checkNewPosition(this)
   this.undo()
 }
+-remove ChessGame.informFiguresOfMove or/and at least let
+BasicChessBoard.forAllFigures(OfColor) not iterate over all 64 fields (a board should have an array of white and one for black figures)
 
 
 features:

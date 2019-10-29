@@ -229,8 +229,8 @@ object EvaluatingAsIsNow : EvaluatingStatically {
             } else {
                 SMALL_KING_DEFENSE_VALUE
             }
-            val minColumn = Math.max(0, kingsColumn - 1)
-            val maxColumn = Math.min(7, kingsColumn + 1)
+            val minColumn = (kingsColumn - 1).coerceAtLeast(0)
+            val maxColumn = (kingsColumn + 1).coerceAtMost(7)
             var value = 0.0
             for (column in minColumn..maxColumn) {
                 if (containsPawnOfColor(game, Position[secondRow, column], isWhite)) {

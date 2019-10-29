@@ -14,8 +14,9 @@ import voidchess.player.ki.openings.OpeningsLibrary
 import voidchess.ui.ComputerPlayerUI
 import voidchess.ui.TableInterface
 import voidchess.ui.Thumb
-import java.text.DecimalFormat
 import java.util.*
+import kotlin.math.pow
+import kotlin.random.Random
 
 
 class ComputerPlayer(private val table: TableInterface, private val game: ChessGameInterface, private val ui: ComputerPlayerUI) : PlayerInterface {
@@ -26,7 +27,6 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
     private var usesStandardEvaluation: Boolean = false
     private val openingsLibrary: OpeningsLibrary
     private var useLibrary: Boolean = false
-    private val randomNumberGenerator: Random
     private var isWhite = false
 
     init {
@@ -35,7 +35,6 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
         evaluatingMinMax = EvaluatingMinMax(standardPruner, standardEvaluation)
         concurrencyStrategy = getConcurrencyStrategy(ui::setProgress, 1)
         openingsLibrary = OpeningsLibrary("openings.txt")
-        randomNumberGenerator = Random()
         reset()
     }
 
@@ -62,7 +61,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
                 //display that the computer is working
                 ui.setProgress(0, 1)
                 //pick a random move
-                val randomMove = possibleMoves[randomNumberGenerator.nextInt(possibleMoves.size)]
+                val randomMove = possibleMoves[Random.nextInt(possibleMoves.size)]
                 //and evaluate it
                 val isWhitePlayer = game.isWhiteTurn
                 game.move(randomMove)
@@ -139,7 +138,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
                 add(Pair(move, (okDistanceToBest-distanceToBest)/okDistanceToBest))
             }
         }
-        println("considering: ${moveAndLinearWeight.map { it.first.toString() }.joinToString()}")
+//        println("considering: ${moveAndLinearWeight.joinToString { it.first.toString() }}")
 
         require(moveAndLinearWeight.isNotEmpty())
         if(moveAndLinearWeight.size==1) {
@@ -158,7 +157,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
 //        printMovesAndWeight(moveAndLinearWeight)
 
         // make it more than linear probable to pick a better move (the bigger the factor, the more preferable better solutions are)
-        val moveAndWeight = moveAndLinearWeight.map { Pair(it.first, Math.pow(it.second, 1.8)) }
+        val moveAndWeight = moveAndLinearWeight.map { Pair(it.first, it.second.pow(1.8)) }
         val weightSum = moveAndWeight.map { it.second }.sum()
         // the sum of all percentages will be 1.0 (or close to it because of rounding errors)
         val moveAndPercentage = moveAndWeight.map { Pair(it.first, it.second/weightSum) }
@@ -175,7 +174,7 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
 //        printMovesAndPercentages(moveAndPercentage)
 
 
-        var randomValueInbetween0and1 = randomNumberGenerator.nextDouble()
+        var randomValueInbetween0and1 = Random.nextDouble()
         val moveAndPercentageIter = moveAndPercentage.iterator()
         var moveWithPercentage = moveAndPercentageIter.next()
         while(moveAndPercentageIter.hasNext() && randomValueInbetween0and1>moveWithPercentage.second) {

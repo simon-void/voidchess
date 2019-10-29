@@ -11,7 +11,12 @@ class OpeningsLibraryTest {
 
     val validOpeningsProvider: Array<Array<Any>>
         @DataProvider(name = "validOpeningsProvider")
-        get() = arrayOf(arrayOf("e2-e4,c7-c5,g1-f3,d7-d6,d2-d4,c5-d4,f3-d4,g8-f6,b1-c3,a7-a6", 10), arrayOf("e2-e4, c7-c5,  b1-c3, b8-c6   ,g2-g3,g7-g6,f1-g2,f8-g7", 8), arrayOf("e2-e4", 1), arrayOf("", 0))
+        get() = arrayOf(
+                arrayOf("e2-e4,c7-c5,g1-f3,d7-d6,d2-d4,c5-d4,f3-d4,g8-f6,b1-c3,a7-a6", 10),
+                arrayOf("e2-e4, c7-c5,  b1-c3, b8-c6   ,g2-g3,g7-g6,f1-g2,f8-g7", 8),
+                arrayOf("e2-e4", 1),
+                arrayOf("", 0)
+        )
 
     val invalidOpeningsProvider: Array<Array<Any>>
         @DataProvider(name = "invalidOpeningsProvider")

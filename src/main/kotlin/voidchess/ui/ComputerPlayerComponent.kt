@@ -6,6 +6,7 @@ import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Rectangle
 import javax.swing.JComponent
+import kotlin.math.ceil
 
 
 class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
@@ -214,7 +215,7 @@ class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
                 g.color = Color.BLACK
                 g.drawRect(49, 46, 101, 18)
                 g.color = Color.DARK_GRAY
-                val progress = Math.ceil(100 * index / total.toDouble()).toInt()
+                val progress = ceil(100 * index / total.toDouble()).toInt()
                 g.fillRect(50, 47, progress, 17)
             }
         }

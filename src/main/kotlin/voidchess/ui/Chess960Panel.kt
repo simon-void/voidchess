@@ -6,6 +6,7 @@ import javax.swing.*
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
+import kotlin.math.floor
 
 class Chess960Panel internal constructor(private val game: ChessGameInterface, private val gameUI: ChessboardComponent) : JPanel(), ActionListener {
     var positionCode: Int = 0
@@ -15,7 +16,7 @@ class Chess960Panel internal constructor(private val game: ChessGameInterface, p
     private var positionIndexField: JTextField = JTextField(positionCode.toString(), 3)
 
     private val randomPosition: Int
-            get() = Math.floor(Math.random() * 960).toInt()
+            get() = floor(Math.random() * 960).toInt()
 
     init {
         designLayout()
@@ -43,8 +44,7 @@ class Chess960Panel internal constructor(private val game: ChessGameInterface, p
     }
 
     override fun actionPerformed(event: ActionEvent) {
-        val source = event.source
-        when (source) {
+        when (event.source) {
             classicButton -> setPosition(CLASSIC_CHESS_POSITION)
             random960Button -> setPosition(randomPosition)
             positionIndexField -> setPosition(positionIndexField.text)

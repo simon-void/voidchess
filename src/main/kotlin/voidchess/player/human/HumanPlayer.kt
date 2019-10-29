@@ -73,7 +73,7 @@ class HumanPlayer(
             }
         } else {
             if (game.isMovable(lockedFrom, pos, isWhitePlayer)) {
-                move(Move.get(lockedFrom, pos))
+                move(Move[lockedFrom, pos])
             }
         }
     }

@@ -75,12 +75,8 @@ class OpeningsLibrary(relativePathToOpeningsFile: String) {
             }
 
             val separator = ','
-            if (openingSequence.startsWith(separator)) {
-                throw IllegalArgumentException("opening sequence starts with separator: $openingSequence")
-            }
-            if (openingSequence.endsWith(separator)) {
-                throw IllegalArgumentException("opening sequence ends with separator: $openingSequence")
-            }
+            require(!openingSequence.startsWith(separator)) { "opening sequence starts with separator: $openingSequence" }
+            require(!openingSequence.endsWith(separator)) { "opening sequence ends with separator: $openingSequence" }
 
             val textMoves = openingSequence.splitAndTrim(separator)
             val checkedMoves = ArrayList<String>(textMoves.size)
@@ -88,18 +84,12 @@ class OpeningsLibrary(relativePathToOpeningsFile: String) {
             val game = ChessGame()
 
             for (textMove in textMoves) {
-                if (!Move.isValid(textMove)) {
-                    throw IllegalArgumentException(
-                            "illegal move format'$textMove' in opening sequence: $openingSequence")
-                }
+                require(Move.isValid(textMove)) { "illegal move format'$textMove' in opening sequence: $openingSequence" }
                 val move = Move.byCode(textMove)
                 val isMoveExecutable = game.isMovable(
                         move.from, move.to, game.isWhiteTurn
                 )
-                if (!isMoveExecutable) {
-                    throw IllegalArgumentException(
-                            "illegal move '$textMove' in opening sequence: $openingSequence")
-                }
+                require(isMoveExecutable) { "illegal move '$textMove' in opening sequence: $openingSequence" }
                 game.move(move)
 
                 checkedMoves.add(textMove)

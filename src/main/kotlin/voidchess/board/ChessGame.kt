@@ -4,6 +4,7 @@ import voidchess.board.move.*
 import voidchess.figures.*
 import voidchess.player.ki.evaluation.SearchTreePruner
 import java.util.*
+import kotlin.math.abs
 
 
 class ChessGame private constructor(
@@ -134,9 +135,7 @@ class ChessGame private constructor(
     @JvmOverloads constructor(initialPosition: Int = 518, vararg moves: String) : this(ChessGameSupervisorDummy, initialPosition) {
         for(move in moves) {
             val result = move(Move.byCode(move))
-            if(result!= MoveResult.NO_END) {
-                throw IllegalStateException("board is not supposed to end via these moves but did. end by $result")
-            }
+            check(result == MoveResult.NO_END) { "board is not supposed to end via these moves but did. end by $result" }
         }
     }
 
@@ -390,7 +389,7 @@ class ChessGame private constructor(
 
         val newLatestMove = extendedMoveStack.last
         val figure = board.getFigure(newLatestMove.move.to)
-        if (figure.isPawn() && Math.abs(newLatestMove.move.from.row - newLatestMove.move.to.row) == 2) {
+        if (figure.isPawn() && abs(newLatestMove.move.from.row - newLatestMove.move.to.row) == 2) {
             (figure as Pawn).setCanBeHitByEnpasent()
         }
     }
@@ -417,7 +416,7 @@ class ChessGame private constructor(
         memorizeGame()
     }
 
-    fun equals(other: ChessGame): Boolean {
+    fun equalsOther(other: ChessGame): Boolean {
         if (whiteTurn != other.whiteTurn) return false
 
         for (index in 0..63) {
@@ -554,8 +553,8 @@ private class Memento constructor(game: BasicChessBoard, private val isWhite: Bo
         return figureCount != other.figureCount
     }
 
-    fun equals(other: Memento): Boolean {
-        return isWhite == other.isWhite && Arrays.equals(compressedBoard, other.compressedBoard)
+    fun equalsOther(other: Memento): Boolean {
+        return isWhite == other.isWhite && compressedBoard.contentEquals(other.compressedBoard)
     }
 
     private fun compressBoardSlicesToLong(board: IntArray, startIndex: Int, endIndex: Int): Long {
@@ -626,7 +625,7 @@ private class NumberStack {
 fun LinkedList<ExtendedMove>.getLatestMoves(count: Int): String {
     assert(count > 0)
 
-    val minIndex = Math.max(0, size - count)
+    val minIndex = (size - count).coerceAtLeast(0)
     return subList(fromIndex = minIndex, toIndex = size).joinToString(separator = ",") { it.toString() }
 }
 
@@ -647,7 +646,7 @@ private fun LinkedList<Memento>.countOccurrencesOfLastMemento(): Int {
         if(memento.hasDifferentNumberOfFiguresAs(lastMemento)) {
             break
         }
-        if(memento.equals(lastMemento)) {
+        if(memento.equalsOther(lastMemento)) {
             count++
         }
 

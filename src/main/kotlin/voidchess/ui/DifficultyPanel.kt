@@ -3,11 +3,8 @@ package voidchess.ui
 import voidchess.player.ki.ComputerPlayer
 import voidchess.player.ki.evaluation.AllMovesOrNonePruner
 import voidchess.player.ki.evaluation.PrunerWithIrreversibleMoves
-import voidchess.player.ki.evaluation.SearchTreePruner
 import java.awt.Color
 import java.awt.FlowLayout
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
 import javax.swing.JComboBox
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -36,7 +33,8 @@ class DifficultyPanel internal constructor(private val player: ComputerPlayer) :
         background = Color.WHITE
         add(comboBox)
         comboBox.addActionListener {
-            player.setSearchTreePruner(namedPruners.getValue(comboBox.selectedItem.toString()))
+            val selected = comboBox.selectedItem as String
+            player.setSearchTreePruner(namedPruners.getValue(selected))
         }
         player.setSearchTreePruner(namedPruners.entries.first().value)
     }

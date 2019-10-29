@@ -11,6 +11,7 @@ import voidchess.board.move.Move
 import voidchess.board.move.Position
 import java.lang.IllegalArgumentException
 import java.lang.UnsupportedOperationException
+import kotlin.math.abs
 import kotlin.math.sign
 
 
@@ -27,8 +28,8 @@ class King : CastlingFigure {
     }
 
     override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
-        val horizontalDifference = Math.abs(position.row - toPos.row)
-        val verticalDifference = Math.abs(position.column - toPos.column)
+        val horizontalDifference = abs(position.row - toPos.row)
+        val verticalDifference = abs(position.column - toPos.column)
         if (horizontalDifference <= 1 && verticalDifference <= 1) {
             val figure = game.getFigureOrNull(toPos)
             if (figure==null || hasDifferentColor(figure)) return true
@@ -297,10 +298,10 @@ class King : CastlingFigure {
 
     override fun countReachableMoves(game: BasicChessBoard): Int {
         var count = 0
-        val minRow = Math.max(position.row - 1, 0)
-        val minColumn = Math.max(position.column - 1, 0)
-        val maxRow = Math.min(position.row + 1, 7)
-        val maxColumn = Math.min(position.column + 1, 7)
+        val minRow = (position.row - 1).coerceAtLeast(0)
+        val minColumn = (position.column - 1).coerceAtLeast(0)
+        val maxRow = (position.row + 1).coerceAtMost(7)
+        val maxColumn = (position.column + 1).coerceAtMost(7)
 
         for (row in minRow..maxRow) {
             for (column in minColumn..maxColumn) {

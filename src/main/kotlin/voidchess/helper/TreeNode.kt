@@ -2,10 +2,9 @@ package voidchess.helper
 
 import java.util.SortedMap
 import java.util.TreeMap
-import java.util.stream.Stream
 
 
-class TreeNode<T : Comparable<T>> private constructor(var data: T) : Comparable<TreeNode<T>> {
+class TreeNode<T : Comparable<T>> private constructor(private var data: T) : Comparable<TreeNode<T>> {
     private var childrenByData: SortedMap<T, TreeNode<T>> = TreeMap()
 
     val childData: List<T>

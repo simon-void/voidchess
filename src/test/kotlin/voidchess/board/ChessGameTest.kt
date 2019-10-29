@@ -61,7 +61,7 @@ class ChessGameTest {
     @Test
     fun testEquals() {
         val copy = ChessGame(game.toString())
-        assertTrue(game.equals(copy))
+        assertTrue(game.equalsOther(copy))
     }
 
     @Test
@@ -511,7 +511,7 @@ class ChessGameTest {
             val to = move.to
             val isWhiteTurn = game.isWhiteTurn
             val isMovable = game.isMovable(from, to, isWhiteTurn)
-            assertTrue(isMovable, move.toString() + " should be valid")
+            assertTrue(isMovable, "$move should be valid")
             game.move(move)
         }
         val possibleMoves = game.getAllMoves()

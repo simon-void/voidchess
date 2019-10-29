@@ -21,31 +21,28 @@ class CoresPanel constructor(private val player: ComputerPlayer) : JPanel(), Act
         }
 
     init {
-        designLayout()
-        //preselect the option of the maximum number of cores
-        comboBox.selectedIndex = comboBox.itemCount - 1
-    }
-
-    /**
-     * @return true if more than one core is available
-     */
-    fun hasOptions() = comboBox.itemCount > 1
-
-    private fun designLayout() {
         background = Color.WHITE
-
         val numberOfCores = Runtime.getRuntime().availableProcessors()
         if (numberOfCores == 1) {
             comboBox.addItem("1")
         } else {
             comboBox.addItem((numberOfCores - 1).toString())
             comboBox.addItem(numberOfCores.toString())
+
+            if (numberOfCores < 4) {
+                //preselect the option of the maximum number of cores
+                comboBox.selectedIndex = comboBox.itemCount - 1
+            }
         }
         comboBox.isEditable = false
         comboBox.addActionListener(this)
-
         add(comboBox)
     }
+
+    /**
+     * @return true if more than one core is available
+     */
+    fun hasOptions() = comboBox.itemCount > 1
 
     override fun setEnabled(enable: Boolean) {
         comboBox.isEnabled = enable

@@ -4,6 +4,7 @@ import voidchess.image.ImageLoader
 
 import javax.swing.*
 import java.awt.*
+import kotlin.system.exitProcess
 
 fun main() {
     try {
@@ -13,7 +14,7 @@ fun main() {
         val sb = "The game got canceled because of an error.\nThe error message is:\n$e"
         JOptionPane.showMessageDialog(null, sb)
         e.printStackTrace()
-        System.exit(1)
+        exitProcess(1)
     }
 }
 
@@ -34,7 +35,10 @@ class ChessFrame : JFrame("  VoidChess960  ") {
             val frameSize = size
             val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
             val windowSize = ge.maximumWindowBounds
-            setLocation(Math.max(windowSize.width / 2 - frameSize.width / 2, 0), Math.max(windowSize.height / 2 - frameSize.height / 2, 0))
+            setLocation(
+                    (windowSize.width / 2 - frameSize.width / 2).coerceAtLeast(0),
+                    (windowSize.height / 2 - frameSize.height / 2).coerceAtLeast(0)
+            )
         } catch (e: RuntimeException) {
             // best effort
         }

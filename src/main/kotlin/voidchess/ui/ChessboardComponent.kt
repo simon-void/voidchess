@@ -21,9 +21,6 @@ class ChessboardComponent constructor(private val game: BasicChessBoard, imageOb
     private val adapter: ChessboardAdapter
     private val figureGallery = FigureGallery(imageObserver, areaSize)
     var isWhiteView: Boolean = true
-        private set(value) {
-            field = value
-        }
     private val evenFieldColor = Color.lightGray
     private val oddFieldColor = Color.white
     private val lessDark = 20

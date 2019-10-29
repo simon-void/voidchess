@@ -7,13 +7,14 @@ import voidchess.board.check.CheckLine
 import voidchess.board.getKing
 import voidchess.board.move.Move
 import voidchess.board.move.Position
+import kotlin.math.abs
 
 
 class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.KNIGHT, false, false) {
 
     override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
-        val horizontalDifference = Math.abs(position.row - toPos.row)
-        val verticalDifference = Math.abs(position.column - toPos.column)
+        val horizontalDifference = abs(position.row - toPos.row)
+        val verticalDifference = abs(position.column - toPos.column)
 
         if((horizontalDifference != 2 || verticalDifference != 1) && (horizontalDifference != 1 || verticalDifference != 2)) {
             return false
@@ -50,8 +51,8 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
             return heavyFigureCounter > 1
         }
         fun couldJump(from: Position, to: Position): Boolean {
-            val horizontalDifference = Math.abs(from.row - to.row)
-            val verticalDifference = Math.abs(from.column - to.column)
+            val horizontalDifference = abs(from.row - to.row)
+            val verticalDifference = abs(from.column - to.column)
 
             return (horizontalDifference == 2 && verticalDifference == 1) || (horizontalDifference == 1 && verticalDifference == 2)
         }
@@ -69,8 +70,8 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         // all checkInterceptPositions are guaranteed to be either empty
         // or to contain the attacker (who has a different color)
         checkLine.posProgression.forEachReachablePos {checkInterceptPos->
-            val horizontalDifference = Math.abs(position.row - checkInterceptPos.row)
-            val verticalDifference = Math.abs(position.column - checkInterceptPos.column)
+            val horizontalDifference = abs(position.row - checkInterceptPos.row)
+            val verticalDifference = abs(position.column - checkInterceptPos.column)
             if(horizontalDifference+verticalDifference==3 && horizontalDifference!=0 && verticalDifference!=0) {
                 result.add(Move[position, checkInterceptPos])
             }

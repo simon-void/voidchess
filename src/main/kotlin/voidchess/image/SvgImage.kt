@@ -16,7 +16,7 @@ import java.io.InputStream
 object SvgImageFactory {
     private val factory = SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName())
 
-    fun createRectImage(inputStream: InputStream, svgPageDimension: Dimension): SvgImage {
+    private fun createRectImage(inputStream: InputStream, svgPageDimension: Dimension): SvgImage {
         val svgDocument = factory.createSVGDocument(null, inputStream)
         return SvgImage(svgDocument, svgPageDimension)
     }
@@ -41,7 +41,7 @@ class SvgImage (private val svgDocument: SVGDocument, private val svgPageDimensi
      * @param height desired height
      * @return image of the rendered svg.
      */
-    fun getRectImage(width: Int, height: Int): Image {
+    private fun getRectImage(width: Int, height: Int): Image {
         // Paint svg into image buffer
         val bufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
         val g2d = bufferedImage.graphics as Graphics2D
