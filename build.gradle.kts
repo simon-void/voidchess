@@ -12,10 +12,10 @@ repositories {
 }
 
 group = "de.gmx.simonvoid"
-version = "3.0.0"
+version = "3.1.0"
 
 application {
-    mainClassName = "voidchess.ui.ChessFrameKt"
+    mainClassName = "voidchess.VoidchessAppKt"
 }
 
 dependencies {
