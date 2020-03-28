@@ -9,6 +9,7 @@ import kotlin.math.abs
 
 class ChessGame private constructor(
         private val board: ChessBoard,
+        override val startConfig: StartConfig,
         private val mementoStack: LinkedList<Memento>,
         private val extendedMoveStack: LinkedList<ExtendedMove>,
         private val numberStack: NumberStack,
@@ -19,10 +20,6 @@ class ChessGame private constructor(
     private var figureCount: Int = 32
     private var hasHitFigure: Boolean = false
     private var whiteTurn: Boolean = true
-    private var standardGame = false
-
-    override val isStandardGame: Boolean
-        get() = standardGame
 
     override val isWhiteTurn: Boolean
         get() = whiteTurn
@@ -100,6 +97,7 @@ class ChessGame private constructor(
      */
     constructor(supervisor: ChessGameSupervisor): this(
             ArrayChessBoard(),
+            StartConfig.ClassicConfig,
             LinkedList<Memento>(),
             LinkedList<ExtendedMove>(),
             NumberStack(),
@@ -113,6 +111,7 @@ class ChessGame private constructor(
      */
     private constructor(other: ChessGame, desc: String): this(
             ArrayChessBoard(desc),
+            other.startConfig,
             other.mementoStack.shallowCopy(),
             other.extendedMoveStack.shallowCopy(),
             NumberStack(other.numberStack),
@@ -144,6 +143,7 @@ class ChessGame private constructor(
      */
     private constructor(supervisor: ChessGameSupervisor, game_description: String): this(
             ArrayChessBoard(game_description),
+            StartConfig.ManualConfig,
             LinkedList<Memento>(),
             LinkedList<ExtendedMove>(),
             NumberStack(),
@@ -170,6 +170,7 @@ class ChessGame private constructor(
     private constructor(supervisor: ChessGameSupervisor,
                         initialPosition: Int): this(
             ArrayChessBoard().apply { init(initialPosition) },
+            StartConfig.Chess960Config(initialPosition),
             LinkedList<Memento>(),
             LinkedList<ExtendedMove>(),
             NumberStack(),
@@ -403,7 +404,6 @@ class ChessGame private constructor(
     private fun initGame() = initGame(518)    //classic chess starting configuration
 
     override fun initGame(chess960: Int) {
-        standardGame = chess960 == 518
         whiteTurn = true
         numberOfMovesWithoutHit = 0
         figureCount = 32

@@ -12,7 +12,8 @@ interface ChessGameInterface : BasicChessBoard {
      * returns true if this game was started with the standard distribution of figures
      * (chess960 code: 518)
      */
-    val isStandardGame: Boolean
+    val isStandardGame: Boolean get() = startConfig.isClassicStartConfig
+    val startConfig: StartConfig
     val isWhiteTurn: Boolean
 
     /**
@@ -39,6 +40,14 @@ interface ChessGameInterface : BasicChessBoard {
     fun suspendInteractiveSupervisor(): ChessGameSupervisor
     fun useSupervisor(supervisor: ChessGameSupervisor)
     fun undo()
+}
+
+sealed class StartConfig(val isClassicStartConfig: Boolean) {
+    object ClassicConfig: StartConfig(true) {
+        val chess960Index = 518
+    }
+    class Chess960Config(val chess960Index: Int): StartConfig(chess960Index==518)
+    object ManualConfig: StartConfig(false)
 }
 
 fun <T> ChessGameInterface.withMove(move: Move, workWithGameAfterMove: (ChessGameInterface)->T): T {

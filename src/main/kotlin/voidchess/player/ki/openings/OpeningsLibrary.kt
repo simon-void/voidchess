@@ -4,10 +4,8 @@ import voidchess.board.ChessGame
 import voidchess.board.move.Move
 import voidchess.helper.*
 
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.ArrayList
-import java.util.LinkedList
+import kotlin.random.Random
 
 
 class OpeningsLibrary(relativePathToOpeningsFile: String) {
@@ -18,39 +16,30 @@ class OpeningsLibrary(relativePathToOpeningsFile: String) {
         openingsRootNode = parseOpenings(openingSequences)
     }
 
-    fun nextMove(history: String): List<Move> {
+    val maxDepth: Int get() = openingsRootNode.depth
+
+    fun nextMove(
+        moves: List<String>,
+        chess960StartIndex: Int
+    ): Move? {
+        // assume that the whole library is based on classic chess
+        if(chess960StartIndex==518) return null
+
         var currentNode: TreeNode<String> = openingsRootNode
-        if (history != "") {
-            val moves = history.splitAndTrim(',')
-            for (move in moves) {
-                currentNode = currentNode.getChild(move) ?: return emptyList()
-            }
+        for (move in moves) {
+            currentNode = currentNode.getChild(move) ?: return null
         }
-        val moveDescriptionsFound = currentNode.childData
-        return moveDescriptionsFound.map {moveCode -> Move.byCode(moveCode)}
+
+        val movesFound: List<Move> = currentNode.childData.map {moveCode -> Move.byCode(moveCode)}
+        return movesFound[Random.nextInt(movesFound.size)]
     }
 
-    private fun loadOpeningSequencesFromFile(relativePathToOpeningsFile: String): List<String> {
-        try {
-            getResourceStream(relativePathToOpeningsFile).use { fileStream ->
-
-                val openingSequences = LinkedList<String>()
-
-                BufferedReader(InputStreamReader(fileStream)).use { reader ->
-                    for(line: String in reader.readLines().trim()) {
-                        if (line.isEmpty() || line.startsWith("#")) {
-                            continue
-                        }
-                        openingSequences.add(line)
-                    }
-                }
-
-                return openingSequences
-            }
-        } catch (e: Exception) {
-            return emptyList()
+    private fun loadOpeningSequencesFromFile(relativePathToOpeningsFile: String): List<String> = try {
+        getResourceStream(relativePathToOpeningsFile).bufferedReader().useLines { lines ->
+            lines.map { it.trim() }.filter { !(it.isEmpty() || it.startsWith('#')) }.toList()
         }
-
+    } catch (e: Exception) {
+        emptyList()
     }
 
     private fun parseOpenings(openingSequences: List<String>): TreeNode<String> {

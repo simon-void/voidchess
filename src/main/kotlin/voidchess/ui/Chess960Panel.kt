@@ -81,6 +81,7 @@ class Chess960Panel internal constructor(private val game: ChessGameInterface, p
     }
 
     companion object {
+        // TODO should be move into an inline class Chess960StartConfig
         private const val CLASSIC_CHESS_POSITION = 518
     }
 }

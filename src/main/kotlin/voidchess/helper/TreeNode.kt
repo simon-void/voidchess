@@ -7,6 +7,10 @@ import java.util.TreeMap
 class TreeNode<T : Comparable<T>> private constructor(private var data: T) : Comparable<TreeNode<T>> {
     private var childrenByData: SortedMap<T, TreeNode<T>> = TreeMap()
 
+    val depth: Int by lazy {
+        childrenByData.values.maxBy { treeNode -> treeNode.depth }?.let { treeNode -> treeNode.depth + 1 } ?: 0
+    }
+
     val childData: List<T>
         get() = childrenByData.values.map { node: TreeNode<T> -> node.data }
 
