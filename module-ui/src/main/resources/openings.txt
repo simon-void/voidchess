@@ -1,0 +1,144 @@
+### e4 e5 offene Spiele
+
+##spaninsch
+e2-e4,e7-e5,g1-f3,b8-c6,f1-b5,a7-a6
+
+##italienisch
+e2-e4,e7-e5,g1-f3,b8-c6,f1-c4
+
+##schottisch
+e2-e4,e7-e5,g1-f3,b8-c6,d2-d4
+
+##Berliner Verteidigung
+e2-e4,e7-e5,g1-f3,g8-f6,f3-e5,d7-d6
+
+##Wiener Spiel
+#e2-e4,e7-e5,b1-c3
+
+##Läufer-Eröffnung
+#e2-e4,e7-e5,f1-c4
+
+
+### e4 nicht e5 halboffen
+
+##Sizilianisch
+#Najdorf
+e2-e4,c7-c5,g1-f3,d7-d6,d2-d4,c5-d4,f3-d4,g8-f6,b1-c3,a7-a6
+#Drachen
+e2-e4,c7-c5,g1-f3,d7-d6,d2-d4,c5-d4,f3-d4,g8-f6,b1-c3,g7-g6
+#klassisch
+e2-e4,c7-c5,g1-f3,d7-d6,d2-d4,c5-d4,f3-d4,g8-f6,b1-c3,b8-c6
+#Scheveningen
+e2-e4,c7-c5,g1-f3,d7-d6,d2-d4,c5-d4,f3-d4,g8-f6,b1-c3,e7-e6
+#Sveshnikov Variation
+e2-e4,c7-c5,g1-f3,b8-c6,d2-d4,c5-d4,f3-d4,g8-f6,b1-c3,e7-e5
+#beschleunigter Drachen
+e2-e4,c7-c5,g1-f3,b8-c6,d2-d4,c5-d4,f3-d4,g7-g6,c2-c4
+#Kalashnikov Variation
+e2-e4,c7-c5,g1-f3,b8-c6,d2-d4,c5-d4,f3-d4,e7-e5,d4-b5,d7-d6
+#Taimanov Variation
+e2-e4,c7-c5,g1-f3,e7-e6,d2-d4,c5-d4,f3-d4,b8-c6
+#Kan (Paulsen) Variation
+e2-e4,c7-c5,g1-f3,e7-e6,d2-d4,c5-d4,f3-d4,a7-a6
+#Vier-Springer Variation
+e2-e4,c7-c5,g1-f3,e7-e6,d2-d4,c5-d4,f3-d4,g8-f6,b1-c3,b8-c6
+#Canal-Sokolsky Angriff
+e2-e4,c7-c5,g1-f3,d7-d6,f1-b5
+#geschlossener Sizilianer
+e2-e4,c7-c5,b1-c3,b8-c6,g2-g3,g7-g6,f1-g2,f8-g7,d2-d3,d7-d6
+e2-e4,c7-c5,b1-c3,e7-e6
+e2-e4,c7-c5,b1-c3,d7-d6
+
+
+##Französisch
+#Rubinstein Variation
+e2-e4,e7-e6,d2-d4,d7-d5,b1-c3,d5-e4,c3-e4
+#Winawer Variation
+e2-e4,e7-e6,d2-d4,d7-d5,b1-c3,f8-b4
+#klassische Variation
+e2-e4,e7-e6,d2-d4,d7-d5,b1-c3,g8-f6,c1-g5,d5-e4,c3-e4,f8-e7
+e2-e4,e7-e6,d2-d4,d7-d5,b1-c3,g8-f6,c1-g5,f8-e7
+#Steinitz Variation
+e2-e4,e7-e6,d2-d4,d7-d5,b1-c3,g8-f6,e4-e5,f6-d7,f2-f4
+#Tarrasch Variation
+#e2-e4,e7-e6,d2-d4,d7-d5,b1-d2
+#Advance Variation
+e2-e4,e7-e6,d2-d4,d7-d5,e4-e5,c7-c5,c2-c3,b8-c6,g1-f3,d8-b6
+e2-e4,e7-e6,d2-d4,d7-d5,e4-e5,c7-c5,c2-c3,b8-c6,g1-f3,c8-d7
+
+
+##Caro-Kahn
+#klassische Variation
+e2-e4,c7-c6,d2-d4,d7-d5,b1-c3,d5-e4,c3-e4,c8-f5
+#moderne Variation
+#e2-e4,c7-c6,d2-d4,d7-d5,b1-c3,d5-e4,c3-e4,b8-d7
+#Korchnoi Variation
+e2-e4,c7-c6,d2-d4,d7-d5,b1-c3,d5-e4,c3-e4,g8-f6,e4-f6,e7-f6
+#Advance Variation
+e2-e4,c7-c6,d2-d4,d7-d5,e4-e5,c8-f5
+#Abtauschvariante
+e2-e4,c7-c6,d2-d4,d7-d5,e4-d5,c6-d5,f1-d3
+
+
+##Alekhines Verteidigung
+#e2-e4,g8-c6
+
+##Pircs Verteidigung
+#e2-e4,g7-g6
+
+##Moderne Verteidigung
+#e2-e4,g8-c6
+
+##Skandinavische Verteidigung
+e2-e4,d7-d5,e4-d5,d8-d5,b1-c3,d5-a5,d2-d4,c7-c6,g1-f3
+e2-e4,d7-d5,e4-d5,d8-d5,b1-c3,d5-a5,g1-f3,c7-c6,d2-d4
+#Patzer Variante
+e2-e4,d7-d5,e4-d5,d8-d5,b1-c3,d5-e5
+#Alternativen zu Sc3
+e2-e4,d7-d5,e4-d5,d8-d5,d2-d4,b8-c6
+e2-e4,d7-d5,e4-d5,d8-d5,d1-f3,d5-a5,f3-c3,b8-c6
+#Marshall Gambit
+#e2-e4,d7-d5,e4-d5,g8-f6
+
+
+##Nimzowitsch Verteidigung
+#e2-e4,b8-c6
+
+
+### d4 d5 geschlossene Spiele
+
+##Queens Gambit
+#d2-d4,d7-d5,c2-c4
+
+##Colle System
+d2-d4,d7-d5,g1-f3,g8-f6,e2-e3
+
+##London System
+d2-d4,d7-d5,g1-f3,g8-f6,c1-f4
+
+##Torre Angriff
+d2-d4,d7-d5,g1-f3,g8-f6,c1-g5
+
+
+### d4 Sf6 Indische Verteidigung
+
+##Nimzo-indisch
+d2-d4,g8-f6,c2-c4,e7-e6,b1-c3,f8-b4
+
+##Königs-indisch
+d2-d4,g8-f6,c2-c4,g7-g6,b1-c3,f8-g7
+
+##Grünfeld-Verteidigung
+d2-d4,g8-f6,c2-c4,g7-g6,b1-c3,d7-d5
+
+##Königinen-indisch
+d2-d4,g8-f6,c2-c4,e7-e6,g1-f3,b7-b6
+
+##Modernes Benoni
+d2-d4,g8-f6,c2-c4,c7-c5,d4-d5,e7-e6
+
+##Budapest-Gambit
+#d2-d4,g8-f6,c2-c4,e7-e5
+
+##altindische Verteidigung
+#d2-d4,g8-f6,c2-c4,d7-d6

@@ -11,10 +11,9 @@
 /out
 /target
 /build
+**/build
 
-*.iml
-*.log
+**/*.iml
+**/*.log
 dependency-reduced-pom.xml
-
-
 
