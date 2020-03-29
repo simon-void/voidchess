@@ -1,6 +1,6 @@
 package voidchess.ui
 
-import voidchess.board.move.Position
+import voidchess.common.board.move.Position
 import voidchess.player.human.HumanPlayerInterface
 import java.awt.Point
 import java.awt.event.MouseEvent

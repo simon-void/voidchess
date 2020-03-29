@@ -1,7 +1,7 @@
 package voidchess.ui
 
 import voidchess.player.ComputerPlayer
-import voidchess.player.ki.Option
+import voidchess.common.player.ki.Option
 import java.awt.Color
 import java.awt.FlowLayout
 import javax.swing.JComboBox

@@ -5,13 +5,11 @@ import org.testng.annotations.Test
 import voidchess.board.ChessGame
 import voidchess.board.ChessBoard
 import voidchess.board.getFigure
-import voidchess.board.move.Move
-import voidchess.board.move.Position
+import voidchess.common.board.move.Move
+import voidchess.common.board.move.Position
 import voidchess.getPossibleMovesFrom
-import voidchess.initChessBoard
 import voidchess.initSimpleChessBoard
-import voidchess.toTargetPosAsStringSet
-import java.util.*
+import voidchess.isMovable
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -29,7 +27,10 @@ class KingTest {
             arrayOf(initSimpleChessBoard(518), "e1", false),
             arrayOf(initSimpleChessBoard(518).apply { clearFigure(Position.byCode("f2")) }, "e1", true),
             arrayOf(initSimpleChessBoard(613), "f1", true),
-            arrayOf(initSimpleChessBoard(613).apply { setFigure(Position.byCode("h3"), Knight(false, Position.byCode("h3"))) }, "f1", false),
+            arrayOf(initSimpleChessBoard(613).apply { setFigure(
+                Position.byCode("h3"),
+                Knight(false, Position.byCode("h3"))
+            ) }, "f1", false),
             arrayOf(initSimpleChessBoard(380), "d1", true)
     )
 
@@ -140,81 +141,6 @@ class KingTest {
             arrayOf("black 0 Bishop-black-h8 Rook-black-g8-0 King-black-f8-0 Bishop-black-e8 King-white-e1-0", "f8", "g8", true)
     )
 
-    @Test(dataProvider = "getGetPossibleMovesData")
-    fun testGetPossibleMoves(gameDes: String, posCode: String, expectedPossibleMoveCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
-        val possibleMoves = game.getPossibleMovesFrom(posCode)
-        val actualPossibleMoveCodes = possibleMoves.asSequence().map { move-> move.to.toString() }.toSet()
-        assertEquals(expectedPossibleMoveCodes, actualPossibleMoveCodes, "expected# ${expectedPossibleMoveCodes.size}, actual# ${actualPossibleMoveCodes.size} - king can move to")
-    }
-
-    @DataProvider
-    fun getGetPossibleMovesData(): Array<Array<Any>> = arrayOf(
-            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0", "e1", setOf("a1", "d1", "d2", "e2", "f2", "f1", "h1")),
-            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e4 King-black-e8-0", "e1", setOf("a1", "d1", "d2", "e2", "f2", "f1", "h1")),
-            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e3 King-black-e8-0", "e1", setOf("d1", "e2", "f1")),
-            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Bishop-black-e2 King-black-e8-0", "e1", setOf("d2", "e2", "f2")),
-            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e3 King-black-e8-0", "e1", setOf("d2", "e2", "f2")),
-            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Knight-black-e2 King-black-e8-0", "e1", setOf("d1", "d2", "e2", "f2", "f1")),
-            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Rook-black-f2-2 Pawn-black-e3-false King-black-e8-0", "e1", setOf("d1", "a1")),
-            arrayOf("white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 Rook-black-d2-2 Pawn-black-e3-false King-black-e8-0", "e1", setOf("f1", "h1")),
-            arrayOf("white 0 Rook-white-a1-0 King-white-b3-8 Pawn-black-c5-false King-black-d5-8 Knight-black-e1", "b3", setOf("c3", "b2", "a2", "a3", "a4")),
-            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4", "d3", setOf("c4", "c3", "c2", "e3", "e4")),
-            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-b5", "d3", setOf("c3", "c2", "e3", "e4")),
-            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4 Pawn-black-b5-false", "d3", setOf("c3", "c2", "e3", "e4")),
-            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4 Pawn-black-b5-false Knight-black-d1", "d3", setOf("c2", "e4")),
-            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4 Pawn-black-b5-false Knight-black-d1 Knight-black-e3", "d3", setOf("e4")),
-            arrayOf("white 0 King-black-e8-0 Queen-black-d8 King-white-d3-8 Bishop-black-c4 Pawn-black-b5-false Knight-black-d1 Pawn-white-c2-false", "d3", setOf("e4"))
-    )
-
-    @Test(dataProvider = "getPossibleMovesAfterInitialMovesData")
-    fun testGetPossibleMovesAfterInitialMoves(chess960: Int, moveCodes: List<String>, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game1 = initChessBoard(chess960)
-        for(moveCode in moveCodes) game1.move(Move.byCode(moveCode))
-        val moveFrom1 = game1.getPossibleMovesFrom(posCode)
-        val actualMoveToCodes = moveFrom1.toTargetPosAsStringSet()
-        assertEquals(expectedMoveToCodes, actualMoveToCodes, "king can move to")
-    }
-
-    @DataProvider
-    fun getPossibleMovesAfterInitialMovesData(): Array<Array<Any>> = arrayOf(
-            arrayOf(621, listOf("f2-f3", "f7-f6", "g1-f2", "g8-f7"), "e1", setOf("f1")),
-            arrayOf(621, listOf("f2-f3", "f7-f6", "g1-f2", "g8-f7", "e1-f1"), "e8", setOf("f8")),
-            arrayOf(621, listOf("c2-c3", "f7-f6", "d1-c2", "g8-c4", "c2-h7"), "e8", setOf("f7")),
-            arrayOf(621, listOf<String>(), "e1", setOf<String>())
-    )
-
-    @Test(dataProvider = "getGetCriticalMovesData")
-    fun testGetPossibleIrreversibleMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
-        val king = game.getFigure(Position.byCode(posCode))
-        val results = TreeSet<Move>()
-        king.getCriticalMoves(game, results)
-        val actualMoveToCodes = results.toTargetPosAsStringSet()
-        assertEquals(expectedMoveToCodes, actualMoveToCodes, "king can move to irreversibly")
-    }
-
-    @DataProvider
-    fun getGetCriticalMovesData(): Array<Array<Any>> = arrayOf(
-            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Rook-white-a1-0 Rook-white-h1-0", "e1", setOf("a1", "h1")),
-            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Rook-white-a1-0 Rook-white-h1-0 Knight-black-f2", "e1", setOf("f2", "h1"))
-    )
-
-    @Test(dataProvider = "getGetPossibleTakingMovesData")
-    fun testGetPossibleTakingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
-        val king = game.getFigure(Position.byCode(posCode))
-        val results = LinkedList<Move>()
-        king.getPossibleTakingMoves(game, results)
-        val actualMoveToCodes = results.toTargetPosAsStringSet()
-        assertEquals(expectedMoveToCodes, actualMoveToCodes, "king can take on")
-    }
-
-    @DataProvider
-    fun getGetPossibleTakingMovesData(): Array<Array<Any>> = arrayOf(
-            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Rook-white-a1-0 Rook-white-h1-0 Knight-black-f2", "e1", setOf("f2"))
-    )
-
     @Test
     fun testDidCastling() {
         val des = "white 0 Rook-white-a1-0 King-white-e1-0 " + "King-black-e8-0"
@@ -239,6 +165,8 @@ class KingTest {
         }
 
         assertTrue(game.isMovable(Position.byCode("e1"), Position.byCode("h1"), true), "isMovable: king can move to h1 (short castling)")
+        val king = game.getFigure(Position.byCode("e1")) as King
+        assertTrue(king.isMovable("f1", game))
         val whiteKingMoves = game.getPossibleMovesFrom("e1")
         assertEquals(whiteKingMoves.size,2, "king can go to f1 and h1 (short castling), therefore getPossibleMoves#")
         assertTrue(whiteKingMoves.contains(Move.byCode("e1-h1")), "possible move e1-h1")

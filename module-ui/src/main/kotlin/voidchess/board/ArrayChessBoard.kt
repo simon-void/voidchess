@@ -3,12 +3,12 @@ package voidchess.board
 import voidchess.board.check.AttackLines
 import voidchess.board.check.CheckSearch
 import voidchess.board.check.checkAttackLines
-import voidchess.board.move.Move
-import voidchess.board.move.Position
+import voidchess.common.board.move.Move
+import voidchess.common.board.move.Position
 import voidchess.figures.Figure
 import voidchess.figures.FigureFactory
 import voidchess.figures.King
-import voidchess.helper.splitAndTrim
+import voidchess.common.helper.splitAndTrim
 
 class ArrayChessBoard constructor() : ChessBoard {
     private val game: Array<Figure?> = arrayOfNulls(64)

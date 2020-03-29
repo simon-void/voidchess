@@ -1,18 +1,20 @@
 package voidchess.board.check
 
-import voidchess.board.move.Direction
-import voidchess.board.move.Position
+import voidchess.common.board.move.Direction
+import voidchess.common.board.move.Position
 import voidchess.board.move.PositionProgression
 
 /**
  * the iterator contains all Positions that can be used to break the check (starting with the position of the attacker)
  */
 sealed class CheckLine(
-        val attackerPos: Position,
-        val kingPos: Position,
-        val posProgression: PositionProgression
+    val attackerPos: Position,
+    val kingPos: Position,
+    val posProgression: PositionProgression
 ) {
-    constructor(attackerPos: Position, kingPos: Position): this(attackerPos, kingPos, PositionProgression(attackerPos, 1, Direction.UP))
+    constructor(attackerPos: Position, kingPos: Position): this(attackerPos, kingPos,
+        PositionProgression(attackerPos, 1, Direction.UP)
+    )
 
     abstract fun keepsKingInCheckIfHeMovesTo(direction: Direction): Boolean
     abstract val isStraightCheck: Boolean
@@ -20,8 +22,8 @@ sealed class CheckLine(
 }
 
 class KnightCheck(
-        knightPos: Position,
-        kingPos: Position
+    knightPos: Position,
+    kingPos: Position
 ): CheckLine(knightPos, kingPos) {
     override fun keepsKingInCheckIfHeMovesTo(direction: Direction) = false
     override val isStraightCheck = false
@@ -29,8 +31,8 @@ class KnightCheck(
 }
 
 class PawnCheck(
-        pawnPos: Position,
-        kingPos: Position
+    pawnPos: Position,
+    kingPos: Position
 ): CheckLine(pawnPos, kingPos) {
     override fun keepsKingInCheckIfHeMovesTo(direction: Direction) = false
     override val isStraightCheck = false
@@ -38,10 +40,16 @@ class PawnCheck(
 }
 
 class ActualCheckLine(
-        kingPos: Position,
-        attackerPos: Position,
-        private val kingToAttackerDirection: Direction
-): CheckLine(attackerPos, kingPos, PositionProgression(attackerPos, attackerPos.distanceTo(kingPos), kingToAttackerDirection.reverse)) {
+    kingPos: Position,
+    attackerPos: Position,
+    private val kingToAttackerDirection: Direction
+): CheckLine(attackerPos, kingPos,
+    PositionProgression(
+        attackerPos,
+        attackerPos.distanceTo(kingPos),
+        kingToAttackerDirection.reverse
+    )
+) {
 
     init {
         assert(kingPos.getDirectionTo(attackerPos)==kingToAttackerDirection) {"actualDir: $kingToAttackerDirection, expectedDir: ${kingPos.getDirectionTo(attackerPos)}"}

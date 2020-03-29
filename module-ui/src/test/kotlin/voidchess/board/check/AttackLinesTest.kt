@@ -1,10 +1,11 @@
 package voidchess.board.check
 
 import org.testng.annotations.Test
-import voidchess.board.move.Position
+import voidchess.common.board.move.Position
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
+import voidchess.board.check.checkAttackLines
 import voidchess.board.move.PositionProgression
 import voidchess.initSimpleChessBoard
 import voidchess.toList
@@ -65,7 +66,7 @@ class AttackLinesTest {
         assertEquals(attackLines.boundLineByBoundFigurePos.size, 1, "#boundLines")
 
         fun assertIteratorOrder(positionProgression: PositionProgression, vararg posCodes: String) {
-            assertEquals(positionProgression.toList(), posCodes.map {Position.byCode(it)}, "ordered")
+            assertEquals(positionProgression.toList(), posCodes.map { Position.byCode(it)}, "ordered")
         }
 
         // the attackIterator should start at the attacker

@@ -1,25 +1,28 @@
 package voidchess.board
 
 import org.testng.annotations.BeforeMethod
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.ChessGameSupervisorMock
-import voidchess.board.move.Move
+import voidchess.board.ChessGame
+import voidchess.board.ChessGameSupervisorDummy
+import voidchess.common.board.move.Move
 import voidchess.board.move.MoveResult
 import voidchess.board.move.PawnPromotion
-import voidchess.board.move.Position
+import voidchess.common.board.move.Position
+import voidchess.board.withMove
 import voidchess.figures.Bishop
 import voidchess.figures.King
-import voidchess.moves
 import kotlin.test.*
 
 
 class ChessGameTest {
-    private var game: ChessGame = ChessGame(ChessGameSupervisorDummy)
+    private var game: ChessGame =
+        ChessGame(ChessGameSupervisorDummy)
 
     @BeforeMethod
     fun setUp() {
-        game = ChessGame(ChessGameSupervisorDummy)
+        game =
+            ChessGame(ChessGameSupervisorDummy)
     }
 
     @Test
@@ -62,40 +65,6 @@ class ChessGameTest {
     fun testEquals() {
         val copy = ChessGame(game.toString())
         assertTrue(game.equalsOther(copy))
-    }
-
-    @Test
-    fun testCopy() {
-        val copies = game.copyGame(4)
-
-        for (copy in copies) {
-            assertEquals(copy.toString(), game.toString(), "copy and game")
-        }
-    }
-
-    @Test(dependsOnMethods = ["testIsDrawBecauseOfThreeTimesSamePosition", "testCopy"])
-    fun testDeepCopy() {
-        val whiteMove = Move.byCode("g1-f3")
-        val whiteReturn = Move.byCode("f3-g1")
-        val blackMove = Move.byCode("b8-c6")
-        val blackReturn = Move.byCode("c6-b8")
-
-        game.move(whiteMove)
-        game.move(blackMove)
-        game.move(whiteReturn)
-        game.move(blackReturn)
-        game.move(whiteMove)
-        game.move(blackMove)
-        game.move(whiteReturn)
-        game.move(blackReturn)
-        game.move(whiteMove)
-        game.move(blackMove)
-        game.move(whiteReturn)
-
-        val copy = game.copyGame(3)[1]
-        val gameState = copy.move(blackReturn)
-
-        assertEquals(gameState, MoveResult.THREE_TIMES_SAME_POSITION, "game state")
     }
 
     @Test
@@ -266,10 +235,11 @@ class ChessGameTest {
 
     @Test
     fun testWithMove() {
-        val game = ChessGame("white 0 King-white-e6-6 Rook-white-h1-0 King-black-e8-0")
+        val game =
+            ChessGame("white 0 King-white-e6-6 Rook-white-h1-0 King-black-e8-0")
         val desc = game.toString()
 
-        game.withMove(Move.byCode("h1-h8")) {gameAfterMove ->
+        game.withMove(Move.byCode("h1-h8")) { gameAfterMove ->
             assertNotEquals(desc, gameAfterMove.toString())
         }
         assertEquals(desc, game.toString())
@@ -501,67 +471,6 @@ class ChessGameTest {
         assertEquals(4, game.countFigures())
         game.undo()
         assertEquals(5, game.countFigures())
-    }
-
-    @Test(dataProvider = "getTestGetPossibleMovesData")
-    fun testGetPossibleMoves(game: ChessGame, moveCodes: List<String>, expectedPossibleMovesCount: Int) {
-        val moves = moveCodes.map { Move.byCode(it) }
-        for (move in moves) {
-            val from = move.from
-            val to = move.to
-            val isWhiteTurn = game.isWhiteTurn
-            val isMovable = game.isMovable(from, to, isWhiteTurn)
-            assertTrue(isMovable, "$move should be valid")
-            game.move(move)
-        }
-        val possibleMoves = game.getAllMoves()
-        assertEquals(expectedPossibleMovesCount, possibleMoves.size, "possible move count")
-    }
-
-
-    @DataProvider
-    fun getTestGetPossibleMovesData(): Array<Array<Any>> = arrayOf(
-            arrayOf(ChessGame(518), listOf("g1-f3", "b8-c6", "f3-g1", "c6-b4", "g1-f3", "b4-c2"), 1),
-            arrayOf(ChessGame("black 0 King-white-g1-2 Bishop-black-b6 King-black-e8-0"), listOf("b6-c5"), 4),
-            arrayOf(ChessGame("black 0 Rook-white-a1-0 Rook-white-f1-1 King-white-g1-1-true "
-                    + "Pawn-white-a2-false Pawn-white-b2-false Bishop-white-d2 Bishop-white-e2 "
-                    + "Pawn-white-f2-false Pawn-white-h2-false Queen-white-b3 Pawn-white-g3-false "
-                    + "Pawn-white-e4-false Pawn-black-b5-false Pawn-black-a6-false Bishop-black-b6 "
-                    + "Pawn-black-h6-false Bishop-black-b7 Pawn-black-f7-false Pawn-black-g7-false "
-                    + "Rook-black-c8-1 Queen-black-d8 Rook-black-f8-1 King-black-g8-1"), listOf("b6-f2"), 4),
-            arrayOf(ChessGame("black 0 Pawn-white-b2-false King-white-d3-2 Rook-black-h4-1 Rook-black-a8-0 King-black-e8-0"), listOf("a8-a3"), 5),
-            arrayOf(ChessGame("black 0 King-white-d3-2 Knight-black-e5 Bishop-black-g8 King-black-e8-0"), listOf("g8-h7"), 5),
-            arrayOf(ChessGame("white 2 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 King-white-e1-0 " +
-                    "Queen-white-d1 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 Pawn-white-a2-false " +
-                    "Pawn-white-b2-false Pawn-white-d2-false Pawn-white-e2-false " +
-                    "Pawn-white-f2-false Pawn-white-g2-false Pawn-white-h2-false " +
-                    "Pawn-white-c3-false Pawn-black-d6-false Pawn-black-a7-false " +
-                    "Pawn-black-b7-false Pawn-black-c7-false Pawn-black-e7-false Pawn-black-f7-false " +
-                    "Pawn-black-g7-false Pawn-black-h7-false Rook-black-a8-0 Knight-black-b8 " +
-                    "Bishop-black-c8 Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0"), listOf("d1-a4"), 6),
-            arrayOf(ChessGame("black 0 King-white-e1-0 Rook-white-d2-2 Queen-black-e2 " + "Bishop-black-b4 King-black-e8-0"), listOf("b4-c3"), 1),
-            arrayOf(ChessGame("black 0 King-white-g1-2 Pawn-black-c4-false Pawn-white-d4-true " + "Bishop-black-b6 King-black-e8-0"), listOf("c4-d3"), 4),
-            arrayOf(ChessGame("black 0 King-white-h1-3 Pawn-white-c7-false "
-                    + "Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false "
-                    + "Knight-black-a7 King-black-b7-3-false"), listOf("b7-c6", "c7-c8"), 1),
-            arrayOf(ChessGame("black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0"), listOf<String>(), 12),
-            arrayOf(ChessGame("white 0 King-white-g6-6 Pawn-white-g7-false King-black-e8-0 Knight-black-h8"), listOf<String>(), 7),
-            arrayOf(ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Rook-black-h1-1 Rook-black-a2-1 Knight-black-d3 King-black-d8-0"), listOf<String>(), 12),
-            arrayOf(ChessGame(518), listOf("e2-e4", "d7-d5", "f1-b5", "c7-c6", "b5-c6", "b8-d7", "c6-b5"), 19),
-            arrayOf(ChessGame(621), listOf("g2-g3", "f7-f6", "c2-c3", "g8-f7", "d1-c2", "e8-f8", "c2-h7"), 1),
-            arrayOf(ChessGame("white 0 Rook-black-e1-8 Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 "
-                    + "Knight-white-g4 Queen-black-e8 King-black-g7-3"), listOf("f2-e1", "e2-f1"), 2),
-            arrayOf(ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Bishop-black-d3 King-black-d8-0"), listOf<String>(), 22)
-    )
-
-    @Test
-    fun testGetPossibleMovesAfterIndirectChessAfterEnpassent() {
-        game.moves(listOf("e2-e4", "d7-d5", "e4-e5", "e8-d7", "d1-g4", "f7-f5", "e5-f6")) //en-passant creates indirect chess path
-        assertTrue(game.getLastMove()!!.isEnPassant)
-        val possibleMoves = game.getAllMoves()
-        val actualMoveCodes = possibleMoves.asSequence().map { move -> move.toString() }.toSet()
-        val expectedMoveCodes = setOf("d7-e8", "d7-c6", "d7-d6", "e7-e6")
-        assertEquals(expectedMoveCodes, actualMoveCodes, "expected#: ${expectedMoveCodes.size}, actual#: ${possibleMoves.size}")
     }
 
     @Test

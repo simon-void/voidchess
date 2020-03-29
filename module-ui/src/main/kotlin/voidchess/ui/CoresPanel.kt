@@ -1,7 +1,7 @@
 package voidchess.ui
 
 import voidchess.player.ComputerPlayer
-import voidchess.player.ki.Option
+import voidchess.common.player.ki.Option
 
 import javax.swing.*
 import java.awt.*

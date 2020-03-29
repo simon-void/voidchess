@@ -2,7 +2,13 @@ package voidchess.board
 
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import voidchess.board.move.Position
+import voidchess.board.ArrayChessBoard
+import voidchess.board.getFigure
+import voidchess.common.board.move.Position
+import voidchess.figures.King
+import voidchess.figures.Knight
+import voidchess.figures.Queen
+import voidchess.figures.Rook
 import kotlin.test.*
 
 
@@ -20,11 +26,11 @@ class SimpleBoardTest {
     fun testInit() {
         val board = ArrayChessBoard()
         var figure = board.getFigure(Position.byCode("a1"))
-        assertTrue(figure.isRook())
+        assertTrue(figure is Rook)
         assertTrue(figure.isWhite)
 
         figure = board.getFigure(Position.byCode("e8"))
-        assertTrue(figure.isKing())
+        assertTrue(figure is King)
         assertFalse(figure.isWhite)
 
         val nullFigure = board.getFigureOrNull(Position.byCode("e3"))
@@ -59,7 +65,7 @@ class SimpleBoardTest {
         val board = ArrayChessBoard()
         val des = "  white   0   Queen-white-c1     King-white-e1-0    King-black-e8-0     "
         board.init(des)
-        assertTrue(board.getFigure(Position.byCode("c1")).isQueen())
+        assertTrue(actual = board.getFigure(Position.byCode("c1")) is Queen)
     }
 
     @Test
@@ -75,7 +81,7 @@ class SimpleBoardTest {
         val figure = board.getFigure(Position.byCode("b1"))
         val to = Position.byCode("e4")
         board.setFigure(to, figure)
-        assertTrue(board.getFigure(to).isKnight())
+        assertTrue(board.getFigure(to) is Knight)
     }
 
     @Test

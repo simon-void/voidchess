@@ -3,17 +3,17 @@ package voidchess.ui
 import voidchess.board.ChessGameInterface
 import voidchess.board.ChessGameSupervisor
 import voidchess.board.move.MoveResult
-import voidchess.board.move.Move
+import voidchess.common.board.move.Move
 import voidchess.board.move.PawnPromotion
-import voidchess.board.move.Position
+import voidchess.common.board.move.Position
 import voidchess.player.PlayerInterface
 
 
 class Table constructor(
-        private val game: ChessGameInterface,
-        private val ui: ChessboardComponent,
-        private val parent: ChessPanel,
-        private val panel960: Chess960Panel
+    private val game: ChessGameInterface,
+    private val ui: ChessboardComponent,
+    private val parent: ChessPanel,
+    private val panel960: Chess960Panel
 ) : ChessGameSupervisor, TableInterface {
 
     private lateinit var whitePlayer: PlayerInterface

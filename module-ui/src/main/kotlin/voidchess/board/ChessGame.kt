@@ -1,18 +1,32 @@
 package voidchess.board
 
-import voidchess.board.move.*
-import voidchess.figures.*
+import voidchess.board.move.ExtendedMove
+import voidchess.board.move.MoveResult
+import voidchess.board.move.PawnPromotion
+import voidchess.common.board.StartConfig
+import voidchess.common.board.move.Move
+import voidchess.common.board.move.Position
+import voidchess.engine.board.move.*
+import voidchess.engine.figures.*
+import voidchess.figures.Bishop
+import voidchess.figures.Figure
+import voidchess.figures.FigureFactory
+import voidchess.figures.King
+import voidchess.figures.Knight
+import voidchess.figures.Pawn
+import voidchess.figures.Queen
+import voidchess.figures.Rook
 import java.util.*
 import kotlin.math.abs
 
 
 class ChessGame private constructor(
-        private val board: ChessBoard,
-        override val startConfig: StartConfig,
-        private val mementoStack: LinkedList<Memento>,
-        private val extendedMoveStack: LinkedList<ExtendedMove>,
-        private val numberStack: NumberStack,
-        private var supervisor: ChessGameSupervisor
+    private val board: ChessBoard,
+    override val startConfig: StartConfig,
+    private val mementoStack: LinkedList<Memento>,
+    private val extendedMoveStack: LinkedList<ExtendedMove>,
+    private val numberStack: NumberStack,
+    private var supervisor: ChessGameSupervisor
 ): ChessGameInterface, BasicChessBoard by board {
     private val figureFactory = FigureFactory
     private var numberOfMovesWithoutHit: Int = 0
@@ -59,16 +73,17 @@ class ChessGame private constructor(
             var numberOfBlackKnights = 0
 
             board.forAllFigures { figure ->
-                if (figure.isPawn()
-                        || figure.isRook()
-                        || figure.isQueen()) {
+                if (figure is Pawn
+                    || figure is Rook
+                    || figure is Queen
+                ) {
                     return false
-                } else if (figure.isBishop()) {
+                } else if (figure is Bishop) {
                     if (figure.isWhite)
                         numberOfWhiteBishops++
                     else
                         numberOfBlackBishops++
-                } else if (figure.isKnight()) {
+                } else if (figure is Knight) {
                     if (figure.isWhite)
                         numberOfWhiteKnights++
                     else
@@ -95,31 +110,14 @@ class ChessGame private constructor(
      * the normal constructor
      */
     constructor(supervisor: ChessGameSupervisor): this(
-            ArrayChessBoard(),
-            StartConfig.ClassicConfig,
+        ArrayChessBoard(),
+        StartConfig.ClassicConfig,
             LinkedList<Memento>(),
             LinkedList<ExtendedMove>(),
-            NumberStack(),
+        NumberStack(),
             supervisor
     ) {
         initGame()
-    }
-
-    /**
-     * copy-constructor
-     */
-    private constructor(other: ChessGame, desc: String): this(
-            ArrayChessBoard(desc),
-            other.startConfig,
-            other.mementoStack.shallowCopy(),
-            other.extendedMoveStack.shallowCopy(),
-            NumberStack(other.numberStack),
-            ChessGameSupervisorDummy
-    ) {
-        hasHitFigure = other.hasHitFigure
-        whiteTurn = other.whiteTurn
-        numberOfMovesWithoutHit = other.numberOfMovesWithoutHit
-        figureCount = other.figureCount
     }
 
     /**
@@ -130,23 +128,18 @@ class ChessGame private constructor(
     /**
      * for unit-tests
      */
-    @JvmOverloads constructor(initialPosition: Int = 518, vararg moves: String) : this(ChessGameSupervisorDummy, initialPosition) {
-        for(move in moves) {
-            val result = move(Move.byCode(move))
-            check(result == MoveResult.NO_END) { "board is not supposed to end via these moves but did. end by $result" }
-        }
-    }
+    @JvmOverloads constructor(initialPosition: Int = 518) : this(ChessGameSupervisorDummy, initialPosition)
 
     /**
      * for unit-tests
      */
-    private constructor(supervisor: ChessGameSupervisor, game_description: String): this(
-            ArrayChessBoard(game_description),
-            StartConfig.ManualConfig,
-            LinkedList<Memento>(),
-            LinkedList<ExtendedMove>(),
-            NumberStack(),
-            supervisor
+    private constructor(supervisor: ChessGameSupervisor, game_description: String) : this(
+        ArrayChessBoard(game_description),
+        StartConfig.ManualConfig,
+        LinkedList<Memento>(),
+        LinkedList<ExtendedMove>(),
+        NumberStack(),
+        supervisor
     ) {
         val st = StringTokenizer(game_description, " ", false)
         whiteTurn = st.nextToken() == "white"
@@ -166,14 +159,16 @@ class ChessGame private constructor(
     /**
      * for unit-tests
      */
-    private constructor(supervisor: ChessGameSupervisor,
-                        initialPosition: Int): this(
-            ArrayChessBoard().apply { init(initialPosition) },
-            StartConfig.Chess960Config(initialPosition),
-            LinkedList<Memento>(),
-            LinkedList<ExtendedMove>(),
-            NumberStack(),
-            supervisor
+    private constructor(
+        supervisor: ChessGameSupervisor,
+        initialPosition: Int
+    ) : this(
+        ArrayChessBoard().apply { init(initialPosition) },
+        StartConfig.Chess960Config(initialPosition),
+        LinkedList<Memento>(),
+        LinkedList<ExtendedMove>(),
+        NumberStack(),
+        supervisor
     ) {
         memorizeGame()
     }
@@ -187,8 +182,6 @@ class ChessGame private constructor(
         supervisor = ChessGameSupervisorDummy
         return normalSupervisor
     }
-
-    fun getLastMove() = if (extendedMoveStack.isEmpty()) null else extendedMoveStack.last
 
     private fun setFigure(pos: Position, figure: Figure?) {
         if (figure == null) {
@@ -272,9 +265,10 @@ class ChessGame private constructor(
     }
 
     private fun handleEnpasent(move: Move): Pawn? {
-        if (board.getFigure(move.from).isPawn()
-                && move.from.column != move.to.column
-                && isFreeArea(move.to)) {
+        if (board.getFigure(move.from) is Pawn
+            && move.from.column != move.to.column
+            && isFreeArea(move.to)
+        ) {
             val pawnToBeHit = Position[move.from.row, move.to.column]
             val pawn = getFigureOrNull(pawnToBeHit) as Pawn?
             setFigure(pawnToBeHit, null)
@@ -287,12 +281,12 @@ class ChessGame private constructor(
 
     private fun extractCastlingRook(move: Move): Rook? {
         val movingFigure = board.getFigure(move.from)
-        if (!movingFigure.isKing()) return null
+        if (movingFigure !is King) return null
 
         val castlingRook = getFigureOrNull(move.to)
         if (castlingRook != null && castlingRook.isWhite == movingFigure.isWhite) {
             setFigure(move.to, null)    // the rook is taken off the board temporarily
-            (movingFigure as King).performCastling()
+            movingFigure.performCastling()
             return castlingRook as Rook?
         }
         return null
@@ -311,7 +305,7 @@ class ChessGame private constructor(
     }
 
     private fun handlePawnTransformation(move: Move): Boolean {
-        if (board.getFigure(move.to).isPawn()) {
+        if (board.getFigure(move.to) is Pawn) {
             if (move.to.row == 0 || move.to.row == 7) {
                 val figure = supervisor.askForPawnChange(move.to)
                 val isWhite = move.to.row == 7
@@ -389,8 +383,8 @@ class ChessGame private constructor(
 
         val newLatestMove = extendedMoveStack.last
         val figure = board.getFigure(newLatestMove.move.to)
-        if (figure.isPawn() && abs(newLatestMove.move.from.row - newLatestMove.move.to.row) == 2) {
-            (figure as Pawn).setCanBeHitByEnpasent()
+        if (figure is Pawn && abs(newLatestMove.move.from.row - newLatestMove.move.to.row) == 2) {
+            figure.setCanBeHitByEnpasent()
         }
     }
 
@@ -432,66 +426,11 @@ class ChessGame private constructor(
 
     private fun noMovesLeft(caseWhite: Boolean): Boolean {
         board.forAllFiguresOfColor(caseWhite) { figure ->
-            if (!figure.isKing() && figure.isSelectable(board)) {
+            if (figure !is King && figure.isSelectable(board)) {
                 return false
             }
         }
         return !board.getKing(caseWhite).isSelectable(board)
-    }
-
-    override fun getAllMoves(): List<Move> {
-        val possibleMoves = LinkedList<Move>()
-        board.forAllFiguresOfColor(whiteTurn) { figure ->
-            figure.getPossibleMoves(board, possibleMoves)
-        }
-        return possibleMoves
-    }
-
-    override fun getCriticalMoves(): Collection<Move> {
-        val criticalMoves = TreeSet<Move>()
-        board.forAllFiguresOfColor(whiteTurn) { figure ->
-            figure.getCriticalMoves(board, criticalMoves)
-        }
-        return criticalMoves
-    }
-
-    override fun getTakingMoves(): List<Move> {
-        val takingMoves = LinkedList<Move>()
-        board.forAllFiguresOfColor(whiteTurn) { figure ->
-            figure.getPossibleTakingMoves(board, takingMoves)
-        }
-        return takingMoves
-    }
-
-
-    override fun countReachableMoves(): Pair<Int, Int> {
-        var whiteCount = 0
-        var blackCount = 0
-
-        board.forAllFigures { figure->
-            val count = figure.countReachableMoves(board)
-            if(figure.isWhite) {
-                whiteCount += count
-            }else{
-                blackCount += count
-            }
-        }
-
-        return Pair(whiteCount, blackCount)
-    }
-
-    override fun copyGame(neededInstances: Int): List<ChessGameInterface> {
-        val gameInstances = ArrayList<ChessGameInterface>(neededInstances)
-        gameInstances.add(this)
-
-        if (neededInstances > 1) {
-            val gameDes = toString()
-            for (i in 1 until neededInstances) {
-                val copy = ChessGame(this, gameDes)
-                gameInstances.add(copy)
-            }
-        }
-        return gameInstances
     }
 
     private fun memorizeGame() = mementoStack.addLast(Memento(board, whiteTurn))
@@ -509,13 +448,14 @@ class ChessGame private constructor(
             castlingRookOrEnPassantPawn = castlingRook
         }
         val extendedMove = ExtendedMove(
-                move,
-                hitFigure,
-                castlingRookOrEnPassantPawn,
-                whiteMove,
-                isCastling,
-                hitsEnPassant,
-                pawnTransformed)
+            move,
+            hitFigure,
+            castlingRookOrEnPassantPawn,
+            whiteMove,
+            isCastling,
+            hitsEnPassant,
+            pawnTransformed
+        )
         extendedMoveStack.addLast(extendedMove)
     }
 
@@ -574,19 +514,11 @@ private class Memento constructor(game: BasicChessBoard, private val isWhite: Bo
 }
 
 private class NumberStack {
-    private var numberStack: IntArray
+    private var numberStack: IntArray = IntArray(50)
     private var index: Int = 0
 
-    internal constructor() {
-        numberStack = IntArray(50)
+    init {
         init()
-    }
-
-    //copy-Constructor
-    internal constructor(other: NumberStack) {
-        numberStack = IntArray(other.index + 10)
-        System.arraycopy(other.numberStack, 0, numberStack, 0, numberStack.size)
-        index = other.index
     }
 
     internal fun init() {
@@ -659,6 +591,3 @@ private fun LinkedList<Memento>.countOccurrencesOfLastMemento(): Int {
 
     return count
 }
-
-@Suppress("UNCHECKED_CAST")
-fun <T> LinkedList<T>.shallowCopy() = clone() as LinkedList<T>

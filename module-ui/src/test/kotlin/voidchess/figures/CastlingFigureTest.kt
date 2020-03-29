@@ -1,8 +1,9 @@
 package voidchess.figures
 
 import org.testng.annotations.Test
-import voidchess.board.move.Move
-import voidchess.board.move.Position
+import voidchess.common.board.move.Move
+import voidchess.common.board.move.Position
+import voidchess.figures.King
 import kotlin.test.assertEquals
 
 class CastlingFigureTest {

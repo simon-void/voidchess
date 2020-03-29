@@ -1,7 +1,7 @@
 package voidchess.board
 
 import voidchess.board.move.PawnPromotion
-import voidchess.board.move.Position
+import voidchess.common.board.move.Position
 
 
 interface ChessGameSupervisor {

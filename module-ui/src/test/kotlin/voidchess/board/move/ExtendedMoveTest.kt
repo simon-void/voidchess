@@ -6,6 +6,9 @@ import voidchess.figures.Pawn
 
 import org.testng.Assert.assertFalse
 import org.testng.Assert.assertTrue
+import voidchess.board.move.ExtendedMove
+import voidchess.common.board.move.Move
+import voidchess.common.board.move.Position
 
 
 class ExtendedMoveTest {
@@ -14,22 +17,33 @@ class ExtendedMoveTest {
     @BeforeMethod
     private fun setUp() {
         extendedMove = ExtendedMove(
-                Move[Position.byCode("a1"), Position.byCode("d1")],
-                null, null,
-                true,
-                false,
-                false,
-                false)
+            move = Move[Position.byCode(
+                "a1"
+            ), Position.byCode("d1")],
+            figureTaken = null, enpassantPawnOrCastlingRook = null,
+            colorOfMove = true,
+            isCastling = false,
+            isEnPassant = false,
+            isPawnTransformation = false
+        )
     }
 
     @Test
     fun testFrom() {
-        assertTrue(extendedMove!!.move.from.equalsPosition(Position.byCode("a1")))
+        assertTrue(extendedMove!!.move.from.equalsPosition(
+            Position.byCode(
+                "a1"
+            )
+        ))
     }
 
     @Test
     fun testTo() {
-        assertTrue(extendedMove!!.move.to.equalsPosition(Position.byCode("d1")))
+        assertTrue(extendedMove!!.move.to.equalsPosition(
+            Position.byCode(
+                "d1"
+            )
+        ))
     }
 
     @Test
@@ -56,21 +70,34 @@ class ExtendedMoveTest {
     fun testHasHitFigure() {
         assertFalse(extendedMove!!.wasFigureTaken)
         val hitPawn = ExtendedMove(
-                Move[Position.byCode("b5"), Position.byCode("a6")], null,
-                Pawn(false, Position.byCode("a5"), true),
-                true,
+            move = Move[Position.byCode(
+                "b5"
+            ), Position.byCode("a6")], figureTaken = null,
+            enpassantPawnOrCastlingRook = Pawn(
                 false,
-                true,
-                false
+                Position.byCode("a5"),
+                true
+            ),
+            colorOfMove = true,
+            isCastling = false,
+            isEnPassant = true,
+            isPawnTransformation = false
         )
         assertTrue(hitPawn.wasFigureTaken)
         val hitFigure = ExtendedMove(
-                Move[Position.byCode("b5"), Position.byCode("a6")],
-                Pawn(false, Position.byCode("a6"), false), null,
-                true,
+            move = Move[Position.byCode(
+                "b5"
+            ), Position.byCode("a6")],
+            figureTaken = Pawn(
                 false,
-                true,
-                false)
+                Position.byCode("a6"),
+                false
+            ), enpassantPawnOrCastlingRook = null,
+            colorOfMove = true,
+            isCastling = false,
+            isEnPassant = true,
+            isPawnTransformation = false
+        )
         assertTrue(hitFigure.wasFigureTaken)
     }
 }

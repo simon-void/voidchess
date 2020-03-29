@@ -1,17 +1,9 @@
 package voidchess.figures
 
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.ChessGame
-import voidchess.board.ArrayChessBoard
-import voidchess.board.getFigure
-import voidchess.board.move.Move
-import voidchess.board.move.Position
-import voidchess.initSimpleChessBoard
-import voidchess.toTargetPosAsStringSet
-import java.util.*
-
-import kotlin.test.assertEquals
+import voidchess.common.board.move.Position
+import voidchess.figures.Knight
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -43,40 +35,4 @@ class KnightTest {
         assertFalse(knight.isReachable(to8, game))
         assertFalse(knight.isReachable(from, game))
     }
-
-    @Test
-    fun testGetPossibleMoves() {
-        val des = "white 0 Knight-white-a1 King-white-e1-0 Knight-white-g6 King-black-e8-0"
-        val game = ArrayChessBoard(des)
-
-        val knight1 = game.getFigure(Position.byCode("a1"))
-        val moveIter1 = LinkedList<Move>()
-        knight1.getPossibleMoves(game, moveIter1)
-        assertEquals(2, moveIter1.size)
-        val knight2 = game.getFigure(Position.byCode("g6"))
-        val moveIter2 = LinkedList<Move>()
-        knight2.getPossibleMoves(game, moveIter2)
-        assertEquals(6, moveIter2.size)
-    }
-
-    @Test(dataProvider = "getGetCriticalMovesData")
-    fun testGetCriticalMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
-        val knight = game.getFigure(Position.byCode(posCode))
-        val actualIrreversibleResults = TreeSet<Move>()
-        knight.getCriticalMoves(game, actualIrreversibleResults)
-        assertEquals(expectedMoveToCodes, actualIrreversibleResults.toTargetPosAsStringSet(), "knight can move irreversibly to")
-
-        val actualTakingResults = TreeSet<Move>()
-        knight.getCriticalMoves(game, actualTakingResults)
-        assertEquals(expectedMoveToCodes, actualTakingResults.toTargetPosAsStringSet(), "knight can take on")
-    }
-
-    @DataProvider
-    fun getGetCriticalMovesData(): Array<Array<Any>> = arrayOf(
-            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Knight-white-d3 Queen-black-e5", "d3", setOf("e5")),
-            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Knight-white-d3 Queen-black-e5 Bishop-black-d2", "d3", setOf<String>()),
-            arrayOf("white 0 King-black-e8-0 King-white-e2-1 Knight-white-d3 Queen-black-e5 Bishop-black-c4", "d3", setOf<String>()),
-            arrayOf("white 0 King-black-e8-0 King-white-e1-0 Knight-white-d3 Bishop-black-e5 Queen-black-c5", "d3", setOf("e5", "c5"))
-    )
 }

@@ -1,11 +1,15 @@
 package voidchess.board.check
 
 import org.testng.annotations.Test
-import voidchess.board.move.Direction
-import voidchess.board.move.Position
+import voidchess.common.board.move.Direction
+import voidchess.common.board.move.Position
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
+import voidchess.board.check.ActualCheckLine
+import voidchess.board.check.CheckLine
+import voidchess.board.check.KnightCheck
+import voidchess.board.check.PawnCheck
 import voidchess.toList
 
 class CheckLineTest {
@@ -46,8 +50,16 @@ class CheckLineTest {
 
     @DataProvider
     fun getTestDoesNotKeepKingInCheckIfHeMovesToData() :Array<Array<Any>> = arrayOf(
-            arrayOf(PawnCheck(Position.byCode("g3"), Position.byCode("f2")), listOf<Direction>()),
-            arrayOf(KnightCheck(Position.byCode("g3"), Position.byCode("f1")), listOf<Direction>()),
+            arrayOf(
+                PawnCheck(
+                    Position.byCode("g3"),
+                    Position.byCode("f2")
+                ), listOf<Direction>()),
+            arrayOf(
+                KnightCheck(
+                    Position.byCode("g3"),
+                    Position.byCode("f1")
+                ), listOf<Direction>()),
             arrayOf(getActualCheckLine("g3", "h3"), listOf(Direction.LEFT)),
             arrayOf(getActualCheckLine("g3", "h2"), listOf(Direction.UP_LEFT)),
             arrayOf(getActualCheckLine("g3", "g1"), listOf(Direction.DOWN, Direction.UP))
@@ -57,6 +69,10 @@ class CheckLineTest {
         val kingPos = Position.byCode(kingPosCode)
         val attackerPos = Position.byCode(attackerPosCode)
 
-        return ActualCheckLine(kingPos, attackerPos, kingPos.getDirectionTo(attackerPos)!!)
+        return ActualCheckLine(
+            kingPos,
+            attackerPos,
+            kingPos.getDirectionTo(attackerPos)!!
+        )
     }
 }

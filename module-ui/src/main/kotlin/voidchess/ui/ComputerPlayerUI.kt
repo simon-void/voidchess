@@ -1,6 +1,6 @@
 package voidchess.ui
 
-import voidchess.player.ki.evaluation.Evaluation
+import voidchess.common.player.ki.evaluation.Evaluation
 
 
 interface ComputerPlayerUI {

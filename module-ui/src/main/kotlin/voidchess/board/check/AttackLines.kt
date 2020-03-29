@@ -3,8 +3,10 @@ package voidchess.board.check
 import voidchess.board.BasicChessBoard
 import voidchess.board.getFirstFigureInDir
 import voidchess.board.getKing
-import voidchess.board.move.Direction
-import voidchess.board.move.Position
+import voidchess.common.board.move.Direction
+import voidchess.common.board.move.Position
+import voidchess.figures.Knight
+import voidchess.figures.Pawn
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -38,7 +40,13 @@ fun checkAttackLines(game: BasicChessBoard, isWhite: Boolean): AttackLines {
             if (firstInLine.isWhite != isWhite) {
                 val isAttackingKing = if (directionFromKingOutwards.isStraight) firstInLine.attacksStraightLine else firstInLine.attacksDiagonalLine
                 if (isAttackingKing) {
-                    checkLines.add(ActualCheckLine(kingPos, firstInLine.position, directionFromKingOutwards))
+                    checkLines.add(
+                        ActualCheckLine(
+                            kingPos,
+                            firstInLine.position,
+                            directionFromKingOutwards
+                        )
+                    )
                 }
             } else {
                 val secondInLine = game.getFirstFigureInDir(directionFromKingOutwards, firstInLine.position)
@@ -48,7 +56,12 @@ fun checkAttackLines(game: BasicChessBoard, isWhite: Boolean): AttackLines {
                         if (isFirstInLineBound) {
                             val boundFigurePos = firstInLine.position
                             boundLineByBoundFigurePos[boundFigurePos] =
-                                    BoundLine(kingPos, boundFigurePos, secondInLine.position, directionFromKingOutwards)
+                                BoundLine(
+                                    kingPos,
+                                    boundFigurePos,
+                                    secondInLine.position,
+                                    directionFromKingOutwards
+                                )
                         }
                     }
                 }
@@ -64,7 +77,7 @@ fun checkAttackLines(game: BasicChessBoard, isWhite: Boolean): AttackLines {
     )) {
         kingPos.step(forwardDiagonalDir)?.let { forwardDiagonalPos ->
             game.getFigureOrNull(forwardDiagonalPos)?.let { possiblyPawn ->
-                if(possiblyPawn.isWhite!=isWhite && possiblyPawn.isPawn()) {
+                if(possiblyPawn.isWhite!=isWhite && possiblyPawn is Pawn) {
                     checkLines.add(PawnCheck(forwardDiagonalPos, kingPos))
                 }
             }
@@ -73,7 +86,7 @@ fun checkAttackLines(game: BasicChessBoard, isWhite: Boolean): AttackLines {
 
     kingPos.forEachKnightPos {possibleKnightPos->
         game.getFigureOrNull(possibleKnightPos)?.let { figure ->
-            if(figure.isKnight()&&figure.isWhite!=isWhite) {
+            if(figure is Knight &&figure.isWhite!=isWhite) {
                 checkLines.add(KnightCheck(possibleKnightPos, kingPos))
             }
         }

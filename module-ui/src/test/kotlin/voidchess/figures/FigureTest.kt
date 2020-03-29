@@ -4,8 +4,9 @@ import org.testng.Assert.*
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.board.getFigure
-import voidchess.board.move.Move
-import voidchess.board.move.Position
+import voidchess.common.board.move.Move
+import voidchess.common.board.move.Position
+import voidchess.engine.figures.*
 import voidchess.initSimpleChessBoard
 import java.util.*
 
@@ -26,10 +27,10 @@ class FigureTest {
     fun testCanBeHitByEnpasent() {
         assertFalse(
                 Knight(
-                        true,
-                        Position[0, 0]
+                    true,
+                    Position[0, 0]
                 ).canBeHitEnPassant(),
-                "should be false for all voidchess.figures but pawns"
+                "should be false for all voidchess.engine.figures but pawns"
         )
     }
 

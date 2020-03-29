@@ -1,7 +1,7 @@
 package voidchess.board
 
-import voidchess.board.move.Direction
-import voidchess.board.move.Position
+import voidchess.common.board.move.Direction
+import voidchess.common.board.move.Position
 import voidchess.figures.Figure
 import voidchess.figures.King
 import java.lang.IllegalArgumentException

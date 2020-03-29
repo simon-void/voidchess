@@ -1,6 +1,6 @@
 package voidchess.player.human
 
-import voidchess.board.move.Position
+import voidchess.common.board.move.Position
 import voidchess.player.PlayerInterface
 
 

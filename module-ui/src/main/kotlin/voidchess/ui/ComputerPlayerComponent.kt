@@ -1,6 +1,7 @@
 package voidchess.ui
 
-import voidchess.player.ki.evaluation.*
+import voidchess.common.player.ki.evaluation.*
+import voidchess.engine.player.ki.evaluation.*
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics

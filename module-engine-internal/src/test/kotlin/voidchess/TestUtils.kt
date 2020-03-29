@@ -1,8 +1,10 @@
 package voidchess
 
-import voidchess.board.*
-import voidchess.board.move.*
-import voidchess.helper.splitAndTrim
+import voidchess.common.board.move.Move
+import voidchess.common.board.move.Position
+import voidchess.engine.board.*
+import voidchess.engine.board.move.*
+import voidchess.common.helper.splitAndTrim
 import java.util.*
 
 

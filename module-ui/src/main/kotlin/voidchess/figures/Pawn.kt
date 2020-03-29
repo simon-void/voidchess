@@ -2,14 +2,10 @@ package voidchess.figures
 
 import voidchess.board.BasicChessBoard
 import voidchess.board.ChessBoard
-import voidchess.board.check.BoundLine
-import voidchess.board.check.CheckLine
-import voidchess.board.getFigure
-import voidchess.board.move.Direction
-import voidchess.board.move.Move
-import voidchess.board.move.Position
+import voidchess.common.board.move.Direction
+import voidchess.common.board.move.Move
+import voidchess.common.board.move.Position
 import kotlin.math.abs
-import kotlin.math.sign
 
 
 class Pawn : Figure {
@@ -20,7 +16,8 @@ class Pawn : Figure {
     /**
      * attacksDiagonalLine set to false because while the pawn attacks diagonally, he doesn't attack a line
      */
-    constructor(isWhite: Boolean, position: Position) : super(isWhite, position, FigureType.PAWN, false, false) {
+    constructor(isWhite: Boolean, position: Position) : super(isWhite, position,
+        FigureType.PAWN, false, false) {
         canBeHitByEnpasent = false
     }
 
@@ -116,71 +113,9 @@ class Pawn : Figure {
         return to.row == oneForwardRow && abs(to.column - position.column) == 1
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableMoves(game: BasicChessBoard): Collection<Move> = ArrayList<Move>(4).apply {
         forEachReachablePos(game) {
-            result.add(Move[position, it])
-        }
-    }
-
-    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
-        forEachDiagonalReachablePos(game) {
-            result.add(Move[position, it])
-        }
-    }
-
-    override fun getCriticalMoves(game: ChessBoard, result: MutableSet<Move>) =
-            getPossibleMoves(game, result)
-
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) {
-        fun checkLinePassesThroughPawnColumn(attackerPos: Position, kingPos: Position): Boolean {
-            val attackerColumnSign = (position.column - attackerPos.column).sign
-            val kingColumnSign = (position.column - kingPos.column).sign
-            return attackerColumnSign == -kingColumnSign && kingColumnSign != 0
-        }
-        // a pawn can only intercept a check by taking the attacker diagonally (possibly through enpassent)
-        if (isOneStepForwardDiagonally(checkLine.attackerPos)) {
-            result.add(Move[position, checkLine.attackerPos])
-        } else if (game.getFigure(checkLine.attackerPos).canBeHitEnPassant()) {
-            // now i only have to test if my pawn is to the side of the attacker pawn
-            if (position.row == checkLine.attackerPos.row && abs(position.column - checkLine.attackerPos.column) == 1) {
-                val oneForwardRow = if (isWhite) position.row + 1 else position.row - 1
-                result.add(Move[position, Position[oneForwardRow, checkLine.attackerPos.column]])
-            }
-        }
-        // or/and by stepping forward into the line
-        if (checkLinePassesThroughPawnColumn(checkLine.attackerPos, checkLine.kingPos)) {
-            // try to stop check by moving forward
-            if (!checkLine.posProgression.hasSinglePos) {
-                checkLine.posProgression.forEachReachablePos { interceptPos->
-                    if (isStraightReachable(interceptPos, game)) {
-                        result.add(Move[position, interceptPos])
-                        return
-                    }
-                }
-            }
-        }
-    }
-
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) {
-        when {
-            boundLine.boundFigureToAttackerDirection.isDiagonal -> {
-                if(isOneStepForwardDiagonally(boundLine.attackerPos)) {
-                    result.add(Move[position, boundLine.attackerPos])
-                }
-            }
-            boundLine.boundFigureToAttackerDirection.isVertical -> {
-                val oneForwardPos = position.step(forwardDirection) ?: throw IllegalStateException("pawn left board with single step from $position")
-                if( game.isFreeArea(oneForwardPos)) {
-                    result.add(Move[position, oneForwardPos])
-                    if(hasNotMovedYet()) {
-                        val twoForwardPos = oneForwardPos.step(forwardDirection) ?: throw IllegalStateException("pawn left board with double step from $position")
-                        if( game.isFreeArea(twoForwardPos)) {
-                            result.add(Move[position, twoForwardPos])
-                        }
-                    }
-                }
-            }
-            // else the pawn can't move
+            add(Move[position, it])
         }
     }
 
@@ -189,14 +124,6 @@ class Pawn : Figure {
             if (!isBound(it, game)) return true
         }
         return false
-    }
-
-    override fun countReachableMoves(game: BasicChessBoard): Int {
-        var reachableMovesCount = 0
-        forEachReachablePos(game) {
-            reachableMovesCount++
-        }
-        return reachableMovesCount
     }
 
     override fun toString() = "${super.toString()}-$canBeHitByEnpasent"

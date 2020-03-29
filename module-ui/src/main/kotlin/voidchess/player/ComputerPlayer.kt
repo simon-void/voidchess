@@ -3,10 +3,10 @@ package voidchess.player
 import voidchess.board.ChessGameInterface
 import voidchess.board.move.MoveResult
 import voidchess.board.move.PawnPromotion
-import voidchess.board.move.Position
-import voidchess.helper.RuntimeFacade
-import voidchess.player.ki.Engine
-import voidchess.player.ki.KaiEngine
+import voidchess.common.board.move.Position
+import voidchess.common.helper.RuntimeFacade
+import voidchess.common.player.ki.Engine
+import voidchess.engine.player.ki.KaiEngine
 import voidchess.ui.ComputerPlayerUI
 import voidchess.ui.TableInterface
 import voidchess.ui.Thumb

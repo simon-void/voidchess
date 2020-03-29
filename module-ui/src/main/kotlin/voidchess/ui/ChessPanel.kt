@@ -25,7 +25,8 @@ class ChessPanel : JPanel(), ActionListener {
     init {
         startButton = JButton(resignString)
         switchButton = JButton(switchString)
-        val game = ChessGame(ChessGameSupervisorDummy)
+        val game =
+            ChessGame(ChessGameSupervisorDummy)
         val chessboardComponent = ChessboardComponent(game, this)
         panel960 = Chess960Panel(game, chessboardComponent)
         table = Table(game, chessboardComponent, this, panel960)

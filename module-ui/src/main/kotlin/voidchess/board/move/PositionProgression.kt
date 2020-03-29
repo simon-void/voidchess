@@ -1,11 +1,13 @@
 package voidchess.board.move
 
+import voidchess.common.board.move.Direction
+import voidchess.common.board.move.Position
 import java.lang.IllegalStateException
 
 data class PositionProgression(
-        val inclusiveStartPos: Position,
-        val size: Int,
-        val direction: Direction
+    val inclusiveStartPos: Position,
+    val size: Int,
+    val direction: Direction
 ) {
     init {
         assert(size in 0..7)

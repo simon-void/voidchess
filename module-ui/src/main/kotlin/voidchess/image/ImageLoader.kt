@@ -5,7 +5,7 @@ import voidchess.figures.FigureType
 import javax.imageio.ImageIO
 import java.awt.*
 
-import voidchess.helper.getResourceStream
+import voidchess.common.helper.getResourceStream
 
 
 /**
@@ -38,7 +38,7 @@ private fun loadSvgImage(svgInfo: SvgChessSetInfo, fileName: String): SvgImage {
 
 
 
-private fun loadFigure(figureType:FigureType, isWhite: Boolean, svgInfo: SvgChessSetInfo): SvgImage {
+private fun loadFigure(figureType: FigureType, isWhite: Boolean, svgInfo: SvgChessSetInfo): SvgImage {
     val figureImgFile = "${if(isWhite) "w" else "b"}_${figureType.name.toLowerCase()}"
     return loadSvgImage(svgInfo, figureImgFile)
 }

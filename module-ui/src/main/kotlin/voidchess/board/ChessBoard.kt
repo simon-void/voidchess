@@ -2,7 +2,7 @@ package voidchess.board
 
 import voidchess.board.check.AttackLines
 import voidchess.figures.Figure
-import voidchess.board.move.Position
+import voidchess.common.board.move.Position
 
 
 interface ChessBoard : BasicChessBoard {

@@ -3,7 +3,7 @@ package voidchess.ui
 import voidchess.board.BasicChessBoard
 import voidchess.board.forAllFigures
 import voidchess.board.move.ExtendedMove
-import voidchess.board.move.Position
+import voidchess.common.board.move.Position
 import voidchess.image.FigureGallery
 import voidchess.player.human.HumanPlayerInterface
 import java.awt.Color
