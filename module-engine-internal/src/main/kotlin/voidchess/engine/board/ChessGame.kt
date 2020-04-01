@@ -18,7 +18,6 @@ internal class ChessGame private constructor(
     private val numberStack: NumberStack,
     private var supervisor: ChessGameSupervisor
 ): ChessGameInterface, BasicChessBoard by board {
-    private val figureFactory = FigureFactory
     private var numberOfMovesWithoutHit: Int = 0
     private var figureCount: Int = 32
     private var hasHitFigure: Boolean = false
@@ -321,10 +320,10 @@ internal class ChessGame private constructor(
                 val isWhite = move.to.row == 7
                 val newFigure: Figure
                 newFigure = when (figure) {
-                    PawnPromotion.QUEEN -> figureFactory.getQueen(move.to, isWhite)
-                    PawnPromotion.ROOK -> figureFactory.getRook(move.to, isWhite)
-                    PawnPromotion.KNIGHT -> figureFactory.getKnight(move.to, isWhite)
-                    PawnPromotion.BISHOP -> figureFactory.getBishop(move.to, isWhite)
+                    PawnPromotion.QUEEN -> getQueen(move.to, isWhite)
+                    PawnPromotion.ROOK -> getRook(move.to, isWhite)
+                    PawnPromotion.KNIGHT -> getKnight(move.to, isWhite)
+                    PawnPromotion.BISHOP -> getBishop(move.to, isWhite)
                 }
                 setFigure(move.to, newFigure)
                 return true
@@ -384,7 +383,7 @@ internal class ChessGame private constructor(
 
     private fun undoPawnTransformation(lastExtMove: ExtendedMove) {
         val pawnPos = lastExtMove.move.from
-        val pawn = figureFactory.getPawn(pawnPos, lastExtMove.colorOfMove)
+        val pawn = getPawn(pawnPos, lastExtMove.colorOfMove)
         setFigure(pawnPos, pawn)
     }
 

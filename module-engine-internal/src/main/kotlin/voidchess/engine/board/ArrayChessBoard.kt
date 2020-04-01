@@ -5,19 +5,16 @@ import voidchess.engine.board.check.CheckSearch
 import voidchess.engine.board.check.checkAttackLines
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.engine.figures.Figure
-import voidchess.engine.figures.FigureFactory
-import voidchess.engine.figures.King
 import voidchess.common.helper.splitAndTrim
+import voidchess.engine.figures.*
 
 internal class ArrayChessBoard constructor() : ChessBoard {
     private val game: Array<Figure?> = arrayOfNulls(64)
-    private val figureFactory = FigureFactory
 
     // the alternative to creating dummy instances for white and black king is 'lateinit'
     // but that would come with a null-check on each access
-    override var whiteKing: King = figureFactory.getKing(Position.byCode("a1"), true)
-    override var blackKing: King = figureFactory.getKing(Position.byCode("a8"), false)
+    override var whiteKing: King = getKing(Position.byCode("a1"), true)
+    override var blackKing: King = getKing(Position.byCode("a8"), false)
 
     private var calculatedWhiteCheck: Boolean = false
     private var calculatedBlackCheck: Boolean = false
@@ -78,44 +75,44 @@ internal class ArrayChessBoard constructor() : ChessBoard {
 
         for (i in 0..7) {
             pos = Position[1, i]
-            setFigure(pos, figureFactory.getPawn(pos, true))
+            setFigure(pos, getPawn(pos, true))
             pos = Position[6, i]
-            setFigure(pos, figureFactory.getPawn(pos, false))
+            setFigure(pos, getPawn(pos, false))
         }
         pos = Position.byCode("a1")
-        setFigure(pos, figureFactory.getRook(pos, true))
+        setFigure(pos, getRook(pos, true))
         pos = Position.byCode("h1")
-        setFigure(pos, figureFactory.getRook(pos, true))
+        setFigure(pos, getRook(pos, true))
         pos = Position.byCode("b1")
-        setFigure(pos, figureFactory.getKnight(pos, true))
+        setFigure(pos, getKnight(pos, true))
         pos = Position.byCode("g1")
-        setFigure(pos, figureFactory.getKnight(pos, true))
+        setFigure(pos, getKnight(pos, true))
         pos = Position.byCode("c1")
-        setFigure(pos, figureFactory.getBishop(pos, true))
+        setFigure(pos, getBishop(pos, true))
         pos = Position.byCode("f1")
-        setFigure(pos, figureFactory.getBishop(pos, true))
+        setFigure(pos, getBishop(pos, true))
         pos = Position.byCode("d1")
-        setFigure(pos, figureFactory.getQueen(pos, true))
+        setFigure(pos, getQueen(pos, true))
         pos = Position.byCode("e1")
-        whiteKing = figureFactory.getKing(pos, true)
+        whiteKing = getKing(pos, true)
         setFigure(pos, whiteKing)
 
         pos = Position.byCode("a8")
-        setFigure(pos, figureFactory.getRook(pos, false))
+        setFigure(pos, getRook(pos, false))
         pos = Position.byCode("h8")
-        setFigure(pos, figureFactory.getRook(pos, false))
+        setFigure(pos, getRook(pos, false))
         pos = Position.byCode("b8")
-        setFigure(pos, figureFactory.getKnight(pos, false))
+        setFigure(pos, getKnight(pos, false))
         pos = Position.byCode("g8")
-        setFigure(pos, figureFactory.getKnight(pos, false))
+        setFigure(pos, getKnight(pos, false))
         pos = Position.byCode("c8")
-        setFigure(pos, figureFactory.getBishop(pos, false))
+        setFigure(pos, getBishop(pos, false))
         pos = Position.byCode("f8")
-        setFigure(pos, figureFactory.getBishop(pos, false))
+        setFigure(pos, getBishop(pos, false))
         pos = Position.byCode("d8")
-        setFigure(pos, figureFactory.getQueen(pos, false))
+        setFigure(pos, getQueen(pos, false))
         pos = Position.byCode("e8")
-        blackKing = figureFactory.getKing(pos, false)
+        blackKing = getKing(pos, false)
         setFigure(pos, blackKing)
     }
 
@@ -131,9 +128,9 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         // pawn positions is always the same
         for (i in 0..7) {
             pos = Position[1, i]
-            setFigure(pos, figureFactory.getPawn(pos, true))
+            setFigure(pos, getPawn(pos, true))
             pos = Position[6, i]
-            setFigure(pos, figureFactory.getPawn(pos, false))
+            setFigure(pos, getPawn(pos, false))
         }
 
         // first bishop
@@ -142,9 +139,9 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         code960Code /= 4
 
         pos = Position[0, row]
-        setFigure(pos, figureFactory.getBishop(pos, true))
+        setFigure(pos, getBishop(pos, true))
         pos = Position[7, row]
-        setFigure(pos, figureFactory.getBishop(pos, false))
+        setFigure(pos, getBishop(pos, false))
 
         // second bishop
         rest = code960Code % 4
@@ -152,9 +149,9 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         code960Code /= 4
 
         pos = Position[0, row]
-        setFigure(pos, figureFactory.getBishop(pos, true))
+        setFigure(pos, getBishop(pos, true))
         pos = Position[7, row]
-        setFigure(pos, figureFactory.getBishop(pos, false))
+        setFigure(pos, getBishop(pos, false))
 
         // queen
         rest = code960Code % 6
@@ -162,9 +159,9 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         code960Code /= 6
 
         pos = Position[0, row]
-        setFigure(pos, figureFactory.getQueen(pos, true))
+        setFigure(pos, getQueen(pos, true))
         pos = Position[7, row]
-        setFigure(pos, figureFactory.getQueen(pos, false))
+        setFigure(pos, getQueen(pos, false))
 
         val otherFigures = getFigureArray(code960Code)
 
@@ -203,7 +200,7 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         while (iter.hasNext()) {
             val figureDescription = iter.next()
             val pos = getPositionOfCodedFigure(figureDescription)
-            val figure = figureFactory.getFigureByString(figureDescription)
+            val figure = getFigureByString(figureDescription)
             if(figure is King) {
                 if(figure.isWhite) {
                     whiteKing = figure
@@ -244,9 +241,9 @@ internal class ArrayChessBoard constructor() : ChessBoard {
     }
 
     private fun createFigure(name: String, isWhite: Boolean, pos: Position) = when (name) {
-        "Rook" -> figureFactory.getRook(pos, isWhite)
-        "Knight" -> figureFactory.getKnight(pos, isWhite)
-        "King" -> figureFactory.getKing(pos, isWhite)
+        "Rook" -> getRook(pos, isWhite)
+        "Knight" -> getKnight(pos, isWhite)
+        "King" -> getKing(pos, isWhite)
         else -> throw IllegalStateException("unknown figure: $name")
     }
 
