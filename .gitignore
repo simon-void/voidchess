@@ -12,6 +12,7 @@
 /target
 /build
 **/build
+/buildSrc/.gradle
 
 **/*.iml
 **/*.log
