@@ -6,19 +6,20 @@ import voidchess.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.helper.RuntimeFacade
 import voidchess.common.player.ki.Engine
+import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.engine.player.ki.KaiEngine
 import voidchess.ui.ComputerPlayerUI
 import voidchess.ui.TableInterface
 import voidchess.ui.Thumb
 
+class ComputerPlayer(
+    private val table: TableInterface,
+    private val game: ChessGameInterface,
+    private val ui: ComputerPlayerUI
+) : PlayerInterface {
 
-class ComputerPlayer(private val table: TableInterface, private val game: ChessGameInterface, private val ui: ComputerPlayerUI) :
-    PlayerInterface {
-    private val engine: Engine =
-        KaiEngine(ui::setProgress)
+    private val engine: Engine = KaiEngine(ui::setProgress)
     private var isWhite = false
-
-
 
     override fun play() {
         ui.setBubbleText(null)
@@ -31,7 +32,15 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
     }
 
     //lets see if the library contains a next move, else we compute the next move
-    private fun nextMove() = engine.evaluateMovesBestMoveFirst(game.getCompleteHistory().split(','), game.startConfig)
+    private fun nextMove(): EvaluatedMove {
+        val evaluatedMove = engine.evaluateMovesBestMoveFirst(game.getCompleteHistory().split(','), game.startConfig)
+        run {
+            // since the engine is a potentially external component the suggested move has to be checked
+            val move = evaluatedMove.move
+            if(!game.isMovable(move.from, move.to, isWhite)) throw IllegalStateException("illegal move $move! Figure can't move that way.")
+        }
+        return evaluatedMove
+    }
 
     override fun askForPawnPromotionType(pawnPosition: Position) = PawnPromotion.QUEEN
 
@@ -75,3 +84,4 @@ class ComputerPlayer(private val table: TableInterface, private val game: ChessG
         engine.setOption(name, value)
     }
 }
+
