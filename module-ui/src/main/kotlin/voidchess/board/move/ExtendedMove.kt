@@ -2,18 +2,15 @@ package voidchess.board.move
 
 import voidchess.common.board.move.Move
 import voidchess.figures.Figure
+import voidchess.figures.Pawn
 
-
-class ExtendedMove(val move: Move,
-                   val figureTaken: Figure?,
-                   val enpassantPawnOrCastlingRook: Figure?,
-                   val colorOfMove: Boolean,
-                   val isCastling: Boolean,
-                   val isEnPassant: Boolean,
-                   val isPawnTransformation: Boolean) {
-
-    @get:JvmName("wasFigureTaken")
-    val wasFigureTaken = figureTaken != null || isEnPassant
-
-    override fun toString() = move.toString()
+sealed class ExtendedMove(
+    val move: Move,
+    val hasHitFigure: Boolean
+) {
+    class Normal(move: Move, val figureTaken: Figure?): ExtendedMove(move, figureTaken!=null)
+    class PawnDoubleJump(move: Move, val pawn: Pawn): ExtendedMove(move, false)
+    class Castling(kingPosToRookPos: Move, val kingMove: Move, val rookMove: Move): ExtendedMove(kingPosToRookPos, false)
+    class Enpassant(pawnMove: Move, val pawnTaken: Figure): ExtendedMove(pawnMove, true)
+    class Promotion(pawnPromotionMove: Move, val pawnPromoted: Figure, val figureTaken: Figure?): ExtendedMove(pawnPromotionMove, figureTaken!=null)
 }

@@ -6,10 +6,6 @@ import voidchess.common.board.move.Position
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
-import voidchess.board.check.ActualCheckLine
-import voidchess.board.check.CheckLine
-import voidchess.board.check.KnightCheck
-import voidchess.board.check.PawnCheck
 import voidchess.toList
 
 class CheckLineTest {

@@ -1,9 +1,9 @@
 package voidchess.player.human
 
 import voidchess.board.ChessGameInterface
-import voidchess.board.move.MoveResult
 import voidchess.common.board.move.Move
-import voidchess.board.move.PawnPromotion
+import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.ui.ChessboardComponent
 import voidchess.ui.PosType

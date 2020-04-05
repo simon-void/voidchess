@@ -1,6 +1,6 @@
 package voidchess.engine.board
 
-import voidchess.engine.board.move.PawnPromotion
+import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 
 

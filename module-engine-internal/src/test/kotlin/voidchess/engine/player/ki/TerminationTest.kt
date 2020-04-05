@@ -14,7 +14,7 @@ import org.testng.Assert.assertEquals
 import kotlin.system.exitProcess
 
 
-internal class EngineTest {
+internal class TerminationTest {
 
     private val playData: Array<Array<Any>>
         @DataProvider
@@ -209,7 +209,7 @@ internal class EngineTest {
 
         private fun loadTest(game: ChessGame, pruner: SearchTreePruner, staticEvaluation: EvaluatingStatically, type: String) {
             val decimalFormat = DecimalFormat("#.0")
-            val computerPlayer = EngineTest()
+            val computerPlayer = TerminationTest()
 
             try {
                 println("$type: Berechnung gestartet")

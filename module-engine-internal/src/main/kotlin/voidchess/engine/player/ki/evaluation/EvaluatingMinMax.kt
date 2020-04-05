@@ -4,7 +4,7 @@ import voidchess.engine.board.ChessGameInterface
 import voidchess.engine.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.player.ki.evaluation.*
-import voidchess.engine.board.move.MoveResult
+import voidchess.common.board.move.MoveResult
 import java.util.Collections.emptyList
 
 
@@ -20,7 +20,7 @@ internal class EvaluatingMinMax(var pruner: SearchTreePruner, var strategy: Eval
 
         val result = when (game.move(move)) {
             MoveResult.NO_END -> {
-                val thisMoveHasHitFigure = game.hasHitFigure()
+                val thisMoveHasHitFigure = game.hasHitFigure
                 val thisMoveIsChess = game.isCheck(!forWhite)
 
                 getMin(game, forWhite, depth, thisMoveIsChess, thisMoveHasHitFigure, game.getAllMoves())
@@ -61,7 +61,7 @@ internal class EvaluatingMinMax(var pruner: SearchTreePruner, var strategy: Eval
                 MoveResult.NO_END -> {
                     val newDepth = depth + 1
 
-                    val thisMoveHasHitFigure = game.hasHitFigure()
+                    val thisMoveHasHitFigure = game.hasHitFigure
                     val thisMoveIsChess = game.isCheck(forWhite)
 
                     val maxPossibleMovesBuffer =
@@ -144,7 +144,7 @@ internal class EvaluatingMinMax(var pruner: SearchTreePruner, var strategy: Eval
 
             when(game.move(move)) {
                 MoveResult.NO_END -> {
-                    val thisMoveHasHitFigure = game.hasHitFigure()
+                    val thisMoveHasHitFigure = game.hasHitFigure
                     val thisMoveIsChess = game.isCheck(!forWhite)
 
                     val minPossibleMovesBuffer =

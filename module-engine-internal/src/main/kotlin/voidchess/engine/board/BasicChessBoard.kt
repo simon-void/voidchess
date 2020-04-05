@@ -28,7 +28,7 @@ internal fun BasicChessBoard.getFirstFigureInDir(direction: Direction, startPos:
 
 internal fun BasicChessBoard.getKing(isWhiteKing: Boolean): King = if (isWhiteKing) { whiteKing } else { blackKing }
 
-internal fun BasicChessBoard.getFigure(pos: Position) = getFigureOrNull(pos) ?: throw IllegalArgumentException("no figure at $pos")
+internal fun BasicChessBoard.getFigure(pos: Position) = getFigureOrNull(pos) ?: throw AssertionError("no figure at $pos")
 
 internal inline fun BasicChessBoard.forAllFigures(informOfFigure: (Figure)->Unit) {
     for (linearIndex in 0..63) getFigureOrNull(Position.byIndex(linearIndex))?.let(informOfFigure)

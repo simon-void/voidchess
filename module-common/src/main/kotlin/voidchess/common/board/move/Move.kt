@@ -45,6 +45,23 @@ class Move private constructor(@JvmField val from: Position, @JvmField val to: P
         }
 
         @JvmStatic
+        fun byCheckedCode(code: String): Move {
+            val fromColumn = code[0].toInt() - 97
+            val fromRow = code[1].toInt() - 49
+            val toColumn = code[3].toInt() - 97
+            val toRow = code[4].toInt() - 49
+
+            if(!(Position.inBounds(fromRow, fromColumn) && Position.inBounds(toRow, toColumn))) {
+                throw IllegalArgumentException("moveCode $code isn't valid")
+            }
+
+            return get(
+                Position[fromRow, fromColumn],
+                Position[toRow, toColumn]
+            )
+        }
+
+        @JvmStatic
         fun isValid(code: String?): Boolean {
             if (code == null || code.length != 5 || code[2] != '-') {
                 return false

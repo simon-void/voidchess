@@ -6,7 +6,7 @@ import voidchess.common.board.move.Position
 import kotlin.test.*
 
 
-class SimpleBoardTest {
+class ChessBoardTest {
     private val initial = "Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 " +
             "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 " +
             "Pawn-white-a2-false Pawn-white-b2-false Pawn-white-c2-false Pawn-white-d2-false " +

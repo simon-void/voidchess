@@ -7,7 +7,7 @@ import voidchess.common.board.move.Position
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
-import voidchess.board.move.PositionProgression
+import voidchess.common.board.move.PositionProgression
 import voidchess.toList
 import java.util.*
 

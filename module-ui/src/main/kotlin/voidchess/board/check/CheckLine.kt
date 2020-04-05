@@ -2,7 +2,7 @@ package voidchess.board.check
 
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
-import voidchess.board.move.PositionProgression
+import voidchess.common.board.move.PositionProgression
 
 /**
  * the iterator contains all Positions that can be used to break the check (starting with the position of the attacker)

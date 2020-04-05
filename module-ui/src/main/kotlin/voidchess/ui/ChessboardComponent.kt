@@ -20,7 +20,8 @@ class ChessboardComponent constructor(private val game: BasicChessBoard, imageOb
     val borderSize: Int = 25
     private val adapter: ChessboardAdapter
     private val figureGallery = FigureGallery(imageObserver, areaSize)
-    var isWhiteView: Boolean = true
+    var isWhiteView = true
+    private var isComputerMove = false
     private val evenFieldColor = Color.lightGray
     private val oddFieldColor = Color.white
     private val lessDark = 20
@@ -47,11 +48,14 @@ class ChessboardComponent constructor(private val game: BasicChessBoard, imageOb
         isDoubleBuffered = true
     }
 
-    fun repaintAfterMove(extendedMove: ExtendedMove) {
-        val move = extendedMove.move
-        run {
-            val isComputerMove = extendedMove.colorOfMove != isWhiteView
+    fun startNewGame() {
+        isComputerMove = !isWhiteView
+        repaintAtOnce()
+    }
 
+    fun repaintAfterMove(extendedMove: ExtendedMove) {
+        val move = if(extendedMove is ExtendedMove.Castling) extendedMove.kingMove else extendedMove.move
+        run {
             if (isComputerMove) {
                 lastComputerMoveTo = move.to
             } else {
@@ -65,16 +69,22 @@ class ChessboardComponent constructor(private val game: BasicChessBoard, imageOb
             if (isComputerMove) {
                 adapter.resendLatestMousePos()
             }
+
+            isComputerMove = !isComputerMove
         }
 
         repaintPositionAtOnce(move.from)
         repaintPositionAtOnce(move.to)
 
-        if (extendedMove.isEnPassant) {
-            repaintPositionAtOnce(Position[move.from.row, move.to.column])
-            repaintPositionAtOnce(Position[move.to.row, move.from.column])
-        } else if (extendedMove.isCastling) {
-            repaintRowAtOnce(move.from.row)
+        when (extendedMove) {
+            is ExtendedMove.Enpassant -> {
+                repaintPositionAtOnce(Position[move.from.row, move.to.column])
+                repaintPositionAtOnce(Position[move.to.row, move.from.column])
+            }
+            is ExtendedMove.Castling -> {
+                repaintPositionAtOnce(extendedMove.rookMove.from)
+                repaintPositionAtOnce(extendedMove.rookMove.to)
+            }
         }
     }
 
@@ -84,14 +94,6 @@ class ChessboardComponent constructor(private val game: BasicChessBoard, imageOb
 
         val repaintSize = areaSize + 1
         paintImmediately(xPos, yPos, repaintSize, repaintSize)
-    }
-
-    private fun repaintRowAtOnce(row: Int) {
-        val xPos = borderSize
-        val yPos = borderSize + areaSize * if (isWhiteView) 7 - row else row
-
-        val repaintSize = areaSize + 1
-        paintImmediately(xPos, yPos, repaintSize * 8, repaintSize)
     }
 
     fun repaintAtOnce() {

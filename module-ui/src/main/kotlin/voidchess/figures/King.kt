@@ -14,7 +14,7 @@ import kotlin.math.sign
 
 
 class King : CastlingFigure {
-    private var didCastling: Boolean = false
+    var didCastling: Boolean = false
     private val groundRow = if (isWhite) 0 else 7
 
     constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition,
@@ -228,12 +228,6 @@ class King : CastlingFigure {
         }
 
         return false
-    }
-
-    fun didCastling() = didCastling
-
-    fun performCastling() {
-        didCastling = true
     }
 
     override fun undoMove(oldPosition: Position) {

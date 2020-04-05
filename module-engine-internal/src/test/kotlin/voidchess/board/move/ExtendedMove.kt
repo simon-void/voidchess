@@ -1,4 +1,4 @@
-package voidchess.engine.board.move
+package voidchess.board.move
 
 import voidchess.common.board.move.Move
 import voidchess.engine.figures.Figure

@@ -2,7 +2,7 @@ package voidchess.engine.board.check
 
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
-import voidchess.engine.board.move.PositionProgression
+import voidchess.common.board.move.PositionProgression
 
 internal data class BoundLine(
     private val kingPos: Position,
@@ -19,14 +19,16 @@ internal data class BoundLine(
      * All positions from bound figure to attacker (exclusive bound figure's position, inclusive attacker's position).
      */
     val possibleMovesToAttacker = PositionProgression(
-            boundFigurePos.step(boundFigureToAttackerDirection)!!,
-            boundFigurePos.distanceTo(attackerPos),
-            boundFigureToAttackerDirection)
+        boundFigurePos.step(boundFigureToAttackerDirection)!!,
+        boundFigurePos.distanceTo(attackerPos),
+        boundFigureToAttackerDirection
+    )
     /**
      * All positions from bound figure to king (exclusive bound figure's position, exclusive king's position).
      */
     val possibleMovesToKing = PositionProgression(
-            boundFigurePos.step(boundFigureToAttackerDirection.reverse)!!,
-            boundFigurePos.distanceTo(kingPos)-1,
-            boundFigureToAttackerDirection.reverse)
+        boundFigurePos.step(boundFigureToAttackerDirection.reverse)!!,
+        boundFigurePos.distanceTo(kingPos) - 1,
+        boundFigureToAttackerDirection.reverse
+    )
 }

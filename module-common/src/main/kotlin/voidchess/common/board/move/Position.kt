@@ -15,7 +15,7 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
     override fun hashCode() = index
 
     fun isStraightTo(pos: Position) = row == pos.row || column == pos.column
-    fun isDiagonalTo(pos: Position) = Math.abs(row - pos.row) == Math.abs(column - pos.column)
+    fun isDiagonalTo(pos: Position) = abs(row - pos.row) == abs(column - pos.column)
     fun isStraightOrDiagonalTo(pos: Position) = isStraightTo(pos) || isDiagonalTo(pos)
     fun hasSameColor(pos: Position) = isWhiteField==pos.isWhiteField
 
@@ -61,7 +61,7 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
         }
 
         // if fromPos and toPos aren't diagonal
-        if (Math.abs(rowDifference) != Math.abs(columnDifference)) {
+        if (abs(rowDifference) != abs(columnDifference)) {
             return null
         }
 

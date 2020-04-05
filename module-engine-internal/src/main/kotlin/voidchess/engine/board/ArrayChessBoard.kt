@@ -274,8 +274,13 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         game[pos.index] = figure
     }
 
-    override fun clearFigure(pos: Position) {
-        assert(game[pos.index] != null) { "position $pos is already clear" }
+    override fun clearFigure(pos: Position): Figure {
+        val figure: Figure = game[pos.index] ?: throw IllegalStateException("position $pos doesn't contain a figure to clear")
+        game[pos.index] = null
+        return figure
+    }
+
+    override fun clearPos(pos: Position) {
         game[pos.index] = null
     }
 

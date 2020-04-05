@@ -16,7 +16,7 @@ import kotlin.math.sign
 
 
 internal class King : CastlingFigure {
-    private var didCastling: Boolean = false
+    var didCastling: Boolean = false
     private val groundRow = if (isWhite) 0 else 7
 
     constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.KING) {
@@ -327,12 +327,6 @@ internal class King : CastlingFigure {
         }
 
         return count
-    }
-
-    fun didCastling() = didCastling
-
-    fun performCastling() {
-        didCastling = true
     }
 
     override fun undoMove(oldPosition: Position) {

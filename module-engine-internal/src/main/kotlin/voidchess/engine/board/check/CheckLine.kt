@@ -2,7 +2,7 @@ package voidchess.engine.board.check
 
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
-import voidchess.engine.board.move.PositionProgression
+import voidchess.common.board.move.PositionProgression
 
 /**
  * the iterator contains all Positions that can be used to break the check (starting with the position of the attacker)
@@ -12,7 +12,9 @@ internal sealed class CheckLine(
     val kingPos: Position,
     val posProgression: PositionProgression
 ) {
-    constructor(attackerPos: Position, kingPos: Position): this(attackerPos, kingPos, PositionProgression(attackerPos, 1, Direction.UP))
+    constructor(attackerPos: Position, kingPos: Position): this(attackerPos, kingPos,
+        PositionProgression(attackerPos, 1, Direction.UP)
+    )
 
     abstract fun keepsKingInCheckIfHeMovesTo(direction: Direction): Boolean
     abstract val isStraightCheck: Boolean
@@ -41,7 +43,13 @@ internal class ActualCheckLine(
     kingPos: Position,
     attackerPos: Position,
     private val kingToAttackerDirection: Direction
-): CheckLine(attackerPos, kingPos, PositionProgression(attackerPos, attackerPos.distanceTo(kingPos), kingToAttackerDirection.reverse)) {
+): CheckLine(attackerPos, kingPos,
+    PositionProgression(
+        attackerPos,
+        attackerPos.distanceTo(kingPos),
+        kingToAttackerDirection.reverse
+    )
+) {
 
     init {
         assert(kingPos.getDirectionTo(attackerPos)==kingToAttackerDirection) {"actualDir: $kingToAttackerDirection, expectedDir: ${kingPos.getDirectionTo(attackerPos)}"}

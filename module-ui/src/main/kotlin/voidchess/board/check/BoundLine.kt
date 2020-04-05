@@ -2,7 +2,7 @@ package voidchess.board.check
 
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
-import voidchess.board.move.PositionProgression
+import voidchess.common.board.move.PositionProgression
 
 data class BoundLine(
     private val kingPos: Position,

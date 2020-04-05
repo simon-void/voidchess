@@ -7,24 +7,23 @@ import voidchess.common.board.move.Position
 
 import org.testng.annotations.DataProvider
 import voidchess.board.getFigure
-import voidchess.figures.Pawn
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 
 class PawnTest {
     @Test
-    fun testCanBeHitByEnpasent() {
+    fun testCanBeHitByEnpassant() {
         val move = Move[Position.byCode("e2"), Position.byCode("e4")]
         val otherMove = Move[Position.byCode("d2"), Position.byCode("d4")]
 
 
         val pawn = Pawn(true, move.from)
-        assertFalse(pawn.canBeHitEnPassant())
+        assertFalse(pawn.canBeHitEnpassant)
         pawn.figureMoved(move)
-        assertTrue(pawn.canBeHitEnPassant())
+        assertTrue(pawn.canBeHitEnpassant)
         pawn.figureMoved(otherMove)
-        assertFalse(pawn.canBeHitEnPassant())
+        assertFalse(pawn.canBeHitEnpassant)
     }
 
     @Test(dataProvider = "getIsReachableData")

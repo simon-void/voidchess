@@ -11,36 +11,31 @@ import kotlin.math.abs
 class Pawn : Figure {
     private val forwardDirection = Direction.getForward(isWhite)
     private val startingRow = if(isWhite) 1 else 6
-    private var canBeHitByEnpasent: Boolean = false
+    override var canBeHitEnpassant: Boolean = false
 
     /**
      * attacksDiagonalLine set to false because while the pawn attacks diagonally, he doesn't attack a line
      */
     constructor(isWhite: Boolean, position: Position) : super(isWhite, position,
         FigureType.PAWN, false, false) {
-        canBeHitByEnpasent = false
+        canBeHitEnpassant = false
     }
 
-    constructor(isWhite: Boolean, position: Position, canBeHitByEnpasent: Boolean)
+    constructor(isWhite: Boolean, position: Position, canBeHitByEnpassant: Boolean)
             : super(isWhite, position, FigureType.PAWN, false, false) {
-        this.canBeHitByEnpasent = canBeHitByEnpasent
-    }
-
-    override fun canBeHitEnPassant() = canBeHitByEnpasent
-    fun setCanBeHitByEnpasent() {
-        canBeHitByEnpasent = true
+        this.canBeHitEnpassant = canBeHitByEnpassant
     }
 
     private fun hasNotMovedYet() = position.row == startingRow
 
     override fun figureMoved(move: Move) {
-        canBeHitByEnpasent = move.from.equalsPosition(position) && abs(move.from.row - move.to.row) == 2
+        canBeHitEnpassant = move.from.equalsPosition(position) && abs(move.from.row - move.to.row) == 2
         super.figureMoved(move)
     }
 
     override fun undoMove(oldPosition: Position) {
         super.undoMove(oldPosition)
-        canBeHitByEnpasent = false
+        canBeHitEnpassant = false
     }
 
     private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
@@ -104,7 +99,7 @@ class Pawn : Figure {
         game.getFigureOrNull(to)?.let { if (hasDifferentColor(it)) return true }
         // ok, so no simple diagonal strike, maybe enpassent
         val sidePos = Position[position.row, to.column]
-        game.getFigureOrNull(sidePos)?.let { if (it.canBeHitEnPassant()) return true }
+        game.getFigureOrNull(sidePos)?.let { if (it.canBeHitEnpassant) return true }
         return false
     }
 
@@ -126,5 +121,5 @@ class Pawn : Figure {
         return false
     }
 
-    override fun toString() = "${super.toString()}-$canBeHitByEnpasent"
+    override fun toString() = "${super.toString()}-$canBeHitEnpassant"
 }

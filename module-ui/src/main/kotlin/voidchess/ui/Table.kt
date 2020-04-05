@@ -2,9 +2,9 @@ package voidchess.ui
 
 import voidchess.board.ChessGameInterface
 import voidchess.board.ChessGameSupervisor
-import voidchess.board.move.MoveResult
 import voidchess.common.board.move.Move
-import voidchess.board.move.PawnPromotion
+import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.player.PlayerInterface
 
@@ -80,7 +80,7 @@ class Table constructor(
         whitePlayersTurn = true
         resign = false
         game.initGame(panel960.positionCode)
-        ui.repaintAtOnce()
+        ui.startNewGame()
 
         whitePlayer.gameStarts()
         blackPlayer.gameStarts()

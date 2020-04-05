@@ -215,7 +215,7 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
     }
 
     private fun evaluateCastling(king: King, queenOfOppositeColorStillOnBoard: Boolean) =
-            if (queenOfOppositeColorStillOnBoard && !king.didCastling()) NOT_YET_CASTLED_PUNISHMENT
+            if (queenOfOppositeColorStillOnBoard && !king.didCastling) NOT_YET_CASTLED_PUNISHMENT
             else 0.0
 
     private fun evaluateKingDefense(game: ChessGameInterface, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
@@ -223,7 +223,7 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
         val kingsRow = king.position.row
         val groundRow = if (isWhite) 0 else 7
 
-        if (king.didCastling() && kingsRow == groundRow) {
+        if (king.didCastling && kingsRow == groundRow) {
             val kingsColumn = king.position.column
             val secondRow = if (isWhite) 1 else 6
             val defenseValue = if (queenOfOppositeColorStillOnBoard) {

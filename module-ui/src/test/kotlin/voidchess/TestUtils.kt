@@ -1,11 +1,7 @@
 package voidchess
 
 import voidchess.board.*
-import voidchess.board.move.PawnPromotion
-import voidchess.board.move.PositionProgression
-import voidchess.common.board.move.Direction
-import voidchess.common.board.move.Move
-import voidchess.common.board.move.Position
+import voidchess.common.board.move.*
 import voidchess.figures.Figure
 import voidchess.figures.King
 import voidchess.figures.Knight

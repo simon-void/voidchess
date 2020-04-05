@@ -4,8 +4,6 @@ import org.testng.annotations.Test
 import voidchess.board.ChessGame
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.figures.FigureFactory
-import voidchess.figures.Rook
 
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -35,7 +33,7 @@ class RookTest {
 
     @Test
     fun testUndoMove() {
-        val rook = FigureFactory.getRook(Position.byCode("a1"), false)
+        val rook = getRook(Position.byCode("a1"), false)
 
         assertTrue(rook.canCastle())
         rook.figureMoved(Move.byCode("a1-b1"))

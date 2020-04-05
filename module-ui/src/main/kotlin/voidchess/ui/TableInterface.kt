@@ -1,7 +1,7 @@
 package voidchess.ui
 
-import voidchess.board.move.MoveResult
 import voidchess.common.board.move.Move
+import voidchess.common.board.move.MoveResult
 import voidchess.player.PlayerInterface
 
 

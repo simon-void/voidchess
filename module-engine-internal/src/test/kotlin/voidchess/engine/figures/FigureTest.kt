@@ -23,12 +23,12 @@ class FigureTest {
     }
 
     @Test
-    fun testCanBeHitByEnpasent() {
+    fun testCanBeHitByEnpassant() {
         assertFalse(
                 Knight(
                         true,
                         Position[0, 0]
-                ).canBeHitEnPassant(),
+                ).canBeHitEnpassant,
                 "should be false for all voidchess.engine.figures but pawns"
         )
     }

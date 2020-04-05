@@ -6,7 +6,6 @@ import org.testng.annotations.Test
 import voidchess.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.engine.figures.*
 import voidchess.initSimpleChessBoard
 import java.util.*
 
@@ -29,7 +28,7 @@ class FigureTest {
                 Knight(
                     true,
                     Position[0, 0]
-                ).canBeHitEnPassant(),
+                ).canBeHitEnpassant,
                 "should be false for all voidchess.engine.figures but pawns"
         )
     }

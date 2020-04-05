@@ -1,7 +1,7 @@
 package voidchess.player
 
-import voidchess.board.move.MoveResult
-import voidchess.board.move.PawnPromotion
+import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 
 

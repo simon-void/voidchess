@@ -221,9 +221,9 @@ internal class KingTest {
         val game = ChessGame(des)
 
         val king = game.getFigureOrNull(Position.byCode("e1")) as King
-        assertFalse(king.didCastling())
+        assertFalse(king.didCastling)
         game.move(Move.byCode("e1-a1"))
-        assertTrue(king.didCastling())
+        assertTrue(king.didCastling)
     }
 
     @Test

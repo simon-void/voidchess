@@ -1,9 +1,10 @@
 package voidchess
 
 import voidchess.common.board.move.Move
+import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
+import voidchess.common.board.move.PositionProgression
 import voidchess.engine.board.*
-import voidchess.engine.board.move.*
 import voidchess.common.helper.splitAndTrim
 import java.util.*
 
@@ -58,12 +59,12 @@ internal fun Position.mirrorRow() = Position[7-row, column]
 internal fun Move.mirrorRow() = Move[from.mirrorRow(), to.mirrorRow()]
 
 internal fun ChessGame.copyGameWithInvertedColors(): ChessGame {
-    val intermidiate = "switching"
+    val intermediate = "switching"
     val copyDef = toString()
             // switch white and black
-            .replace("white", intermidiate)
+            .replace("white", intermediate)
             .replace("black", "white")
-            .replace(intermidiate, "black")
+            .replace(intermediate, "black")
             // mirror positions
             .splitAndTrim(' ')
             .joinToString(" ") { token ->

@@ -5,8 +5,7 @@ import voidchess.common.board.move.Position
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
-import voidchess.board.check.checkAttackLines
-import voidchess.board.move.PositionProgression
+import voidchess.common.board.move.PositionProgression
 import voidchess.initSimpleChessBoard
 import voidchess.toList
 import kotlin.test.assertTrue

@@ -20,8 +20,9 @@ abstract class Figure constructor(
 
     // encodes type of class + color
     val typeInfo: Int = if (isWhite) type.index else (type.index + 7)
+    open val canBeHitEnpassant = false
+
     fun hasDifferentColor(other: Figure) = isWhite != other.isWhite
-    open fun canBeHitEnPassant() = false
     open fun canCastle(): Boolean = false
 
     open fun figureMoved(move: Move) {

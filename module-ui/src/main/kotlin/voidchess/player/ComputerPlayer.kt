@@ -1,11 +1,12 @@
 package voidchess.player
 
 import voidchess.board.ChessGameInterface
-import voidchess.board.move.MoveResult
-import voidchess.board.move.PawnPromotion
+import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.helper.RuntimeFacade
 import voidchess.common.player.ki.Engine
+import voidchess.common.player.ki.EngineAnswer
 import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.engine.player.ki.KaiEngine
 import voidchess.ui.ComputerPlayerUI
@@ -33,7 +34,19 @@ class ComputerPlayer(
 
     //lets see if the library contains a next move, else we compute the next move
     private fun nextMove(): EvaluatedMove {
-        val evaluatedMove = engine.evaluateMovesBestMoveFirst(game.getCompleteHistory().split(','), game.startConfig)
+        val movesSoFar: List<String> = game.getCompleteHistory().split(',').let {
+            if (it.size == 1 && it.first() == "") {
+                emptyList()
+            } else {
+                it
+            }
+        }
+        val evaluatedMove = when (
+            val engineAnswer = engine.evaluateMovesBestMoveFirst(movesSoFar, game.startConfig)
+            ) {
+            is EngineAnswer.Success -> engineAnswer.evaluatedMove
+            is EngineAnswer.Error -> throw IllegalStateException("Engine threw an exception: ${engineAnswer.errorMsg}")
+        }
         run {
             // since the engine is a potentially external component the suggested move has to be checked
             val move = evaluatedMove.move

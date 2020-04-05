@@ -3,10 +3,7 @@ package voidchess.engine.player.ki
 import voidchess.engine.board.ChessGame
 import voidchess.common.board.StartConfig
 import voidchess.common.board.move.Move
-import voidchess.common.player.ki.Engine
-import voidchess.common.player.ki.EngineSpec
-import voidchess.common.player.ki.Option
-import voidchess.common.player.ki.ProgressCallback
+import voidchess.common.player.ki.*
 import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.common.player.ki.evaluation.NumericalEvaluation
 import voidchess.engine.player.ki.concurrent.ConcurrencyStrategy
@@ -20,8 +17,7 @@ import kotlin.math.pow
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
-class KaiEngine(private val progressCallback: ProgressCallback):
-    Engine {
+class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
     private val concurrencyStrategyCache = ConcurrencyStrategyContainer(progressCallback)
     private val openingsLibrary = OpeningsLibrary("openings.txt")
@@ -43,16 +39,25 @@ class KaiEngine(private val progressCallback: ProgressCallback):
         }
     }
 
-    override fun evaluateMovesBestMoveFirst(movesSoFar: List<String>, startConfig: StartConfig): EvaluatedMove {
+    override fun evaluateMovesBestMoveFirst(movesSoFar: List<String>, startConfig: StartConfig): EngineAnswer = try {
         val chess960StartIndex = when(startConfig) {
             is StartConfig.ClassicConfig -> startConfig.chess960Index
             is StartConfig.Chess960Config -> startConfig.chess960Index
             is StartConfig.ManualConfig -> throw IllegalStateException("can't copy game from manual starting config")
         }
         val game = ChessGame(
-            initialPosition = chess960StartIndex,
-            moves = *movesSoFar.toTypedArray()
-        )
+            initialPosition = chess960StartIndex
+        ).apply {
+            var isWhitesTurn = startConfig.doesWhitePlayerStart
+            val moves = movesSoFar.map { Move.byCheckedCode(it) }
+            for(move in moves) {
+                if(!this.isMovable(move.from, move.to, isWhitesTurn)) {
+                    throw IllegalArgumentException("$move is illegal")
+                }
+                this.move(move)
+                isWhitesTurn = !isWhitesTurn
+            }
+        }
 
         //display that the computer is working
         progressCallback(0, 1)
@@ -61,8 +66,12 @@ class KaiEngine(private val progressCallback: ProgressCallback):
         val coresToUse = CoresToUseOption.coresToUse
         val evaluatingMinMax = EvaluatingMinMax(pruner, staticEvaluation)
 
-        return lookUpNextMove(game, evaluatingMinMax, movesSoFar, chess960StartIndex)
+        val evaluatedMove = lookUpNextMove(game, evaluatingMinMax, movesSoFar, chess960StartIndex)
             ?: concurrencyStrategyCache.get(coresToUse).evaluateMovesBestMoveFirst(game, evaluatingMinMax).pickOkMove()
+
+        EngineAnswer.Success(evaluatedMove)
+    }catch (e: Exception) {
+        EngineAnswer.Error(e.toString())
     }
 
     private fun lookUpNextMove(

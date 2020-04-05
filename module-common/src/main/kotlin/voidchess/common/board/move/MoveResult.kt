@@ -1,6 +1,6 @@
-package voidchess.engine.board.move
+package voidchess.common.board.move
 
-internal enum class MoveResult {
+enum class MoveResult {
     NO_END,
     CHECKMATE,
     STALEMATE,

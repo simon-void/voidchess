@@ -1,10 +1,7 @@
-package voidchess.engine.board.move
+package voidchess.common.board.move
 
-import voidchess.common.board.move.Direction
-import voidchess.common.board.move.Position
-import java.lang.IllegalStateException
 
-internal data class PositionProgression(
+data class PositionProgression(
     val inclusiveStartPos: Position,
     val size: Int,
     val direction: Direction
@@ -17,7 +14,7 @@ internal data class PositionProgression(
     val hasSinglePos = size==1
 
     inline fun forEachReachablePos(informOf: (Position) -> Unit) {
-        var index = 1;
+        var index = 1
         var currentPos = inclusiveStartPos
         if(size!=0) {
             informOf(currentPos)

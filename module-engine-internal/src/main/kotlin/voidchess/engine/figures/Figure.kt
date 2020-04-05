@@ -22,17 +22,17 @@ internal abstract class Figure constructor(
 
     // encodes type of class + color
     val typeInfo: Int = if (isWhite) type.index else (type.index + 7)
+    open val canBeHitEnpassant = false
 
     fun isPawn() = type == FigureType.PAWN
     fun isRook() = type == FigureType.ROOK
     fun isKnight() = type == FigureType.KNIGHT
     fun isBishop() = type == FigureType.BISHOP
     fun isQueen() = type == FigureType.QUEEN
+
     fun isKing() = type == FigureType.KING
 
     fun hasDifferentColor(other: Figure) = isWhite != other.isWhite
-
-    open fun canBeHitEnPassant() = false
 
     open fun canCastle(): Boolean {
         return false

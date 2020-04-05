@@ -1,15 +1,13 @@
 package voidchess.board
 
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.ChessGameSupervisorMock
-import voidchess.board.ChessGame
-import voidchess.board.ChessGameSupervisorDummy
 import voidchess.common.board.move.Move
-import voidchess.board.move.MoveResult
-import voidchess.board.move.PawnPromotion
 import voidchess.common.board.move.Position
-import voidchess.board.withMove
+import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.PawnPromotion
 import voidchess.figures.Bishop
 import voidchess.figures.King
 import kotlin.test.*
@@ -432,7 +430,7 @@ class ChessGameTest {
         try {
             game.move(Move.byCode("a1-b1"))
             fail()
-        } catch (e: AssertionError) {
+        } catch (e: IllegalArgumentException) {
         }
 
     }
@@ -443,19 +441,19 @@ class ChessGameTest {
                 + "Pawn-white-g2-false Bishop-white-e7 King-black-e8-0 "
                 + "Knight-black-g5 Pawn-white-a6-false")
         val game = ChessGame(des)
-        assertTrue(game.hasHitFigure())            //da numberWithoutHit=0 ist in 'des'
+        assertTrue(game.hasHitFigure)            //da numberWithoutHit=0 ist in 'des'
         game.move(Move.byCode("g2-h3"))
-        assertTrue(game.hasHitFigure())
+        assertTrue(game.hasHitFigure)
         game.move(Move.byCode("g5-h3"))
-        assertTrue(game.hasHitFigure())
+        assertTrue(game.hasHitFigure)
         game.move(Move.byCode("h2-h3"))
-        assertTrue(game.hasHitFigure())
+        assertTrue(game.hasHitFigure)
         game.move(Move.byCode("e8-e7"))
-        assertTrue(game.hasHitFigure())
+        assertTrue(game.hasHitFigure)
         game.move(Move.byCode("a6-a7"))
-        assertFalse(game.hasHitFigure())
+        assertFalse(game.hasHitFigure)
         game.move(Move.byCode("e7-d7"))
-        assertFalse(game.hasHitFigure())
+        assertFalse(game.hasHitFigure)
     }
 
     @Test
@@ -485,28 +483,31 @@ class ChessGameTest {
         val game = ChessGame(621)
         game.move(Move.byCode("g2-g3"))
         game.move(Move.byCode("f7-f6"))
-        assertEquals(game.history, "g2-g3,f7-f6")
+        assertEquals("g2-g3,f7-f6", game.history)
         game.move(Move.byCode("c2-c3"))
         game.move(Move.byCode("g8-f7"))
-        assertEquals(game.history, "g2-g3,f7-f6,c2-c3,g8-f7")
+        assertEquals("g2-g3,f7-f6,c2-c3,g8-f7", game.history)
         game.move(Move.byCode("d1-c2"))
         game.move(Move.byCode("a7-a6"))
         game.move(Move.byCode("c2-h7"))
-        assertEquals(game.history, "g8-f7,d1-c2,a7-a6,c2-h7")
+        assertEquals("g8-f7,d1-c2,a7-a6,c2-h7", game.history)
     }
 
-    @Test
-    fun testGetCompleteHistory() {
-        val game = ChessGame(621)
-        game.move(Move.byCode("g2-g3"))
-        game.move(Move.byCode("f7-f6"))
-        assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6")
-        game.move(Move.byCode("c2-c3"))
-        game.move(Move.byCode("g8-f7"))
-        assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6,c2-c3,g8-f7")
-        game.move(Move.byCode("d1-c2"))
-        game.move(Move.byCode("a7-a6"))
-        game.move(Move.byCode("c2-h7"))
-        assertEquals(game.getCompleteHistory(), "g2-g3,f7-f6,c2-c3,g8-f7,d1-c2,a7-a6,c2-h7")
+    @Test(dataProvider = "getCompleteHistoryData")
+    fun testGetCompleteHistory(initialPos: Int, expectedCompleteHistory: String) {
+        val game = ChessGame(initialPos)
+        val moves = expectedCompleteHistory.split(',').map { Move.byCheckedCode(it) }
+        for(move in moves) {
+            assertTrue(game.isMovable(move.from, move.to, game.isWhiteTurn), "move $move isn't allowed in sequence $expectedCompleteHistory")
+            game.move(move)
+        }
+        assertEquals(expectedCompleteHistory, game.getCompleteHistory())
     }
+
+    @DataProvider
+    fun getCompleteHistoryData(): Array<Array<Any>> = arrayOf(
+        arrayOf(621, "g2-g3,f7-f6,c2-c3,g8-f7,d1-c2,a7-a6,c2-h7"),
+        arrayOf(518, "g2-g3,g7-g6,g1-f3,g8-f6,f1-g2,f8-g7,e1-h1,e8-h8"),
+        arrayOf(652, "c2-c3,c7-c6,c1-b3,c8-b6,b1-c2,b8-c7,d1-a1,d8-a8")
+    )
 }

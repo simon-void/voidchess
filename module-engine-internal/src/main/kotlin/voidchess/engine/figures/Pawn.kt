@@ -15,36 +15,21 @@ import kotlin.math.sign
 internal class Pawn : Figure {
     private val forwardDirection = Direction.getForward(isWhite)
     private val startingRow = if(isWhite) 1 else 6
-    private var canBeHitByEnpasent: Boolean = false
+    override var canBeHitEnpassant: Boolean = false
 
     /**
      * attacksDiagonalLine set to false because while the pawn attacks diagonally, he doesn't attack a line
      */
     constructor(isWhite: Boolean, position: Position) : super(isWhite, position, FigureType.PAWN, false, false) {
-        canBeHitByEnpasent = false
+        canBeHitEnpassant = false
     }
 
-    constructor(isWhite: Boolean, position: Position, canBeHitByEnpasent: Boolean)
+    constructor(isWhite: Boolean, position: Position, canBeHitByEnpassant: Boolean)
             : super(isWhite, position, FigureType.PAWN, false, false) {
-        this.canBeHitByEnpasent = canBeHitByEnpasent
-    }
-
-    override fun canBeHitEnPassant() = canBeHitByEnpasent
-    fun setCanBeHitByEnpasent() {
-        canBeHitByEnpasent = true
+        this.canBeHitEnpassant = canBeHitByEnpassant
     }
 
     private fun hasNotMovedYet() = position.row == startingRow
-
-    override fun figureMoved(move: Move) {
-        canBeHitByEnpasent = move.from.equalsPosition(position) && abs(move.from.row - move.to.row) == 2
-        super.figureMoved(move)
-    }
-
-    override fun undoMove(oldPosition: Position) {
-        super.undoMove(oldPosition)
-        canBeHitByEnpasent = false
-    }
 
     private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
         forEachDiagonalReachablePos(game, informOf)
@@ -105,9 +90,11 @@ internal class Pawn : Figure {
         if (!isOneStepForwardDiagonally(to)) return false
         // now we know that to is one step diagonal to us
         game.getFigureOrNull(to)?.let { if (hasDifferentColor(it)) return true }
-        // ok, so no simple diagonal strike, maybe enpassent
+        // ok, so no simple diagonal strike, maybe enpassant
         val sidePos = Position[position.row, to.column]
-        game.getFigureOrNull(sidePos)?.let { if (it.canBeHitEnPassant()) return true }
+        game.getFigureOrNull(sidePos)?.let { sideFigure->
+            if (sideFigure.canBeHitEnpassant) return true
+        }
         return false
     }
 
@@ -140,7 +127,7 @@ internal class Pawn : Figure {
         // a pawn can only intercept a check by taking the attacker diagonally (possibly through enpassent)
         if (isOneStepForwardDiagonally(checkLine.attackerPos)) {
             result.add(Move[position, checkLine.attackerPos])
-        } else if (game.getFigure(checkLine.attackerPos).canBeHitEnPassant()) {
+        } else if (game.getFigure(checkLine.attackerPos).canBeHitEnpassant) {
             // now i only have to test if my pawn is to the side of the attacker pawn
             if (position.row == checkLine.attackerPos.row && abs(position.column - checkLine.attackerPos.column) == 1) {
                 val oneForwardRow = if (isWhite) position.row + 1 else position.row - 1
@@ -199,5 +186,5 @@ internal class Pawn : Figure {
         return reachableMovesCount
     }
 
-    override fun toString() = "${super.toString()}-$canBeHitByEnpasent"
+    override fun toString() = "${super.toString()}-$canBeHitEnpassant"
 }
