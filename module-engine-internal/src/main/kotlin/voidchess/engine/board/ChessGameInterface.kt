@@ -4,7 +4,6 @@ import voidchess.common.board.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.Position
-import voidchess.engine.board.move.ExtendedMove
 
 
 internal interface ChessGameInterface : BasicChessBoard {
@@ -21,7 +20,6 @@ internal interface ChessGameInterface : BasicChessBoard {
      * @return all the moves played so far in a string representation
      */
     fun getCompleteHistory(): String
-    fun getLastExtendedMove(): ExtendedMove
     fun initGame(chess960: Int)
     fun copyGame(neededInstances: Int): List<ChessGameInterface>
     fun countFigures(): Int

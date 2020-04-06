@@ -4,12 +4,18 @@ import voidchess.engine.board.check.AttackLines
 import voidchess.engine.board.check.CheckSearch
 import voidchess.engine.board.check.checkAttackLines
 import voidchess.common.board.move.Move
+import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.helper.splitAndTrim
+import voidchess.engine.board.move.ExtendedMove
 import voidchess.engine.figures.*
+import java.util.*
+import kotlin.math.abs
 
 internal class ArrayChessBoard constructor() : ChessBoard {
     private val game: Array<Figure?> = arrayOfNulls(64)
+    // TODO use kotlin.ArrayDeque if that is no longer experimental
+    private val extendedMoveStack = ArrayDeque<ExtendedMove>(16)
 
     // the alternative to creating dummy instances for white and black king is 'lateinit'
     // but that would come with a null-check on each access
@@ -264,6 +270,7 @@ internal class ArrayChessBoard constructor() : ChessBoard {
 
     private fun clear() {
         clearCheckComputation()
+        extendedMoveStack.clear()
         for (linearIndex in 0..63) {
             game[linearIndex] = null
         }
@@ -299,6 +306,157 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         figure.undoMove(from)
     }
 
+    override fun historyToString(numberOfHalfMoves: Int?) = extendedMoveStack.getLatestMoves(numberOfHalfMoves)
+
+    /**
+     * @return true if a figure got hit
+     */
+    override fun move(
+        move: Move,
+        supervisor: ChessGameSupervisor
+    ): Boolean {
+        val movingFigure: Figure = clearFigure(move.from)
+        val toFigure: Figure? = getFigureOrNull(move.to)
+
+        val extendedMove: ExtendedMove = when(movingFigure.type) {
+            FigureType.KING -> {
+                if(toFigure!=null && toFigure.isWhite==movingFigure.isWhite) {
+                    val isKingSideCastling = move.from.column<move.to.column
+                    val kingToColumn = if (isKingSideCastling) 6 else 2
+                    val rookToColumn = if (isKingSideCastling) 5 else 3
+                    ExtendedMove.Castling(move, Move[move.from, Position[move.to.row, kingToColumn]], Move[move.to, Position[move.to.row, rookToColumn]])
+                }else{
+                    ExtendedMove.Normal(move, toFigure)
+                }
+            }
+            FigureType.PAWN -> {
+                if(move.to.row==0 || move.to.row==7) {
+                    ExtendedMove.Promotion(move, movingFigure, getFigureOrNull(move.to))
+                }else if(abs(move.from.row-move.to.row) ==2) {
+                    ExtendedMove.PawnDoubleJump(move,  movingFigure as Pawn)
+                }else if(move.from.column!=move.to.column && toFigure==null) {
+                    val pawnTakenByEnpassant = getFigure(Position[move.from.row, move.to.column])
+                    ExtendedMove.Enpassant(move, pawnTakenByEnpassant)
+                }else{
+                    ExtendedMove.Normal(move, toFigure)
+                }
+            }
+            else -> ExtendedMove.Normal(move, toFigure)
+        }
+
+        when(extendedMove) {
+            is ExtendedMove.Castling -> {
+                val castlingRook = clearFigure(extendedMove.rookMove.from)
+                setFigure(extendedMove.rookMove.to, castlingRook)
+                setFigure(extendedMove.kingMove.to, movingFigure)
+                // inform the involved figure(s) of the move
+                movingFigure.figureMoved(extendedMove.kingMove)
+                castlingRook.figureMoved(extendedMove.rookMove)
+                (movingFigure as King).didCastling = true
+            }
+            is ExtendedMove.Promotion -> {
+                val toPos: Position = extendedMove.move.to
+                val promotedPawn: Figure = when (supervisor.askForPawnChange(toPos)) {
+                    PawnPromotion.QUEEN -> getQueen(toPos, movingFigure.isWhite)
+                    PawnPromotion.ROOK -> getRook(toPos, movingFigure.isWhite)
+                    PawnPromotion.KNIGHT -> getKnight(toPos, movingFigure.isWhite)
+                    PawnPromotion.BISHOP -> getBishop(toPos, movingFigure.isWhite)
+                }
+                setFigure(toPos, promotedPawn)
+                // the newly created figure is already aware of its position and doesn't need to be informed
+            }
+            is ExtendedMove.Enpassant -> {
+                setFigure(extendedMove.move.to, movingFigure)
+                clearPos(extendedMove.pawnTaken.position)
+                // inform the involved figure(s) of the move
+                movingFigure.figureMoved(extendedMove.move)
+            }
+            is ExtendedMove.PawnDoubleJump -> {
+                setFigure(extendedMove.move.to, movingFigure)
+                // inform the involved figure(s) of the move
+                extendedMove.pawn.let { pawn: Pawn ->
+                    pawn.figureMoved(extendedMove.move)
+                    pawn.canBeHitEnpassant = true
+                }
+            }
+            is ExtendedMove.Normal -> {
+                setFigure(extendedMove.move.to, movingFigure)
+                // inform the involved figure(s) of the move
+                movingFigure.figureMoved(extendedMove.move)
+            }
+        }.let {}
+
+        // remove possible susceptibility to being hit by enpassant
+        extendedMoveStack.lastOrNull()?.let { previousExtendedMove->
+            if(previousExtendedMove is ExtendedMove.PawnDoubleJump) {
+                previousExtendedMove.pawn.canBeHitEnpassant = false
+            }
+        }
+
+        extendedMoveStack.addLast(extendedMove)
+
+        return extendedMove.hasHitFigure
+    }
+
+    override fun undo(): Boolean {
+        val lastExtMove: ExtendedMove = extendedMoveStack.removeLast()
+        when(lastExtMove) {
+            is ExtendedMove.Castling -> {
+                val king = clearFigure(lastExtMove.kingMove.to) as King
+                val rook = clearFigure(lastExtMove.rookMove.to)
+                setFigure(lastExtMove.kingMove.from, king)
+                setFigure(lastExtMove.rookMove.from, rook)
+                // inform the involved figure(s) of the undo
+                king.undoMove(lastExtMove.kingMove.from)
+                rook.undoMove(lastExtMove.rookMove.from)
+                king.didCastling = false
+            }
+            is ExtendedMove.Promotion -> {
+                clearPos(lastExtMove.move.to)
+                lastExtMove.figureTaken?.let { figureTaken->
+                    setFigure(figureTaken.position, figureTaken)
+                }
+                setFigure(lastExtMove.move.from, lastExtMove.pawnPromoted)
+                // no undo necessary because pawn's position was never updated
+            }
+            is ExtendedMove.Enpassant -> {
+                val pawnMoved = clearFigure(lastExtMove.move.to)
+                setFigure(lastExtMove.move.from, pawnMoved)
+                lastExtMove.pawnTaken.let { pawnTaken->
+                    setFigure(pawnTaken.position, pawnTaken)
+                }
+                // inform the involved figure(s) of the undo
+                pawnMoved.undoMove(lastExtMove.move.from)
+            }
+            is ExtendedMove.PawnDoubleJump -> {
+                lastExtMove.pawn.let { pawn ->
+                    clearPos(lastExtMove.move.to)
+                    setFigure(lastExtMove.move.from, pawn)
+                    // inform the involved figure(s) of the undo
+                    pawn.undoMove(lastExtMove.move.from)
+                    pawn.canBeHitEnpassant=false
+                }
+            }
+            is ExtendedMove.Normal -> {
+                val movingFigure = clearFigure(lastExtMove.move.to)
+                setFigure(lastExtMove.move.from, movingFigure)
+                lastExtMove.figureTaken?.let { setFigure(lastExtMove.move.to, it) }
+                // inform the involved figure(s) of the undo
+                movingFigure.undoMove(lastExtMove.move.from)
+            }
+        }.let {}
+
+        extendedMoveStack.lastOrNull()?.let { preLastExtMove->
+            if(preLastExtMove is ExtendedMove.PawnDoubleJump) {
+                preLastExtMove.pawn.canBeHitEnpassant = true
+            }
+        }
+
+        return lastExtMove.hasHitFigure
+    }
+
+    override fun movesPlayed(): List<Move> = extendedMoveStack.map { it.move }
+
     override fun getFigureOrNull(pos: Position) = game[pos.index]
     override fun isFreeArea(pos: Position) = game[pos.index] == null
 
@@ -317,4 +475,16 @@ internal class ArrayChessBoard constructor() : ChessBoard {
 
         return buffer.toString()
     }
+}
+
+private fun ArrayDeque<ExtendedMove>.getLatestMoves(count: Int?): String {
+    val latestExtendedMoves = if (count == null) {
+        this
+    } else {
+        assert(count > 0)
+        val minIndex = (size - count).coerceAtLeast(0)
+        filterIndexed { index, _ -> index >= minIndex }
+    }
+
+    return latestExtendedMoves.map { it.move }.joinToString(separator = ",") { it.toString() }
 }

@@ -468,7 +468,7 @@ internal class ChessGameTest {
         try {
             game.move(Move.byCode("a1-b1"))
             fail()
-        } catch (e: AssertionError) {
+        } catch (e: IllegalStateException) {
         }
     }
 
@@ -560,7 +560,6 @@ internal class ChessGameTest {
     @Test
     fun testGetPossibleMovesAfterIndirectChessAfterEnpassent() {
         game.moves(listOf("e2-e4", "d7-d5", "e4-e5", "e8-d7", "d1-g4", "f7-f5", "e5-f6")) //en-passant creates indirect chess path
-        assertTrue(game.getLastMove()!! is ExtendedMove.Enpassant)
         val possibleMoves = game.getAllMoves()
         val actualMoveCodes = possibleMoves.asSequence().map { move -> move.toString() }.toSet()
         val expectedMoveCodes = setOf("d7-e8", "d7-c6", "d7-d6", "e7-e6")

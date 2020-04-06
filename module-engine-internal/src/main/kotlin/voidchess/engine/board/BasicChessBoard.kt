@@ -4,7 +4,6 @@ import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
 import voidchess.engine.figures.Figure
 import voidchess.engine.figures.King
-import java.lang.IllegalArgumentException
 
 
 internal interface BasicChessBoard {

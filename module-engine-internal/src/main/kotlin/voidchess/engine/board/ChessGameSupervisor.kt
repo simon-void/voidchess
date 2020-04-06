@@ -3,7 +3,7 @@ package voidchess.engine.board
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 
-
+// TODO make functional interface in Kotlin 1.4
 internal interface ChessGameSupervisor {
     fun askForPawnChange(pawnPosition: Position): PawnPromotion
 }

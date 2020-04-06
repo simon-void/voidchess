@@ -2,19 +2,14 @@ package voidchess.engine.board
 
 import voidchess.common.board.StartConfig
 import voidchess.common.board.move.*
-import voidchess.common.board.move.PawnPromotion.*
-import voidchess.engine.board.move.ExtendedMove
-import voidchess.engine.figures.*
 import voidchess.engine.player.ki.evaluation.SearchTreePruner
 import java.util.*
-import kotlin.math.abs
 
 
 internal class ChessGame private constructor(
     private val board: ChessBoard,
     override val startConfig: StartConfig,
     private val mementoStack: LinkedList<Memento>,
-    private val extendedMoveStack: LinkedList<ExtendedMove>,
     private val numberStack: NumberStack,
     private var supervisor: ChessGameSupervisor
 ): ChessGameInterface, BasicChessBoard by board {
@@ -48,7 +43,7 @@ internal class ChessGame private constructor(
         }
 
     val history: String
-        get() = getHistory(4)
+        get() = board.historyToString(4)
 
     private val isDrawBecauseOfLowMaterial: Boolean
         get() {
@@ -100,7 +95,6 @@ internal class ChessGame private constructor(
             ArrayChessBoard(),
             StartConfig.ClassicConfig,
             LinkedList<Memento>(),
-            LinkedList<ExtendedMove>(),
             NumberStack(),
             supervisor
     ) {
@@ -110,19 +104,27 @@ internal class ChessGame private constructor(
     /**
      * copy-constructor
      */
-    private constructor(other: ChessGame, desc: String): this(
-            ArrayChessBoard(desc),
-            other.startConfig,
-            other.mementoStack.shallowCopy(),
-            other.extendedMoveStack.shallowCopy(),
-            NumberStack(other.numberStack),
-            ChessGameSupervisorDummy
+    private constructor(other: ChessGame, startConfig: StartConfig, movesPlayed: List<Move>) : this(
+        when (startConfig) {
+            is StartConfig.ManualConfig -> ArrayChessBoard().apply { init(startConfig.boardConfig) }
+            is StartConfig.ClassicConfig -> ArrayChessBoard().apply { init() }
+            is StartConfig.Chess960Config -> ArrayChessBoard().apply { init(startConfig.chess960Index) }
+        }.also { board ->
+            for (move in movesPlayed) {
+                board.move(move, ChessGameSupervisorDummy)
+            }
+        },
+        other.startConfig,
+        other.mementoStack.shallowCopy(),
+        NumberStack(other.numberStack),
+        ChessGameSupervisorDummy
     ) {
         hasHitFigure = other.hasHitFigure
         isWhiteTurn = other.isWhiteTurn
         numberOfMovesWithoutHit = other.numberOfMovesWithoutHit
         figureCount = other.figureCount
     }
+
 
     /**
      * for unit-tests
@@ -146,7 +148,6 @@ internal class ChessGame private constructor(
             ArrayChessBoard(game_description),
             StartConfig.ManualConfig(game_description, game_description.startsWith("white ")),
             LinkedList<Memento>(),
-            LinkedList<ExtendedMove>(),
             NumberStack(),
             supervisor
     ) {
@@ -173,7 +174,6 @@ internal class ChessGame private constructor(
             ArrayChessBoard().apply { init(initialPosition) },
             StartConfig.Chess960Config(initialPosition),
             LinkedList<Memento>(),
-            LinkedList<ExtendedMove>(),
             NumberStack(),
             supervisor
     ) {
@@ -188,16 +188,6 @@ internal class ChessGame private constructor(
         val normalSupervisor = supervisor
         supervisor = ChessGameSupervisorDummy
         return normalSupervisor
-    }
-
-    fun getLastMove() = if (extendedMoveStack.isEmpty()) null else extendedMoveStack.last
-
-    private fun setFigure(pos: Position, figure: Figure?) {
-        if (figure == null) {
-            board.clearPos(pos)
-        } else {
-            board.setFigure(pos, figure)
-        }
     }
 
     override fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean {
@@ -215,106 +205,23 @@ internal class ChessGame private constructor(
     }
 
     override fun move(move: Move): MoveResult {
-        val movingFigure: Figure = board.getFigure(move.from)
-        val toFigure: Figure? = board.getFigureOrNull(move.to)
-        assert(movingFigure.isWhite == isWhiteTurn) { "figure to be moved has wrong color" }
+        hasHitFigure = board.move(move, supervisor)
 
-        val extendedMove: ExtendedMove = when(movingFigure.type) {
-            FigureType.KING -> {
-                if(toFigure!=null && toFigure.isWhite==movingFigure.isWhite) {
-                    val isKingSideCastling = move.from.column<move.to.column
-                    val kingToColumn = if (isKingSideCastling) 6 else 2
-                    val rookToColumn = if (isKingSideCastling) 5 else 3
-                    ExtendedMove.Castling(move, Move[move.from, Position[move.to.row, kingToColumn]], Move[move.to, Position[move.to.row, rookToColumn]])
-                }else{
-                    ExtendedMove.Normal(move, toFigure)
-                }
-            }
-            FigureType.PAWN -> {
-                if(move.to.row==0 || move.to.row==7) {
-                    ExtendedMove.Promotion(move, movingFigure, board.getFigureOrNull(move.to))
-                }else if(abs(move.from.row-move.to.row)==2) {
-                    ExtendedMove.PawnDoubleJump(move,  movingFigure as Pawn)
-                }else if(move.from.column!=move.to.column && toFigure==null) {
-                    val pawnTakenByEnpassant = board.getFigure(Position[move.from.row, move.to.column])
-                    ExtendedMove.Enpassant(move, pawnTakenByEnpassant)
-                }else{
-                    ExtendedMove.Normal(move, toFigure)
-                }
-            }
-            else -> ExtendedMove.Normal(move, toFigure)
-        }
-
-        moveFigure(extendedMove)
-
-        memorizeGame()
-        memorizeMove(extendedMove)
-
-        return isEnd
-    }
-
-    private fun moveFigure(extendedMove: ExtendedMove) {
-        val movingFigure = board.clearFigure(extendedMove.move.from)
-        when(extendedMove) {
-            is ExtendedMove.Castling -> {
-                val castlingRook = board.clearFigure(extendedMove.rookMove.from)
-                board.setFigure(extendedMove.rookMove.to, castlingRook)
-                board.setFigure(extendedMove.kingMove.to, movingFigure)
-                // inform the involved figure(s) of the move
-                movingFigure.figureMoved(extendedMove.kingMove)
-                castlingRook.figureMoved(extendedMove.rookMove)
-                (movingFigure as King).didCastling = true
-            }
-            is ExtendedMove.Promotion -> {
-                val toPos: Position = extendedMove.move.to
-                val promotedPawn: Figure = when (supervisor.askForPawnChange(toPos)) {
-                    QUEEN -> getQueen(toPos, movingFigure.isWhite)
-                    ROOK -> getRook(toPos, movingFigure.isWhite)
-                    KNIGHT -> getKnight(toPos, movingFigure.isWhite)
-                    BISHOP -> getBishop(toPos, movingFigure.isWhite)
-                }
-                setFigure(toPos, promotedPawn)
-                // the newly created figure is already aware of its position and doesn't need to be informed
-            }
-            is ExtendedMove.Enpassant -> {
-                board.setFigure(extendedMove.move.to, movingFigure)
-                board.clearPos(extendedMove.pawnTaken.position)
-                // inform the involved figure(s) of the move
-                movingFigure.figureMoved(extendedMove.move)
-            }
-            is ExtendedMove.PawnDoubleJump -> {
-                board.setFigure(extendedMove.move.to, movingFigure)
-                // inform the involved figure(s) of the move
-                extendedMove.pawn.let { pawn: Pawn ->
-                    pawn.figureMoved(extendedMove.move)
-                    pawn.canBeHitEnpassant = true
-                }
-            }
-            is ExtendedMove.Normal -> {
-                board.setFigure(extendedMove.move.to, movingFigure)
-                // inform the involved figure(s) of the move
-                movingFigure.figureMoved(extendedMove.move)
-            }
-        }.let {}
-
-        // remove possible susceptibility to being hit by enpassant
-        extendedMoveStack.lastOrNull()?.let { previousExtendedMove->
-            if(previousExtendedMove is ExtendedMove.PawnDoubleJump) {
-                previousExtendedMove.pawn.canBeHitEnpassant = false
-            }
+        if (hasHitFigure) {
+            numberStack.figureHit()
+            numberOfMovesWithoutHit = 0
+            figureCount--
+        } else {
+            numberStack.noFigureHit()
+            numberOfMovesWithoutHit++
         }
 
         isWhiteTurn = !isWhiteTurn
-        hasHitFigure = extendedMove.hasHitFigure.also { didHitFigure->
-            if (didHitFigure) {
-                numberStack.figureHit()
-                numberOfMovesWithoutHit = 0
-                figureCount--
-            } else {
-                numberStack.noFigureHit()
-                numberOfMovesWithoutHit++
-            }
-        }
+
+
+        memorizeGame()
+
+        return isEnd
     }
 
     override fun undo() {
@@ -322,69 +229,16 @@ internal class ChessGame private constructor(
         numberOfMovesWithoutHit = numberStack.undo()
         mementoStack.removeLast()
 
-        val lastExtMove: ExtendedMove = extendedMoveStack.removeLast()
-        when(lastExtMove) {
-            is ExtendedMove.Castling -> {
-                val king = board.clearFigure(lastExtMove.kingMove.to) as King
-                val rook = board.clearFigure(lastExtMove.rookMove.to)
-                board.setFigure(lastExtMove.kingMove.from, king)
-                board.setFigure(lastExtMove.rookMove.from, rook)
-                // inform the involved figure(s) of the undo
-                king.undoMove(lastExtMove.kingMove.from)
-                rook.undoMove(lastExtMove.rookMove.from)
-                king.didCastling = false
-            }
-            is ExtendedMove.Promotion -> {
-                board.clearPos(lastExtMove.move.to)
-                lastExtMove.figureTaken?.let { figureTaken->
-                    board.setFigure(figureTaken.position, figureTaken)
-                }
-                board.setFigure(lastExtMove.move.from, lastExtMove.pawnPromoted)
-                // no undo necessary because pawn's position was never updated
-            }
-            is ExtendedMove.Enpassant -> {
-                val pawnMoved = board.clearFigure(lastExtMove.move.to)
-                board.setFigure(lastExtMove.move.from, pawnMoved)
-                lastExtMove.pawnTaken.let { pawnTaken->
-                    board.setFigure(pawnTaken.position, pawnTaken)
-                }
-                // inform the involved figure(s) of the undo
-                pawnMoved.undoMove(lastExtMove.move.from)
-            }
-            is ExtendedMove.PawnDoubleJump -> {
-                lastExtMove.pawn.let { pawn ->
-                    board.clearPos(lastExtMove.move.to)
-                    board.setFigure(lastExtMove.move.from, pawn)
-                    // inform the involved figure(s) of the undo
-                    pawn.undoMove(lastExtMove.move.from)
-                    pawn.canBeHitEnpassant=false
-                }
-            }
-            is ExtendedMove.Normal -> {
-                val movingFigure = board.clearFigure(lastExtMove.move.to)
-                board.setFigure(lastExtMove.move.from, movingFigure)
-                lastExtMove.figureTaken?.let { board.setFigure(lastExtMove.move.to, it) }
-                // inform the involved figure(s) of the undo
-                movingFigure.undoMove(lastExtMove.move.from)
-            }
-        }.let {}
+        val undoneMoveHasHitFigure = board.undo()
 
-        extendedMoveStack.lastOrNull()?.let { preLastExtMove->
-            if(preLastExtMove is ExtendedMove.PawnDoubleJump) {
-                preLastExtMove.pawn.canBeHitEnpassant = true
-            }
-        }
-
-        if (lastExtMove.hasHitFigure) {
+        if (undoneMoveHasHitFigure) {
             figureCount++
         }
     }
 
     override fun toString() = "${if (isWhiteTurn) "white" else "black"} $numberOfMovesWithoutHit $board"
 
-    private fun getHistory(numberOfHalfMoves: Int) = extendedMoveStack.getLatestMoves(numberOfHalfMoves)
-
-    override fun getCompleteHistory() = extendedMoveStack.getLatestMoves(extendedMoveStack.size)
+    override fun getCompleteHistory() = board.historyToString(null)
 
     private fun initGame() = initGame(518)    //classic chess starting configuration
 
@@ -393,7 +247,6 @@ internal class ChessGame private constructor(
         numberOfMovesWithoutHit = 0
         figureCount = 32
         mementoStack.clear()
-        extendedMoveStack.clear()
         numberStack.init()
 
         board.init(chess960)
@@ -471,9 +324,9 @@ internal class ChessGame private constructor(
         gameInstances.add(this)
 
         if (neededInstances > 1) {
-            val gameDes = toString()
+            val moves = board.movesPlayed()
             for (i in 1 until neededInstances) {
-                val copy = ChessGame(this, gameDes)
+                val copy = ChessGame(this, startConfig, moves)
                 gameInstances.add(copy)
             }
         }
@@ -481,14 +334,6 @@ internal class ChessGame private constructor(
     }
 
     private fun memorizeGame() = mementoStack.addLast(Memento(board, isWhiteTurn))
-
-    private fun memorizeMove(
-        extendedMove: ExtendedMove
-    ) {
-        extendedMoveStack.addLast(extendedMove)
-    }
-
-    override fun getLastExtendedMove(): ExtendedMove = extendedMoveStack.last
 }
 
 private class Memento constructor(game: BasicChessBoard, private val isWhite: Boolean) {
@@ -588,13 +433,6 @@ private class NumberStack {
             numberStack = newNumberStack
         }
     }
-}
-
-internal fun LinkedList<ExtendedMove>.getLatestMoves(count: Int): String {
-    assert(count > 0)
-
-    val minIndex = (size - count).coerceAtLeast(0)
-    return subList(fromIndex = minIndex, toIndex = size).map { it.move }.joinToString(separator = ",") { it.toString() }
 }
 
 private fun LinkedList<Memento>.countOccurrencesOfLastMemento(): Int {
