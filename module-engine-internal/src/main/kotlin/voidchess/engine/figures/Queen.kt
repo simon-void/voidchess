@@ -59,13 +59,13 @@ internal class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite
     override fun getReachableCheckingMoves(game: ChessBoard, result: MutableCollection<Move>) {
         val opponentKingPos = game.getKing(!isWhite).position
         val currentPos = position
-        forEachReachablePos(game) {
-            if(isReachable(it, game)) {
-                val figureTaken = game.move(this, it)
-                if(isReachable(opponentKingPos, game)) {
-                    result.add(Move[currentPos, it])
+        forEachReachablePos(game) { checkingPos ->
+            if (isReachable(checkingPos, game)) {
+                if(game.simulateSimplifiedMove(this, checkingPos) { boardAfterMove ->
+                        isReachable(opponentKingPos, boardAfterMove)}
+                ) {
+                    result.add(Move[currentPos, checkingPos])
                 }
-                game.undoMove(this, currentPos, figureTaken)
             }
         }
     }

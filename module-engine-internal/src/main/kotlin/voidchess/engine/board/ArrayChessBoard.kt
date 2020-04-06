@@ -28,13 +28,6 @@ internal class ArrayChessBoard constructor() : ChessBoard {
     private var isBlackCheck: Boolean = false
     private var cachedAttackLines: AttackLines? = null
 
-    val figureCount: Int
-        get() {
-            var count = 0
-            forAllFigures { count++ }
-            return count
-        }
-
     init {
         init()
     }
@@ -67,12 +60,9 @@ internal class ArrayChessBoard constructor() : ChessBoard {
     }
 
     override fun getCachedAttackLines(isWhite: Boolean): AttackLines {
-            var scopedAttackLines = cachedAttackLines
-            if (scopedAttackLines == null) {
-                scopedAttackLines = checkAttackLines(this, isWhite)
-                cachedAttackLines = scopedAttackLines
-            }
-            return scopedAttackLines
+        val scopedAttackLines: AttackLines = cachedAttackLines ?: checkAttackLines(this, isWhite)
+        cachedAttackLines = scopedAttackLines
+        return scopedAttackLines
     }
 
     override fun init() {
@@ -276,34 +266,46 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         }
     }
 
-    override fun setFigure(pos: Position, figure: Figure) {
-        clearCheckComputation()
+    private fun setFigure(pos: Position, figure: Figure) {
         game[pos.index] = figure
     }
 
-    override fun clearFigure(pos: Position): Figure {
+    private fun clearFigure(pos: Position): Figure {
         val figure: Figure = game[pos.index] ?: throw IllegalStateException("position $pos doesn't contain a figure to clear")
         game[pos.index] = null
         return figure
     }
 
-    override fun clearPos(pos: Position) {
+    private fun clearPos(pos: Position) {
         game[pos.index] = null
     }
 
-    override fun move(figure: Figure, to: Position): Figure? {
-        val move = Move[figure.position, to]
-        game[figure.position.index] = null
-        val figureTaken = game[to.index]
-        game[to.index] = figure
-        figure.figureMoved(move)
-        return figureTaken
-    }
+    override fun simulateSimplifiedMove(
+        figure: Figure,
+        warpTo: Position,
+        query: (BasicChessBoard) -> Boolean
+    ): Boolean {
+        fun move(figure: Figure, to: Position): Figure? {
+            val move = Move[figure.position, to]
+            game[figure.position.index] = null
+            val figureTaken = game[to.index]
+            game[to.index] = figure
+            figure.figureMoved(move)
+            return figureTaken
+        }
+        fun undoMove(figure: Figure, from: Position, figureTaken: Figure?) {
+            game[figure.position.index] = figureTaken
+            game[from.index] = figure
+            figure.undoMove(from)
+        }
 
-    override fun undoMove(figure: Figure, from: Position, figureTaken: Figure?) {
-        game[figure.position.index] = figureTaken
-        game[from.index] = figure
-        figure.undoMove(from)
+        val fromPos = figure.position
+        val figureTaken = move(figure, warpTo)
+        // execute the query with figure on the new position
+        val result = query(this)
+        // move the figure back to it's original position
+        undoMove(figure, fromPos, figureTaken)
+        return result
     }
 
     override fun historyToString(numberOfHalfMoves: Int?) = extendedMoveStack.getLatestMoves(numberOfHalfMoves)
@@ -315,6 +317,8 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         move: Move,
         supervisor: ChessGameSupervisor
     ): Boolean {
+        clearCheckComputation()
+
         val movingFigure: Figure = clearFigure(move.from)
         val toFigure: Figure? = getFigureOrNull(move.to)
 
@@ -399,6 +403,8 @@ internal class ArrayChessBoard constructor() : ChessBoard {
     }
 
     override fun undo(): Boolean {
+        clearCheckComputation()
+
         val lastExtMove: ExtendedMove = extendedMoveStack.removeLast()
         when(lastExtMove) {
             is ExtendedMove.Castling -> {

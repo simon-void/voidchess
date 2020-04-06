@@ -162,13 +162,10 @@ internal class King : CastlingFigure {
         return false
     }
 
-    private fun isKingCheckAt(to: Position, game: ChessBoard): Boolean {
-        val from = position
-        val figureTaken = game.move(this, to)
-        val isCheck = CheckSearch.isCheck(game, this)
-        game.undoMove(this, from, figureTaken)
-        return isCheck
-    }
+    private fun isKingCheckAt(to: Position, game: ChessBoard): Boolean =
+        game.simulateSimplifiedMove(this, to) { boardAfterMove ->
+            CheckSearch.isCheck(boardAfterMove, this)
+        }
 
     override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
     override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleTakingMoves(..)")

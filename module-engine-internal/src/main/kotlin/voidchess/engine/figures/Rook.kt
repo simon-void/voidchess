@@ -61,20 +61,20 @@ internal class Rook : CastlingFigure {
         val possiblePos1 = Position[currentPos.row, opponentKingPos.column]
         val possiblePos2 = Position[opponentKingPos.row, currentPos.column]
         // check position 1
-        if(isReachable(possiblePos1, game)) {
-            val figureTaken = game.move(this, possiblePos1)
-            if(isReachable(opponentKingPos, game)) {
+        if (isReachable(possiblePos1, game)) {
+            if (game.simulateSimplifiedMove(this, possiblePos1) { boardAfterMove ->
+                    isReachable(opponentKingPos, boardAfterMove)}
+            ) {
                 result.add(Move[currentPos, possiblePos1])
             }
-            game.undoMove(this, currentPos, figureTaken)
         }
         // check position 2
-        if(isReachable(possiblePos2, game)) {
-            val figureTaken = game.move(this, possiblePos2)
-            if(isReachable(opponentKingPos, game)) {
+        if (isReachable(possiblePos2, game)) {
+            if (game.simulateSimplifiedMove(this, possiblePos2) { boardAfterMove ->
+                    isReachable(opponentKingPos, boardAfterMove)}
+            ) {
                 result.add(Move[currentPos, possiblePos2])
             }
-            game.undoMove(this, currentPos, figureTaken)
         }
     }
 

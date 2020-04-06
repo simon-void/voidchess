@@ -65,11 +65,11 @@ internal class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhit
             if(Position.inBounds(row, column)) {
                 val checkPos = Position[row, column]
                 if(isReachable(checkPos, game)) {
-                    val figureTaken = game.move(this, checkPos)
-                    if(isReachable(opponentKingPos, game)) {
+                    if(game.simulateSimplifiedMove(this, checkPos) { boardAfterMove ->
+                            isReachable(opponentKingPos, boardAfterMove)}
+                    ) {
                         result.add(Move[currentPos, checkPos])
                     }
-                    game.undoMove(this, currentPos, figureTaken)
                 }
             }
         }

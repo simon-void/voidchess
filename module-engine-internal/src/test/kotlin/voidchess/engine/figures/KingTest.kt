@@ -27,9 +27,8 @@ internal class KingTest {
     @DataProvider
     fun getIsSelectableData(): Array<Array<Any>> = arrayOf(
             arrayOf(initSimpleChessBoard(518), "e1", false),
-            arrayOf(initSimpleChessBoard(518).apply { clearFigure(Position.byCode("f2")) }, "e1", true),
+            arrayOf(initSimpleChessBoard(518, "f2-f3", "f7-f6"), "e1", true),
             arrayOf(initSimpleChessBoard(613), "f1", true),
-            arrayOf(initSimpleChessBoard(613).apply { setFigure(Position.byCode("h3"), Knight(false, Position.byCode("h3"))) }, "f1", false),
             arrayOf(initSimpleChessBoard(380), "d1", true)
     )
 

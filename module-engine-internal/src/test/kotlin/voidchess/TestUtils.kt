@@ -6,7 +6,9 @@ import voidchess.common.board.move.Position
 import voidchess.common.board.move.PositionProgression
 import voidchess.engine.board.*
 import voidchess.common.helper.splitAndTrim
+import voidchess.engine.figures.Figure
 import java.util.*
+import kotlin.AssertionError
 
 
 internal class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPromotion) : ChessGameSupervisor {
@@ -18,7 +20,12 @@ internal class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPro
 
 internal fun initSimpleChessBoard(gameDes: String): ChessBoard = ArrayChessBoard(gameDes)
 
-internal fun initSimpleChessBoard(chess960: Int): ChessBoard = ArrayChessBoard().apply { init(chess960) }
+internal fun initSimpleChessBoard(chess960: Int, vararg moveCodes: String): ChessBoard = ArrayChessBoard().apply {
+    init(chess960)
+    for(moveCode in moveCodes) {
+        move(Move.byCode(moveCode), ChessGameSupervisorDummy)
+    }
+}
 
 internal fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessGameInterface = ChessGame(chess960).apply {
     for(moveCode in moveCodes) {
@@ -43,6 +50,47 @@ internal fun ChessGameInterface.moves(moveCodes: Iterable<String>) {
     for(moveCode in moveCodes) {
         move(Move.byCode(moveCode))
     }
+}
+
+internal fun BasicChessBoard.countFigures(): Int {
+    var figureCount = 0
+    for(row in 0..7) {
+        for(column in 0..7) {
+            if(this.getFigureOrNull(Position[row, column])!=null) {
+                figureCount++
+            }
+        }
+    }
+    return figureCount
+}
+
+internal fun BasicChessBoard.assertFiguresKnowTherePosition() {
+    val figuresWhichAreWrongAboutTheirPosition = mutableListOf<Pair<Position, Figure>>()
+    for(row in 0..7) {
+        for(column in 0..7) {
+            val pos = Position[row, column]
+            getFigureOrNull(pos)?.let { figure ->
+                if(pos.notEqualsPosition(figure.position)) {
+                    figuresWhichAreWrongAboutTheirPosition.add(pos to figure)
+                }
+            }
+        }
+    }
+    if(figuresWhichAreWrongAboutTheirPosition.isNotEmpty()) {
+        throw AssertionError("these figures are wrong about their position: "+ figuresWhichAreWrongAboutTheirPosition.joinToString())
+    }
+}
+
+internal fun BasicChessBoard.allFigures(): List<Figure> {
+    val figures = mutableListOf<Figure>()
+    for(row in 0..7) {
+        for(column in 0..7) {
+            getFigureOrNull(Position[row, column])?.let { figure ->
+                figures.add(figure)
+            }
+        }
+    }
+    return figures
 }
 
 internal fun PositionProgression.toList(): List<Position> {

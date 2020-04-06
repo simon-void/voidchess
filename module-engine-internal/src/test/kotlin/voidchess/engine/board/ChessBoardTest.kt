@@ -2,6 +2,8 @@ package voidchess.engine.board
 
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import voidchess.assertFiguresKnowTherePosition
+import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import kotlin.test.*
 
@@ -70,15 +72,6 @@ class ChessBoardTest {
     }
 
     @Test
-    fun testSetFigure() {
-        val board = ArrayChessBoard()
-        val figure = board.getFigure(Position.byCode("b1"))
-        val to = Position.byCode("e4")
-        board.setFigure(to, figure)
-        assertTrue(board.getFigure(to).isKnight())
-    }
-
-    @Test
     fun testGetCachedAttackLines() {
         val board = ArrayChessBoard()
         var attackLines = board.getCachedAttackLines(true)
@@ -99,33 +92,20 @@ class ChessBoardTest {
     }
 
     @Test(dataProvider = "getTestMoveUndoMoveInvarianceData")
-    fun testMoveUndoMoveInvariance(fromCode: String, toCode: String, gameDes: String) {
+    fun testSimulateSimplifiedMove(fromCode: String, toCode: String, gameDes: String) {
         val board = ArrayChessBoard()
         board.init(gameDes)
-        val initialLongGameDescription = board.toString()
-        val initialFigureCount = board.figureCount
-        val from = Position.byCode(fromCode)
-        val to = Position.byCode(toCode)
+        board.assertFiguresKnowTherePosition()
+        val initialContent = board.toString()
 
-        val figure = board.getFigureOrNull(from)
-        assertNotNull(figure, "figure to move")
-        val canDoCastlingInitially = figure.canCastle()
-        val willTakeFigure = !board.isFreeArea(to)
-
-        val figureTaken = board.move(figure, to)
-
-        val wasFigureTaken = figureTaken != null
-        assertEquals(willTakeFigure, wasFigureTaken, "figure taken")
-        assertEquals(if (wasFigureTaken) initialFigureCount - 1 else initialFigureCount, board.figureCount)
-        assertEquals(figure, board.getFigureOrNull(to), "figure after move")
-        assertEquals(to, figure.position, "figure position after move")
-        assertFalse(figure.canCastle(), "after a move, yuo can't do castling guaranteed")
-
-        board.undoMove(figure, from, figureTaken)
-
-        assertEquals(initialLongGameDescription, board.toString(), "game state after move-undo")
-        assertEquals(from, figure.position)
-        assertEquals(canDoCastlingInitially, figure.canCastle(), "same castling state as before")
+        val figure = board.getFigure(Position.byCode(fromCode))
+        board.simulateSimplifiedMove(figure, Position.byCode(toCode)) {boardAfterMove->
+            boardAfterMove.assertFiguresKnowTherePosition()
+            assertNotEquals(initialContent, boardAfterMove.toString(), "game state within simulated")
+            true
+        }
+        board.assertFiguresKnowTherePosition()
+        assertEquals(initialContent, board.toString(), "game state after simulated")
     }
 
     @DataProvider
@@ -138,5 +118,21 @@ class ChessBoardTest {
     fun testToString() {
         val board = ArrayChessBoard()
         assertEquals(board.toString(), initial)
+    }
+
+    @Test
+    fun testMovesPlayed() {
+        val twoMoves = mutableListOf(Move.byCode("e2-e4"), Move.byCode("e7-e5"))
+        val thirdMove = Move.byCode("d2-d4")
+        val threeMoves = mutableListOf(Move.byCode("e2-e4"), Move.byCode("e7-e5"), thirdMove)
+        val board = ArrayChessBoard()
+        twoMoves.forEach {
+            board.move(it, ChessGameSupervisorDummy)
+        }
+        assertEquals(twoMoves, board.movesPlayed())
+        board.move(thirdMove, ChessGameSupervisorDummy)
+        assertEquals(threeMoves, board.movesPlayed())
+        board.undo()
+        assertEquals(twoMoves, board.movesPlayed())
     }
 }
