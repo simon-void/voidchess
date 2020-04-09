@@ -9,7 +9,9 @@ import org.testng.Assert.assertTrue
 import org.testng.annotations.DataProvider
 import voidchess.common.player.ki.evaluation.Ongoing
 import voidchess.copyGameWithInvertedColors
+import voidchess.initChessGame
 import voidchess.mirrorRow
+import voidchess.toManualConfig
 
 
 internal class EvaluatingMinMaxTest {
@@ -18,13 +20,13 @@ internal class EvaluatingMinMaxTest {
         val easyPruner = AllMovesOrNonePruner(1, 4, 3)
         return arrayOf(
                 arrayOf(
-                        ChessGame("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false"),
+                        ChessGame("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false".toManualConfig()),
                         AllMovesOrNonePruner(1, 4, 3),
                         Move.byCode("g6-g5"),
                         -9.5..-8.0,
                         "pawn promotion"),
                 arrayOf(
-                        ChessGame("white 0 King-white-h1-4 King-black-c8-6 Knight-white-d5 Rook-black-g8-8 Pawn-white-h2-false Pawn-black-h3-false"),
+                        ChessGame("white 0 King-white-h1-4 King-black-c8-6 Knight-white-d5 Rook-black-g8-8 Pawn-white-h2-false Pawn-black-h3-false".toManualConfig()),
                         easyPruner,
                         Move.byCode("d5-e7"),
                         2.7..3.3,
@@ -51,7 +53,7 @@ internal class EvaluatingMinMaxTest {
     @Test
     fun testEvaluateMoveHasNoSideEffects() {
         val des = "black 0 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false"
-        val game = ChessGame(des)
+        val game = ChessGame(des.toManualConfig())
         val dynamicEvaluation = EvaluatingMinMax()
 
         dynamicEvaluation.evaluateMove(game, Move.byCode("a6-b6"))
@@ -61,7 +63,7 @@ internal class EvaluatingMinMaxTest {
 
     @Test
     fun testMinMaxScheme() {
-        val game = ChessGame(518, "d2-d3", "d7-d6", "c1-g5")
+        val game = initChessGame(518, "d2-d3", "d7-d6", "c1-g5")
 
         val dynamicEvaluation = EvaluatingMinMax()
 

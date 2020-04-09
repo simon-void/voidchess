@@ -119,7 +119,7 @@ class ChessGame private constructor(
      */
     private constructor(supervisor: ChessGameSupervisor, game_description: String) : this(
         ArrayChessBoard(game_description),
-        StartConfig.ManualConfig(game_description, game_description.startsWith("white ")),
+        game_description.toManualStartConfig(),
         LinkedList<Memento>(),
         LinkedList<ExtendedMove>(),
         NumberStack(),
@@ -539,4 +539,14 @@ private fun LinkedList<Memento>.countOccurrencesOfLastMemento(): Int {
     }
 
     return count
+}
+
+private fun String.toManualStartConfig(): StartConfig.ManualConfig {
+    val gameDesc = this
+    val gameDescParts = this.split(" ")
+    check(gameDescParts.size>=4) {"expected gameDescription, found something else: $gameDesc"}
+    val isWhiteTurn = gameDescParts[0].toBoolean()
+    val numberOfMovesSinceHitFigure = gameDescParts[1].toInt()
+    val figureStates = gameDescParts.filterIndexed{ index, _ ->index>1}
+    return StartConfig.ManualConfig(isWhiteTurn, numberOfMovesSinceHitFigure, figureStates)
 }

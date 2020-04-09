@@ -6,7 +6,7 @@ import org.testng.annotations.Test
 import voidchess.engine.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.initSimpleChessBoard
+import voidchess.initChessBoard
 import java.util.*
 
 
@@ -98,7 +98,7 @@ class FigureTest {
 
     @Test(dataProvider = "getIsBoundData")
     fun testIsBound(gameDes: String, figurePos: String, isNotBoundPosCodes: List<String>, isBoundPosCodes: List<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val figure = game.getFigure(Position.byCode(figurePos))
 
         val shouldNotBeBoundButAre = LinkedList<String>()
@@ -133,7 +133,7 @@ class FigureTest {
     @Test(dependsOnMethods = ["testIsBound"])
     fun testIsMovable() {
         val des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-h4 King-black-e8-0"
-        val game = initSimpleChessBoard(des)
+        val game = initChessBoard(des)
 
         val from = Position.byCode("h2")
         val to1 = Position.byCode("f2")

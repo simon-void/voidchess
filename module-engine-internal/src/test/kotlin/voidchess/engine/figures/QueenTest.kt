@@ -7,8 +7,9 @@ import voidchess.engine.board.ArrayChessBoard
 import voidchess.engine.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.initSimpleChessBoard
+import voidchess.initChessBoard
 import voidchess.toFromPosAsStringSet
+import voidchess.toManualConfig
 import voidchess.toTargetPosAsStringSet
 import java.util.*
 
@@ -20,8 +21,8 @@ import kotlin.test.assertTrue
 class QueenTest {
     @Test
     fun testIsReachable() {
-        val des = "white 0 Queen-white-e2  King-white-e1-0  King-black-e8-0"
-        val game = ChessGame(des)
+        val des = "white 0 Queen-white-e2 King-white-e1-0 King-black-e8-0"
+        val game = ChessGame(des.toManualConfig())
 
         val from = Position.byCode("e2")
         val to1 = Position.byCode("e5")
@@ -41,7 +42,7 @@ class QueenTest {
 
     @Test(dataProvider = "getTestGetPossibleMovesData")
     fun testGetPossibleMoves(des: String, queenPosCode: String, expectedNumberOfMoves: Int) {
-        val game = ArrayChessBoard(des)
+        val game = ArrayChessBoard(des.toManualConfig())
 
         val queen = game.getFigure(Position.byCode(queenPosCode))
         val moveIter = LinkedList<Move>()
@@ -52,13 +53,13 @@ class QueenTest {
     @DataProvider
     fun getTestGetPossibleMovesData(): Array<Array<Any>> = arrayOf(
             arrayOf("white 0 Queen-white-d1 King-white-e1-0 King-black-e8-0", "d1", 17),
-            arrayOf("white 0 Rook-black-a1-1 Queen-white-d1 King-white-e1-0  King-black-e8-0", "d1", 3),
+            arrayOf("white 0 Rook-black-a1-1 Queen-white-d1 King-white-e1-0 King-black-e8-0", "d1", 3),
             arrayOf("white 0 King-white-e1-0 Bishop-black-c3 Queen-white-b4 King-black-e8-0", "b4", 1)
     )
 
     @Test(dataProvider = "getGetReachableCheckingMovesData")
     fun testGetReachableCheckingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val queen = game.getFigure(Position.byCode(posCode))
         val actualReachableCheckingResults = TreeSet<Move>()
         queen.getReachableCheckingMoves(game, actualReachableCheckingResults)
@@ -74,7 +75,7 @@ class QueenTest {
 
     @Test(dataProvider = "getGetCriticalMovesData")
     fun testGetCriticalMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val queen = game.getFigure(Position.byCode(posCode))
         val actualIrreversibleResults = TreeSet<Move>()
         queen.getCriticalMoves(game, actualIrreversibleResults)
@@ -93,7 +94,7 @@ class QueenTest {
 
     @Test(dataProvider = "getTestIsSelectableData")
     fun testIsSelectable(des: String, figurePos: String, expectedIsSelectable: Boolean) {
-        val game = ArrayChessBoard(des)
+        val game = ArrayChessBoard(des.toManualConfig())
         val queen = game.getFigure(Position.byCode(figurePos))
         assertEquals(expectedIsSelectable, queen.isSelectable(game), "isSelectable")
     }

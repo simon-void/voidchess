@@ -2,14 +2,15 @@ package voidchess.engine.figures
 
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import voidchess.*
 import voidchess.engine.board.ChessGame
 import voidchess.engine.board.ChessBoard
 import voidchess.engine.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import voidchess.getPossibleMovesFrom
+import voidchess.initChessGame
 import voidchess.initChessBoard
-import voidchess.initSimpleChessBoard
 import voidchess.toTargetPosAsStringSet
 import java.util.*
 import kotlin.test.assertEquals
@@ -26,16 +27,16 @@ internal class KingTest {
 
     @DataProvider
     fun getIsSelectableData(): Array<Array<Any>> = arrayOf(
-            arrayOf(initSimpleChessBoard(518), "e1", false),
-            arrayOf(initSimpleChessBoard(518, "f2-f3", "f7-f6"), "e1", true),
-            arrayOf(initSimpleChessBoard(613), "f1", true),
-            arrayOf(initSimpleChessBoard(380), "d1", true)
+            arrayOf(initChessBoard(518), "e1", false),
+            arrayOf(initChessBoard(518, "f2-f3", "f7-f6"), "e1", true),
+            arrayOf(initChessBoard(613), "f1", true),
+            arrayOf(initChessBoard(380), "d1", true)
     )
 
     @Test
     fun testIsReachable() {
         var des = "white 0 Rook-white-a1-0 King-white-e1-0 Rook-white-h1-0 King-black-e8-0"
-        var game = ChessGame(des)
+        var game = ChessGame(des.toManualConfig())
 
         var from = Position.byCode("e1")
         var to1 = Position.byCode("f1")
@@ -60,7 +61,7 @@ internal class KingTest {
 
 
         des = "black 0 Rook-black-a8-0 Knight-black-b8 King-black-c8-0 Rook-black-h8-0 King-white-e1-0"
-        game = ChessGame(des)
+        game = ChessGame(des.toManualConfig())
 
         from = Position.byCode("c8")
         to1 = Position.byCode("a8")
@@ -82,7 +83,7 @@ internal class KingTest {
         assertFalse(king.isReachable(from, game))
 
 
-        game = ChessGame(621)
+        game = ChessGame(621.toChess960Config())
         from = Position.byCode("e1")
         to1 = Position.byCode("f1")
         king = King(true, from)
@@ -91,7 +92,7 @@ internal class KingTest {
 
     @Test(dataProvider = "getReachableByCastlingData")
     fun testIsReachableByCastling(gameDes: String, kingPosCode: String, rookPosCode: String, expectedCanCastle: Boolean) {
-        val game = ChessGame(gameDes)
+        val game = ChessGame(gameDes.toManualConfig())
         val kingPos = Position.byCode(kingPosCode)
         val rookPos = Position.byCode(rookPosCode)
         val king = game.getFigure(kingPos) as King
@@ -141,7 +142,7 @@ internal class KingTest {
 
     @Test(dataProvider = "getGetPossibleMovesData")
     fun testGetPossibleMoves(gameDes: String, posCode: String, expectedPossibleMoveCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val possibleMoves = game.getPossibleMovesFrom(posCode)
         val actualPossibleMoveCodes = possibleMoves.asSequence().map { move-> move.to.toString() }.toSet()
         assertEquals(expectedPossibleMoveCodes, actualPossibleMoveCodes, "expected# ${expectedPossibleMoveCodes.size}, actual# ${actualPossibleMoveCodes.size} - king can move to")
@@ -168,7 +169,7 @@ internal class KingTest {
 
     @Test(dataProvider = "getPossibleMovesAfterInitialMovesData")
     fun testGetPossibleMovesAfterInitialMoves(chess960: Int, moveCodes: List<String>, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game1 = initChessBoard(chess960)
+        val game1 = initChessGame(chess960)
         for(moveCode in moveCodes) game1.move(Move.byCode(moveCode))
         val moveFrom1 = game1.getPossibleMovesFrom(posCode)
         val actualMoveToCodes = moveFrom1.toTargetPosAsStringSet()
@@ -185,7 +186,7 @@ internal class KingTest {
 
     @Test(dataProvider = "getGetCriticalMovesData")
     fun testGetPossibleIrreversibleMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val king = game.getFigure(Position.byCode(posCode))
         val results = TreeSet<Move>()
         king.getCriticalMoves(game, results)
@@ -201,7 +202,7 @@ internal class KingTest {
 
     @Test(dataProvider = "getGetPossibleTakingMovesData")
     fun testGetPossibleTakingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val king = game.getFigure(Position.byCode(posCode))
         val results = LinkedList<Move>()
         king.getPossibleTakingMoves(game, results)
@@ -217,7 +218,7 @@ internal class KingTest {
     @Test
     fun testDidCastling() {
         val des = "white 0 Rook-white-a1-0 King-white-e1-0 " + "King-black-e8-0"
-        val game = ChessGame(des)
+        val game = ChessGame(des.toManualConfig())
 
         val king = game.getFigureOrNull(Position.byCode("e1")) as King
         assertFalse(king.didCastling)
@@ -227,7 +228,7 @@ internal class KingTest {
 
     @Test
     fun testDoesShortCastling() {
-        val game = ChessGame(518)
+        val game = ChessGame(518.toChess960Config())
         with(game) {
             move(Move.byCode("g2-g3"))
             move(Move.byCode("g7-g6"))
@@ -250,7 +251,7 @@ internal class KingTest {
 
     @Test
     fun testDoesLongCastling() {
-        val game = ChessGame(518)
+        val game = ChessGame(518.toChess960Config())
         game.apply {
             move(Move.byCode("e2-e4"))
             move(Move.byCode("e7-e5"))
@@ -280,14 +281,14 @@ internal class KingTest {
         //check out https://de.wikipedia.org/wiki/Chess960#Castlingregeln
 
         //Rook on a1, king on b1 so b1-a1 should be possible as a first move
-        var game = ChessGame(314)
+        var game = ChessGame(314.toChess960Config())
         val c1 = Position.byCode("c1")
         val d1 = Position.byCode("d1")
         var isCastlingPossible = game.isMovable(d1, c1, true)
         assertTrue(isCastlingPossible, "castling should be possible")
 
         //Rook on a1, king on b1 so b1-a1 should be be possible as a first move
-        game = ChessGame(759)
+        game = ChessGame(759.toChess960Config())
         val a1 = Position.byCode("a1")
         val b1 = Position.byCode("b1")
         isCastlingPossible = game.isMovable(b1, a1, true)

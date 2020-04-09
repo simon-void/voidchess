@@ -1,33 +1,35 @@
 package voidchess
 
+import voidchess.common.board.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.board.move.PositionProgression
 import voidchess.engine.board.*
 import voidchess.common.helper.splitAndTrim
+import voidchess.engine.board.other.ChessGameSupervisor
+import voidchess.engine.board.other.ChessGameSupervisorDummy
 import voidchess.engine.figures.Figure
 import java.util.*
-import kotlin.AssertionError
 
 
-internal class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPromotion) : ChessGameSupervisor {
+internal class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPromotion) :
+    ChessGameSupervisor {
 
     override fun askForPawnChange(pawnPosition: Position): PawnPromotion {
         return defaultPawnTransform
     }
 }
 
-internal fun initSimpleChessBoard(gameDes: String): ChessBoard = ArrayChessBoard(gameDes)
+internal fun initChessBoard(gameDes: String): ChessBoard = ArrayChessBoard(gameDes.toManualConfig())
 
-internal fun initSimpleChessBoard(chess960: Int, vararg moveCodes: String): ChessBoard = ArrayChessBoard().apply {
-    init(chess960)
+internal fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessBoard = ArrayChessBoard(StartConfig.Chess960Config(chess960)).apply {
     for(moveCode in moveCodes) {
         move(Move.byCode(moveCode), ChessGameSupervisorDummy)
     }
 }
 
-internal fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessGameInterface = ChessGame(chess960).apply {
+internal fun initChessGame(chess960: Int, vararg moveCodes: String): ChessGameInterface = ChessGame(StartConfig.Chess960Config(chess960)).apply {
     for(moveCode in moveCodes) {
         move(Move.byCode(moveCode))
     }
@@ -123,5 +125,21 @@ internal fun ChessGame.copyGameWithInvertedColors(): ChessGame {
                 } else token
             }
 
-    return ChessGame(copyDef)
+    return ChessGame(copyDef.toManualConfig())
+}
+
+internal fun String.toManualConfig(): StartConfig.ManualConfig {
+    val gameDesc = this
+    val gameDescParts = this.split(" ").filter { it.isNotEmpty() }
+    check(gameDescParts.size>=4) {"expected gameDescription, found something else: $gameDesc"}
+    val isWhiteTurn = gameDescParts[0]=="white"
+    val numberOfMovesSinceHitFigure = gameDescParts[1].toInt()
+    val figureStates = gameDescParts.filterIndexed{ index, _ ->index>1}
+    return StartConfig.ManualConfig(isWhiteTurn, numberOfMovesSinceHitFigure, figureStates)
+}
+
+internal fun Int.toChess960Config(): StartConfig.Chess960Config {
+    val chess960Index = this
+    check(chess960Index in 0 until 960) {"expected value to be within 0-959 but was: $chess960Index"}
+    return StartConfig.Chess960Config(chess960Index)
 }

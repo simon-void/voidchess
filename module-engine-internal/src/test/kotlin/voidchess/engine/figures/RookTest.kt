@@ -7,8 +7,9 @@ import voidchess.engine.board.ArrayChessBoard
 import voidchess.engine.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.initSimpleChessBoard
+import voidchess.initChessBoard
 import voidchess.toFromPosAsStringSet
+import voidchess.toManualConfig
 import voidchess.toTargetPosAsStringSet
 import java.util.*
 
@@ -21,7 +22,7 @@ class RookTest {
     @Test
     fun testIsReachable() {
         val des = "white 0 Pawn-white-c2-false Rook-white-c4-2 " + "Knight-black-g4 King-white-e1-0 King-black-e8-0"
-        val game = ChessGame(des)
+        val game = ChessGame(des.toManualConfig())
 
         val from = Position.byCode("c4")
         val to1 = Position.byCode("c3")
@@ -52,7 +53,7 @@ class RookTest {
 
     @Test(dataProvider = "getTestGetPossibleMovesData")
     fun testGetPossibleMoves(des: String, rookPosCode: String, expectedNumberOfMoves: Int) {
-        val game = ArrayChessBoard(des)
+        val game = ArrayChessBoard(des.toManualConfig())
 
         val rook = game.getFigure(Position.byCode(rookPosCode))
         val moveIter = LinkedList<Move>()
@@ -67,7 +68,7 @@ class RookTest {
 
     @Test(dataProvider = "getGetReachableCheckingMovesData")
     fun testGetReachableCheckingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val rook = game.getFigure(Position.byCode(posCode))
         val actualReachableCheckingResults = TreeSet<Move>()
         rook.getReachableCheckingMoves(game, actualReachableCheckingResults)
@@ -83,7 +84,7 @@ class RookTest {
 
     @Test(dataProvider = "getGetCriticalMovesData")
     fun testGetCriticalMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val rook = game.getFigure(Position.byCode(posCode))
         val actualIrreversibleResults = TreeSet<Move>()
         rook.getCriticalMoves(game, actualIrreversibleResults)

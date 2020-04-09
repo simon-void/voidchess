@@ -1,19 +1,22 @@
 package voidchess.engine.board
 
+import voidchess.common.board.StartConfig
 import voidchess.engine.board.check.AttackLines
-import voidchess.engine.board.check.CheckSearch
 import voidchess.engine.board.check.checkAttackLines
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
-import voidchess.common.helper.splitAndTrim
 import voidchess.engine.board.move.ExtendedMove
+import voidchess.engine.board.other.ChessGameSupervisor
+import voidchess.engine.board.other.boardInstanciator
 import voidchess.engine.figures.*
 import java.util.*
 import kotlin.math.abs
 
-internal class ArrayChessBoard constructor() : ChessBoard {
-    private val game: Array<Figure?> = arrayOfNulls(64)
+internal class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : ChessBoard {
+    override var isWhiteTurn: Boolean = true
+
+    private val board: Array<Figure?> = arrayOfNulls(64)
     // TODO use kotlin.ArrayDeque if that is no longer experimental
     private val extendedMoveStack = ArrayDeque<ExtendedMove>(16)
 
@@ -22,262 +25,67 @@ internal class ArrayChessBoard constructor() : ChessBoard {
     override var whiteKing: King = getKing(Position.byCode("a1"), true)
     override var blackKing: King = getKing(Position.byCode("a8"), false)
 
-    private var calculatedWhiteCheck: Boolean = false
-    private var calculatedBlackCheck: Boolean = false
-    private var isWhiteCheck: Boolean = false
-    private var isBlackCheck: Boolean = false
     private var cachedAttackLines: AttackLines? = null
 
     init {
-        init()
-    }
-
-    //for testing
-    constructor(des: String) : this() {
-        init(des)
+        init(startConfig)
     }
 
     private fun clearCheckComputation() {
-        calculatedWhiteCheck = false
-        calculatedBlackCheck = false
         cachedAttackLines = null
     }
 
-    override fun isCheck(isWhite: Boolean): Boolean {
-        return if (isWhite) {
-            if (!calculatedWhiteCheck) {
-                isWhiteCheck = CheckSearch.isCheck(this, whiteKing)
-                calculatedWhiteCheck = true
-            }
-            isWhiteCheck
-        } else {
-            if (!calculatedBlackCheck) {
-                isBlackCheck = CheckSearch.isCheck(this, blackKing)
-                calculatedBlackCheck = true
-            }
-            isBlackCheck
-        }
-    }
-
-    override fun getCachedAttackLines(isWhite: Boolean): AttackLines {
+    override fun getAttackLines(isWhite: Boolean): AttackLines {
         val scopedAttackLines: AttackLines = cachedAttackLines ?: checkAttackLines(this, isWhite)
         cachedAttackLines = scopedAttackLines
         return scopedAttackLines
     }
 
-    override fun init() {
-        clear()
-        var pos: Position
+    override fun init(startConfig: StartConfig) {
+        clearCheckComputation()
+        extendedMoveStack.clear()
+        isWhiteTurn = startConfig.doesWhitePlayerStart
 
-        for (i in 0..7) {
-            pos = Position[1, i]
-            setFigure(pos, getPawn(pos, true))
-            pos = Position[6, i]
-            setFigure(pos, getPawn(pos, false))
-        }
-        pos = Position.byCode("a1")
-        setFigure(pos, getRook(pos, true))
-        pos = Position.byCode("h1")
-        setFigure(pos, getRook(pos, true))
-        pos = Position.byCode("b1")
-        setFigure(pos, getKnight(pos, true))
-        pos = Position.byCode("g1")
-        setFigure(pos, getKnight(pos, true))
-        pos = Position.byCode("c1")
-        setFigure(pos, getBishop(pos, true))
-        pos = Position.byCode("f1")
-        setFigure(pos, getBishop(pos, true))
-        pos = Position.byCode("d1")
-        setFigure(pos, getQueen(pos, true))
-        pos = Position.byCode("e1")
-        whiteKing = getKing(pos, true)
-        setFigure(pos, whiteKing)
-
-        pos = Position.byCode("a8")
-        setFigure(pos, getRook(pos, false))
-        pos = Position.byCode("h8")
-        setFigure(pos, getRook(pos, false))
-        pos = Position.byCode("b8")
-        setFigure(pos, getKnight(pos, false))
-        pos = Position.byCode("g8")
-        setFigure(pos, getKnight(pos, false))
-        pos = Position.byCode("c8")
-        setFigure(pos, getBishop(pos, false))
-        pos = Position.byCode("f8")
-        setFigure(pos, getBishop(pos, false))
-        pos = Position.byCode("d8")
-        setFigure(pos, getQueen(pos, false))
-        pos = Position.byCode("e8")
-        blackKing = getKing(pos, false)
-        setFigure(pos, blackKing)
-    }
-
-    override fun init(chess960: Int) {
-        var code960Code = chess960
-        assert(code960Code in 0..959) { "chess960 out of bounds. Should be 0-959, is $code960Code" }
-
-        clear()
         var foundWhiteKing = false
         var foundBlackKing = false
-        var pos: Position
+        val pawnsThatDoubleJumped = mutableListOf<Pawn>()
+        startConfig.boardInstanciator().generateInitialSetup().forEach { (pos, figureOrNull)->
+            board[pos.index] = figureOrNull
 
-        // pawn positions is always the same
-        for (i in 0..7) {
-            pos = Position[1, i]
-            setFigure(pos, getPawn(pos, true))
-            pos = Position[6, i]
-            setFigure(pos, getPawn(pos, false))
-        }
-
-        // first bishop
-        var rest = code960Code % 4
-        var row = rest * 2 + 1
-        code960Code /= 4
-
-        pos = Position[0, row]
-        setFigure(pos, getBishop(pos, true))
-        pos = Position[7, row]
-        setFigure(pos, getBishop(pos, false))
-
-        // second bishop
-        rest = code960Code % 4
-        row = rest * 2
-        code960Code /= 4
-
-        pos = Position[0, row]
-        setFigure(pos, getBishop(pos, true))
-        pos = Position[7, row]
-        setFigure(pos, getBishop(pos, false))
-
-        // queen
-        rest = code960Code % 6
-        row = getFreeRow(rest)
-        code960Code /= 6
-
-        pos = Position[0, row]
-        setFigure(pos, getQueen(pos, true))
-        pos = Position[7, row]
-        setFigure(pos, getQueen(pos, false))
-
-        val otherFigures = getFigureArray(code960Code)
-
-        for (figureName in otherFigures) {
-            // always into the first free column
-            row = getFreeRow(0)
-            pos = Position[0, row]
-            var figure = createFigure(figureName, true, pos)
-            setFigure(pos, figure)
-            if (figure is King) {
-                whiteKing = figure
-                foundWhiteKing = true
+            if(figureOrNull is Pawn && figureOrNull.canBeHitEnpassant) {
+                pawnsThatDoubleJumped.add(figureOrNull)
             }
-            pos = Position[7, row]
-            figure = createFigure(figureName, false, pos)
-            setFigure(pos, figure)
-            if (figure is King) {
-                blackKing = figure
-                foundBlackKing = true
-            }
-        }
+            if(figureOrNull is King) {
+                if(figureOrNull.isWhite) {
+                    whiteKing = figureOrNull
 
-        require(foundWhiteKing) {"no white king for chess960 configuration $chess960"}
-        require(foundBlackKing) {"no black king for chess960 configuration $chess960"}
-    }
-
-    override fun init(des: String) {
-        clear()
-        var foundWhiteKing = false
-        var foundBlackKing = false
-
-        val iter = des.splitAndTrim(' ').iterator()
-        iter.next()
-        iter.next()
-
-        while (iter.hasNext()) {
-            val figureDescription = iter.next()
-            val pos = getPositionOfCodedFigure(figureDescription)
-            val figure = getFigureByString(figureDescription)
-            if(figure is King) {
-                if(figure.isWhite) {
-                    whiteKing = figure
-
-                    require(!foundWhiteKing) {"more than one white king in description [$des]"}
+                    require(!foundWhiteKing) {"more than one white king in config $startConfig"}
                     foundWhiteKing = true
                 }else{
-                    blackKing = figure
+                    blackKing = figureOrNull
 
-                    require(!foundBlackKing) {"more than one black king in description [$des]"}
+                    require(!foundBlackKing) {"more than one black king in config $startConfig"}
                     foundBlackKing = true
                 }
             }
-            require(getFigureOrNull(pos)==null) {"two figures at same position $pos"}
-            setFigure(pos, figure)
         }
-        require(foundWhiteKing) {"no white king in description [$des]"}
-        require(foundBlackKing) {"no black king in description [$des]"}
-    }
-
-    private fun getPositionOfCodedFigure(figure_description: String): Position {
-        val tokens = figure_description.split('-')
-        return Position.byCode(tokens[2])
-    }
-
-    private fun getFigureArray(index: Int) = when (index) {
-        0 -> arrayOf("Knight", "Knight", "Rook", "King", "Rook")
-        1 -> arrayOf("Knight", "Rook", "Knight", "King", "Rook")
-        2 -> arrayOf("Knight", "Rook", "King", "Knight", "Rook")
-        3 -> arrayOf("Knight", "Rook", "King", "Rook", "Knight")
-        4 -> arrayOf("Rook", "Knight", "Knight", "King", "Rook")
-        5 -> arrayOf("Rook", "Knight", "King", "Knight", "Rook")
-        6 -> arrayOf("Rook", "Knight", "King", "Rook", "Knight")
-        7 -> arrayOf("Rook", "King", "Knight", "Knight", "Rook")
-        8 -> arrayOf("Rook", "King", "Knight", "Rook", "Knight")
-        9 -> arrayOf("Rook", "King", "Rook", "Knight", "Knight")
-        else -> throw IllegalArgumentException("index should be between [0-9] but is $index")
-    }
-
-    private fun createFigure(name: String, isWhite: Boolean, pos: Position) = when (name) {
-        "Rook" -> getRook(pos, isWhite)
-        "Knight" -> getKnight(pos, isWhite)
-        "King" -> getKing(pos, isWhite)
-        else -> throw IllegalStateException("unknown figure: $name")
-    }
-
-    private fun getFreeRow(index: Int): Int {
-        assert(index in 0..7)
-
-        var counter = 0
-        for (row in 0..7) {
-            if (isFreeArea(Position[0, row])) {
-                if (index == counter)
-                    return row
-                else
-                    counter++
-            }
-        }
-        throw RuntimeException("No free Position with index $index found")
-    }
-
-    private fun clear() {
-        clearCheckComputation()
-        extendedMoveStack.clear()
-        for (linearIndex in 0..63) {
-            game[linearIndex] = null
-        }
+        require(foundWhiteKing) {"no white king in config $startConfig"}
+        require(foundBlackKing) {"no black king in config $startConfig"}
+        require(pawnsThatDoubleJumped.size<2) {"it isn't possible that more than one pawn can be hit by enpassant but there are ${pawnsThatDoubleJumped.size} in $startConfig"}
     }
 
     private fun setFigure(pos: Position, figure: Figure) {
-        game[pos.index] = figure
+        board[pos.index] = figure
     }
 
     private fun clearFigure(pos: Position): Figure {
-        val figure: Figure = game[pos.index] ?: throw IllegalStateException("position $pos doesn't contain a figure to clear")
-        game[pos.index] = null
+        val figure: Figure = board[pos.index] ?: throw IllegalStateException("position $pos doesn't contain a figure to clear")
+        board[pos.index] = null
         return figure
     }
 
     private fun clearPos(pos: Position) {
-        game[pos.index] = null
+        board[pos.index] = null
     }
 
     override fun simulateSimplifiedMove(
@@ -287,15 +95,15 @@ internal class ArrayChessBoard constructor() : ChessBoard {
     ): Boolean {
         fun move(figure: Figure, to: Position): Figure? {
             val move = Move[figure.position, to]
-            game[figure.position.index] = null
-            val figureTaken = game[to.index]
-            game[to.index] = figure
+            board[figure.position.index] = null
+            val figureTaken = board[to.index]
+            board[to.index] = figure
             figure.figureMoved(move)
             return figureTaken
         }
         fun undoMove(figure: Figure, from: Position, figureTaken: Figure?) {
-            game[figure.position.index] = figureTaken
-            game[from.index] = figure
+            board[figure.position.index] = figureTaken
+            board[from.index] = figure
             figure.undoMove(from)
         }
 
@@ -398,6 +206,7 @@ internal class ArrayChessBoard constructor() : ChessBoard {
         }
 
         extendedMoveStack.addLast(extendedMove)
+        isWhiteTurn = !isWhiteTurn
 
         return extendedMove.hasHitFigure
     }
@@ -457,14 +266,15 @@ internal class ArrayChessBoard constructor() : ChessBoard {
                 preLastExtMove.pawn.canBeHitEnpassant = true
             }
         }
+        isWhiteTurn = !isWhiteTurn
 
         return lastExtMove.hasHitFigure
     }
 
     override fun movesPlayed(): List<Move> = extendedMoveStack.map { it.move }
 
-    override fun getFigureOrNull(pos: Position) = game[pos.index]
-    override fun isFreeArea(pos: Position) = game[pos.index] == null
+    override fun getFigureOrNull(pos: Position) = board[pos.index]
+    override fun isFreeArea(pos: Position) = board[pos.index] == null
 
     override fun toString(): String {
         val buffer = StringBuilder(512)

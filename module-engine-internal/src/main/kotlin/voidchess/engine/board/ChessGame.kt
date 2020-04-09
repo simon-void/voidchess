@@ -2,6 +2,8 @@ package voidchess.engine.board
 
 import voidchess.common.board.StartConfig
 import voidchess.common.board.move.*
+import voidchess.engine.board.other.ChessGameSupervisor
+import voidchess.engine.board.other.ChessGameSupervisorDummy
 import voidchess.engine.player.ki.evaluation.SearchTreePruner
 import java.util.*
 
@@ -16,11 +18,9 @@ internal class ChessGame private constructor(
     private var numberOfMovesWithoutHit: Int = 0
     private var figureCount: Int = 32
     override var hasHitFigure: Boolean = false
-    override var isWhiteTurn: Boolean = true
 
-
-
-    override fun isCheck(isWhiteInCheck: Boolean) = board.getCachedAttackLines(isWhiteInCheck).isCheck
+    override val isWhiteTurn: Boolean get() = board.isWhiteTurn
+    override fun isCheck(isWhiteInCheck: Boolean) = board.getAttackLines(isWhiteInCheck).isCheck
 
     private val isEnd: MoveResult
         get() {
@@ -92,7 +92,7 @@ internal class ChessGame private constructor(
      * the normal constructor
      */
     constructor(supervisor: ChessGameSupervisor): this(
-            ArrayChessBoard(),
+            ArrayChessBoard(StartConfig.ClassicConfig),
             StartConfig.ClassicConfig,
             LinkedList<Memento>(),
             NumberStack(),
@@ -106,9 +106,9 @@ internal class ChessGame private constructor(
      */
     private constructor(other: ChessGame, startConfig: StartConfig, movesPlayed: List<Move>) : this(
         when (startConfig) {
-            is StartConfig.ManualConfig -> ArrayChessBoard().apply { init(startConfig.boardConfig) }
-            is StartConfig.ClassicConfig -> ArrayChessBoard().apply { init() }
-            is StartConfig.Chess960Config -> ArrayChessBoard().apply { init(startConfig.chess960Index) }
+            is StartConfig.ManualConfig -> ArrayChessBoard(startConfig)
+            is StartConfig.ClassicConfig -> ArrayChessBoard(startConfig)
+            is StartConfig.Chess960Config -> ArrayChessBoard(startConfig)
         }.also { board ->
             for (move in movesPlayed) {
                 board.move(move, ChessGameSupervisorDummy)
@@ -120,64 +120,30 @@ internal class ChessGame private constructor(
         ChessGameSupervisorDummy
     ) {
         hasHitFigure = other.hasHitFigure
-        isWhiteTurn = other.isWhiteTurn
         numberOfMovesWithoutHit = other.numberOfMovesWithoutHit
         figureCount = other.figureCount
     }
 
-
     /**
      * for unit-tests
      */
-    constructor(game_description: String) : this(ChessGameSupervisorDummy, game_description)
-
-    /**
-     * for unit-tests
-     */
-    @JvmOverloads constructor(initialPosition: Int = 518, vararg moves: String) : this(ChessGameSupervisorDummy, initialPosition) {
-        for(move in moves) {
-            val result = move(Move.byCode(move))
-            check(result == MoveResult.NO_END) { "board is not supposed to end via these moves but did. end by $result" }
-        }
-    }
-
-    /**
-     * for unit-tests
-     */
-    private constructor(supervisor: ChessGameSupervisor, game_description: String): this(
-            ArrayChessBoard(game_description),
-            StartConfig.ManualConfig(game_description, game_description.startsWith("white ")),
-            LinkedList<Memento>(),
-            NumberStack(),
-            supervisor
+    internal constructor(
+        startConfig: StartConfig = StartConfig.ClassicConfig,
+        supervisor: ChessGameSupervisor = ChessGameSupervisorDummy
+    ) : this(
+        ArrayChessBoard(startConfig),
+        startConfig,
+        LinkedList<Memento>(),
+        NumberStack(),
+        supervisor
     ) {
-        val st = StringTokenizer(game_description, " ", false)
-        isWhiteTurn = st.nextToken() == "white"
-        numberOfMovesWithoutHit = Integer.parseInt(st.nextToken())
+        numberOfMovesWithoutHit = startConfig.numberOfMovesWithoutHit
         for (i in 0 until numberOfMovesWithoutHit) numberStack.noFigureHit()
 
-        figureCount = 0
-        while (st.hasMoreTokens()) {
-            figureCount++
-            st.nextToken()
-        }
+        figureCount = startConfig.figureCount
 
         memorizeGame()
         hasHitFigure = numberOfMovesWithoutHit == 0
-    }
-
-    /**
-     * for unit-tests
-     */
-    private constructor(supervisor: ChessGameSupervisor,
-                        initialPosition: Int): this(
-            ArrayChessBoard().apply { init(initialPosition) },
-            StartConfig.Chess960Config(initialPosition),
-            LinkedList<Memento>(),
-            NumberStack(),
-            supervisor
-    ) {
-        memorizeGame()
     }
 
     override fun useSupervisor(supervisor: ChessGameSupervisor) {
@@ -216,16 +182,12 @@ internal class ChessGame private constructor(
             numberOfMovesWithoutHit++
         }
 
-        isWhiteTurn = !isWhiteTurn
-
-
         memorizeGame()
 
         return isEnd
     }
 
     override fun undo() {
-        isWhiteTurn = !isWhiteTurn
         numberOfMovesWithoutHit = numberStack.undo()
         mementoStack.removeLast()
 
@@ -243,13 +205,12 @@ internal class ChessGame private constructor(
     private fun initGame() = initGame(518)    //classic chess starting configuration
 
     override fun initGame(chess960: Int) {
-        isWhiteTurn = true
         numberOfMovesWithoutHit = 0
         figureCount = 32
         mementoStack.clear()
         numberStack.init()
 
-        board.init(chess960)
+        board.init(StartConfig.Chess960Config(chess960))
 
         memorizeGame()
     }

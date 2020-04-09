@@ -5,6 +5,9 @@ import org.testng.annotations.Test
 import voidchess.assertFiguresKnowTherePosition
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
+import voidchess.engine.board.other.ChessGameSupervisorDummy
+import voidchess.toChess960Config
+import voidchess.toManualConfig
 import kotlin.test.*
 
 
@@ -36,22 +39,22 @@ class ChessBoardTest {
     @Test
     fun testInit960() {
         val board = ArrayChessBoard()
-        board.init(518)
+        board.init(518.toChess960Config())
         assertEquals(initial, board.toString())
 
-        board.init(0)
-        board.init(314)
-        board.init(959)
+        board.init(0.toChess960Config())
+        board.init(314.toChess960Config())
+        board.init(959.toChess960Config())
         try {
-            board.init(960)
+            board.init(960.toChess960Config())
             fail("AssertionError should have been thrown:Argument bigger than 959")
-        } catch (e: AssertionError) {
+        } catch (e: IllegalStateException) {
         }
 
         try {
-            board.init(-1)
+            board.init((-1).toChess960Config())
             fail("AssertionError should have been thrown:Argument smaller than 0")
-        } catch (e: AssertionError) {
+        } catch (e: IllegalStateException) {
         }
 
     }
@@ -60,7 +63,7 @@ class ChessBoardTest {
     fun testInitByDescriptionWithToManySpaces() {
         val board = ArrayChessBoard()
         val des = "  white   0   Queen-white-c1     King-white-e1-0    King-black-e8-0     "
-        board.init(des)
+        board.init(des.toManualConfig())
         assertTrue(board.getFigure(Position.byCode("c1")).isQueen())
     }
 
@@ -74,27 +77,26 @@ class ChessBoardTest {
     @Test
     fun testGetCachedAttackLines() {
         val board = ArrayChessBoard()
-        var attackLines = board.getCachedAttackLines(true)
+        var attackLines = board.getAttackLines(true)
         assertFalse(attackLines.isCheck)
 
         var des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-b4 King-black-e8-0"
-        board.init(des)
-        attackLines = board.getCachedAttackLines(true)
+        board.init(des.toManualConfig())
+        attackLines = board.getAttackLines(true)
         assertTrue(attackLines.isCheck)
         assertFalse(attackLines.isDoubleCheck)
         assertEquals(3, attackLines.checkLines[0].posProgression.size)
 
         des = "white 0 King-white-e2-3 Knight-black-g1 Knight-white-f3 Rook-black-h2-12 King-black-g7-3"
-        board.init(des)
-        attackLines = board.getCachedAttackLines(true)
+        board.init(des.toManualConfig())
+        attackLines = board.getAttackLines(true)
         assertTrue(attackLines.isCheck)
         assertTrue(attackLines.isDoubleCheck)
     }
 
     @Test(dataProvider = "getTestMoveUndoMoveInvarianceData")
     fun testSimulateSimplifiedMove(fromCode: String, toCode: String, gameDes: String) {
-        val board = ArrayChessBoard()
-        board.init(gameDes)
+        val board = ArrayChessBoard(gameDes.toManualConfig())
         board.assertFiguresKnowTherePosition()
         val initialContent = board.toString()
 

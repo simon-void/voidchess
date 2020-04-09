@@ -11,11 +11,11 @@ import voidchess.engine.player.ki.concurrent.MultiThreadStrategy
 import voidchess.engine.player.ki.concurrent.SingleThreadStrategy
 import voidchess.engine.player.ki.evaluation.*
 import voidchess.engine.player.ki.openings.OpeningsLibrary
-import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.math.pow
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
+import kotlin.IllegalArgumentException
 
 class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
@@ -46,7 +46,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             is StartConfig.ManualConfig -> throw IllegalStateException("can't copy game from manual starting config")
         }
         val game = ChessGame(
-            initialPosition = chess960StartIndex
+            StartConfig.Chess960Config( chess960StartIndex)
         ).apply {
             var isWhitesTurn = startConfig.doesWhitePlayerStart
             val moves = movesSoFar.map { Move.byCheckedCode(it) }

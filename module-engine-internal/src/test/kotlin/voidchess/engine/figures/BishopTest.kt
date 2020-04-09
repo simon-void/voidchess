@@ -8,8 +8,9 @@ import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 
 import voidchess.engine.board.getFigure
-import voidchess.initSimpleChessBoard
+import voidchess.initChessBoard
 import voidchess.toFromPosAsStringSet
+import voidchess.toManualConfig
 import voidchess.toTargetPosAsStringSet
 import java.util.*
 import kotlin.test.assertEquals
@@ -21,7 +22,7 @@ class BishopTest {
     @Test
     fun testIsReachable() {
         val des = "white 0 Pawn-white-c2-false Bishop-white-d3- " + "Knight-black-b5 King-white-e1-0 King-black-e8-0"
-        val game = ChessGame(des)
+        val game = ChessGame(des.toManualConfig())
 
         val from = Position.byCode("d3")
         val to1 = Position.byCode("b5")
@@ -45,7 +46,7 @@ class BishopTest {
 
     @Test(dataProvider = "getTestGetPossibleMovesData")
     fun testGetPossibleMoves(des: String, bishopPosCode: String, expectedNumberOfMoves: Int) {
-        val game = ArrayChessBoard(des)
+        val game = ArrayChessBoard(des.toManualConfig())
 
         val bishop = game.getFigure(Position.byCode(bishopPosCode))
         val moveIter = LinkedList<Move>()
@@ -63,7 +64,7 @@ class BishopTest {
     @Test
     fun testGetReachableMoves() {
         val des = "white 0 Knight-white-e1 Rook-black-b2-2 Bishop-white-d2 King-white-e2-1 " + "Pawn-white-a5-false Knight-black-g5 King-black-e8-0"
-        val game = ArrayChessBoard(des)
+        val game = ArrayChessBoard(des.toManualConfig())
 
         val bishop = game.getFigure(Position.byCode("d2"))
         val moveIter = LinkedList<Move>()
@@ -74,7 +75,7 @@ class BishopTest {
     @Test
     fun testCountReachableMoves() {
         val des = "white 0 Knight-white-e1 Rook-black-b2-2 Bishop-white-d2 King-white-e2-1 " + "Pawn-white-a5-false Knight-black-g5 King-black-e8-0"
-        val game = ArrayChessBoard(des)
+        val game = ArrayChessBoard(des.toManualConfig())
 
         val bishop = game.getFigure(Position.byCode("d2"))
         assertEquals(6, bishop.countReachableMoves(game))
@@ -82,7 +83,7 @@ class BishopTest {
 
     @Test(dataProvider = "getTestIsSelectableData")
     fun testIsSelectable(des: String, figurePos: String, expectedIsSelectable: Boolean) {
-        val game = ArrayChessBoard(des)
+        val game = ArrayChessBoard(des.toManualConfig())
 
         val bishop = game.getFigure(Position.byCode(figurePos))
         val actualIsSelectable = bishop.isSelectable(game)
@@ -100,7 +101,7 @@ class BishopTest {
 
     @Test(dataProvider = "getGetReachableCheckingMovesData")
     fun testGetReachableCheckingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val bishop = game.getFigure(Position.byCode(posCode))
         val actualReachableCheckingResults = TreeSet<Move>()
         bishop.getReachableCheckingMoves(game, actualReachableCheckingResults)
@@ -122,7 +123,7 @@ class BishopTest {
 
     @Test(dataProvider = "getGetCriticalMovesData", dependsOnMethods = ["testGetReachableCheckingMoves"])
     fun testGetCriticalMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val bishop = game.getFigure(Position.byCode(posCode))
         val actualIrreversibleResults = TreeSet<Move>()
         bishop.getCriticalMoves(game, actualIrreversibleResults)

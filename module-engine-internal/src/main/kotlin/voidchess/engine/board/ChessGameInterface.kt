@@ -4,6 +4,7 @@ import voidchess.common.board.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.Position
+import voidchess.engine.board.other.ChessGameSupervisor
 
 
 internal interface ChessGameInterface : BasicChessBoard {

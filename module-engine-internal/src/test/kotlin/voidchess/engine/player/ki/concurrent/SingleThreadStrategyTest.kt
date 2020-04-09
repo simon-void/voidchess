@@ -10,8 +10,11 @@ import voidchess.engine.board.ChessGameInterface
 import voidchess.common.board.move.Move
 import voidchess.common.player.ki.evaluation.*
 import voidchess.copyGameWithInvertedColors
-import voidchess.mirrorRow
 import voidchess.engine.player.ki.evaluation.*
+import voidchess.initChessGame
+import voidchess.mirrorRow
+import voidchess.toChess960Config
+import voidchess.toManualConfig
 
 
 internal class SingleThreadStrategyTest {
@@ -23,27 +26,27 @@ internal class SingleThreadStrategyTest {
     //best matt move in 2
     @DataProvider(name = "bestMoveProvider")
     fun bestMoveBoardsProvider(): Array<Array<Any>> = arrayOf(
-            arrayOf(1, ChessGame("black 0 King-white-h1-3 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f4-2 King-black-e8-0"), Move.byCode("f4-f1")),
-            arrayOf(1, ChessGame("white 0 King-black-h8-3 Pawn-black-g7-false Pawn-black-h7-false Rook-white-f4-2 King-white-e1-0"), Move.byCode("f4-f8")),
-            arrayOf(1, ChessGame("white 0 King-white-e1-0 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f2-2 King-black-e8-0"), Move.byCode("e1-f2")),
-            arrayOf(2, ChessGame("white 0 Bishop-white-a1 Rook-black-b2-2 Knight-black-c2 Pawn-white-d6-false King-white-g6-8 King-black-h8-4"), Move.byCode("d6-d7")),
-            arrayOf(1, ChessGame(518, "d2-d3", "d7-d6", "c1-g5", "e7-e6"), Move.byCode("g5-d8")))
+            arrayOf(1, ChessGame("black 0 King-white-h1-3 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f4-2 King-black-e8-0".toManualConfig()), Move.byCode("f4-f1")),
+            arrayOf(1, ChessGame("white 0 King-black-h8-3 Pawn-black-g7-false Pawn-black-h7-false Rook-white-f4-2 King-white-e1-0".toManualConfig()), Move.byCode("f4-f8")),
+            arrayOf(1, ChessGame("white 0 King-white-e1-0 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f2-2 King-black-e8-0".toManualConfig()), Move.byCode("e1-f2")),
+            arrayOf(2, ChessGame("white 0 Bishop-white-a1 Rook-black-b2-2 Knight-black-c2 Pawn-white-d6-false King-white-g6-8 King-black-h8-4".toManualConfig()), Move.byCode("d6-d7")),
+            arrayOf(1, initChessGame(518, "d2-d3", "d7-d6", "c1-g5", "e7-e6"), Move.byCode("g5-d8")))
 
     //worst move goes into matt
     //color inverted worst move goes into matt
     //worst move by value
     @DataProvider(name = "worstMoveProvider")
     fun worstMoveBoardsProvider(): Array<Array<Any>> = arrayOf(
-            arrayOf(1, ChessGame("white 0 King-white-g1-2 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f4-2 King-black-e8-0"), Move.byCode("g1-h1")),
-            arrayOf(1, ChessGame("black 0 King-black-g8-2 Pawn-black-g7-false Pawn-black-h7-false Rook-white-f4-2 King-white-e1-0"), Move.byCode("g8-h8")),
-            arrayOf(1, ChessGame("white 0 King-white-e1-0 Rook-black-f2-2 Queen-black-d1 King-black-e8-0"), Move.byCode("e1-f2")),
-            arrayOf(1, ChessGame(518, "d2-d3", "d7-d6", "c1-g5"), Move.byCode("e7-e6"))
+            arrayOf(1, ChessGame("white 0 King-white-g1-2 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f4-2 King-black-e8-0".toManualConfig()), Move.byCode("g1-h1")),
+            arrayOf(1, ChessGame("black 0 King-black-g8-2 Pawn-black-g7-false Pawn-black-h7-false Rook-white-f4-2 King-white-e1-0".toManualConfig()), Move.byCode("g8-h8")),
+            arrayOf(1, ChessGame("white 0 King-white-e1-0 Rook-black-f2-2 Queen-black-d1 King-black-e8-0".toManualConfig()), Move.byCode("e1-f2")),
+            arrayOf(1, initChessGame(518, "d2-d3", "d7-d6", "c1-g5"), Move.byCode("e7-e6"))
     )
 
     @DataProvider(name = "getFindBestResultData")
     fun findBestResultData(): Array<Array<Any>> {
-        val mattIn2 = ChessGame("white 0 King-white-e3-2 Rook-white-e4-2 Bishop-white-f6 Rook-black-d8-2 Knight-black-c8 King-black-g8-1 Pawn-black-d7-false Pawn-black-e5-false Pawn-black-f7-false")
-        val stalemateIn1 = ChessGame("white 0 King-white-a1-9 Rook-white-h2-2 Pawn-white-g2-false Rook-black-b2-5 King-black-g8-1 Pawn-black-b4-false Pawn-black-c3-false Pawn-black-g3-false Pawn-black-f7-false Pawn-black-g7-false")
+        val mattIn2 = ChessGame("white 0 King-white-e3-2 Rook-white-e4-2 Bishop-white-f6 Rook-black-d8-2 Knight-black-c8 King-black-g8-1 Pawn-black-d7-false Pawn-black-e5-false Pawn-black-f7-false".toManualConfig())
+        val stalemateIn1 = ChessGame("white 0 King-white-a1-9 Rook-white-h2-2 Pawn-white-g2-false Rook-black-b2-5 King-black-g8-1 Pawn-black-b4-false Pawn-black-c3-false Pawn-black-g3-false Pawn-black-f7-false Pawn-black-g7-false".toManualConfig())
         val twoMovesAheadPruner = PrunerWithIrreversibleMoves(2, 2, 2, 2)
         return arrayOf(
                 arrayOf(mattIn2, twoMovesAheadPruner,
@@ -60,12 +63,12 @@ internal class SingleThreadStrategyTest {
         val easyPruner = AllMovesOrNonePruner(1, 4, 3)
         return arrayOf(
                 arrayOf(
-                        ChessGame("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false"),
+                        ChessGame("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false".toManualConfig()),
                         AllMovesOrNonePruner(1, 4, 3),
                         -12.0..-8.0,
                         "pawn promotion"),
                 arrayOf(
-                        ChessGame("white 0 King-white-g1-4 King-black-c8-6 Knight-white-d5 Rook-black-g6-8 Pawn-black-g5-false"),
+                        ChessGame("white 0 King-white-g1-4 King-black-c8-6 Knight-white-d5 Rook-black-g6-8 Pawn-black-g5-false".toManualConfig()),
                         easyPruner,
                         1.0..4.0,
                         "find knight fork with check")
@@ -79,7 +82,7 @@ internal class SingleThreadStrategyTest {
 
     @Test
     fun testSortOrder() {
-        val game = ChessGame(518)
+        val game = ChessGame(518.toChess960Config())
         val moves = evaluate(1, game).iterator()
 
         var betterMove = moves.next()
@@ -145,7 +148,7 @@ internal class SingleThreadStrategyTest {
     fun testMinMaxIsInvokedForEachPossibleMove() {
         val easyPruner = PrunerWithIrreversibleMoves(1, 2, 2, 2)
         val minMax = EvaluatingMinMax(easyPruner, EvaluatingAsIsNow)
-        val game = ChessGame("white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false")
+        val game = ChessGame("white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false".toManualConfig())
         val evaluatedMoves = strategy.evaluateMovesBestMoveFirst(game, minMax)
         val actualMoves = evaluatedMoves.map { it.move }
         val expectedMoves = setOf(Move.byCode("h1-g1"), Move.byCode("h1-g2"), Move.byCode("h1-h2"), Move.byCode("a7-a8"))

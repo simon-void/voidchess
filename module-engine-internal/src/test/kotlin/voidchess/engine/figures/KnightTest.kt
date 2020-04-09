@@ -7,7 +7,8 @@ import voidchess.engine.board.ArrayChessBoard
 import voidchess.engine.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.initSimpleChessBoard
+import voidchess.initChessBoard
+import voidchess.toManualConfig
 import voidchess.toTargetPosAsStringSet
 import java.util.*
 
@@ -20,7 +21,7 @@ class KnightTest {
     @Test
     fun testIsReachable() {
         val des = "black 0 Pawn-white-c2-false Knight-black-d4 " + "Knight-black-f5 King-white-e1-0 King-black-e8-0"
-        val game = ChessGame(des)
+        val game = ChessGame(des.toManualConfig())
 
         val from = Position.byCode("d4")
         val to1 = Position.byCode("b3")
@@ -47,7 +48,7 @@ class KnightTest {
     @Test
     fun testGetPossibleMoves() {
         val des = "white 0 Knight-white-a1 King-white-e1-0 Knight-white-g6 King-black-e8-0"
-        val game = ArrayChessBoard(des)
+        val game = ArrayChessBoard(des.toManualConfig())
 
         val knight1 = game.getFigure(Position.byCode("a1"))
         val moveIter1 = LinkedList<Move>()
@@ -61,7 +62,7 @@ class KnightTest {
 
     @Test(dataProvider = "getGetCriticalMovesData")
     fun testGetCriticalMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val knight = game.getFigure(Position.byCode(posCode))
         val actualIrreversibleResults = TreeSet<Move>()
         knight.getCriticalMoves(game, actualIrreversibleResults)

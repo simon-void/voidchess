@@ -7,11 +7,11 @@ import voidchess.common.board.move.Position
 
 import org.testng.annotations.DataProvider
 import voidchess.engine.board.getFigure
-import voidchess.initSimpleChessBoard
+import voidchess.initChessBoard
+import voidchess.toManualConfig
 import voidchess.toTargetPosAsStringSet
 import java.util.*
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 
@@ -19,7 +19,7 @@ class PawnTest {
 
     @Test(dataProvider = "getIsReachableData")
     fun testIsReachable(des: String, fromPosCode: String, reachablePosCodes: Set<String>, unreachablePosCodes: Set<String>) {
-        val game = ChessGame(des)
+        val game = ChessGame(des.toManualConfig())
         val from = Position.byCode(fromPosCode)
         val pawn = game.getFigure(from) as Pawn
         val shouldBeReachableButAreNot = reachablePosCodes.map { Position.byCode(it) }.filter { pos -> !pawn.isReachable(pos, game)}.map { it.toString() }
@@ -39,7 +39,7 @@ class PawnTest {
 
     @Test(dataProvider = "getGetReachableMovesData")
     fun testGetReachableMoves(gameDes: String, pawnPosCode: String, expectedPossibleToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
 
         val pawn = game.getFigure(Position.byCode(pawnPosCode)) as Pawn
         val moveIter1 = LinkedList<Move>()
@@ -56,7 +56,7 @@ class PawnTest {
 
     @Test(dataProvider = "getGetPossibleMovesData")
     fun testGetPossibleMoves(gameDes: String, pawnPosCode: String, expectedPossibleToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
 
         val pawn = game.getFigure(Position.byCode(pawnPosCode)) as Pawn
         val moveIter1 = LinkedList<Move>()
@@ -91,7 +91,7 @@ class PawnTest {
 
     @Test(dataProvider = "getGetCriticalMovesData")
     fun testGetPossibleIrreversibleMoves(gameDes: String, posCode: String) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val pawn = game.getFigure(Position.byCode(posCode)) as Pawn
         val actualResults = TreeSet<Move>()
         pawn.getCriticalMoves(game, actualResults)
@@ -108,7 +108,7 @@ class PawnTest {
 
     @Test(dataProvider = "getGetPossibleTakingMovesData")
     fun testGetPossibleTakingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val pawn = game.getFigure(Position.byCode(posCode)) as Pawn
         val results = LinkedList<Move>()
         pawn.getPossibleTakingMoves(game, results)

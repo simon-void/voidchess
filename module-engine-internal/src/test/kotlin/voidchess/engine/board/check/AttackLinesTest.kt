@@ -6,7 +6,7 @@ import voidchess.common.board.move.Position
 import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
 import voidchess.common.board.move.PositionProgression
-import voidchess.initSimpleChessBoard
+import voidchess.initChessBoard
 import voidchess.toList
 import kotlin.test.assertTrue
 
@@ -14,7 +14,7 @@ class AttackLinesTest {
 
     @Test(dataProvider = "getCheckAttackLinesData")
     fun testCheckAttackLines(gameDes: String, isWhite: Boolean, attackerGivingCheckPosCodes: Set<String>, boundFigurePosCodes: Set<String>) {
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val attackLines = checkAttackLines(game, isWhite)
 
         // test check tests
@@ -59,7 +59,7 @@ class AttackLinesTest {
         // the question of if an attack can be intercepted or if a bound figure can move can in special case be decided
         // by checking if the first position in the iterator is reachable or not
         val gameDes = "white 0 King-white-e1-0 Rook-white-e5-4 Bishop-black-h4 Queen-black-e8 King-black-d8-1"
-        val game = initSimpleChessBoard(gameDes)
+        val game = initChessBoard(gameDes)
         val attackLines = checkAttackLines(game, true)
         assertEquals(attackLines.checkLines.size, 1, "#checkLines")
         assertEquals(attackLines.boundLineByBoundFigurePos.size, 1, "#boundLines")

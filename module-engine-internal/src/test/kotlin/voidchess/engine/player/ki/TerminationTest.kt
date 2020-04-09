@@ -11,6 +11,8 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 
 import org.testng.Assert.assertEquals
+import voidchess.toChess960Config
+import voidchess.toManualConfig
 import kotlin.system.exitProcess
 
 
@@ -32,10 +34,10 @@ internal class TerminationTest {
 
         val game: ChessGame
         game = try {
-            val chess960 = Integer.parseInt(chess960IndexOrDesc)
-            ChessGame(chess960)
+            val chess960 = chess960IndexOrDesc.toInt()
+            ChessGame(chess960.toChess960Config())
         } catch (e: NumberFormatException) {
-            ChessGame(chess960IndexOrDesc)
+            ChessGame(chess960IndexOrDesc.toManualConfig())
         }
 
         for (moveDesc in moveDescs) {
@@ -50,7 +52,7 @@ internal class TerminationTest {
     fun testInvarianz() {
         val des = "black 0 Rook-white-a1-0 King-white-e1-0 Pawn-white-a5-false " + "Pawn-black-b7-false King-black-e8-0 Rook-black-h8-3"
 
-        val game = ChessGame(des)
+        val game = ChessGame(des.toManualConfig())
         game.move(Move.byCode("b7-b5"))
         testTermination(game)
         val newDes = "white 1 Rook-white-a1-0 King-white-e1-0 Pawn-white-a5-false " + "Pawn-black-b5-true King-black-e8-0 Rook-black-h8-3"
@@ -201,7 +203,7 @@ internal class TerminationTest {
         }
 
         private fun loadTest(des: String) {
-            val game = ChessGame(des)
+            val game = ChessGame(des.toManualConfig())
             val pruner = PrunerWithIrreversibleMoves(2, 3, 4, 3)
             val staticEvaluation = EvaluatingAsIsNow
             loadTest(game, pruner, staticEvaluation, "Loadtest")
