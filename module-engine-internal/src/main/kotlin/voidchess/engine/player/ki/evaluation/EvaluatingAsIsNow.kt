@@ -1,11 +1,11 @@
 package voidchess.engine.player.ki.evaluation
 
-import voidchess.engine.board.ChessGameInterface
-import voidchess.engine.board.forAllFigures
+import voidchess.common.board.forAllFigures
 import voidchess.common.board.move.Position
+import voidchess.common.figures.Figure
+import voidchess.common.figures.King
 import voidchess.common.player.ki.evaluation.Ongoing
-import voidchess.engine.figures.Figure
-import voidchess.engine.figures.King
+import voidchess.engine.board.ChessGameInterface
 
 internal interface EvaluatingStatically {
     fun getPreliminaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Double

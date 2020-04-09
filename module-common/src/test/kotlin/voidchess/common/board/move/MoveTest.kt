@@ -3,8 +3,6 @@ package voidchess.common.board.move
 import org.testng.annotations.Test
 
 import org.testng.Assert.*
-import voidchess.common.board.move.Move
-import voidchess.common.board.move.Position
 
 
 class MoveTest {

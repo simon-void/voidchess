@@ -1,9 +1,11 @@
 package voidchess.engine.board
 
-import voidchess.common.board.StartConfig
-import voidchess.common.board.move.*
-import voidchess.engine.board.other.ChessGameSupervisor
-import voidchess.engine.board.other.ChessGameSupervisorDummy
+import voidchess.common.board.*
+import voidchess.common.board.move.Move
+import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.Position
+import voidchess.common.board.other.ChessGameSupervisor
+import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.engine.player.ki.evaluation.SearchTreePruner
 import java.util.*
 
@@ -92,7 +94,7 @@ internal class ChessGame private constructor(
      * the normal constructor
      */
     constructor(supervisor: ChessGameSupervisor): this(
-            ArrayChessBoard(StartConfig.ClassicConfig),
+        ArrayChessBoard(StartConfig.ClassicConfig),
             StartConfig.ClassicConfig,
             LinkedList<Memento>(),
             NumberStack(),

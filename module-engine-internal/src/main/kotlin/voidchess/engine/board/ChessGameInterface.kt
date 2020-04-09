@@ -1,10 +1,11 @@
 package voidchess.engine.board
 
+import voidchess.common.board.BasicChessBoard
 import voidchess.common.board.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.Position
-import voidchess.engine.board.other.ChessGameSupervisor
+import voidchess.common.board.other.ChessGameSupervisor
 
 
 internal interface ChessGameInterface : BasicChessBoard {

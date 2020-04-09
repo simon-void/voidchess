@@ -1,10 +1,10 @@
 package voidchess.engine.player.ki.evaluation
 
-import voidchess.engine.board.ChessGameInterface
-import voidchess.engine.board.getFigure
+import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
-import voidchess.common.player.ki.evaluation.*
 import voidchess.common.board.move.MoveResult
+import voidchess.common.player.ki.evaluation.*
+import voidchess.engine.board.ChessGameInterface
 import java.util.Collections.emptyList
 
 

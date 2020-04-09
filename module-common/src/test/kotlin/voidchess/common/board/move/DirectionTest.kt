@@ -2,7 +2,6 @@ package voidchess.common.board.move
 
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import voidchess.common.board.move.Direction
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

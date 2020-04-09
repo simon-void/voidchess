@@ -4,13 +4,14 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.ChessGameSupervisorMock
+import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
-import voidchess.engine.board.other.ChessGameSupervisorDummy
-import voidchess.engine.figures.Bishop
-import voidchess.engine.figures.King
+import voidchess.common.board.other.ChessGameSupervisorDummy
+import voidchess.common.figures.Bishop
+import voidchess.common.figures.King
 import voidchess.moves
 import voidchess.toChess960Config
 import voidchess.toManualConfig
@@ -281,9 +282,15 @@ internal class ChessGameTest {
         game.move(Move.byCode("c2-c4"))
         assertTrue(game.getFigure(Position.byCode("c4")).canBeHitEnpassant, "pawn can be hit enpassant after enpassant")
         game.move(Move.byCode("e8-f8"))
-        assertFalse(game.getFigure(Position.byCode("c4")).canBeHitEnpassant, "pawn can't be hit enpassant after black moved king")
+        assertFalse(
+            game.getFigure(Position.byCode("c4")).canBeHitEnpassant,
+            "pawn can't be hit enpassant after black moved king"
+        )
         game.undo()
-        assertTrue(game.getFigure(Position.byCode("c4")).canBeHitEnpassant, "pawn can be hit enpassant after king move was undone")
+        assertTrue(
+            game.getFigure(Position.byCode("c4")).canBeHitEnpassant,
+            "pawn can be hit enpassant after king move was undone"
+        )
         assertTrue(game.isMovable(Position.byCode("b4"), Position.byCode("c3"), false))
         game.move(Move.byCode("b4-c3"))
         val newDes = "white 0 King-white-e1-0 Pawn-black-c3-false " + "King-black-e8-0"
@@ -329,7 +336,8 @@ internal class ChessGameTest {
 
         game = ChessGame(314.toChess960Config())
         game.move(Move.byCode("d1-c1"))
-        val expectedNewDesStart = "black 1 Knight-white-a1 Queen-white-b1 King-white-c1-1-true Rook-white-d1-1 Bishop-white-e1 Bishop-white-f1 Rook-white-g1-0 Knight-white-h1"
+        val expectedNewDesStart =
+            "black 1 Knight-white-a1 Queen-white-b1 King-white-c1-1-true Rook-white-d1-1 Bishop-white-e1 Bishop-white-f1 Rook-white-g1-0 Knight-white-h1"
         assertEquals(expectedNewDesStart, game.toString().substring(0, expectedNewDesStart.length))
     }
 
@@ -359,7 +367,8 @@ internal class ChessGameTest {
 
     @Test
     fun testIsDrawBecauseOfThreeTimesSamePosition() {
-        val des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 Knight-white-c2 Knight-white-e7 King-black-e8-0"
+        val des =
+            "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 Knight-white-c2 Knight-white-e7 King-black-e8-0"
         val game = ChessGame(des.toManualConfig())
         val whiteMove = Move.byCode("c2-a1")
         val whiteReturn = Move.byCode("a1-c2")
@@ -498,7 +507,8 @@ internal class ChessGameTest {
 
     @Test
     fun testCountFigures() {
-        val des = "white 0 King-white-e1-0 Pawn-black-a5-true " + "Pawn-white-b5-false Pawn-white-e7-false King-black-e8-0"
+        val des =
+            "white 0 King-white-e1-0 Pawn-black-a5-true " + "Pawn-white-b5-false Pawn-white-e7-false King-black-e8-0"
         val game = ChessGame(des.toManualConfig())
         assertEquals(5, game.countFigures())
         game.move(Move.byCode("b5-a6"))
@@ -527,46 +537,118 @@ internal class ChessGameTest {
 
     @DataProvider
     fun getTestGetPossibleMovesData(): Array<Array<Any>> = arrayOf(
-            arrayOf(ChessGame(518.toChess960Config()), listOf("g1-f3", "b8-c6", "f3-g1", "c6-b4", "g1-f3", "b4-c2"), 1),
-            arrayOf(ChessGame("black 0 King-white-g1-2 Bishop-black-b6 King-black-e8-0".toManualConfig()), listOf("b6-c5"), 4),
-            arrayOf(ChessGame(("black 0 Rook-white-a1-0 Rook-white-f1-1 King-white-g1-1-true "
-                    + "Pawn-white-a2-false Pawn-white-b2-false Bishop-white-d2 Bishop-white-e2 "
-                    + "Pawn-white-f2-false Pawn-white-h2-false Queen-white-b3 Pawn-white-g3-false "
-                    + "Pawn-white-e4-false Pawn-black-b5-false Pawn-black-a6-false Bishop-black-b6 "
-                    + "Pawn-black-h6-false Bishop-black-b7 Pawn-black-f7-false Pawn-black-g7-false "
-                    + "Rook-black-c8-1 Queen-black-d8 Rook-black-f8-1 King-black-g8-1").toManualConfig()), listOf("b6-f2"), 4),
-            arrayOf(ChessGame("black 0 Pawn-white-b2-false King-white-d3-2 Rook-black-h4-1 Rook-black-a8-0 King-black-e8-0".toManualConfig()), listOf("a8-a3"), 5),
-            arrayOf(ChessGame("black 0 King-white-d3-2 Knight-black-e5 Bishop-black-g8 King-black-e8-0".toManualConfig()), listOf("g8-h7"), 5),
-            arrayOf(ChessGame(("white 2 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 King-white-e1-0 " +
-                    "Queen-white-d1 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 Pawn-white-a2-false " +
-                    "Pawn-white-b2-false Pawn-white-d2-false Pawn-white-e2-false " +
-                    "Pawn-white-f2-false Pawn-white-g2-false Pawn-white-h2-false " +
-                    "Pawn-white-c3-false Pawn-black-d6-false Pawn-black-a7-false " +
-                    "Pawn-black-b7-false Pawn-black-c7-false Pawn-black-e7-false Pawn-black-f7-false " +
-                    "Pawn-black-g7-false Pawn-black-h7-false Rook-black-a8-0 Knight-black-b8 " +
-                    "Bishop-black-c8 Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0").toManualConfig()), listOf("d1-a4"), 6),
-            arrayOf(ChessGame("black 0 King-white-e1-0 Rook-white-d2-2 Queen-black-e2 Bishop-black-b4 King-black-e8-0".toManualConfig()), listOf("b4-c3"), 1),
-            arrayOf(ChessGame("black 0 King-white-g1-2 Pawn-black-c4-false Pawn-white-d4-true Bishop-black-b6 King-black-e8-0".toManualConfig()), listOf("c4-d3"), 4),
-            arrayOf(ChessGame(("black 0 King-white-h1-3 Pawn-white-c7-false "
-                    + "Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false "
-                    + "Knight-black-a7 King-black-b7-3-false").toManualConfig()), listOf("b7-c6", "c7-c8"), 1),
-            arrayOf(ChessGame("black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0".toManualConfig()), listOf<String>(), 12),
-            arrayOf(ChessGame("white 0 King-white-g6-6 Pawn-white-g7-false King-black-e8-0 Knight-black-h8".toManualConfig()), listOf<String>(), 7),
-            arrayOf(ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Rook-black-h1-1 Rook-black-a2-1 Knight-black-d3 King-black-d8-0".toManualConfig()), listOf<String>(), 12),
-            arrayOf(ChessGame(518.toChess960Config()), listOf("e2-e4", "d7-d5", "f1-b5", "c7-c6", "b5-c6", "b8-d7", "c6-b5"), 19),
-            arrayOf(ChessGame(621.toChess960Config()), listOf("g2-g3", "f7-f6", "c2-c3", "g8-f7", "d1-c2", "e8-f8", "c2-h7"), 1),
-            arrayOf(ChessGame("white 0 Rook-black-e1-8 Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 Knight-white-g4 Queen-black-e8 King-black-g7-3".toManualConfig()),
-                listOf("f2-e1", "e2-f1"), 2),
-            arrayOf(ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Bishop-black-d3 King-black-d8-0".toManualConfig()), listOf<String>(), 22)
+        arrayOf(ChessGame(518.toChess960Config()), listOf("g1-f3", "b8-c6", "f3-g1", "c6-b4", "g1-f3", "b4-c2"), 1),
+        arrayOf(
+            ChessGame("black 0 King-white-g1-2 Bishop-black-b6 King-black-e8-0".toManualConfig()),
+            listOf("b6-c5"),
+            4
+        ),
+        arrayOf(
+            ChessGame(
+                ("black 0 Rook-white-a1-0 Rook-white-f1-1 King-white-g1-1-true "
+                        + "Pawn-white-a2-false Pawn-white-b2-false Bishop-white-d2 Bishop-white-e2 "
+                        + "Pawn-white-f2-false Pawn-white-h2-false Queen-white-b3 Pawn-white-g3-false "
+                        + "Pawn-white-e4-false Pawn-black-b5-false Pawn-black-a6-false Bishop-black-b6 "
+                        + "Pawn-black-h6-false Bishop-black-b7 Pawn-black-f7-false Pawn-black-g7-false "
+                        + "Rook-black-c8-1 Queen-black-d8 Rook-black-f8-1 King-black-g8-1").toManualConfig()
+            ), listOf("b6-f2"), 4
+        ),
+        arrayOf(
+            ChessGame("black 0 Pawn-white-b2-false King-white-d3-2 Rook-black-h4-1 Rook-black-a8-0 King-black-e8-0".toManualConfig()),
+            listOf("a8-a3"),
+            5
+        ),
+        arrayOf(
+            ChessGame("black 0 King-white-d3-2 Knight-black-e5 Bishop-black-g8 King-black-e8-0".toManualConfig()),
+            listOf("g8-h7"),
+            5
+        ),
+        arrayOf(
+            ChessGame(
+                ("white 2 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 King-white-e1-0 " +
+                        "Queen-white-d1 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 Pawn-white-a2-false " +
+                        "Pawn-white-b2-false Pawn-white-d2-false Pawn-white-e2-false " +
+                        "Pawn-white-f2-false Pawn-white-g2-false Pawn-white-h2-false " +
+                        "Pawn-white-c3-false Pawn-black-d6-false Pawn-black-a7-false " +
+                        "Pawn-black-b7-false Pawn-black-c7-false Pawn-black-e7-false Pawn-black-f7-false " +
+                        "Pawn-black-g7-false Pawn-black-h7-false Rook-black-a8-0 Knight-black-b8 " +
+                        "Bishop-black-c8 Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0").toManualConfig()
+            ), listOf("d1-a4"), 6
+        ),
+        arrayOf(
+            ChessGame("black 0 King-white-e1-0 Rook-white-d2-2 Queen-black-e2 Bishop-black-b4 King-black-e8-0".toManualConfig()),
+            listOf("b4-c3"),
+            1
+        ),
+        arrayOf(
+            ChessGame("black 0 King-white-g1-2 Pawn-black-c4-false Pawn-white-d4-true Bishop-black-b6 King-black-e8-0".toManualConfig()),
+            listOf("c4-d3"),
+            4
+        ),
+        arrayOf(
+            ChessGame(
+                ("black 0 King-white-h1-3 Pawn-white-c7-false "
+                        + "Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false "
+                        + "Knight-black-a7 King-black-b7-3-false").toManualConfig()
+            ), listOf("b7-c6", "c7-c8"), 1
+        ),
+        arrayOf(
+            ChessGame("black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0".toManualConfig()),
+            listOf<String>(),
+            12
+        ),
+        arrayOf(
+            ChessGame("white 0 King-white-g6-6 Pawn-white-g7-false King-black-e8-0 Knight-black-h8".toManualConfig()),
+            listOf<String>(),
+            7
+        ),
+        arrayOf(
+            ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Rook-black-h1-1 Rook-black-a2-1 Knight-black-d3 King-black-d8-0".toManualConfig()),
+            listOf<String>(),
+            12
+        ),
+        arrayOf(
+            ChessGame(518.toChess960Config()),
+            listOf("e2-e4", "d7-d5", "f1-b5", "c7-c6", "b5-c6", "b8-d7", "c6-b5"),
+            19
+        ),
+        arrayOf(
+            ChessGame(621.toChess960Config()),
+            listOf("g2-g3", "f7-f6", "c2-c3", "g8-f7", "d1-c2", "e8-f8", "c2-h7"),
+            1
+        ),
+        arrayOf(
+            ChessGame("white 0 Rook-black-e1-8 Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 Knight-white-g4 Queen-black-e8 King-black-g7-3".toManualConfig()),
+            listOf("f2-e1", "e2-f1"), 2
+        ),
+        arrayOf(
+            ChessGame("white 0 Rook-white-b1-0 King-white-d1-0 Rook-white-e1-0 Bishop-black-d3 King-black-d8-0".toManualConfig()),
+            listOf<String>(),
+            22
+        )
     )
 
     @Test
     fun testGetPossibleMovesAfterIndirectChessAfterEnpassent() {
-        game.moves(listOf("e2-e4", "d7-d5", "e4-e5", "e8-d7", "d1-g4", "f7-f5", "e5-f6")) //en-passant creates indirect chess path
+        game.moves(
+            listOf(
+                "e2-e4",
+                "d7-d5",
+                "e4-e5",
+                "e8-d7",
+                "d1-g4",
+                "f7-f5",
+                "e5-f6"
+            )
+        ) //en-passant creates indirect chess path
         val possibleMoves = game.getAllMoves()
         val actualMoveCodes = possibleMoves.asSequence().map { move -> move.toString() }.toSet()
         val expectedMoveCodes = setOf("d7-e8", "d7-c6", "d7-d6", "e7-e6")
-        assertEquals(expectedMoveCodes, actualMoveCodes, "expected#: ${expectedMoveCodes.size}, actual#: ${possibleMoves.size}")
+        assertEquals(
+            expectedMoveCodes,
+            actualMoveCodes,
+            "expected#: ${expectedMoveCodes.size}, actual#: ${possibleMoves.size}"
+        )
     }
 
     @Test
@@ -595,8 +677,11 @@ internal class ChessGameTest {
     fun testGetCompleteHistory(initialPos: Int, expectedCompleteHistory: String) {
         val game = ChessGame(initialPos.toChess960Config())
         val moves = expectedCompleteHistory.split(',').map { Move.byCheckedCode(it) }
-        for(move in moves) {
-            assertTrue(game.isMovable(move.from, move.to, game.isWhiteTurn), "move $move isn't allowed in sequence $expectedCompleteHistory")
+        for (move in moves) {
+            assertTrue(
+                game.isMovable(move.from, move.to, game.isWhiteTurn),
+                "move $move isn't allowed in sequence $expectedCompleteHistory"
+            )
             game.move(move)
         }
         assertEquals(expectedCompleteHistory, game.getCompleteHistory())

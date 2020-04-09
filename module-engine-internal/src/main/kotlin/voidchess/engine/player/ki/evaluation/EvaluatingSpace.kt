@@ -1,13 +1,11 @@
 package voidchess.engine.player.ki.evaluation
 
-import voidchess.engine.board.ChessGameInterface
-import voidchess.engine.board.forAllFigures
-import voidchess.engine.figures.Figure
+import voidchess.common.board.forAllFigures
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
-
-import java.util.HashSet
-import java.util.LinkedList
+import voidchess.common.figures.Figure
+import voidchess.engine.board.ChessGameInterface
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -104,22 +102,5 @@ internal class EvaluatingSpace : EvaluatingStatically {
             }
         }
         return positions.iterator()
-    }
-
-    companion object {
-
-        fun shouldUseStaticSpaceEvaluation(game: ChessGameInterface): Boolean {
-            var whiteFigures = 0
-            var blackFigures = 0
-            game.forAllFigures { figure ->
-                if (figure.isWhite) {
-                    whiteFigures++
-                } else {
-                    blackFigures++
-                }
-                if (figure.isPawn() || whiteFigures > 1 && blackFigures > 1) return false
-            }
-            return true
-        }
     }
 }

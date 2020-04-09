@@ -4,7 +4,6 @@ import voidchess.board.BasicChessBoard
 import voidchess.board.getFirstFigureInDir
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
-import voidchess.engine.figures.*
 import voidchess.figures.Bishop
 import voidchess.figures.King
 import voidchess.figures.Knight
