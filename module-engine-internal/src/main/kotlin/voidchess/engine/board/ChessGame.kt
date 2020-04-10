@@ -9,12 +9,14 @@ import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.board.other.StartConfig
 import voidchess.engine.player.ki.evaluation.SearchTreePruner
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.LinkedHashSet
 
 
 internal class ChessGame private constructor(
     private val board: ChessBoard,
     override val startConfig: StartConfig,
-    private val mementoStack: LinkedList<Memento>,
+    private val mementoStack: ArrayDeque<Memento>,
     private val numberStack: NumberStack
 ): ChessGameInterface, BasicChessBoard by board {
     private var supervisor: ChessGameSupervisor = ChessGameSupervisorDummy
@@ -116,7 +118,7 @@ internal class ChessGame private constructor(
     ) : this(
         ArrayChessBoard(startConfig),
         startConfig,
-        LinkedList<Memento>(),
+        ArrayDeque<Memento>(64),
         NumberStack()
     ) {
         numberOfMovesWithoutHit = startConfig.numberOfMovesWithoutHit
@@ -193,7 +195,7 @@ internal class ChessGame private constructor(
     }
 
     override fun getAllMoves(): List<Move> {
-        val possibleMoves = LinkedList<Move>()
+        val possibleMoves = ArrayList<Move>(64)
         board.forAllFiguresOfColor(isWhiteTurn) { figure ->
             figure.getPossibleMoves(board, possibleMoves)
         }
@@ -201,7 +203,7 @@ internal class ChessGame private constructor(
     }
 
     override fun getCriticalMoves(): Collection<Move> {
-        val criticalMoves = TreeSet<Move>()
+        val criticalMoves = LinkedHashSet<Move>()
         board.forAllFiguresOfColor(isWhiteTurn) { figure ->
             figure.getCriticalMoves(board, criticalMoves)
         }
@@ -209,7 +211,7 @@ internal class ChessGame private constructor(
     }
 
     override fun getTakingMoves(): List<Move> {
-        val takingMoves = LinkedList<Move>()
+        val takingMoves = ArrayList<Move>(64)
         board.forAllFiguresOfColor(isWhiteTurn) { figure ->
             figure.getPossibleTakingMoves(board, takingMoves)
         }
@@ -349,7 +351,7 @@ private class NumberStack {
     }
 }
 
-private fun LinkedList<Memento>.countOccurrencesOfLastMemento(): Int {
+private fun ArrayDeque<Memento>.countOccurrencesOfLastMemento(): Int {
     val inverseIter: Iterator<Memento> = descendingIterator()
     val lastMemento = inverseIter.next()
     var count = 1
@@ -382,4 +384,4 @@ private fun LinkedList<Memento>.countOccurrencesOfLastMemento(): Int {
 }
 
 @Suppress("UNCHECKED_CAST")
-internal fun <T> LinkedList<T>.shallowCopy() = clone() as LinkedList<T>
+internal fun <T> ArrayDeque<T>.shallowCopy() = clone() as ArrayDeque<T>

@@ -15,7 +15,7 @@ import java.util.*
 class ChessGame private constructor(
     private val board: ChessBoard,
     override val startConfig: StartConfig,
-    private val mementoStack: LinkedList<Memento>,
+    private val mementoStack: ArrayDeque<Memento>,
     private val numberStack: NumberStack,
     private var supervisor: ChessGameSupervisor
 ): ChessGameInterface, BasicChessBoard by board {
@@ -94,10 +94,10 @@ class ChessGame private constructor(
      */
     constructor(supervisor: ChessGameSupervisor): this(
         ArrayChessBoard(StartConfig.ClassicConfig),
-            StartConfig.ClassicConfig,
-            LinkedList<Memento>(),
-            NumberStack(),
-            supervisor
+        StartConfig.ClassicConfig,
+        ArrayDeque<Memento>(64),
+        NumberStack(),
+        supervisor
     ) {
         initGame()
     }
@@ -111,7 +111,7 @@ class ChessGame private constructor(
     ) : this(
         ArrayChessBoard(startConfig),
         startConfig,
-        LinkedList<Memento>(),
+        ArrayDeque<Memento>(64),
         NumberStack(),
         supervisor
     ) {
@@ -283,7 +283,7 @@ private class NumberStack internal constructor() {
     }
 }
 
-private fun LinkedList<Memento>.countOccurrencesOfLastMemento(): Int {
+private fun ArrayDeque<Memento>.countOccurrencesOfLastMemento(): Int {
     val inverseIter: Iterator<Memento> = descendingIterator()
     val lastMemento = inverseIter.next()
     var count = 1
