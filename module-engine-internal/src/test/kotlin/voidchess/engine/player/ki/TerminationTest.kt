@@ -4,7 +4,6 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.engine.board.ChessGame
 import voidchess.common.board.move.Move
-import voidchess.common.helper.RuntimeFacade
 import voidchess.engine.player.ki.evaluation.*
 
 import java.text.DecimalFormat
@@ -17,10 +16,8 @@ import kotlin.system.exitProcess
 
 
 internal class TerminationTest {
-
-    private val playData: Array<Array<Any>>
-        @DataProvider
-        get() = arrayOf(
+    @DataProvider
+    private fun getPlayData(): Array<Array<Any>> = arrayOf(
                 arrayOf("black 0 King-white-g1-2 Pawn-white-f2-false Bishop-black-e3 Pawn-white-g3-false Pawn-white-e4-false Bishop-black-b7 King-black-g8-2", listOf("e3-f2")),
                 arrayOf("518", listOf("c2-c3")), arrayOf("black 0 King-white-h1-3 Pawn-white-c7-false King-black-b7-3-false", emptyList<Any>()),
                 arrayOf("black 0 King-white-h1-3 Pawn-white-c7-false Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false Knight-black-a7 King-black-b7-3-false", emptyList<Any>()),
@@ -218,7 +215,6 @@ internal class TerminationTest {
                 val time = System.currentTimeMillis()
                 computerPlayer.testTermination(game, pruner, staticEvaluation)
                 println("Dauer: " + decimalFormat.format((System.currentTimeMillis() - time) / 1000.0) + "s")
-                RuntimeFacade.printMemoryUsage("Speicherverbrauch used/total")
             } catch (e: RuntimeException) {
                 println(type + "fehler:" + e.message)
             } finally {
