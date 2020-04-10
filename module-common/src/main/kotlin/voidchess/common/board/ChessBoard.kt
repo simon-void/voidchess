@@ -2,6 +2,7 @@ package voidchess.common.board
 
 import voidchess.common.board.move.Move
 import voidchess.common.board.check.AttackLines
+import voidchess.common.board.move.ExtendedMove
 import voidchess.common.figures.Figure
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.ChessGameSupervisor
@@ -14,7 +15,7 @@ interface ChessBoard : BasicChessBoard {
     fun init(startConfig: StartConfig)
 
     /**@return true if a figure got hit */
-    fun move(move: Move, supervisor: ChessGameSupervisor): Boolean
+    fun move(move: Move, supervisor: ChessGameSupervisor): ExtendedMove
     /**@return true if a figure got hit */
     fun undo(): Boolean
     /** "normal" moves only, no special cases (castling, enpassant, pawn promotion)

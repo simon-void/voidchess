@@ -1,6 +1,6 @@
 package voidchess.image
 
-import voidchess.figures.FigureType
+import voidchess.common.figures.FigureType
 
 import javax.imageio.ImageIO
 import java.awt.*

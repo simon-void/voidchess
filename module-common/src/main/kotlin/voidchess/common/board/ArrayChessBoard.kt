@@ -125,7 +125,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) :
     override fun move(
         move: Move,
         supervisor: ChessGameSupervisor
-    ): Boolean {
+    ): ExtendedMove {
         clearCheckComputation()
 
         val movingFigure: Figure = clearFigure(move.from)
@@ -209,7 +209,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) :
         extendedMoveStack.addLast(extendedMove)
         isWhiteTurn = !isWhiteTurn
 
-        return extendedMove.hasHitFigure
+        return extendedMove
     }
 
     override fun undo(): Boolean {

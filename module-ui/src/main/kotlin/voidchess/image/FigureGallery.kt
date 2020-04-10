@@ -1,7 +1,7 @@
 package voidchess.image
 
-import voidchess.figures.Figure
-import voidchess.figures.FigureType
+import voidchess.common.figures.Figure
+import voidchess.common.figures.FigureType
 import java.awt.image.ImageObserver
 
 class FigureGallery(imageObserver: ImageObserver, imageWidthHeight: Int) {

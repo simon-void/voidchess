@@ -1,11 +1,11 @@
 package voidchess.ui
 
 import voidchess.board.ChessGameInterface
-import voidchess.board.ChessGameSupervisor
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
+import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.player.PlayerInterface
 
 
@@ -35,7 +35,7 @@ class Table constructor(
                 return
             }
             val endOption = game.move(move)
-            val extendedMove = game.getLastExtendedMove()
+            val extendedMove = game.getLatestExtendedMove()
             ui.repaintAfterMove(extendedMove)
 
             whitePlayersTurn = !whitePlayersTurn

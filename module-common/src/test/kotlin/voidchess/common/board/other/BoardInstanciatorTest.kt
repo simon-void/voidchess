@@ -2,21 +2,14 @@ package voidchess.common.board.other
 
 import org.testng.annotations.Test
 import voidchess.common.board.StartConfig
+import voidchess.common.board.StartConfigTest
 import voidchess.common.board.move.Position
 import voidchess.common.figures.*
 import kotlin.test.assertEquals
 
 
-class ChessBoardTest {
-    private val sortedClassicSetupFigureStates = ("Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 " +
-            "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 " +
-            "Pawn-white-a2-false Pawn-white-b2-false Pawn-white-c2-false Pawn-white-d2-false " +
-            "Pawn-white-e2-false Pawn-white-f2-false Pawn-white-g2-false Pawn-white-h2-false " +
-            "Pawn-black-a7-false Pawn-black-b7-false Pawn-black-c7-false Pawn-black-d7-false " +
-            "Pawn-black-e7-false Pawn-black-f7-false Pawn-black-g7-false Pawn-black-h7-false " +
-            "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 " +
-            "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0")
-        .split(" ").sorted()
+class BoardInstanciatorTest {
+    private val sortedClassicSetupFigureStates = StartConfigTest.classicFigureStates.sorted()
 
     @Test
     fun testInstanciateByManual() {

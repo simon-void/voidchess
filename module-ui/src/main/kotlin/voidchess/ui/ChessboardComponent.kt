@@ -1,8 +1,8 @@
 package voidchess.ui
 
-import voidchess.board.BasicChessBoard
-import voidchess.board.forAllFigures
-import voidchess.board.move.ExtendedMove
+import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.forAllFigures
+import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Position
 import voidchess.image.FigureGallery
 import voidchess.player.human.HumanPlayerInterface

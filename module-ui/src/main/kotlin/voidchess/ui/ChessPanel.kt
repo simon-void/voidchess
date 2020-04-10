@@ -1,8 +1,8 @@
 package voidchess.ui
 
 import voidchess.board.ChessGame
-import voidchess.board.ChessGameSupervisorDummy
 import voidchess.common.board.move.MoveResult
+import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.player.human.HumanPlayer
 import voidchess.player.ComputerPlayer
 

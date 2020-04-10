@@ -1,11 +1,9 @@
 package voidchess
 
 import voidchess.board.*
+import voidchess.common.board.StartConfig
 import voidchess.common.board.move.*
-import voidchess.figures.Figure
-import voidchess.figures.King
-import voidchess.figures.Knight
-import java.util.*
+import voidchess.common.board.other.ChessGameSupervisor
 
 
 class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPromotion) :
@@ -16,67 +14,34 @@ class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPromotion) :
     }
 }
 
-fun initSimpleChessBoard(gameDes: String): ChessBoard =
-    ArrayChessBoard(gameDes)
-
-fun initSimpleChessBoard(chess960: Int): ChessBoard = ArrayChessBoard().apply {
-    init(chess960)
+fun initChessGame(chess960: Int, vararg moveCodes: String): ChessGameInterface = ChessGame(
+    chess960.toChess960Config()
+).apply {
+    for(moveCode in moveCodes) {
+        move(Move.byCode(moveCode))
+    }
 }
 
-fun ChessGameInterface.getPossibleMovesFrom(posCode: String): Collection<Move> {
-    val game = this
-    val fromPos = Position.byCode(posCode)
-    val figure = game.getFigureOrNull(fromPos) ?: return emptyList()
-    val isWhite = figure.isWhite
-    val moves = mutableListOf<Move>()
-
-    fun fillWithPossibleKnightMoves() {
-        fromPos.forEachKnightPos { toPos ->
-            if (game.isMovable(fromPos, toPos, isWhite)) {
-                moves.add(Move[fromPos, toPos])
-            }
-        }
+fun initChessGame(des: String, vararg moveCodes: String): ChessGameInterface = ChessGame(
+    des.toManualConfig()
+).apply {
+    for(moveCode in moveCodes) {
+        move(Move.byCode(moveCode))
     }
-
-    fun fillWithPossibleKingMoves() {
-        Direction.values().forEach { direction ->
-            fromPos.forEachPosInLine(direction) { toPos ->
-                val isHorizontal = direction.isHorizontal
-                val isFreeArea = game.isFreeArea(toPos)
-                val isMovable = game.isMovable(fromPos, toPos, isWhite)
-                if (isMovable) {
-                    moves.add(Move[fromPos, toPos])
-                }
-                return@forEachPosInLine !(isHorizontal && isFreeArea)
-            }
-        }
-    }
-
-    fun fillWithPossibleStraightMove() {
-        Direction.values().forEach { direction ->
-            fromPos.forEachPosInLine(direction) { toPos ->
-                val isMovable = game.isMovable(fromPos, toPos, isWhite)
-                if (isMovable) {
-                    moves.add(Move[fromPos, toPos])
-                }
-                return@forEachPosInLine !isMovable
-            }
-        }
-    }
-    when (figure) {
-        is Knight -> fillWithPossibleKnightMoves()
-        is King -> fillWithPossibleKingMoves()
-        else -> fillWithPossibleStraightMove()
-    }
-    return moves
 }
 
-fun Figure.isMovable(posCode: String, game: ChessGameInterface): Boolean = game.isMovable(position, Position.byCode(posCode), isWhite)
-
-fun PositionProgression.toList(): List<Position> {
-    val list = LinkedList<Position>()
-    forEachReachablePos { position -> list.add(position) }
-    return list
+fun String.toManualConfig(): StartConfig.ManualConfig {
+    val gameDesc = this
+    val gameDescParts = this.split(" ").filter { it.isNotEmpty() }
+    check(gameDescParts.size >= 4) { "expected gameDescription, found something else: $gameDesc" }
+    val isWhiteTurn = gameDescParts[0] == "white"
+    val numberOfMovesSinceHitFigure = gameDescParts[1].toInt()
+    val figureStates = gameDescParts.filterIndexed { index, _ -> index > 1 }
+    return StartConfig.ManualConfig(isWhiteTurn, numberOfMovesSinceHitFigure, figureStates)
 }
 
-fun Position.mirrorRow() = Position[7 - row, column]
+fun Int.toChess960Config(): StartConfig.Chess960Config {
+    val chess960Index = this
+    check(chess960Index in 0 until 960) { "expected value to be within 0-959 but was: $chess960Index" }
+    return StartConfig.Chess960Config(chess960Index)
+}

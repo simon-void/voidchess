@@ -56,7 +56,7 @@ internal fun ChessGame.copyGameWithInvertedColors(): ChessGame {
     return ChessGame(copyDef.toManualConfig())
 }
 
-internal fun String.toManualConfig(): StartConfig.ManualConfig {
+fun String.toManualConfig(): StartConfig.ManualConfig {
     val gameDesc = this
     val gameDescParts = this.split(" ").filter { it.isNotEmpty() }
     check(gameDescParts.size >= 4) { "expected gameDescription, found something else: $gameDesc" }
@@ -66,7 +66,7 @@ internal fun String.toManualConfig(): StartConfig.ManualConfig {
     return StartConfig.ManualConfig(isWhiteTurn, numberOfMovesSinceHitFigure, figureStates)
 }
 
-internal fun Int.toChess960Config(): StartConfig.Chess960Config {
+fun Int.toChess960Config(): StartConfig.Chess960Config {
     val chess960Index = this
     check(chess960Index in 0 until 960) { "expected value to be within 0-959 but was: $chess960Index" }
     return StartConfig.Chess960Config(chess960Index)

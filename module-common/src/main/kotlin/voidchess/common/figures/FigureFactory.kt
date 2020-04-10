@@ -15,8 +15,8 @@ fun getFigureByString(description: String): Figure {
         "Bishop" -> return Bishop(isWhite, pos)
         "Queen" -> return Queen(isWhite, pos)
         "Pawn" -> {
-            val readyForCastlingOrEnpassant = st.next().toBoolean()
-            return Pawn(isWhite, pos, readyForCastlingOrEnpassant)
+            val didDoubleJumpInPreviousMove = st.next().toBoolean()
+            return Pawn(isWhite, pos, didDoubleJumpInPreviousMove)
         }
     }
 

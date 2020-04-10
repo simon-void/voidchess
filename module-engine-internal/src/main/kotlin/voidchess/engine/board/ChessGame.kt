@@ -173,7 +173,7 @@ internal class ChessGame private constructor(
     }
 
     override fun move(move: Move): MoveResult {
-        hasHitFigure = board.move(move, supervisor)
+        hasHitFigure = board.move(move, supervisor).hasHitFigure
 
         if (hasHitFigure) {
             numberStack.figureHit()
