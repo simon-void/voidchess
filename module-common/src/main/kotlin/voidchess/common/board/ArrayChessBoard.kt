@@ -33,16 +33,6 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) :
         init(startConfig)
     }
 
-    private fun clearCheckComputation() {
-        cachedAttackLines = null
-    }
-
-    override fun getCachedAttackLines(): AttackLines {
-        val scopedAttackLines: AttackLines = cachedAttackLines ?: checkAttackLines(this, isWhiteTurn)
-        cachedAttackLines = scopedAttackLines
-        return scopedAttackLines
-    }
-
     override fun init(startConfig: StartConfig) {
         clearCheckComputation()
         extendedMoveStack.clear()
@@ -271,6 +261,16 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) :
         isWhiteTurn = !isWhiteTurn
 
         return lastExtMove.hasHitFigure
+    }
+
+    private fun clearCheckComputation() {
+        cachedAttackLines = null
+    }
+
+    override fun getCachedAttackLines(): AttackLines {
+        val scopedAttackLines: AttackLines = cachedAttackLines ?: checkAttackLines(this, isWhiteTurn)
+        cachedAttackLines = scopedAttackLines
+        return scopedAttackLines
     }
 
     override fun movesPlayed(): List<Move> = extendedMoveStack.map { it.move }

@@ -25,9 +25,7 @@ internal interface ChessGameInterface : BasicChessBoard {
     fun getCompleteHistory(): String
     fun initGame(chess960: Int)
     fun copyGame(neededInstances: Int): List<ChessGameInterface>
-    fun countFigures(): Int
-    fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean
-    fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean
+    fun isMovable(from: Position, to: Position): Boolean
     fun move(move: Move): MoveResult
     fun getAllMoves(): Collection<Move>
     fun getCriticalMoves(): Collection<Move>
@@ -37,8 +35,6 @@ internal interface ChessGameInterface : BasicChessBoard {
      * while the second int is the same for all black figures.
      */
     fun countReachableMoves(): Pair<Int, Int>
-    fun suspendInteractiveSupervisor(): ChessGameSupervisor
-    fun useSupervisor(supervisor: ChessGameSupervisor)
     fun undo()
 }
 

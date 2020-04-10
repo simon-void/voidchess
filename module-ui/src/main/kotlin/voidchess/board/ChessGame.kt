@@ -20,7 +20,6 @@ class ChessGame private constructor(
     private var supervisor: ChessGameSupervisor
 ): ChessGameInterface, BasicChessBoard by board {
     private var numberOfMovesWithoutHit: Int = 0
-    private var figureCount: Int = 32
     private var latestExtendedMove: ExtendedMove? = null
 
     override val hasHitFigure: Boolean get() = latestExtendedMove?.hasHitFigure ?: startConfig.hasHitFigureInPreviousMove
@@ -119,8 +118,6 @@ class ChessGame private constructor(
         numberOfMovesWithoutHit = startConfig.numberOfMovesWithoutHit
         for (i in 0 until numberOfMovesWithoutHit) numberStack.noFigureHit()
 
-        figureCount = startConfig.figureCount
-
         memorizeGame()
     }
 
@@ -128,24 +125,14 @@ class ChessGame private constructor(
         this.supervisor = supervisor
     }
 
-    override fun suspendInteractiveSupervisor(): ChessGameSupervisor {
-        val normalSupervisor = supervisor
-        supervisor = ChessGameSupervisorDummy
-        return normalSupervisor
-    }
-
-    override fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean {
+    override fun isSelectable(pos: Position): Boolean {
         val figure = getFigureOrNull(pos)
-        return figure!=null && figure.isWhite == whitePlayer && figure.isSelectable(board)
+        return figure!=null && figure.isWhite == isWhiteTurn && figure.isSelectable(board)
     }
 
-    override fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean {
+    override fun isMovable(from: Position, to: Position): Boolean {
         val figure = getFigureOrNull(from)
-        return figure!=null && figure.isWhite == whitePlayer && figure.isMovable(to, board)
-    }
-
-    override fun countFigures(): Int {
-        return figureCount
+        return figure!=null && figure.isWhite == isWhiteTurn && figure.isMovable(to, board)
     }
 
     override fun move(move: Move): MoveResult {
@@ -154,7 +141,6 @@ class ChessGame private constructor(
         if (hasHitFigure) {
             numberStack.figureHit()
             numberOfMovesWithoutHit = 0
-            figureCount--
         } else {
             numberStack.noFigureHit()
             numberOfMovesWithoutHit++
@@ -179,7 +165,6 @@ class ChessGame private constructor(
 
     override fun initGame(chess960: Int) {
         numberOfMovesWithoutHit = 0
-        figureCount = 32
         mementoStack.clear()
         numberStack.init()
 

@@ -25,11 +25,9 @@ interface ChessGameInterface : BasicChessBoard {
      */
     fun getCompleteHistory(): String
     fun initGame(chess960: Int)
-    fun countFigures(): Int
-    fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean
-    fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean
+    fun isSelectable(pos: Position): Boolean
+    fun isMovable(from: Position, to: Position): Boolean
     fun move(move: Move): MoveResult
     fun getLatestExtendedMove(): ExtendedMove
-    fun suspendInteractiveSupervisor(): ChessGameSupervisor
     fun useSupervisor(supervisor: ChessGameSupervisor)
 }

@@ -15,11 +15,10 @@ internal class ChessGame private constructor(
     private val board: ChessBoard,
     override val startConfig: StartConfig,
     private val mementoStack: LinkedList<Memento>,
-    private val numberStack: NumberStack,
-    private var supervisor: ChessGameSupervisor
+    private val numberStack: NumberStack
 ): ChessGameInterface, BasicChessBoard by board {
+    private var supervisor: ChessGameSupervisor = ChessGameSupervisorDummy
     private var numberOfMovesWithoutHit: Int = 0
-    private var figureCount: Int = 32
     override var hasHitFigure: Boolean = false
 
     override val isWhiteTurn: Boolean get() = board.isWhiteTurn
@@ -92,19 +91,6 @@ internal class ChessGame private constructor(
         get() = mementoStack.countOccurrencesOfLastMemento() >= 3
 
     /**
-     * the normal constructor
-     */
-    constructor(supervisor: ChessGameSupervisor): this(
-        ArrayChessBoard(StartConfig.ClassicConfig),
-            StartConfig.ClassicConfig,
-            LinkedList<Memento>(),
-            NumberStack(),
-            supervisor
-    ) {
-        initGame()
-    }
-
-    /**
      * copy-constructor
      */
     private constructor(other: ChessGame, startConfig: StartConfig, movesPlayed: List<Move>) : this(
@@ -119,58 +105,30 @@ internal class ChessGame private constructor(
         },
         other.startConfig,
         other.mementoStack.shallowCopy(),
-        NumberStack(other.numberStack),
-        ChessGameSupervisorDummy
+        NumberStack(other.numberStack)
     ) {
         hasHitFigure = other.hasHitFigure
         numberOfMovesWithoutHit = other.numberOfMovesWithoutHit
-        figureCount = other.figureCount
     }
 
-    /**
-     * for unit-tests
-     */
-    internal constructor(
-        startConfig: StartConfig = StartConfig.ClassicConfig,
-        supervisor: ChessGameSupervisor = ChessGameSupervisorDummy
+    constructor(
+        startConfig: StartConfig = StartConfig.ClassicConfig
     ) : this(
         ArrayChessBoard(startConfig),
         startConfig,
         LinkedList<Memento>(),
-        NumberStack(),
-        supervisor
+        NumberStack()
     ) {
         numberOfMovesWithoutHit = startConfig.numberOfMovesWithoutHit
         for (i in 0 until numberOfMovesWithoutHit) numberStack.noFigureHit()
-
-        figureCount = startConfig.figureCount
 
         memorizeGame()
         hasHitFigure = numberOfMovesWithoutHit == 0
     }
 
-    override fun useSupervisor(supervisor: ChessGameSupervisor) {
-        this.supervisor = supervisor
-    }
-
-    override fun suspendInteractiveSupervisor(): ChessGameSupervisor {
-        val normalSupervisor = supervisor
-        supervisor = ChessGameSupervisorDummy
-        return normalSupervisor
-    }
-
-    override fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean {
-        val figure = getFigureOrNull(pos)
-        return figure!=null && figure.isWhite == whitePlayer && figure.isSelectable(board)
-    }
-
-    override fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean {
+    override fun isMovable(from: Position, to: Position): Boolean {
         val figure = getFigureOrNull(from)
-        return figure!=null && figure.isWhite == whitePlayer && figure.isMovable(to, board)
-    }
-
-    override fun countFigures(): Int {
-        return figureCount
+        return figure!=null && figure.isWhite == isWhiteTurn && figure.isMovable(to, board)
     }
 
     override fun move(move: Move): MoveResult {
@@ -179,7 +137,6 @@ internal class ChessGame private constructor(
         if (hasHitFigure) {
             numberStack.figureHit()
             numberOfMovesWithoutHit = 0
-            figureCount--
         } else {
             numberStack.noFigureHit()
             numberOfMovesWithoutHit++
@@ -194,22 +151,15 @@ internal class ChessGame private constructor(
         numberOfMovesWithoutHit = numberStack.undo()
         mementoStack.removeLast()
 
-        val undoneMoveHasHitFigure = board.undo()
-
-        if (undoneMoveHasHitFigure) {
-            figureCount++
-        }
+        board.undo()
     }
 
     override fun toString() = "${if (isWhiteTurn) "white" else "black"} $numberOfMovesWithoutHit $board"
 
     override fun getCompleteHistory() = board.historyToString(null)
 
-    private fun initGame() = initGame(518)    //classic chess starting configuration
-
     override fun initGame(chess960: Int) {
         numberOfMovesWithoutHit = 0
-        figureCount = 32
         mementoStack.clear()
         numberStack.init()
 

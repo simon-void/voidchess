@@ -56,7 +56,6 @@ internal class EvaluatingSpace : EvaluatingStatically {
     fun countRestSpace(game: ChessGameInterface,
                        king: Figure,
                        otherFiguresPos: List<Position>): Int {
-        val figuresHaveWhiteColor = !king.isWhite
         val foundPositions = HashSet<Position>(64)
         var searchPositions = HashSet<Position>(2)
         foundPositions.add(king.position)
@@ -67,11 +66,9 @@ internal class EvaluatingSpace : EvaluatingStatically {
                 val newIter = getPossibleKingPositions(searchPos)
                 while (newIter.hasNext()) {
                     val foundPos = newIter.next()
-                    if (!foundPositions.contains(foundPos) && isNotReachableByFiguresInList(
-                                    foundPos,
-                                    otherFiguresPos,
-                                    game,
-                                    figuresHaveWhiteColor)) {
+                    if (!foundPositions.contains(foundPos) &&
+                        isNotReachableByFiguresInList(foundPos, otherFiguresPos, game)
+                    ) {
                         foundPositions.add(foundPos)
                         newSearchPositions.add(foundPos)
                     }
@@ -83,13 +80,14 @@ internal class EvaluatingSpace : EvaluatingStatically {
         return foundPositions.size
     }
 
-    private fun isNotReachableByFiguresInList(to: Position,
-                                              other: List<Position>,
-                                              game: ChessGameInterface,
-                                              figuresHaveWhiteColor: Boolean): Boolean {
+    private fun isNotReachableByFiguresInList(
+        to: Position,
+        other: List<Position>,
+        game: ChessGameInterface
+    ): Boolean {
         for (anOther in other) {
             if (anOther.equalsPosition(to)) return false
-            if (game.isMovable(anOther, to, figuresHaveWhiteColor)) return false
+            if (game.isMovable(anOther, to)) return false
         }
         return true
     }

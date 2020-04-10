@@ -50,7 +50,7 @@ class ComputerPlayer(
         run {
             // since the engine is a potentially external component the suggested move has to be checked
             val move = evaluatedMove.move
-            if(!game.isMovable(move.from, move.to, isWhite)) throw IllegalStateException("illegal move $move! Figure can't move that way.")
+            if(!game.isMovable(move.from, move.to)) throw IllegalStateException("illegal move $move! Figure can't move that way.")
         }
         return evaluatedMove
     }

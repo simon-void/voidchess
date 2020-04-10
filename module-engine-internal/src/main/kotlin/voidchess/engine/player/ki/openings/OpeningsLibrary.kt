@@ -80,7 +80,7 @@ internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
                 require(Move.isValid(textMove)) { "illegal move format'$textMove' in opening sequence: $openingSequence" }
                 val move = Move.byCode(textMove)
                 val isMoveExecutable = game.isMovable(
-                        move.from, move.to, game.isWhiteTurn
+                        move.from, move.to
                 )
                 require(isMoveExecutable) { "illegal move '$textMove' in opening sequence: $openingSequence" }
                 game.move(move)

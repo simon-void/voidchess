@@ -51,12 +51,12 @@ class HumanPlayer(
 
         if (lockedFrom == null) {
             ui.unmarkPosition(PosType.HOVER_FROM)
-            if (game.isSelectable(pos, isWhitePlayer)) {
+            if (game.isSelectable(pos)) {
                 ui.markPosition(pos, PosType.HOVER_FROM)
             }
         } else {
             ui.unmarkPosition(PosType.HOVER_TO)
-            if (game.isMovable(lockedFrom, pos, isWhitePlayer)) {
+            if (game.isMovable(lockedFrom, pos)) {
                 ui.markPosition(pos, PosType.HOVER_TO)
             }
         }
@@ -67,12 +67,12 @@ class HumanPlayer(
 
         val lockedFrom = from
         if (lockedFrom == null) {
-            if (game.isSelectable(pos, isWhitePlayer)) {
+            if (game.isSelectable(pos)) {
                 from = pos
                 ui.markPosition(pos, PosType.SELECT_FROM)
             }
         } else {
-            if (game.isMovable(lockedFrom, pos, isWhitePlayer)) {
+            if (game.isMovable(lockedFrom, pos)) {
                 move(Move[lockedFrom, pos])
             }
         }

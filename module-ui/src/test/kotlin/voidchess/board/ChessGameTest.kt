@@ -207,17 +207,19 @@ class ChessGameTest {
     fun testIsSelectable() {
         var des = "white 0 King-white-e1-0 Queen-black-g2 " + "Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0"
         var game = initChessGame(des)
-        assertFalse(game.isSelectable(Position.byCode("e1"), true))
-        assertTrue(game.isSelectable(Position.byCode("e6"), true))
-        assertFalse(game.isSelectable(Position.byCode("e6"), false))
+        assertFalse(game.isSelectable(Position.byCode("g2")))
+        assertFalse(game.isSelectable(Position.byCode("e1")))
+        assertTrue(game.isSelectable(Position.byCode("e6")))
 
         des = "black 0 King-white-e1-0 Queen-white-e2 " + "Bishop-black-c8 King-black-e8-0"
         game = initChessGame(des)
-        assertTrue(game.isSelectable(Position.byCode("c8"), false))
+        assertTrue(game.isSelectable(Position.byCode("c8")))
+        assertTrue(game.isSelectable(Position.byCode("e8")))
+        assertFalse(game.isSelectable(Position.byCode("h8")))
 
         des = "black 0 King-white-e1-0 Queen-white-e2 " + "Rook-black-a6-1 King-black-e8-0"
         game = initChessGame(des)
-        assertTrue(game.isSelectable(Position.byCode("a6"), false))
+        assertTrue(game.isSelectable(Position.byCode("a6")))
     }
 
     @Test
@@ -226,22 +228,22 @@ class ChessGameTest {
         var game = initChessGame(des)
 
 
-        assertTrue(game.isMovable(Position.byCode("e6"), Position.byCode("e7"), true))
+        assertTrue(game.isMovable(Position.byCode("e6"), Position.byCode("e7")))
 
         des = "black 0 King-white-e1-0 Pawn-black-a5-false " + "King-black-g6-2 Rook-white-h6-1"
         game = initChessGame(des)
-        assertFalse(game.isMovable(Position.byCode("a5"), Position.byCode("a4"), false))
+        assertFalse(game.isMovable(Position.byCode("a5"), Position.byCode("a4")))
 
         des = "black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0"
         game = initChessGame(des)
-        assertFalse(game.isMovable(Position.byCode("e8"), Position.byCode("g8"), false))
+        assertFalse(game.isMovable(Position.byCode("e8"), Position.byCode("g8")))
 
         game = initChessGame(621)
         game.move(Move.byCode("f2-f3"))
         game.move(Move.byCode("a7-a6"))
         val from = Position.byCode("f1")
         val to = Position.byCode("f2")
-        assertTrue(game.isMovable(from, to, true))
+        assertTrue(game.isMovable(from, to))
         assertFalse(game.isFreeArea(from))
     }
 
@@ -292,17 +294,6 @@ class ChessGameTest {
     }
 
     @Test
-    fun testCountFigures() {
-        val des = "white 0 King-white-e1-0 Pawn-black-a5-true " + "Pawn-white-b5-false Pawn-white-e7-false King-black-e8-0"
-        val game = initChessGame(des)
-        assertEquals(5, game.countFigures())
-        game.move(Move.byCode("b5-a6"))
-        assertEquals(4, game.countFigures())
-        game.move(Move.byCode("e8-e7"))
-        assertEquals(3, game.countFigures())
-    }
-
-    @Test
     fun testIsCheck() {
         val des = "white 0 King-white-g1-2 Bishop-black-f2 King-black-e8-0"
         val game = initChessGame(des)
@@ -314,7 +305,7 @@ class ChessGameTest {
         val game = initChessGame(initialPos)
         val moves = expectedCompleteHistory.split(',').map { Move.byCheckedCode(it) }
         for(move in moves) {
-            assertTrue(game.isMovable(move.from, move.to, game.isWhiteTurn), "move $move isn't allowed in sequence $expectedCompleteHistory")
+            assertTrue(game.isMovable(move.from, move.to), "move $move isn't allowed in sequence $expectedCompleteHistory")
             game.move(move)
         }
         assertEquals(expectedCompleteHistory, game.getCompleteHistory())

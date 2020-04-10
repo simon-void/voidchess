@@ -3,13 +3,10 @@ package voidchess.engine.board
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import voidchess.ChessGameSupervisorMock
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
-import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
-import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.figures.Bishop
 import voidchess.common.figures.King
 import voidchess.moves
@@ -19,11 +16,11 @@ import kotlin.test.*
 
 
 internal class ChessGameTest {
-    private var game: ChessGame = ChessGame(ChessGameSupervisorDummy)
+    private lateinit var game: ChessGame
 
     @BeforeMethod
-    fun setUp() {
-        game = ChessGame(ChessGameSupervisorDummy)
+    fun setup() {
+        game = ChessGame()
     }
 
     @Test
@@ -59,7 +56,7 @@ internal class ChessGameTest {
                 + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
                 + "Queen-black-d8 King-black-e8-0 "
                 + "Bishop-black-f8 Knight-black-g8 Rook-black-h8-0")
-        assertEquals(game.toString(), code)
+        assertEquals(code, game.toString())
     }
 
     @Test
@@ -124,7 +121,7 @@ internal class ChessGameTest {
         assertEquals(newDes, game.toString())
         game.undo()
         assertEquals(des, game.toString())
-        assertTrue(game.isMovable(move.from, move.to, true))
+        assertTrue(game.isMovable(move.from, move.to))
 
 
         des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-f8-0"
@@ -134,17 +131,17 @@ internal class ChessGameTest {
         game.undo()
 
         assertEquals(des, game.toString())
-        assertTrue(game.isMovable(move.from, move.to, false))
+        assertTrue(game.isMovable(move.from, move.to))
 
 
         des = "white 0 King-white-e1-0 Pawn-white-b5-false Pawn-black-c5-true King-black-e8-0"
         game = ChessGame(des.toManualConfig())
         move = Move.byCode("b5-c6")
 
-        assertTrue(game.isMovable(move.from, move.to, true))
+        assertTrue(game.isMovable(move.from, move.to))
         game.move(move)
         game.undo()
-        assertTrue(game.isMovable(move.from, move.to, true))
+        assertTrue(game.isMovable(move.from, move.to))
 
 
         des = "white 4 Rook-white-a1-0 King-white-e1-0 Bishop-white-f1 " +
@@ -160,10 +157,10 @@ internal class ChessGameTest {
         game = ChessGame(des.toManualConfig())
         move = Move.byCode("e1-a1")
 
-        assertTrue(game.isMovable(move.from, move.to, true))
+        assertTrue(game.isMovable(move.from, move.to))
         game.move(move)
         game.undo()
-        assertTrue(game.isMovable(move.from, move.to, true))
+        assertTrue(game.isMovable(move.from, move.to))
 
 
         des = "black 1 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false"
@@ -276,7 +273,7 @@ internal class ChessGameTest {
 
     @Test
     fun testHandleEnpassant() {
-        val des = "white 0 Pawn-white-c2-false Pawn-black-b4-false " + "King-white-e1-0 King-black-e8-0"
+        val des = "white 0 Pawn-white-c2-false Pawn-black-b4-false King-white-e1-0 King-black-e8-0"
         val game = ChessGame(des.toManualConfig())
         assertFalse(game.getFigure(Position.byCode("c2")).canBeHitEnpassant, "pawn can't be hit enpassant on start row")
         game.move(Move.byCode("c2-c4"))
@@ -291,9 +288,9 @@ internal class ChessGameTest {
             game.getFigure(Position.byCode("c4")).canBeHitEnpassant,
             "pawn can be hit enpassant after king move was undone"
         )
-        assertTrue(game.isMovable(Position.byCode("b4"), Position.byCode("c3"), false))
+        assertTrue(game.isMovable(Position.byCode("b4"), Position.byCode("c3")))
         game.move(Move.byCode("b4-c3"))
-        val newDes = "white 0 King-white-e1-0 Pawn-black-c3-false " + "King-black-e8-0"
+        val newDes = "white 0 King-white-e1-0 Pawn-black-c3-false King-black-e8-0"
         assertEquals(newDes, game.toString())
     }
 
@@ -351,7 +348,7 @@ internal class ChessGameTest {
 
     @Test
     fun testIsDrawBecauseOfNoMoves() {
-        val des = "black 0 King-white-e1-0 Queen-black-h2 " + "Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0"
+        val des = "black 0 King-white-e1-0 Queen-black-h2 Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0"
         val game = ChessGame(des.toManualConfig())
         val endOption = game.move(Move.byCode("h2-g2"))
         assertEquals(MoveResult.STALEMATE, endOption)
@@ -359,7 +356,7 @@ internal class ChessGameTest {
 
     @Test
     fun testIsDrawBecauseOfLowMaterial() {
-        val des = "white 0 King-white-e1-0 Bishop-black-g2 " + "Knight-white-c2 Knight-white-e7 King-black-e8-0"
+        val des = "white 0 King-white-e1-0 Bishop-black-g2 Knight-white-c2 Knight-white-e7 King-black-e8-0"
         val game = ChessGame(des.toManualConfig())
         val endOption = game.move(Move.byCode("e1-f2"))
         assertEquals(MoveResult.DRAW, endOption)
@@ -391,7 +388,7 @@ internal class ChessGameTest {
 
     @Test
     fun testIsDrawBecauseOf50HitlessMoves() {
-        var des = "white 98 King-white-e1-0 Pawn-white-a2-false " + "Pawn-black-b4-false King-black-e8-0"
+        var des = "white 98 King-white-e1-0 Pawn-white-a2-false Pawn-black-b4-false King-black-e8-0"
         var game = ChessGame(des.toManualConfig())
         var endOption: MoveResult
         endOption = game.move(Move.byCode("a2-a4"))
@@ -399,7 +396,7 @@ internal class ChessGameTest {
         endOption = game.move(Move.byCode("b4-a3"))
         assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption)
 
-        des = "white 98 King-white-e1-0 Pawn-white-a2-false " + "Pawn-black-b4-false King-black-e8-0"
+        des = "white 98 King-white-e1-0 Pawn-white-a2-false Pawn-black-b4-false King-black-e8-0"
         game = ChessGame(des.toManualConfig())
         endOption = game.move(Move.byCode("a2-a4"))
         assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption)
@@ -409,60 +406,41 @@ internal class ChessGameTest {
 
     @Test
     fun testHandleTransformPawn() {
-        val mock = ChessGameSupervisorMock(PawnPromotion.KNIGHT)
-        val des = "black 0 King-white-e1-0 Pawn-black-g2-false " + "King-black-e8-0"
+        val des = "black 0 King-white-e1-0 Pawn-black-g2-false King-black-e8-0"
         val game = ChessGame(des.toManualConfig())
-        game.useSupervisor(mock)
         game.move(Move.byCode("g2-g1"))
-        val newDes = "white 1 King-white-e1-0 Knight-black-g1 " + "King-black-e8-0"
+        val newDes = "white 1 King-white-e1-0 Queen-black-g1 King-black-e8-0"
         assertEquals(newDes, game.toString())
     }
 
     @Test
-    fun testIsSelectable() {
-        var des = "white 0 King-white-e1-0 Queen-black-g2 " + "Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0"
-        var game = ChessGame(des.toManualConfig())
-        assertFalse(game.isSelectable(Position.byCode("e1"), true))
-        assertTrue(game.isSelectable(Position.byCode("e6"), true))
-        assertFalse(game.isSelectable(Position.byCode("e6"), false))
-
-        des = "black 0 King-white-e1-0 Queen-white-e2 " + "Bishop-black-c8 King-black-e8-0"
-        game = ChessGame(des.toManualConfig())
-        assertTrue(game.isSelectable(Position.byCode("c8"), false))
-
-        des = "black 0 King-white-e1-0 Queen-white-e2 " + "Rook-black-a6-1 King-black-e8-0"
-        game = ChessGame(des.toManualConfig())
-        assertTrue(game.isSelectable(Position.byCode("a6"), false))
-    }
-
-    @Test
     fun testIsMovable() {
-        var des = "white 0 King-white-e1-0 Queen-black-g2 " + "Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0"
+        var des = "white 0 King-white-e1-0 Queen-black-g2 Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0"
         var game = ChessGame(des.toManualConfig())
 
 
-        assertTrue(game.isMovable(Position.byCode("e6"), Position.byCode("e7"), true))
+        assertTrue(game.isMovable(Position.byCode("e6"), Position.byCode("e7")))
 
-        des = "black 0 King-white-e1-0 Pawn-black-a5-false " + "King-black-g6-2 Rook-white-h6-1"
+        des = "black 0 King-white-e1-0 Pawn-black-a5-false King-black-g6-2 Rook-white-h6-1"
         game = ChessGame(des.toManualConfig())
-        assertFalse(game.isMovable(Position.byCode("a5"), Position.byCode("a4"), false))
+        assertFalse(game.isMovable(Position.byCode("a5"), Position.byCode("a4")))
 
         des = "black 0 King-white-g7-6 King-black-e8-0 Rook-black-h8-0"
         game = ChessGame(des.toManualConfig())
-        assertFalse(game.isMovable(Position.byCode("e8"), Position.byCode("g8"), false))
+        assertFalse(game.isMovable(Position.byCode("e8"), Position.byCode("g8")))
 
         game = ChessGame(621.toChess960Config())
         game.move(Move.byCode("f2-f3"))
         game.move(Move.byCode("a7-a6"))
         val from = Position.byCode("f1")
         val to = Position.byCode("f2")
-        assertTrue(game.isMovable(from, to, true))
+        assertTrue(game.isMovable(from, to))
         assertFalse(game.isFreeArea(from))
     }
 
     @Test
     fun testColorChangedBetweenMoves() {
-        val des = "white 0 King-white-e1-0 Pawn-black-g3-false " + "King-black-e8-0"
+        val des = "white 0 King-white-e1-0 Pawn-black-g3-false King-black-e8-0"
         val game = ChessGame(des.toManualConfig())
         game.move(Move.byCode("e1-d1"))
         try {
@@ -475,7 +453,7 @@ internal class ChessGameTest {
 
     @Test
     fun testChecksForMoveMovesFigureNotNull() {
-        val des = "white 0 King-white-e1-0 Pawn-black-g3-false " + "King-black-e8-0"
+        val des = "white 0 King-white-e1-0 Pawn-black-g3-false King-black-e8-0"
         val game = ChessGame(des.toManualConfig())
         try {
             game.move(Move.byCode("a1-b1"))
@@ -505,28 +483,11 @@ internal class ChessGameTest {
         assertFalse(game.hasHitFigure)
     }
 
-    @Test
-    fun testCountFigures() {
-        val des =
-            "white 0 King-white-e1-0 Pawn-black-a5-true " + "Pawn-white-b5-false Pawn-white-e7-false King-black-e8-0"
-        val game = ChessGame(des.toManualConfig())
-        assertEquals(5, game.countFigures())
-        game.move(Move.byCode("b5-a6"))
-        assertEquals(4, game.countFigures())
-        game.move(Move.byCode("e8-e7"))
-        assertEquals(3, game.countFigures())
-        game.undo()
-        assertEquals(4, game.countFigures())
-        game.undo()
-        assertEquals(5, game.countFigures())
-    }
-
     @Test(dataProvider = "getTestGetPossibleMovesData")
     fun testGetPossibleMoves(game: ChessGame, moveCodes: List<String>, expectedPossibleMovesCount: Int) {
         val moves = moveCodes.map { Move.byCode(it) }
         for (move in moves) {
-            val isWhiteTurn = game.isWhiteTurn
-            val isMovable = game.isMovable(move.from, move.to, isWhiteTurn)
+            val isMovable = game.isMovable(move.from, move.to)
             assertTrue(isMovable, "$move should be valid")
             game.move(move)
         }
@@ -679,7 +640,7 @@ internal class ChessGameTest {
         val moves = expectedCompleteHistory.split(',').map { Move.byCheckedCode(it) }
         for (move in moves) {
             assertTrue(
-                game.isMovable(move.from, move.to, game.isWhiteTurn),
+                game.isMovable(move.from, move.to),
                 "move $move isn't allowed in sequence $expectedCompleteHistory"
             )
             game.move(move)

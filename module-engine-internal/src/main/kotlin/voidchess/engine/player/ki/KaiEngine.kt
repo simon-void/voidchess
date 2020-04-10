@@ -51,7 +51,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             var isWhitesTurn = startConfig.doesWhitePlayerStart
             val moves = movesSoFar.map { Move.byCheckedCode(it) }
             for(move in moves) {
-                if(!this.isMovable(move.from, move.to, isWhitesTurn)) {
+                if(!this.isMovable(move.from, move.to)) {
                     throw IllegalArgumentException("$move is illegal")
                 }
                 this.move(move)

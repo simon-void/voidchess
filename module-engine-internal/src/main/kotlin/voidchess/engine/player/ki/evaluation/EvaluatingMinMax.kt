@@ -19,8 +19,6 @@ internal class EvaluatingMinMax(
         val depth = 0
         val forWhite = game.isWhiteTurn
 
-        val interactiveSupervisor = game.suspendInteractiveSupervisor()
-
         val result = when (game.move(move)) {
             MoveResult.NO_END -> {
                 val thisMoveHasHitFigure = game.hasHitFigure
@@ -34,7 +32,6 @@ internal class EvaluatingMinMax(
             else -> Draw
         }
 
-        game.useSupervisor(interactiveSupervisor)
         game.undo()
         return result
     }
