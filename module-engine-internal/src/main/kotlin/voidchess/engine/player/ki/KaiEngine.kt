@@ -1,7 +1,7 @@
 package voidchess.engine.player.ki
 
 import voidchess.engine.board.ChessGame
-import voidchess.common.board.StartConfig
+import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.player.ki.*
 import voidchess.common.player.ki.evaluation.EvaluatedMove

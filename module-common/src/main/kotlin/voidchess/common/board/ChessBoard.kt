@@ -6,6 +6,7 @@ import voidchess.common.board.move.ExtendedMove
 import voidchess.common.figures.Figure
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.ChessGameSupervisor
+import voidchess.common.board.other.StartConfig
 
 
 interface ChessBoard : BasicChessBoard {
@@ -22,7 +23,7 @@ interface ChessBoard : BasicChessBoard {
      *  the changed board is only accessible as query parameter */
     fun simulateSimplifiedMove(figure: Figure, warpTo: Position, query: (boardAfterMove: BasicChessBoard) -> Boolean): Boolean
 
-    fun getAttackLines(isWhite: Boolean): AttackLines
+    fun getCachedAttackLines(): AttackLines
 
     fun movesPlayed(): List<Move>
     fun historyToString(numberOfHalfMoves: Int?=null): String

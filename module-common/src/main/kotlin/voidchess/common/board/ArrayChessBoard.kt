@@ -7,6 +7,7 @@ import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.other.ChessGameSupervisor
+import voidchess.common.board.other.StartConfig
 import voidchess.common.board.other.boardInstanciator
 import voidchess.common.figures.*
 import java.util.*
@@ -36,8 +37,8 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) :
         cachedAttackLines = null
     }
 
-    override fun getAttackLines(isWhite: Boolean): AttackLines {
-        val scopedAttackLines: AttackLines = cachedAttackLines ?: checkAttackLines(this, isWhite)
+    override fun getCachedAttackLines(): AttackLines {
+        val scopedAttackLines: AttackLines = cachedAttackLines ?: checkAttackLines(this, isWhiteTurn)
         cachedAttackLines = scopedAttackLines
         return scopedAttackLines
     }

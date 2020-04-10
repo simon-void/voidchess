@@ -171,7 +171,7 @@ class King : CastlingFigure {
     override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
 
     override fun getPossibleMoves(game: ChessBoard, result: MutableCollection<Move>) {
-        val attackLines = game.getAttackLines(isWhite)
+        val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
             for(direction in Direction.values()) {
                 position.step(direction)?.let { possibleKingPos->
@@ -228,7 +228,7 @@ class King : CastlingFigure {
 
     // the king ignores the 'OrCheck'-part (because he can't go setting the other king in check)
     override fun getPossibleTakingMoves(game: ChessBoard, result: MutableCollection<Move>) {
-        val attackLines = game.getAttackLines(isWhite)
+        val attackLines = game.getCachedAttackLines()
         Direction.values().forEach directionLoop@ { direction ->
             position.step(direction)?.let { possibleKingPos->
                 for(checkLine in attackLines.checkLines) {
@@ -251,7 +251,7 @@ class King : CastlingFigure {
         getPossibleTakingMoves(game, result)
         // plus castling
         if (canCastle()) {
-            val attackLines = game.getAttackLines(isWhite)
+            val attackLines = game.getCachedAttackLines()
             if(attackLines.noCheck) {
                 getPossibleCastlingMovesAssertNoCheckAndCanCastle(game, result)
             }
@@ -259,7 +259,7 @@ class King : CastlingFigure {
     }
 
     override fun isSelectable(game: ChessBoard): Boolean {
-        val attackLines = game.getAttackLines(isWhite)
+        val attackLines = game.getCachedAttackLines()
         directionLoop@ for(direction in Direction.values()) {
             val directKingNeighbourPos = position.step(direction) ?: continue@directionLoop
             for (checkLine in attackLines.checkLines) {

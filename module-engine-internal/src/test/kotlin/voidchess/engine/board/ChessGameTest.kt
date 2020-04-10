@@ -655,7 +655,7 @@ internal class ChessGameTest {
     fun testIsCheck() {
         val des = "white 0 King-white-g1-2 Bishop-black-f2 King-black-e8-0"
         val game = ChessGame(des.toManualConfig())
-        assertTrue(game.isCheck(true))
+        assertTrue(game.isCheck)
     }
 
     @Test

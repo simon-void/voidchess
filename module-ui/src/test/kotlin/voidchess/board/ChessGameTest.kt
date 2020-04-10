@@ -4,7 +4,7 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.ChessGameSupervisorMock
-import voidchess.common.board.StartConfig
+import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.PawnPromotion
@@ -306,7 +306,7 @@ class ChessGameTest {
     fun testIsCheck() {
         val des = "white 0 King-white-g1-2 Bishop-black-f2 King-black-e8-0"
         val game = initChessGame(des)
-        assertTrue(game.isCheck(true))
+        assertTrue(game.isCheck)
     }
 
     @Test(dataProvider = "getCompleteHistoryData")

@@ -1,7 +1,7 @@
 package voidchess.engine.board
 
 import voidchess.common.board.BasicChessBoard
-import voidchess.common.board.StartConfig
+import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.Position
@@ -17,6 +17,7 @@ internal interface ChessGameInterface : BasicChessBoard {
     val startConfig: StartConfig
     val isWhiteTurn: Boolean
     val hasHitFigure: Boolean
+    val isCheck: Boolean
 
     /**
      * @return all the moves played so far in a string representation
@@ -25,7 +26,6 @@ internal interface ChessGameInterface : BasicChessBoard {
     fun initGame(chess960: Int)
     fun copyGame(neededInstances: Int): List<ChessGameInterface>
     fun countFigures(): Int
-    fun isCheck(isWhiteInCheck: Boolean): Boolean
     fun isSelectable(pos: Position, whitePlayer: Boolean): Boolean
     fun isMovable(from: Position, to: Position, whitePlayer: Boolean): Boolean
     fun move(move: Move): MoveResult

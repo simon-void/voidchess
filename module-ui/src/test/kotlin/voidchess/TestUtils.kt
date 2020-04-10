@@ -1,7 +1,7 @@
 package voidchess
 
 import voidchess.board.*
-import voidchess.common.board.StartConfig
+import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.*
 import voidchess.common.board.other.ChessGameSupervisor
 

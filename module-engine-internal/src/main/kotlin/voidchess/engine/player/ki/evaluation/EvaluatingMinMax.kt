@@ -8,7 +8,10 @@ import voidchess.engine.board.ChessGameInterface
 import java.util.Collections.emptyList
 
 
-internal class EvaluatingMinMax(var pruner: SearchTreePruner, var strategy: EvaluatingStatically) {
+internal class EvaluatingMinMax(
+    private var pruner: SearchTreePruner,
+    private var strategy: EvaluatingStatically
+) {
 
     constructor() : this(PrunerWithIrreversibleMoves(), EvaluatingAsIsNow)
 
@@ -21,7 +24,7 @@ internal class EvaluatingMinMax(var pruner: SearchTreePruner, var strategy: Eval
         val result = when (game.move(move)) {
             MoveResult.NO_END -> {
                 val thisMoveHasHitFigure = game.hasHitFigure
-                val thisMoveIsChess = game.isCheck(!forWhite)
+                val thisMoveIsChess = game.isCheck
 
                 getMin(game, forWhite, depth, thisMoveIsChess, thisMoveHasHitFigure, game.getAllMoves())
             }
@@ -62,7 +65,7 @@ internal class EvaluatingMinMax(var pruner: SearchTreePruner, var strategy: Eval
                     val newDepth = depth + 1
 
                     val thisMoveHasHitFigure = game.hasHitFigure
-                    val thisMoveIsChess = game.isCheck(forWhite)
+                    val thisMoveIsChess = game.isCheck
 
                     val maxPossibleMovesBuffer =
                             when (pruner.continueMaxDynamicEvaluationBy(
@@ -145,7 +148,7 @@ internal class EvaluatingMinMax(var pruner: SearchTreePruner, var strategy: Eval
             when(game.move(move)) {
                 MoveResult.NO_END -> {
                     val thisMoveHasHitFigure = game.hasHitFigure
-                    val thisMoveIsChess = game.isCheck(!forWhite)
+                    val thisMoveIsChess = game.isCheck
 
                     val minPossibleMovesBuffer =
                             when (pruner.continueMinDynamicEvaluationBy(
@@ -198,6 +201,6 @@ internal class EvaluatingMinMax(var pruner: SearchTreePruner, var strategy: Eval
     }
 
     companion object {
-        private val emptyMoveList: List<Move> = emptyList<Move>()
+        private val emptyMoveList: List<Move> = emptyList()
     }
 }

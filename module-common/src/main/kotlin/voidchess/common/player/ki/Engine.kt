@@ -1,6 +1,6 @@
 package voidchess.common.player.ki
 
-import voidchess.common.board.StartConfig
+import voidchess.common.board.other.StartConfig
 import voidchess.common.player.ki.evaluation.EvaluatedMove
 
 interface Option {

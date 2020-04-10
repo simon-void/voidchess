@@ -58,7 +58,7 @@ abstract class Figure constructor(
     }
 
     open fun getPossibleMoves(game: ChessBoard, result: MutableCollection<Move>) {
-        val attackLines = game.getAttackLines(isWhite)
+        val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
             val boundLine = attackLines.boundLineByBoundFigurePos[position]
             if(boundLine==null) {
@@ -81,7 +81,7 @@ abstract class Figure constructor(
      * (for minimizing the code complexity)
      */
     open fun getPossibleTakingMoves(game: ChessBoard, result: MutableCollection<Move>) {
-        val attackLines = game.getAttackLines(isWhite)
+        val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
             val boundLine = attackLines.boundLineByBoundFigurePos[position]
             if(boundLine==null) {
@@ -114,7 +114,7 @@ abstract class Figure constructor(
         if(isPawn()||isKnight()||isKing()) return
 
         // for simplicity lets only consider checks while not in check and figure unbound
-        val attackLines = game.getAttackLines(isWhite)
+        val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
             if(attackLines.boundLineByBoundFigurePos[position]==null) {
                 getReachableCheckingMoves(game, result)
@@ -131,7 +131,7 @@ abstract class Figure constructor(
 
     internal fun isBound(toPos: Position, game: ChessBoard): Boolean {
         assert(isReachable(toPos, game)) { "the assumption of isBound is that toPos is confirmed reachable" }
-        val attackLinesStatus = game.getAttackLines(isWhite)
+        val attackLinesStatus = game.getCachedAttackLines()
         return isBound(toPos, game, attackLinesStatus)
     }
 

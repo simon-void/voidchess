@@ -83,7 +83,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
     }
 
     override fun getPossibleTakingMoves(game: ChessBoard, result: MutableCollection<Move>) {
-        val attackLines = game.getAttackLines(isWhite)
+        val attackLines = game.getCachedAttackLines()
         // a bound knight can't move at all, so only consider cases where he isn't
         if(attackLines.boundLineByBoundFigurePos[position]==null) {
             when {
@@ -120,7 +120,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
     }
 
     private inline fun forEachPossiblePos(game: ChessBoard, informOf: (Position) -> Unit) {
-        val attackLines = game.getAttackLines(isWhite)
+        val attackLines = game.getCachedAttackLines()
         // a bound knight can't move at all
         if(attackLines.boundLineByBoundFigurePos[position]==null) {
             when {

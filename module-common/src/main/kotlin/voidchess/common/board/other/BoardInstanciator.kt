@@ -1,6 +1,5 @@
 package voidchess.common.board.other
 
-import voidchess.common.board.StartConfig
 import voidchess.common.board.move.Position
 import voidchess.common.figures.*
 import voidchess.common.figures.Figure

@@ -1,7 +1,7 @@
 package voidchess.engine.player.ki
 
 import org.testng.annotations.Test
-import voidchess.common.board.StartConfig
+import voidchess.common.board.other.StartConfig
 import voidchess.common.player.ki.Engine
 
 internal class KaiEngineTest {

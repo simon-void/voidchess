@@ -3,6 +3,7 @@ package voidchess.common.board
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.common.board.move.Position
+import voidchess.common.board.other.StartConfig
 import kotlin.test.*
 
 class StartConfigTest {

@@ -1,7 +1,6 @@
 package voidchess.common.board.other
 
 import org.testng.annotations.Test
-import voidchess.common.board.StartConfig
 import voidchess.common.board.StartConfigTest
 import voidchess.common.board.move.Position
 import voidchess.common.figures.*

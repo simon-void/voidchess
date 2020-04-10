@@ -1,4 +1,4 @@
-package voidchess.common.board
+package voidchess.common.board.other
 
 import voidchess.common.board.move.Position
 import voidchess.common.figures.getFigureByString

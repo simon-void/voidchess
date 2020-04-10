@@ -43,7 +43,7 @@ class Table constructor(
         }
 
         if (endOption === MoveResult.NO_END) {
-            val gaveCheck = game.isCheck(whitePlayersTurn)
+            val gaveCheck = game.isCheck
             if (whitePlayersTurn) {
                 whitePlayer.play()
                 if (gaveCheck) {

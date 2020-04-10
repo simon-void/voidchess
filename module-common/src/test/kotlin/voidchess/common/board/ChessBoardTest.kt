@@ -77,19 +77,19 @@ class ChessBoardTest {
     @Test
     fun testGetCachedAttackLines() {
         val board = ArrayChessBoard()
-        var attackLines = board.getAttackLines(true)
+        var attackLines = board.getCachedAttackLines()
         assertFalse(attackLines.isCheck)
 
         var des = "white 0 King-white-e1-0 Rook-white-h2-1 Queen-black-b4 King-black-e8-0"
         board.init(des.toManualConfig())
-        attackLines = board.getAttackLines(true)
+        attackLines = board.getCachedAttackLines()
         assertTrue(attackLines.isCheck)
         assertFalse(attackLines.isDoubleCheck)
         assertEquals(3, attackLines.checkLines[0].posProgression.size)
 
         des = "white 0 King-white-e2-3 Knight-black-g1 Knight-white-f3 Rook-black-h2-12 King-black-g7-3"
         board.init(des.toManualConfig())
-        attackLines = board.getAttackLines(true)
+        attackLines = board.getCachedAttackLines()
         assertTrue(attackLines.isCheck)
         assertTrue(attackLines.isDoubleCheck)
     }

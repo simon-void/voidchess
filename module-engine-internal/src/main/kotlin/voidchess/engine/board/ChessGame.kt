@@ -6,6 +6,7 @@ import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.common.board.other.ChessGameSupervisorDummy
+import voidchess.common.board.other.StartConfig
 import voidchess.engine.player.ki.evaluation.SearchTreePruner
 import java.util.*
 
@@ -22,12 +23,12 @@ internal class ChessGame private constructor(
     override var hasHitFigure: Boolean = false
 
     override val isWhiteTurn: Boolean get() = board.isWhiteTurn
-    override fun isCheck(isWhiteInCheck: Boolean) = board.getAttackLines(isWhiteInCheck).isCheck
+    override val isCheck get() = board.getCachedAttackLines().isCheck
 
     private val isEnd: MoveResult
         get() {
             if (noMovesLeft(isWhiteTurn)) {
-                return if (isCheck(isWhiteTurn)) {
+                return if (isCheck) {
                     MoveResult.CHECKMATE
                 } else {
                     MoveResult.STALEMATE

@@ -5,6 +5,7 @@ import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import voidchess.common.board.move.PositionProgression
 import voidchess.common.board.other.ChessGameSupervisorDummy
+import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Figure
 import java.util.*
 import kotlin.test.assertEquals

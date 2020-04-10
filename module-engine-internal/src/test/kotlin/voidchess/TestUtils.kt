@@ -1,10 +1,10 @@
 package voidchess
 
-import voidchess.common.board.*
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.ChessGameSupervisor
+import voidchess.common.board.other.StartConfig
 import voidchess.common.helper.splitAndTrim
 import voidchess.engine.board.ChessGame
 import voidchess.engine.board.ChessGameInterface
