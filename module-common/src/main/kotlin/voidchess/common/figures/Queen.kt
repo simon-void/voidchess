@@ -1,6 +1,6 @@
 package voidchess.common.figures
 
-import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
 import voidchess.common.board.check.BoundLine
 import voidchess.common.board.check.CheckLine
@@ -12,7 +12,7 @@ import voidchess.common.board.move.Position
 
 class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.QUEEN, true, true) {
 
-    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
+    override fun isReachable(toPos: Position, game: StaticChessBoard): Boolean {
         val direction = position.getDirectionTo(toPos) ?: return false
 
         forEachReachablePos(game, direction) {
@@ -22,7 +22,7 @@ class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPo
         return false
     }
 
-    private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachablePos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         forEachReachablePos(game, Direction.UP, informOf)
         forEachReachablePos(game, Direction.LEFT, informOf)
         forEachReachablePos(game, Direction.DOWN, informOf)
@@ -33,7 +33,7 @@ class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPo
         forEachReachablePos(game, Direction.DOWN_LEFT, informOf)
     }
 
-    private inline fun forEachReachableTakeableEndPos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachableTakeableEndPos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         forReachableTakeableEndPos(game, Direction.UP, informOf)
         forReachableTakeableEndPos(game, Direction.LEFT, informOf)
         forReachableTakeableEndPos(game, Direction.DOWN, informOf)
@@ -44,13 +44,13 @@ class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPo
         forReachableTakeableEndPos(game, Direction.DOWN_LEFT, informOf)
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachReachableTakeableEndPos(game) {
             result.add(Move[position, it])
         }
@@ -93,7 +93,7 @@ class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPo
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessBoard): Int {
+    override fun countReachableMoves(game: StaticChessBoard): Int {
         var reachableMovesCount = 0
         forEachReachablePos(game) {
             reachableMovesCount++

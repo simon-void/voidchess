@@ -1,6 +1,6 @@
 package voidchess.ui
 
-import voidchess.board.ChessGameInterface
+import voidchess.board.CentralChessGame
 
 import javax.swing.*
 import java.awt.*
@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import kotlin.math.floor
 
-class Chess960Panel internal constructor(private val game: ChessGameInterface, private val gameUI: ChessboardComponent) : JPanel(), ActionListener {
+class Chess960Panel internal constructor(private val game: CentralChessGame, private val gameUI: ChessboardComponent) : JPanel(), ActionListener {
     var positionCode: Int = 0
         private set
     private var classicButton: JButton = JButton("classic setup")

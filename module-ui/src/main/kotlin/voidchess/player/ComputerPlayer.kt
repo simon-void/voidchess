@@ -1,6 +1,6 @@
 package voidchess.player
 
-import voidchess.board.ChessGameInterface
+import voidchess.board.CentralChessGame
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
@@ -15,7 +15,7 @@ import voidchess.ui.Thumb
 
 class ComputerPlayer(
     private val table: TableInterface,
-    private val game: ChessGameInterface,
+    private val game: CentralChessGame,
     private val ui: ComputerPlayerUI
 ) : PlayerInterface {
 

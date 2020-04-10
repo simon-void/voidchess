@@ -1,6 +1,6 @@
 package voidchess.common.figures
 
-import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
 import voidchess.common.board.check.BoundLine
 import voidchess.common.board.check.CheckLine
@@ -15,7 +15,7 @@ class Rook : CastlingFigure {
     constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.ROOK)
     constructor(isWhite: Boolean, startPosition: Position, stepsTaken: Int) : super(isWhite, startPosition, stepsTaken, FigureType.ROOK)
 
-    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
+    override fun isReachable(toPos: Position, game: StaticChessBoard): Boolean {
         val direction = position.getDirectionTo(toPos)
 
         if (direction == null || direction.isDiagonal) {
@@ -29,27 +29,27 @@ class Rook : CastlingFigure {
         return false
     }
 
-    private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachablePos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         forEachReachablePos(game, Direction.UP, informOf)
         forEachReachablePos(game, Direction.LEFT, informOf)
         forEachReachablePos(game, Direction.DOWN, informOf)
         forEachReachablePos(game, Direction.RIGHT, informOf)
     }
 
-    private inline fun forEachReachableTakeableEndPos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachableTakeableEndPos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         forReachableTakeableEndPos(game, Direction.UP, informOf)
         forReachableTakeableEndPos(game, Direction.LEFT, informOf)
         forReachableTakeableEndPos(game, Direction.DOWN, informOf)
         forReachableTakeableEndPos(game, Direction.RIGHT, informOf)
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachReachableTakeableEndPos(game) {
             result.add(Move[position, it])
         }
@@ -122,7 +122,7 @@ class Rook : CastlingFigure {
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessBoard): Int {
+    override fun countReachableMoves(game: StaticChessBoard): Int {
         var reachableMovesCount = 0
         forEachReachablePos(game) {
             reachableMovesCount++

@@ -1,6 +1,6 @@
 package voidchess.ui
 
-import voidchess.board.ChessGameInterface
+import voidchess.board.CentralChessGame
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.PawnPromotion
@@ -10,7 +10,7 @@ import voidchess.player.PlayerInterface
 
 
 class Table constructor(
-    private val game: ChessGameInterface,
+    private val game: CentralChessGame,
     private val ui: ChessboardComponent,
     private val parent: ChessPanel,
     private val panel960: Chess960Panel

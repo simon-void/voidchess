@@ -1,6 +1,6 @@
 package voidchess.common.figures
 
-import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
 import voidchess.common.board.check.AttackLines
 import voidchess.common.board.check.BoundLine
@@ -46,11 +46,11 @@ abstract class Figure constructor(
         position = oldPosition
     }
 
-    abstract fun isReachable(toPos: Position, game: BasicChessBoard): Boolean
-    abstract fun countReachableMoves(game: BasicChessBoard): Int
+    abstract fun isReachable(toPos: Position, game: StaticChessBoard): Boolean
+    abstract fun countReachableMoves(game: StaticChessBoard): Int
     abstract fun isSelectable(game: ChessBoard): Boolean
-    internal open fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
-    internal open fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
+    internal open fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
+    internal open fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
     internal open fun getReachableCheckingMoves(game: ChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
 
     fun isMovable(toPos: Position, game: ChessBoard): Boolean {
@@ -125,7 +125,7 @@ abstract class Figure constructor(
     protected abstract fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>)
     protected abstract fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>)
 
-    protected fun addMoveIfReachable(pos: Position, game: BasicChessBoard, result: MutableCollection<Move>) =
+    protected fun addMoveIfReachable(pos: Position, game: StaticChessBoard, result: MutableCollection<Move>) =
             if(isReachable(pos, game)) result.add(Move[position, pos])
             else false
 
@@ -166,7 +166,7 @@ abstract class Figure constructor(
         return true
     }
 
-    protected inline fun forEachReachablePos(game: BasicChessBoard, direction: Direction, informOf: (Position) -> Unit) {
+    protected inline fun forEachReachablePos(game: StaticChessBoard, direction: Direction, informOf: (Position) -> Unit) {
         var currentPos: Position = position
 
         while (true) {
@@ -183,7 +183,7 @@ abstract class Figure constructor(
         }
     }
 
-    protected inline fun forReachableTakeableEndPos(game: BasicChessBoard, direction: Direction, informOf: (Position) -> Unit) {
+    protected inline fun forReachableTakeableEndPos(game: StaticChessBoard, direction: Direction, informOf: (Position) -> Unit) {
         game.getFirstFigureInDir(direction, position)?.let { figure ->
             if(figure.isWhite!=isWhite) {
                 informOf(figure.position)
@@ -191,12 +191,12 @@ abstract class Figure constructor(
         }
     }
 
-    protected fun isAccessible(game: BasicChessBoard, position: Position) =
+    protected fun isAccessible(game: StaticChessBoard, position: Position) =
             game.getFigureOrNull(position).let { figure ->
                 figure == null || hasDifferentColor(figure)
             }
 
-    protected fun containsFigureToTake(game: BasicChessBoard, position: Position) =
+    protected fun containsFigureToTake(game: StaticChessBoard, position: Position) =
             game.getFigureOrNull(position).let { figure ->
                 figure != null && hasDifferentColor(figure)
             }

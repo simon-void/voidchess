@@ -39,7 +39,7 @@ fun ChessBoard.isMovable(from: Position, to: Position, isWhite: Boolean): Boolea
     return figure.isMovable(to, this)
 }
 
-fun BasicChessBoard.countFigures(): Int {
+fun StaticChessBoard.countFigures(): Int {
     var figureCount = 0
     for (row in 0..7) {
         for (column in 0..7) {
@@ -51,7 +51,7 @@ fun BasicChessBoard.countFigures(): Int {
     return figureCount
 }
 
-fun BasicChessBoard.assertFiguresKnowTherePosition() {
+fun StaticChessBoard.assertFiguresKnowTherePosition() {
     val figuresWhichAreWrongAboutTheirPosition = mutableListOf<Pair<Position, Figure>>()
     for (row in 0..7) {
         for (column in 0..7) {

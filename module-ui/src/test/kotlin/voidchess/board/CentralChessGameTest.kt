@@ -17,14 +17,14 @@ import java.lang.IllegalStateException
 import kotlin.test.*
 
 
-class ChessGameTest {
-    private var game: ChessGame =
-        ChessGame(ChessGameSupervisorDummy)
+class CentralChessGameTest {
+    private var game: CentralChessGameImpl =
+        CentralChessGameImpl(ChessGameSupervisorDummy)
 
     @BeforeMethod
     fun setUp() {
         game =
-            ChessGame(ChessGameSupervisorDummy)
+            CentralChessGameImpl(ChessGameSupervisorDummy)
     }
 
     @Test
@@ -65,8 +65,8 @@ class ChessGameTest {
 
     @Test
     fun testEquals() {
-        val game1 = ChessGame(StartConfig.ClassicConfig)
-        val game2 = ChessGame(StartConfig.Chess960Config(518))
+        val game1 = CentralChessGameImpl(StartConfig.ClassicConfig)
+        val game2 = CentralChessGameImpl(StartConfig.Chess960Config(518))
         assertTrue(game1.equalsOther(game2))
     }
 

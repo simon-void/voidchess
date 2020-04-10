@@ -1,6 +1,6 @@
 package voidchess.ui
 
-import voidchess.board.ChessGame
+import voidchess.board.CentralChessGameImpl
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.player.human.HumanPlayer
@@ -26,7 +26,7 @@ class ChessPanel : JPanel(), ActionListener {
         startButton = JButton(resignString)
         switchButton = JButton(switchString)
         val game =
-            ChessGame(ChessGameSupervisorDummy)
+            CentralChessGameImpl(ChessGameSupervisorDummy)
         val chessboardComponent = ChessboardComponent(game, this)
         panel960 = Chess960Panel(game, chessboardComponent)
         table = Table(game, chessboardComponent, this, panel960)

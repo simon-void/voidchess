@@ -14,7 +14,7 @@ class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPromotion) :
     }
 }
 
-fun initChessGame(chess960: Int, vararg moveCodes: String): ChessGameInterface = ChessGame(
+fun initChessGame(chess960: Int, vararg moveCodes: String): CentralChessGame = CentralChessGameImpl(
     chess960.toChess960Config()
 ).apply {
     for(moveCode in moveCodes) {
@@ -22,7 +22,7 @@ fun initChessGame(chess960: Int, vararg moveCodes: String): ChessGameInterface =
     }
 }
 
-fun initChessGame(des: String, vararg moveCodes: String): ChessGameInterface = ChessGame(
+fun initChessGame(des: String, vararg moveCodes: String): CentralChessGame = CentralChessGameImpl(
     des.toManualConfig()
 ).apply {
     for(moveCode in moveCodes) {

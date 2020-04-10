@@ -1,14 +1,13 @@
 package voidchess.engine.board
 
-import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.Position
-import voidchess.common.board.other.ChessGameSupervisor
 
 
-internal interface ChessGameInterface : BasicChessBoard {
+internal interface ChessGameInterface : StaticChessBoard {
 
     /**
      * returns true if this game was started with the standard distribution of figures
@@ -38,7 +37,7 @@ internal interface ChessGameInterface : BasicChessBoard {
     fun undo()
 }
 
-internal fun <T> ChessGameInterface.withMove(move: Move, workWithGameAfterMove: (ChessGameInterface)->T): T {
+internal inline fun <T> ChessGameInterface.withMove(move: Move, workWithGameAfterMove: (ChessGameInterface)->T): T {
     move(move)
     return workWithGameAfterMove(this).apply {
         undo()

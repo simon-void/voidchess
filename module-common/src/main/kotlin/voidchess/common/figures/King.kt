@@ -1,6 +1,6 @@
 package voidchess.common.figures
 
-import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
 import voidchess.common.board.check.AttackLines
 import voidchess.common.board.check.BoundLine
@@ -25,7 +25,7 @@ class King : CastlingFigure {
         this.didCastling = didCastling
     }
 
-    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
+    override fun isReachable(toPos: Position, game: StaticChessBoard): Boolean {
         val horizontalDifference = abs(position.row - toPos.row)
         val verticalDifference = abs(position.column - toPos.column)
         if (horizontalDifference <= 1 && verticalDifference <= 1) {
@@ -36,7 +36,7 @@ class King : CastlingFigure {
         return isLongCastlingReachable(toPos, game)
     }
 
-    private fun isShortCastlingReachable(to: Position, game: BasicChessBoard): Boolean {
+    private fun isShortCastlingReachable(to: Position, game: StaticChessBoard): Boolean {
         val toFigure = game.getFigureOrNull(to)
         if (canCastle() &&
                 toFigure!=null &&
@@ -62,7 +62,7 @@ class King : CastlingFigure {
         return false
     }
 
-    private fun isLongCastlingReachable(to: Position, game: BasicChessBoard): Boolean {
+    private fun isLongCastlingReachable(to: Position, game: StaticChessBoard): Boolean {
         val toFigure = game.getFigureOrNull(to)
         if (canCastle() &&
                 toFigure!=null &&
@@ -165,8 +165,8 @@ class King : CastlingFigure {
             boardAfterMove.isInCheck(this)
         }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
-    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleTakingMoves(..)")
+    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
+    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleTakingMoves(..)")
     override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
     override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
 
@@ -291,7 +291,7 @@ class King : CastlingFigure {
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessBoard): Int {
+    override fun countReachableMoves(game: StaticChessBoard): Int {
         var count = 0
         val minRow = (position.row - 1).coerceAtLeast(0)
         val minColumn = (position.column - 1).coerceAtLeast(0)

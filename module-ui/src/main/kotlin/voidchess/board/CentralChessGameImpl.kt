@@ -1,28 +1,28 @@
-package voidchess.engine.board
+package voidchess.board
 
 import voidchess.common.board.*
+import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.board.other.StartConfig
-import voidchess.engine.player.ki.evaluation.SearchTreePruner
+import java.lang.IllegalStateException
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.LinkedHashSet
 
 
-internal class ChessGame private constructor(
+class CentralChessGameImpl private constructor(
     private val board: ChessBoard,
     override val startConfig: StartConfig,
     private val mementoStack: ArrayDeque<Memento>,
-    private val numberStack: NumberStack
-): ChessGameInterface, BasicChessBoard by board {
-    private var supervisor: ChessGameSupervisor = ChessGameSupervisorDummy
+    private val numberStack: NumberStack,
+    private var supervisor: ChessGameSupervisor
+): CentralChessGame, StaticChessBoard by board {
     private var numberOfMovesWithoutHit: Int = 0
-    override var hasHitFigure: Boolean = false
+    private var latestExtendedMove: ExtendedMove? = null
 
+    override val hasHitFigure: Boolean get() = latestExtendedMove?.hasHitFigure ?: startConfig.hasHitFigureInPreviousMove
     override val isWhiteTurn: Boolean get() = board.isWhiteTurn
     override val isCheck get() = board.getCachedAttackLines().isCheck
 
@@ -46,86 +46,48 @@ internal class ChessGame private constructor(
             } else MoveResult.NO_END
         }
 
-    val history: String
-        get() = board.historyToString(4)
-
-    private val isDrawBecauseOfLowMaterial: Boolean
-        get() {
-            if (mementoStack.last.figureCount > 6) {
-                return false
-            }
-            var numberOfWhiteBishops = 0
-            var numberOfBlackBishops = 0
-            var numberOfWhiteKnights = 0
-            var numberOfBlackKnights = 0
-
-            board.forAllFigures { figure ->
-                if (figure.isPawn()
-                        || figure.isRook()
-                        || figure.isQueen()) {
-                    return false
-                } else if (figure.isBishop()) {
-                    if (figure.isWhite)
-                        numberOfWhiteBishops++
-                    else
-                        numberOfBlackBishops++
-                } else if (figure.isKnight()) {
-                    if (figure.isWhite)
-                        numberOfWhiteKnights++
-                    else
-                        numberOfBlackKnights++
-                }
-            }
-
-            if (numberOfWhiteBishops > 1 || numberOfBlackBishops > 1) {
-                return false
-            }
-            if (numberOfWhiteKnights > 2 || numberOfBlackKnights > 2) {
-                return false
-            }
-            if (numberOfWhiteBishops == 1 && numberOfWhiteKnights > 0) {
-                return false
-            }
-            return numberOfBlackBishops == 0 || numberOfBlackKnights == 0
-        }
-
     private val isDrawBecauseOfThreeTimesSamePosition: Boolean
         get() = mementoStack.countOccurrencesOfLastMemento() >= 3
 
     /**
-     * copy-constructor
+     * the normal constructor
      */
-    private constructor(other: ChessGame, startConfig: StartConfig, movesPlayed: List<Move>) : this(
-        when (startConfig) {
-            is StartConfig.ManualConfig -> ArrayChessBoard(startConfig)
-            is StartConfig.ClassicConfig -> ArrayChessBoard(startConfig)
-            is StartConfig.Chess960Config -> ArrayChessBoard(startConfig)
-        }.also { board ->
-            for (move in movesPlayed) {
-                board.move(move, ChessGameSupervisorDummy)
-            }
-        },
-        other.startConfig,
-        other.mementoStack.shallowCopy(),
-        NumberStack(other.numberStack)
+    constructor(supervisor: ChessGameSupervisor): this(
+        ArrayChessBoard(StartConfig.ClassicConfig),
+        StartConfig.ClassicConfig,
+        ArrayDeque<Memento>(64),
+        NumberStack(),
+        supervisor
     ) {
-        hasHitFigure = other.hasHitFigure
-        numberOfMovesWithoutHit = other.numberOfMovesWithoutHit
+        initGame()
     }
 
-    constructor(
-        startConfig: StartConfig = StartConfig.ClassicConfig
+    /**
+     * for unit-tests
+     */
+    internal constructor(
+        startConfig: StartConfig = StartConfig.ClassicConfig,
+        supervisor: ChessGameSupervisor = ChessGameSupervisorDummy
     ) : this(
         ArrayChessBoard(startConfig),
         startConfig,
         ArrayDeque<Memento>(64),
-        NumberStack()
+        NumberStack(),
+        supervisor
     ) {
         numberOfMovesWithoutHit = startConfig.numberOfMovesWithoutHit
         for (i in 0 until numberOfMovesWithoutHit) numberStack.noFigureHit()
 
         memorizeGame()
-        hasHitFigure = numberOfMovesWithoutHit == 0
+    }
+
+    override fun useSupervisor(supervisor: ChessGameSupervisor) {
+        this.supervisor = supervisor
+    }
+
+    override fun isSelectable(pos: Position): Boolean {
+        val figure = getFigureOrNull(pos)
+        return figure!=null && figure.isWhite == isWhiteTurn && figure.isSelectable(board)
     }
 
     override fun isMovable(from: Position, to: Position): Boolean {
@@ -134,7 +96,7 @@ internal class ChessGame private constructor(
     }
 
     override fun move(move: Move): MoveResult {
-        hasHitFigure = board.move(move, supervisor).hasHitFigure
+        latestExtendedMove = board.move(move, supervisor)
 
         if (hasHitFigure) {
             numberStack.figureHit()
@@ -149,16 +111,17 @@ internal class ChessGame private constructor(
         return isEnd
     }
 
-    override fun undo() {
-        numberOfMovesWithoutHit = numberStack.undo()
-        mementoStack.removeLast()
 
-        board.undo()
+
+    override fun getLatestExtendedMove(): ExtendedMove {
+        return latestExtendedMove ?: throw IllegalStateException("no move was been executed yet")
     }
 
     override fun toString() = "${if (isWhiteTurn) "white" else "black"} $numberOfMovesWithoutHit $board"
 
     override fun getCompleteHistory() = board.historyToString(null)
+
+    private fun initGame() = initGame(518)    //classic chess starting configuration
 
     override fun initGame(chess960: Int) {
         numberOfMovesWithoutHit = 0
@@ -170,7 +133,7 @@ internal class ChessGame private constructor(
         memorizeGame()
     }
 
-    fun equalsOther(other: ChessGame): Boolean {
+    fun equalsOther(other: CentralChessGameImpl): Boolean {
         if (isWhiteTurn != other.isWhiteTurn) return false
 
         for (index in 0..63) {
@@ -194,65 +157,10 @@ internal class ChessGame private constructor(
         return !board.getKing(caseWhite).isSelectable(board)
     }
 
-    override fun getAllMoves(): List<Move> {
-        val possibleMoves = ArrayList<Move>(64)
-        board.forAllFiguresOfColor(isWhiteTurn) { figure ->
-            figure.getPossibleMoves(board, possibleMoves)
-        }
-        return possibleMoves
-    }
-
-    override fun getCriticalMoves(): Collection<Move> {
-        val criticalMoves = LinkedHashSet<Move>()
-        board.forAllFiguresOfColor(isWhiteTurn) { figure ->
-            figure.getCriticalMoves(board, criticalMoves)
-        }
-        return criticalMoves
-    }
-
-    override fun getTakingMoves(): List<Move> {
-        val takingMoves = ArrayList<Move>(64)
-        board.forAllFiguresOfColor(isWhiteTurn) { figure ->
-            figure.getPossibleTakingMoves(board, takingMoves)
-        }
-        return takingMoves
-    }
-
-
-    override fun countReachableMoves(): Pair<Int, Int> {
-        var whiteCount = 0
-        var blackCount = 0
-
-        board.forAllFigures { figure->
-            val count = figure.countReachableMoves(board)
-            if(figure.isWhite) {
-                whiteCount += count
-            }else{
-                blackCount += count
-            }
-        }
-
-        return Pair(whiteCount, blackCount)
-    }
-
-    override fun copyGame(neededInstances: Int): List<ChessGameInterface> {
-        val gameInstances = ArrayList<ChessGameInterface>(neededInstances)
-        gameInstances.add(this)
-
-        if (neededInstances > 1) {
-            val moves = board.movesPlayed()
-            for (i in 1 until neededInstances) {
-                val copy = ChessGame(this, startConfig, moves)
-                gameInstances.add(copy)
-            }
-        }
-        return gameInstances
-    }
-
     private fun memorizeGame() = mementoStack.addLast(Memento(board, isWhiteTurn))
 }
 
-private class Memento constructor(game: BasicChessBoard, private val isWhite: Boolean) {
+private class Memento constructor(game: StaticChessBoard, private val isWhite: Boolean) {
     internal val figureCount: Int
     private val compressedBoard: LongArray
 
@@ -303,20 +211,13 @@ private class Memento constructor(game: BasicChessBoard, private val isWhite: Bo
     }
 }
 
-private class NumberStack {
+private class NumberStack internal constructor() {
     private var numberStack: IntArray
     private var index: Int = 0
 
-    internal constructor() {
+    init {
         numberStack = IntArray(50)
         init()
-    }
-
-    //copy-Constructor
-    internal constructor(other: NumberStack) {
-        numberStack = IntArray(other.index + SearchTreePruner.MAX_SEARCH_DEPTH)
-        System.arraycopy(other.numberStack, 0, numberStack, 0, numberStack.size)
-        index = other.index
     }
 
     internal fun init() {
@@ -331,15 +232,6 @@ private class NumberStack {
     internal fun figureHit() {
         ensureCapacity()
         index++
-    }
-
-    internal fun undo(): Int {
-        if (numberStack[index] == 0) {
-            index--
-        } else {
-            numberStack[index]--
-        }
-        return numberStack[index]
     }
 
     private fun ensureCapacity() {
@@ -382,6 +274,3 @@ private fun ArrayDeque<Memento>.countOccurrencesOfLastMemento(): Int {
 
     return count
 }
-
-@Suppress("UNCHECKED_CAST")
-internal fun <T> ArrayDeque<T>.shallowCopy() = clone() as ArrayDeque<T>

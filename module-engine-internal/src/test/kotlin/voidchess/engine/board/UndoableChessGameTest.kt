@@ -15,7 +15,7 @@ import voidchess.toManualConfig
 import kotlin.test.*
 
 
-internal class ChessGameTest {
+internal class UndoableChessGameTest {
     private lateinit var game: ChessGame
 
     @BeforeMethod

@@ -1,13 +1,13 @@
 package voidchess.common.board.check
 
-import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.getFirstFigureInDir
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
 import voidchess.common.figures.King
 
 
-fun BasicChessBoard.isInCheck(king: King): Boolean {
+fun StaticChessBoard.isInCheck(king: King): Boolean {
     val isWhite = king.isWhite
     val kingPos = king.position
 
@@ -18,7 +18,7 @@ fun BasicChessBoard.isInCheck(king: King): Boolean {
     else isCheckByPawn(this, kingPos, isWhite)
 }
 
-private fun isCheckByKing(game: BasicChessBoard, kingPos: Position): Boolean {
+private fun isCheckByKing(game: StaticChessBoard, kingPos: Position): Boolean {
     Direction.values().forEach {
         kingPos.step(it)?.let { pos ->
             game.getFigureOrNull(pos)?.let { figure ->
@@ -32,7 +32,7 @@ private fun isCheckByKing(game: BasicChessBoard, kingPos: Position): Boolean {
     return false
 }
 
-private fun isCheckByPawn(game: BasicChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
+private fun isCheckByPawn(game: StaticChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
     val forwardDir = Direction.getForward(isWhite)
 
     kingPos.step(Direction.getDiagonal(forwardDir, Direction.RIGHT))?.let { pos ->
@@ -53,7 +53,7 @@ private fun isCheckByPawn(game: BasicChessBoard, kingPos: Position, isWhite: Boo
     return false
 }
 
-private fun isCheckByKnight(game: BasicChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
+private fun isCheckByKnight(game: StaticChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
     kingPos.forEachKnightPos { pos ->
         game.getFigureOrNull(pos)?.let { figure ->
             if (figure.isWhite != isWhite && figure.isKnight()) {
@@ -65,7 +65,7 @@ private fun isCheckByKnight(game: BasicChessBoard, kingPos: Position, isWhite: B
     return false
 }
 
-private fun isCheckByBishopOrQueen(game: BasicChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
+private fun isCheckByBishopOrQueen(game: StaticChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
     Direction.diagonalDirs.forEach { diagonal ->
         game.getFirstFigureInDir(diagonal, kingPos)?.let { figure ->
             if (figure.isWhite != isWhite && (figure.isQueen() || figure.isBishop())) {
@@ -76,7 +76,7 @@ private fun isCheckByBishopOrQueen(game: BasicChessBoard, kingPos: Position, isW
     return false
 }
 
-private fun isCheckByRookOrQueen(game: BasicChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
+private fun isCheckByRookOrQueen(game: StaticChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
 
     if (isDoubleHorizontalCheckAfterPawnPromotion(game, kingPos, isWhite)) return true
     // now that a straight double attack after pawn promotion is no longer an issue,
@@ -93,7 +93,7 @@ private fun isCheckByRookOrQueen(game: BasicChessBoard, kingPos: Position, isWhi
 }
 
 private fun isDoubleHorizontalCheckAfterPawnPromotion(
-    game: BasicChessBoard, kingPos: Position, isWhite: Boolean
+    game: StaticChessBoard, kingPos: Position, isWhite: Boolean
 ): Boolean {
     //only possible if the king stod in the columnshadow of a pawn which transformed in the last move to Rook or queen
     val groundRow = if (isWhite) 0 else 7

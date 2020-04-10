@@ -6,14 +6,14 @@ import voidchess.common.figures.Figure
 import voidchess.common.figures.King
 
 
-interface BasicChessBoard {
+interface StaticChessBoard {
     val whiteKing: King
     val blackKing: King
     fun isFreeArea(pos: Position): Boolean
     fun getFigureOrNull(pos: Position): Figure?
 }
 
-fun BasicChessBoard.getFirstFigureInDir(direction: Direction, startPos: Position): Figure? {
+fun StaticChessBoard.getFirstFigureInDir(direction: Direction, startPos: Position): Figure? {
     startPos.forEachPosInLine(direction) { pos->
         val figure = getFigureOrNull(pos)
         if(figure==null) {
@@ -25,15 +25,15 @@ fun BasicChessBoard.getFirstFigureInDir(direction: Direction, startPos: Position
     return null
 }
 
-fun BasicChessBoard.getKing(isWhiteKing: Boolean): King = if (isWhiteKing) { whiteKing } else { blackKing }
+fun StaticChessBoard.getKing(isWhiteKing: Boolean): King = if (isWhiteKing) { whiteKing } else { blackKing }
 
-fun BasicChessBoard.getFigure(pos: Position) = getFigureOrNull(pos) ?: throw AssertionError("no figure at $pos")
+fun StaticChessBoard.getFigure(pos: Position) = getFigureOrNull(pos) ?: throw AssertionError("no figure at $pos")
 
-inline fun BasicChessBoard.forAllFigures(informOfFigure: (Figure)->Unit) {
+inline fun StaticChessBoard.forAllFigures(informOfFigure: (Figure)->Unit) {
     for (linearIndex in 0..63) getFigureOrNull(Position.byIndex(linearIndex))?.let(informOfFigure)
 }
 
-inline fun BasicChessBoard.forAllFiguresOfColor(isWhite: Boolean, informOfFigure: (Figure)->Unit) {
+inline fun StaticChessBoard.forAllFiguresOfColor(isWhite: Boolean, informOfFigure: (Figure)->Unit) {
     if(isWhite) {
         for (linearIndex in 0..63) getFigureOrNull(Position.byIndex(linearIndex))?.let {
             if (it.isWhite) {
@@ -48,3 +48,50 @@ inline fun BasicChessBoard.forAllFiguresOfColor(isWhite: Boolean, informOfFigure
         }
     }
 }
+
+inline val StaticChessBoard.figureCount: Int get() {
+    var figureCounter = 0
+    this.forAllFigures { figureCounter++ }
+    return figureCounter
+}
+
+val StaticChessBoard.isDrawBecauseOfLowMaterial: Boolean
+    get() {
+        if (this.figureCount > 6) {
+            return false
+        }
+        var numberOfWhiteBishops = 0
+        var numberOfBlackBishops = 0
+        var numberOfWhiteKnights = 0
+        var numberOfBlackKnights = 0
+
+        this.forAllFigures { figure ->
+            if (figure.isPawn()
+                || figure.isRook()
+                || figure.isQueen()
+            ) {
+                return false
+            } else if (figure.isBishop()) {
+                if (figure.isWhite)
+                    numberOfWhiteBishops++
+                else
+                    numberOfBlackBishops++
+            } else if (figure.isKnight()) {
+                if (figure.isWhite)
+                    numberOfWhiteKnights++
+                else
+                    numberOfBlackKnights++
+            }
+        }
+
+        if (numberOfWhiteBishops > 1 || numberOfBlackBishops > 1) {
+            return false
+        }
+        if (numberOfWhiteKnights > 2 || numberOfBlackKnights > 2) {
+            return false
+        }
+        if (numberOfWhiteBishops == 1 && numberOfWhiteKnights > 0) {
+            return false
+        }
+        return numberOfBlackBishops == 0 || numberOfBlackKnights == 0
+    }

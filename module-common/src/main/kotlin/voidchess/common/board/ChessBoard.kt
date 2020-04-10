@@ -9,7 +9,7 @@ import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.common.board.other.StartConfig
 
 
-interface ChessBoard : BasicChessBoard {
+interface ChessBoard : StaticChessBoard {
 
     val isWhiteTurn: Boolean
 
@@ -21,7 +21,7 @@ interface ChessBoard : BasicChessBoard {
     fun undo(): Boolean
     /** "normal" moves only, no special cases (castling, enpassant, pawn promotion)
      *  the changed board is only accessible as query parameter */
-    fun simulateSimplifiedMove(figure: Figure, warpTo: Position, query: (boardAfterMove: BasicChessBoard) -> Boolean): Boolean
+    fun simulateSimplifiedMove(figure: Figure, warpTo: Position, query: (boardAfterMove: StaticChessBoard) -> Boolean): Boolean
 
     fun getCachedAttackLines(): AttackLines
 

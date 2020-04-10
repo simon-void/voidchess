@@ -1,6 +1,6 @@
 package voidchess.player.human
 
-import voidchess.board.ChessGameInterface
+import voidchess.board.CentralChessGame
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.PawnPromotion
@@ -16,7 +16,7 @@ class HumanPlayer(
         private val table: TableInterface,
         private var isWhitePlayer: Boolean,
         private val ui: ChessboardComponent,
-        private val game: ChessGameInterface
+        private val game: CentralChessGame
 ) : HumanPlayerInterface {
     private var mouseHoverWhileInactivePos: Position? = null
     private var from: Position? = null

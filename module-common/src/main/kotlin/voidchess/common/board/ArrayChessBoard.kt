@@ -14,8 +14,8 @@ import java.util.*
 import kotlin.math.abs
 
 
-class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) :
-    ChessBoard {
+class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : ChessBoard
+{
     override var isWhiteTurn: Boolean = true
 
     private val board: Array<Figure?> = arrayOfNulls(64)
@@ -83,7 +83,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) :
     override fun simulateSimplifiedMove(
         figure: Figure,
         warpTo: Position,
-        query: (BasicChessBoard) -> Boolean
+        query: (StaticChessBoard) -> Boolean
     ): Boolean {
         fun move(figure: Figure, to: Position): Figure? {
             val move = Move[figure.position, to]

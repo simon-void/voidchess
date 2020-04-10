@@ -1,7 +1,8 @@
 package voidchess.engine.player.ki.openings
 
-import voidchess.engine.board.ChessGame
+import voidchess.common.board.BasicChessGameImpl
 import voidchess.common.board.move.Move
+import voidchess.common.board.other.StartConfig
 import voidchess.common.helper.TreeNode
 import voidchess.common.helper.getResourceStream
 import voidchess.common.helper.splitAndTrim
@@ -74,7 +75,7 @@ internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
             val textMoves = openingSequence.splitAndTrim(separator)
             val checkedMoves = ArrayList<String>(textMoves.size)
 
-            val game = ChessGame()
+            val game = BasicChessGameImpl(StartConfig.ClassicConfig)
 
             for (textMove in textMoves) {
                 require(Move.isValid(textMove)) { "illegal move format'$textMove' in opening sequence: $openingSequence" }

@@ -1,6 +1,6 @@
 package voidchess.common.figures
 
-import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
 import voidchess.common.board.check.BoundLine
 import voidchess.common.board.check.CheckLine
@@ -12,7 +12,7 @@ import kotlin.math.abs
 
 class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.KNIGHT, false, false) {
 
-    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
+    override fun isReachable(toPos: Position, game: StaticChessBoard): Boolean {
         val horizontalDifference = abs(position.row - toPos.row)
         val verticalDifference = abs(position.column - toPos.column)
 
@@ -24,13 +24,13 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         return figure == null || hasDifferentColor(figure)
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachReachableTakeableEndPos(game) {
             result.add(Move[position, it])
         }
@@ -105,7 +105,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessBoard): Int {
+    override fun countReachableMoves(game: StaticChessBoard): Int {
         var reachableMovesCount = 0
         forEachReachablePos(game) {
             reachableMovesCount++
@@ -113,7 +113,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         return reachableMovesCount
     }
 
-    private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachablePos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         position.forEachKnightPos { pos ->
             if(isAccessible(game, pos)) informOf(pos)
         }
@@ -136,7 +136,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         }
     }
 
-    private inline fun forEachReachableTakeableEndPos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachableTakeableEndPos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         position.forEachKnightPos { pos ->
             game.getFigureOrNull(pos)?.let {figure->
                 if(figure.isWhite!=isWhite) informOf(pos)

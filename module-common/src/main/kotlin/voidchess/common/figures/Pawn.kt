@@ -1,6 +1,6 @@
 package voidchess.common.figures
 
-import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
 import voidchess.common.board.check.BoundLine
 import voidchess.common.board.check.CheckLine
@@ -31,12 +31,12 @@ class Pawn : Figure {
 
     private fun hasNotMovedYet() = position.row == startingRow
 
-    private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachablePos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         forEachDiagonalReachablePos(game, informOf)
         forEachVerticalReachablePos(game, informOf)
     }
 
-    private inline fun forEachDiagonalReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachDiagonalReachablePos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         listOf(Direction.LEFT, Direction.RIGHT).forEach { side: Direction ->
             val diagonal = Direction.getDiagonal(forwardDirection, side)
             position.step(diagonal)?.let { diagonalPos ->
@@ -47,7 +47,7 @@ class Pawn : Figure {
         }
     }
 
-    private inline fun forEachVerticalReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachVerticalReachablePos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         val oneForwardPos = position.step(forwardDirection)!! // !! ok because pawns never stand on the last rank
         if(game.isFreeArea(oneForwardPos)) {
             informOf(oneForwardPos)
@@ -61,11 +61,11 @@ class Pawn : Figure {
         }
     }
 
-    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
+    override fun isReachable(toPos: Position, game: StaticChessBoard): Boolean {
         return isStraightReachable(toPos, game) || isDiagonalReachable(toPos, game)
     }
 
-    private fun isStraightReachable(to: Position, game: BasicChessBoard): Boolean {
+    private fun isStraightReachable(to: Position, game: StaticChessBoard): Boolean {
         if (to.column != position.column) {
             return false
         }
@@ -86,7 +86,7 @@ class Pawn : Figure {
         return false
     }
 
-    private fun isDiagonalReachable(to: Position, game: BasicChessBoard): Boolean {
+    private fun isDiagonalReachable(to: Position, game: StaticChessBoard): Boolean {
         if (!isOneStepForwardDiagonally(to)) return false
         // now we know that to is one step diagonal to us
         game.getFigureOrNull(to)?.let { if (hasDifferentColor(it)) return true }
@@ -103,13 +103,13 @@ class Pawn : Figure {
         return to.row == oneForwardRow && abs(to.column - position.column) == 1
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachDiagonalReachablePos(game) {
             result.add(Move[position, it])
         }
@@ -178,7 +178,7 @@ class Pawn : Figure {
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessBoard): Int {
+    override fun countReachableMoves(game: StaticChessBoard): Int {
         var reachableMovesCount = 0
         forEachReachablePos(game) {
             reachableMovesCount++

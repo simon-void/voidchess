@@ -1,6 +1,6 @@
 package voidchess.common.figures
 
-import voidchess.common.board.BasicChessBoard
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
 import voidchess.common.board.check.BoundLine
 import voidchess.common.board.check.CheckLine
@@ -12,7 +12,7 @@ import voidchess.common.board.move.Position
 
 class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.BISHOP, true, false) {
 
-    override fun isReachable(toPos: Position, game: BasicChessBoard): Boolean {
+    override fun isReachable(toPos: Position, game: StaticChessBoard): Boolean {
         if(!position.hasSameColor(toPos)) {
             return false
         }
@@ -29,27 +29,27 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         return false
     }
 
-    private inline fun forEachReachablePos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachablePos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         forEachReachablePos(game, Direction.UP_RIGHT, informOf)
         forEachReachablePos(game, Direction.UP_LEFT, informOf)
         forEachReachablePos(game, Direction.DOWN_RIGHT, informOf)
         forEachReachablePos(game, Direction.DOWN_LEFT, informOf)
     }
 
-    private inline fun forEachReachableTakeableOrCheckEndPos(game: BasicChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachableTakeableOrCheckEndPos(game: StaticChessBoard, informOf: (Position) -> Unit) {
         forReachableTakeableEndPos(game, Direction.UP_RIGHT, informOf)
         forReachableTakeableEndPos(game, Direction.UP_LEFT, informOf)
         forReachableTakeableEndPos(game, Direction.DOWN_RIGHT, informOf)
         forReachableTakeableEndPos(game, Direction.DOWN_LEFT, informOf)
     }
 
-    override fun getReachableMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachReachablePos(game) {
             result.add(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: BasicChessBoard, result: MutableCollection<Move>) {
+    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
         forEachReachableTakeableOrCheckEndPos(game) {
             result.add(Move[position, it])
         }
@@ -128,7 +128,7 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         return false
     }
 
-    override fun countReachableMoves(game: BasicChessBoard): Int {
+    override fun countReachableMoves(game: StaticChessBoard): Int {
         var reachableMovesCount = 0
         forEachReachablePos(game) {
             reachableMovesCount++
