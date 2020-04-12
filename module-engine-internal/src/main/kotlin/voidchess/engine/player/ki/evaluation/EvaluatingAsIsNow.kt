@@ -8,23 +8,24 @@ import voidchess.common.player.ki.evaluation.Ongoing
 import voidchess.engine.board.EngineChessGame
 
 internal interface EvaluatingStatically {
-    fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean): Double
-    fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean): Double
-
+    fun getNumericEvaluation(game: EngineChessGame, forWhite: Boolean): Ongoing
     fun getCheckmateMaterialEvaluation(game: EngineChessGame, forWhite: Boolean): Double
-
-    fun addSecondaryEvaluationTo(prelimEval: Double, game: EngineChessGame, forWhite: Boolean) =
-        Ongoing(
-            prelimEval, prelimEval + getSecondaryEvaluation(game, forWhite)
-        )
 }
 
 internal object EvaluatingAsIsNow : EvaluatingStatically {
 
-    override fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite)
-    override fun getCheckmateMaterialEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite) + evaluatePosition(game, forWhite)
+    override fun getNumericEvaluation(game: EngineChessGame, forWhite: Boolean): Ongoing {
+        val prelimEval = getPreliminaryEvaluation(game, forWhite)
+        return addSecondaryEvaluationTo(prelimEval, game, forWhite)
+    }
+    fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite)
+    fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateRuledArea(game, forWhite) + evaluatePosition(game, forWhite)
+    fun addSecondaryEvaluationTo(prelimEval: Double, game: EngineChessGame, forWhite: Boolean) =
+        Ongoing(
+            prelimEval, prelimEval + getSecondaryEvaluation(game, forWhite)
+        )
 
-    override fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateRuledArea(game, forWhite) + evaluatePosition(game, forWhite)
+    override fun getCheckmateMaterialEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite) + evaluatePosition(game, forWhite)
 
     private fun evaluateFigures(game: EngineChessGame, forWhite: Boolean): Double {
         var whiteFigures = 0.0

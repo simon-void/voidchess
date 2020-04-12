@@ -5,7 +5,6 @@ import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.player.ki.evaluation.*
 import voidchess.engine.board.EngineChessGame
-import java.util.Collections.emptyList
 
 
 internal class EvaluatingMinMax(
@@ -46,9 +45,7 @@ internal class EvaluatingMinMax(
             "minPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"
         }
 
-        val minEvaluationSelector =
-            Selector(HighestEvaluationFirstComparator)
-        val minPrimaryEvaluations = MinPreliminaryEvaluatedMoves()
+        var minEvaluation: Evaluation? = null
 
         for (move in minPossibleMovesBuffer) {
 
@@ -58,7 +55,7 @@ internal class EvaluatingMinMax(
 
             var stopLookingForBetterMove = false
 
-            game.withMove(move) {moveResult ->
+            val currentEvaluation: Evaluation = game.withMove(move) {moveResult ->
                 when(moveResult) {
                     MoveResult.NO_END -> {
                         val newDepth = depth + 1
@@ -81,49 +78,43 @@ internal class EvaluatingMinMax(
                             }
 
                         if (maxPossibleMovesBuffer.isEmpty()) {
-                            minPrimaryEvaluations.add(move, strategy.getPreliminaryEvaluation(game, forWhite))
+                            strategy.getNumericEvaluation(game, forWhite)
                         }else{
-                            minEvaluationSelector.propose(
-                                getMax(
-                                    game,
-                                    forWhite,
-                                    newDepth,
-                                    thisMoveIsChess,
-                                    thisMoveHasHitFigure,
-                                    maxPossibleMovesBuffer
-                                )
+                            getMax(
+                                game,
+                                forWhite,
+                                newDepth,
+                                thisMoveIsChess,
+                                thisMoveHasHitFigure,
+                                maxPossibleMovesBuffer
                             )
                         }
-
                     }
                     MoveResult.CHECKMATE -> {
                         stopLookingForBetterMove = true
                         val secondaryMateEval = strategy.getCheckmateMaterialEvaluation(game, forWhite)
-                        minEvaluationSelector.propose(
-                            CheckmateSelf(
-                                depth + 1,
-                                secondaryMateEval
-                            )
+                        CheckmateSelf(
+                            depth + 1,
+                            secondaryMateEval
                         )
                     }
-                    MoveResult.THREE_TIMES_SAME_POSITION -> {
-                        minEvaluationSelector.propose(ThreeFoldRepetition)
-                    }
-                    MoveResult.STALEMATE -> {
-                        minEvaluationSelector.propose(Stalemate)
-                    }
-                    else -> {
-                        minEvaluationSelector.propose(Draw)
-                    }
+                    MoveResult.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
+                    MoveResult.STALEMATE -> Stalemate
+                    else -> Draw
                 }
-                Unit
             }
+
+            if(minEvaluation==null  || LowestEvaluationFirstComparator.compare(minEvaluation, currentEvaluation)>0) {
+                minEvaluation = currentEvaluation
+            }
+
             if(stopLookingForBetterMove) break
         }
 
-
-        //minValue
-        return minPrimaryEvaluations.getMin(game, forWhite, strategy, minEvaluationSelector)
+        return minEvaluation
+            ?: throw IllegalStateException(
+                "minPossibleMovesBuffer must have been empty! game: $game, latest moves: ${game.shortTermHistory}"
+            )
     }
 
     private fun getMax(game: EngineChessGame,
@@ -137,9 +128,7 @@ internal class EvaluatingMinMax(
             "maxPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"
         }
 
-        val maxEvaluationSelector =
-            Selector(LowestEvaluationFirstComparator)
-        val maxPrimaryEvaluations = MaxPreliminaryEvaluatedMoves()
+        var maxEvaluation: Evaluation? = null
 
         for (move in maxPossibleMovesBuffer) {
 
@@ -149,7 +138,7 @@ internal class EvaluatingMinMax(
 
             var stopLookingForBetterMove = false
 
-            game.withMove(move) {moveResult ->
+            val currentEvaluation: Evaluation = game.withMove(move) {moveResult ->
                 when(moveResult) {
                     MoveResult.NO_END -> {
                         val thisMoveHasHitFigure = game.hasHitFigure
@@ -170,41 +159,39 @@ internal class EvaluatingMinMax(
                             }
 
                         if (minPossibleMovesBuffer.isEmpty()) {
-                            maxPrimaryEvaluations.add(move, strategy.getPreliminaryEvaluation(game, forWhite))
+                            strategy.getNumericEvaluation(game, forWhite)
                         } else {
-                            maxEvaluationSelector.propose(
-                                getMin(
-                                    game,
-                                    forWhite,
-                                    depth,
-                                    thisMoveIsChess,
-                                    thisMoveHasHitFigure,
-                                    minPossibleMovesBuffer
-                                )
+                            getMin(
+                                game,
+                                forWhite,
+                                depth,
+                                thisMoveIsChess,
+                                thisMoveHasHitFigure,
+                                minPossibleMovesBuffer
                             )
                         }
                     }
                     MoveResult.CHECKMATE -> {
                         stopLookingForBetterMove = true
-                        maxEvaluationSelector.propose( CheckmateOther(depth + 1) )
+                        CheckmateOther(depth + 1)
                     }
-                    MoveResult.THREE_TIMES_SAME_POSITION -> {
-                        maxEvaluationSelector.propose(ThreeFoldRepetition)
-                    }
-                    MoveResult.STALEMATE -> {
-                        maxEvaluationSelector.propose(Stalemate)
-                    }
-                    else -> {
-                        maxEvaluationSelector.propose(Draw)
-                    }
+                    MoveResult.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
+                    MoveResult.STALEMATE -> Stalemate
+                    else -> Draw
                 }
-                Unit
             }
+
+            if(maxEvaluation==null  || LowestEvaluationFirstComparator.compare(maxEvaluation, currentEvaluation)<0) {
+                maxEvaluation = currentEvaluation
+            }
+
             if(stopLookingForBetterMove) break
         }
 
-        //maxValue
-        return maxPrimaryEvaluations.getMax(game, forWhite, strategy, maxEvaluationSelector)
+        return maxEvaluation
+            ?: throw IllegalStateException(
+                "maxPossibleMovesBuffer must have been empty! game: $game, latest moves: ${game.shortTermHistory}"
+            )
     }
 
     companion object {
