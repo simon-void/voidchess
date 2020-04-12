@@ -8,7 +8,6 @@ import voidchess.common.board.move.Position
 import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.board.other.StartConfig
-import java.lang.IllegalStateException
 import java.util.*
 
 

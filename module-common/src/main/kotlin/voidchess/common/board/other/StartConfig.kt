@@ -20,7 +20,7 @@ sealed class StartConfig(
         init {
             require(chess960Index in 0..959)
         }
-        override fun toString() = "Chess960Config(chess960Index: $chess960Index)"
+        override fun toString() = "Chess960Config($chess960Index)"
     }
 
     class ManualConfig(

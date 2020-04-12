@@ -1,21 +1,17 @@
 package voidchess.engine.player.ki.evaluation
 
-import voidchess.engine.board.ChessGameInterface
+import voidchess.engine.board.EngineChessGame
 import voidchess.common.board.move.Move
 import voidchess.common.player.ki.evaluation.*
-import voidchess.engine.board.withMove
 import java.util.*
 
 private const val cutoffDiff = 1.5
 
 internal class MaxPreliminaryEvaluatedMoves {
-    private val prelimEvalMoves = TreeSet<PreliminaryEvaluateMove>(
-        HighestPrelimEvalFirst
-    )
+    private val prelimEvalMoves = TreeSet(HighestPrelimEvalFirst)
     private var max = .0
     private var cutoffEval = .0
     private var _isEmpty = true
-    val isEmpty get() = _isEmpty
 
     fun add(move: Move, prelimEval: Double) {
         when {
@@ -36,7 +32,7 @@ internal class MaxPreliminaryEvaluatedMoves {
     }
 
     fun getMax(
-        game: ChessGameInterface,
+        game: EngineChessGame,
         forWhite: Boolean,
         evaluating: EvaluatingStatically,
         selector: Selector<LowestEvaluationFirstComparator>
@@ -61,24 +57,21 @@ internal class MaxPreliminaryEvaluatedMoves {
     }
 
     private fun evaluateToOngoing(
-        game: ChessGameInterface,
+        game: EngineChessGame,
         move: Move,
         forWhite: Boolean,
         prelimEval: Double,
         evaluating: EvaluatingStatically
-    ): Ongoing = game.withMove(move) { gameAfterMove ->
-        evaluating.addSecondaryEvaluationTo(prelimEval, gameAfterMove, forWhite)
+    ): Ongoing = game.withMove(move) {
+        evaluating.addSecondaryEvaluationTo(prelimEval, game, forWhite)
     }
 }
 
 internal class MinPreliminaryEvaluatedMoves {
-    private val prelimEvalMoves = TreeSet<PreliminaryEvaluateMove>(
-        LowestPrelimEvalFirst
-    )
+    private val prelimEvalMoves = TreeSet(LowestPrelimEvalFirst)
     private var min = .0
     private var cutoffEval = .0
     private var _isEmpty = true
-    val isEmpty get() = _isEmpty
 
     fun add(move: Move, prelimEval: Double) {
         when {
@@ -99,7 +92,7 @@ internal class MinPreliminaryEvaluatedMoves {
     }
 
     fun getMin(
-        game: ChessGameInterface,
+        game: EngineChessGame,
         forWhite: Boolean,
         evaluating: EvaluatingStatically,
         selector: Selector<HighestEvaluationFirstComparator>
@@ -124,12 +117,12 @@ internal class MinPreliminaryEvaluatedMoves {
     }
 
     private fun evaluateToOngoing(
-        game: ChessGameInterface,
+        game: EngineChessGame,
         move: Move,
         forWhite: Boolean,
         prelimEval: Double,
         evaluating: EvaluatingStatically
-    ): Ongoing = game.withMove(move) { gameAfterMove ->
-        evaluating.addSecondaryEvaluationTo(prelimEval, gameAfterMove, forWhite)
+    ): Ongoing = game.withMove(move) {
+        evaluating.addSecondaryEvaluationTo(prelimEval, game, forWhite)
     }
 }

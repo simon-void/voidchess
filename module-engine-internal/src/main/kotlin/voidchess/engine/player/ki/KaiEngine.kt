@@ -1,6 +1,7 @@
 package voidchess.engine.player.ki
 
-import voidchess.engine.board.ChessGame
+import voidchess.common.board.BasicChessGame
+import voidchess.common.board.BasicChessGameImpl
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.player.ki.*
@@ -40,23 +41,9 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
     }
 
     override fun evaluateMovesBestMoveFirst(movesSoFar: List<String>, startConfig: StartConfig): EngineAnswer = try {
-        val chess960StartIndex = when(startConfig) {
-            is StartConfig.ClassicConfig -> startConfig.chess960Index
-            is StartConfig.Chess960Config -> startConfig.chess960Index
-            is StartConfig.ManualConfig -> throw IllegalStateException("can't copy game from manual starting config")
-        }
-        val game = ChessGame(
-            StartConfig.Chess960Config( chess960StartIndex)
-        ).apply {
-            var isWhitesTurn = startConfig.doesWhitePlayerStart
-            val moves = movesSoFar.map { Move.byCheckedCode(it) }
-            for(move in moves) {
-                if(!this.isMovable(move.from, move.to)) {
-                    throw IllegalArgumentException("$move is illegal")
-                }
-                this.move(move)
-                isWhitesTurn = !isWhitesTurn
-            }
+        val moves = movesSoFar.map { Move.byCheckedCode(it) }
+        validateMovesOrReturnErrorMsg(moves, startConfig)?.let { validatorErrorMsg->
+            return EngineAnswer.Error(validatorErrorMsg)
         }
 
         //display that the computer is working
@@ -66,39 +53,63 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
         val coresToUse = CoresToUseOption.coresToUse
         val evaluatingMinMax = EvaluatingMinMax(pruner, staticEvaluation)
 
-        val evaluatedMove = lookUpNextMove(game, evaluatingMinMax, movesSoFar, chess960StartIndex)
-            ?: concurrencyStrategyCache.get(coresToUse).evaluateMovesBestMoveFirst(game, evaluatingMinMax).pickOkMove()
+        val evaluatedMove = lookUpNextMove(startConfig, moves, evaluatingMinMax)
+            ?: concurrencyStrategyCache.get(coresToUse).evaluateMovesBestMoveFirst(startConfig, moves, evaluatingMinMax).pickOkMove()
 
         EngineAnswer.Success(evaluatedMove)
     }catch (e: Exception) {
         EngineAnswer.Error(e.toString())
     }
 
+    private fun validateMovesOrReturnErrorMsg(movesSoFar: List<Move>, startConfig: StartConfig): String? {
+        val basicGame: BasicChessGame = BasicChessGameImpl(startConfig)
+        val movesApplied = mutableListOf<Move>()
+        for(move in movesSoFar) {
+            if(!basicGame.isMovable(move.from, move.to)) {
+                return "$move is illegal with $startConfig after moves: ${movesApplied.joinToString()}"
+            }
+            basicGame.move(move)
+            movesApplied.add(move)
+        }
+        return null
+    }
+
     private fun lookUpNextMove(
-        game: ChessGame,
-        evaluatingMinMax: EvaluatingMinMax,
-        movesSoFar: List<String>,
-        chess960StartIndex: Int
+        startConfig: StartConfig,
+        movesSoFar: List<Move>,
+        evaluatingMinMax: EvaluatingMinMax
     ): EvaluatedMove? {
         fun wait(milliseconds: Long) { runCatching { Thread.sleep(milliseconds) } }
 
-        if (movesSoFar.size<openingsLibrary.maxDepth) {
-            var moveFoundInLib: EvaluatedMove? = null
-            val lookUpDurationInMillies = measureTimeMillis {
-                moveFoundInLib = openingsLibrary.nextMove(movesSoFar, chess960StartIndex)?.let { libraryMove ->
-                    concurrencyStrategyCache.get(1).evaluateMove(game, libraryMove, evaluatingMinMax)
-                }
-            }
-            if(moveFoundInLib!=null) {
-                // for ergonomic reasons lets set the minimum successful look-up time to 300ms
-                val milliesToWait = 300 - lookUpDurationInMillies
-                if(milliesToWait>0) {
-                    wait(milliesToWait)
-                }
-            }
-            return moveFoundInLib
+        val chess960StartIndex: Int? = when (startConfig) {
+            is StartConfig.ClassicConfig -> startConfig.chess960Index
+            is StartConfig.Chess960Config -> startConfig.chess960Index
+            is StartConfig.ManualConfig -> null
         }
-        return null
+
+        if (chess960StartIndex == null || movesSoFar.size >= openingsLibrary.maxDepth) {
+            return null
+        }
+
+        var moveFoundInLib: EvaluatedMove? = null
+        val lookUpDurationInMillies = measureTimeMillis {
+            moveFoundInLib = openingsLibrary.nextMove(chess960StartIndex, movesSoFar)?.let { libraryMove ->
+                concurrencyStrategyCache.get(1).evaluateMove(
+                    StartConfig.Chess960Config(chess960StartIndex),
+                    movesSoFar,
+                    libraryMove,
+                    evaluatingMinMax
+                )
+            }
+        }
+        if (moveFoundInLib != null) {
+            // for ergonomic reasons lets set the minimum successful look-up time to 300ms
+            val milliesToWait = 300 - lookUpDurationInMillies
+            if (milliesToWait > 0) {
+                wait(milliesToWait)
+            }
+        }
+        return moveFoundInLib
     }
 
     /**

@@ -23,15 +23,15 @@ internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
     val maxDepth: Int get() = openingsRootNode.depth
 
     fun nextMove(
-        moves: List<String>,
-        chess960StartIndex: Int
+        chess960StartIndex: Int,
+        moves: List<Move>
     ): Move? {
         // assume that the whole library is based on classic chess
         if(chess960StartIndex==518) return null
 
         var currentNode: TreeNode<String> = openingsRootNode
         for (move in moves) {
-            currentNode = currentNode.getChild(move) ?: return null
+            currentNode = currentNode.getChild(move.toString()) ?: return null
         }
 
         val movesFound: List<Move> = currentNode.childData.map { moveCode -> Move.byCode(moveCode)}

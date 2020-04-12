@@ -12,10 +12,8 @@ class Selector<C:Comparator<Evaluation>>(private val betterIsBiggerComparator: C
     val bestItem: Evaluation? get() = currentBest
 
     fun propose(candidate: Evaluation) {
-        currentBest.let {
-            if (it == null || betterIsBiggerComparator.compare(candidate, it) > 0) {
-                currentBest = candidate
-            }
+        if (currentBest == null || betterIsBiggerComparator.compare(candidate, currentBest) > 0) {
+            currentBest = candidate
         }
     }
 }

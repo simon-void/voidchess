@@ -1,42 +1,37 @@
 package voidchess
 
 import voidchess.common.board.move.Move
-import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
-import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.common.board.other.StartConfig
 import voidchess.common.helper.splitAndTrim
-import voidchess.engine.board.ChessGame
-import voidchess.engine.board.ChessGameInterface
+import voidchess.engine.board.EngineChessGameImpl
+import voidchess.engine.board.EngineChessGame
 import java.util.*
 
 
-internal class ChessGameSupervisorMock(private val defaultPawnTransform: PawnPromotion) :
-    ChessGameSupervisor {
+internal fun initChessGame(startConfig: StartConfig, vararg moveCodes: String): EngineChessGame =
+    EngineChessGameImpl(
+        startConfig,
+        moveCodes.map { Move.byCheckedCode(it) }
+    )
 
-    override fun askForPawnChange(pawnPosition: Position): PawnPromotion {
-        return defaultPawnTransform
-    }
-}
-
-internal fun initChessGame(chess960: Int, vararg moveCodes: String): ChessGameInterface =
-    ChessGame(StartConfig.Chess960Config(chess960)).apply {
-        for (moveCode in moveCodes) {
-            move(Move.byCode(moveCode))
-        }
-    }
-
-internal fun ChessGameInterface.moves(moveCodes: Iterable<String>) {
-    for (moveCode in moveCodes) {
-        move(Move.byCode(moveCode))
-    }
-}
+internal fun initChessGame(chess960: Int, vararg moveCodes: String): EngineChessGame = initChessGame(chess960.toChess960Config(), *moveCodes)
+internal fun initChessGame(des: String, vararg moveCodes: String): EngineChessGame = initChessGame(des.toManualConfig(), *moveCodes)
 
 internal fun Position.mirrorRow() = Position[7 - row, column]
 
 internal fun Move.mirrorRow() = Move[from.mirrorRow(), to.mirrorRow()]
 
-internal fun ChessGame.copyGameWithInvertedColors(): ChessGame {
+internal val EngineChessGame.completeMoveHistory: List<Move>
+    get() = this.completeHistory.let { history ->
+        if (history.isBlank()) {
+            emptyList<Move>()
+        } else {
+            history.split(",").map { Move.byCheckedCode(it) }
+        }
+    }
+
+internal fun EngineChessGameImpl.copyGameWithInvertedColors(): EngineChessGameImpl {
     val intermediate = "switching"
     val copyDef = toString()
         // switch white and black
@@ -53,7 +48,7 @@ internal fun ChessGame.copyGameWithInvertedColors(): ChessGame {
             } else token
         }
 
-    return ChessGame(copyDef.toManualConfig())
+    return EngineChessGameImpl(copyDef.toManualConfig())
 }
 
 fun String.toManualConfig(): StartConfig.ManualConfig {

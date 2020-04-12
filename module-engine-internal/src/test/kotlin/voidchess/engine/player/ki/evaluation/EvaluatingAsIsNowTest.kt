@@ -5,7 +5,7 @@ import org.testng.Assert.assertNotEquals
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.common.player.ki.evaluation.Ongoing
-import voidchess.engine.board.ChessGame
+import voidchess.engine.board.EngineChessGameImpl
 import voidchess.copyGameWithInvertedColors
 import voidchess.initChessGame
 import voidchess.toManualConfig
@@ -14,7 +14,7 @@ import voidchess.toManualConfig
 internal class EvaluatingAsIsNowTest {
 
     @Test(dataProvider = "symmetricPositionProvider")
-    fun testSymmetricPositionLeadsToEqualEvaluation(game: ChessGame) {
+    fun testSymmetricPositionLeadsToEqualEvaluation(game: EngineChessGameImpl) {
         val staticEval = EvaluatingAsIsNow
         val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true)
         val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false)
@@ -36,15 +36,15 @@ internal class EvaluatingAsIsNowTest {
     @DataProvider
     fun symmetricPositionProvider(): Array<Array<Any>> {
         return arrayOf(
-            arrayOf<Any>(ChessGame("black 0 King-white-e1-8 King-black-e8-8".toManualConfig())),
-            arrayOf<Any>(ChessGame("black 0 Rook-white-a1-0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0".toManualConfig())),
-            arrayOf<Any>(ChessGame("black 0 Knight-white-a1 King-white-e1-0 Knight-black-a8 King-black-e8-0".toManualConfig())),
-            arrayOf<Any>(ChessGame("black 0 Bishop-white-a1 King-white-e1-0 Bishop-black-a8 King-black-e8-0".toManualConfig())),
-            arrayOf<Any>(ChessGame("black 0 Queen-white-a1 King-white-e1-0 Queen-black-a8 King-black-e8-0".toManualConfig())),
-            arrayOf<Any>(ChessGame("black 0 Pawn-white-a2-false King-white-e1-0 Pawn-black-a7-false King-black-e8-0".toManualConfig())),
-            arrayOf<Any>(ChessGame("black 0 Pawn-white-e2-false King-white-e1-0 Pawn-black-e7-false King-black-e8-0".toManualConfig())),
-            arrayOf<Any>(ChessGame("black 0 Pawn-white-e2-false Pawn-white-f3-false King-white-e1-0 Pawn-black-e7-false Pawn-black-f6-false King-black-e8-0".toManualConfig())),
-            arrayOf<Any>(ChessGame(("white 0 "
+            arrayOf<Any>(EngineChessGameImpl("black 0 King-white-e1-8 King-black-e8-8".toManualConfig())),
+            arrayOf<Any>(EngineChessGameImpl("black 0 Rook-white-a1-0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0".toManualConfig())),
+            arrayOf<Any>(EngineChessGameImpl("black 0 Knight-white-a1 King-white-e1-0 Knight-black-a8 King-black-e8-0".toManualConfig())),
+            arrayOf<Any>(EngineChessGameImpl("black 0 Bishop-white-a1 King-white-e1-0 Bishop-black-a8 King-black-e8-0".toManualConfig())),
+            arrayOf<Any>(EngineChessGameImpl("black 0 Queen-white-a1 King-white-e1-0 Queen-black-a8 King-black-e8-0".toManualConfig())),
+            arrayOf<Any>(EngineChessGameImpl("black 0 Pawn-white-a2-false King-white-e1-0 Pawn-black-a7-false King-black-e8-0".toManualConfig())),
+            arrayOf<Any>(EngineChessGameImpl("black 0 Pawn-white-e2-false King-white-e1-0 Pawn-black-e7-false King-black-e8-0".toManualConfig())),
+            arrayOf<Any>(EngineChessGameImpl("black 0 Pawn-white-e2-false Pawn-white-f3-false King-white-e1-0 Pawn-black-e7-false Pawn-black-f6-false King-black-e8-0".toManualConfig())),
+            arrayOf<Any>(EngineChessGameImpl(("white 0 "
                 + "King-white-e1-0 "
                 + "Pawn-white-a2-false Pawn-white-b2-false Pawn-white-c2-false "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
@@ -53,7 +53,7 @@ internal class EvaluatingAsIsNowTest {
                 + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
                 + "Pawn-black-g7-false Pawn-black-h7-false "
                 + "King-black-e8-0").toManualConfig())),
-            arrayOf<Any>(ChessGame(("white 0 "
+            arrayOf<Any>(EngineChessGameImpl(("white 0 "
                 + "Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
                 + "Queen-white-d1 King-white-e1-0 "
                 + "Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
@@ -66,7 +66,7 @@ internal class EvaluatingAsIsNowTest {
     }
 
     @Test(dataProvider = "asymmetricPositionProvider")
-    fun testAsymmetricPositionLeadsToInverseEvaluation(game: ChessGame) {
+    fun testAsymmetricPositionLeadsToInverseEvaluation(game: EngineChessGameImpl) {
         val staticEval = EvaluatingAsIsNow
         val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true)
         val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false)
@@ -81,7 +81,7 @@ internal class EvaluatingAsIsNowTest {
     }
 
     @Test(dataProvider = "asymmetricPositionProvider")
-    fun testInvertedAsymmetricPositionLeadsToSameEvaluation(game: ChessGame) {
+    fun testInvertedAsymmetricPositionLeadsToSameEvaluation(game: EngineChessGameImpl) {
         val staticEval = EvaluatingAsIsNow
         val invertedGame = game.copyGameWithInvertedColors()
         val prelimEvalNormal = staticEval.getPreliminaryEvaluation(game, game.isWhiteTurn)
@@ -97,7 +97,7 @@ internal class EvaluatingAsIsNowTest {
     @DataProvider
     fun asymmetricPositionProvider(): Array<Array<Any>> {
         return arrayOf(
-                arrayOf<Any>(ChessGame("black 0 Rook-white-a1-0 King-white-e1-0 King-black-e8-0".toManualConfig())),
+                arrayOf<Any>(EngineChessGameImpl("black 0 Rook-white-a1-0 King-white-e1-0 King-black-e8-0".toManualConfig())),
                 arrayOf<Any>(initChessGame(518, "a2-a3")),
                 arrayOf<Any>(initChessGame(333, "d2-d4", "a8-b6", "e2-e4", "h8-g6")),
                 arrayOf<Any>(initChessGame(518, "e2-e4", "d7-d5", "e4-d5")),

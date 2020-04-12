@@ -1,7 +1,7 @@
 package voidchess.engine.player.ki.evaluation
 
 import org.testng.annotations.Test
-import voidchess.engine.board.ChessGame
+import voidchess.engine.board.EngineChessGameImpl
 import voidchess.common.board.move.Move
 
 import org.testng.Assert.assertEquals
@@ -20,13 +20,13 @@ internal class EvaluatingMinMaxTest {
         val easyPruner = AllMovesOrNonePruner(1, 4, 3)
         return arrayOf(
                 arrayOf(
-                        ChessGame("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false".toManualConfig()),
+                        EngineChessGameImpl("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false".toManualConfig()),
                         AllMovesOrNonePruner(1, 4, 3),
                         Move.byCode("g6-g5"),
                         -9.5..-8.0,
                         "pawn promotion"),
                 arrayOf(
-                        ChessGame("white 0 King-white-h1-4 King-black-c8-6 Knight-white-d5 Rook-black-g8-8 Pawn-white-h2-false Pawn-black-h3-false".toManualConfig()),
+                        EngineChessGameImpl("white 0 King-white-h1-4 King-black-c8-6 Knight-white-d5 Rook-black-g8-8 Pawn-white-h2-false Pawn-black-h3-false".toManualConfig()),
                         easyPruner,
                         Move.byCode("d5-e7"),
                         2.7..3.3,
@@ -35,7 +35,7 @@ internal class EvaluatingMinMaxTest {
     }
 
     @Test(dataProvider = "gameWithObviousEvalProvider")
-    fun testMinMaxEvaluatesToExpectedRange(game: ChessGame, pruner: SearchTreePruner, move: Move, expectedEvalRange: ClosedRange<Double>, msg: String) {
+    fun testMinMaxEvaluatesToExpectedRange(game: EngineChessGameImpl, pruner: SearchTreePruner, move: Move, expectedEvalRange: ClosedRange<Double>, msg: String) {
         val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
         val evaluation = dynamicEvaluation.evaluateMove(game, move) as Ongoing
 
@@ -53,7 +53,7 @@ internal class EvaluatingMinMaxTest {
     @Test
     fun testEvaluateMoveHasNoSideEffects() {
         val des = "black 0 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false"
-        val game = ChessGame(des.toManualConfig())
+        val game = EngineChessGameImpl(des.toManualConfig())
         val dynamicEvaluation = EvaluatingMinMax()
 
         dynamicEvaluation.evaluateMove(game, Move.byCode("a6-b6"))

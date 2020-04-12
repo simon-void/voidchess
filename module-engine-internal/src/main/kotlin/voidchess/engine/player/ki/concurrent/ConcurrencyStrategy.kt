@@ -1,11 +1,13 @@
 package voidchess.engine.player.ki.concurrent
 
-import voidchess.engine.board.ChessGameInterface
+import voidchess.engine.board.EngineChessGame
 import voidchess.common.board.move.Move
+import voidchess.common.board.other.StartConfig
 import voidchess.common.player.ki.ProgressCallback
 import voidchess.engine.player.ki.evaluation.EvaluatingMinMax
 import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.common.player.ki.evaluation.HighestEvalFirst
+import voidchess.engine.board.EngineChessGameImpl
 import java.util.*
 import java.util.concurrent.*
 import kotlin.collections.ArrayList
@@ -16,27 +18,32 @@ internal sealed class ConcurrencyStrategy(protected val progressCallback: Progre
      * @return a sorted set of all possible moves sorted by a value of "how good it is for the computer voidchess.engine.player".
      * The first element is the best choice for the computer voidchess.engine.player and the last element being the worst.
      */
-    fun evaluateMovesBestMoveFirst(game: ChessGameInterface, evaluatingMinMax: EvaluatingMinMax): List<EvaluatedMove> =
-        evaluateMoves(game, game.getAllMoves(), evaluatingMinMax).apply { sortWith(HighestEvalFirst) }
+    fun evaluateMovesBestMoveFirst(startConfig: StartConfig, movesSoFar: List<Move>, evaluatingMinMax: EvaluatingMinMax): List<EvaluatedMove> {
+        val chessGame = EngineChessGameImpl(startConfig, movesSoFar)
+        val possibleMoves = chessGame.getAllMoves()
+        return evaluateMoves(chessGame, possibleMoves, evaluatingMinMax).apply { sortWith(HighestEvalFirst) }
+    }
 
-    fun evaluateMove(game: ChessGameInterface, move: Move, evaluatingMinMax: EvaluatingMinMax): EvaluatedMove =
-        evaluateMoves(game, listOf(move), evaluatingMinMax).single()
+    fun evaluateMove(startConfig: StartConfig, movesSoFar: List<Move>, move: Move, evaluatingMinMax: EvaluatingMinMax): EvaluatedMove {
+        val chessGame = EngineChessGameImpl(startConfig, movesSoFar)
+        return evaluateMoves(chessGame, listOf(move), evaluatingMinMax).single()
+    }
 
     abstract fun shutdown()
 
-    protected abstract fun evaluateMoves(game: ChessGameInterface, moves: Collection<Move>, evaluatingMinMax: EvaluatingMinMax): MutableList<EvaluatedMove>
+    protected abstract fun evaluateMoves(game: EngineChessGame, movesToEvaluate: Collection<Move>, evaluatingMinMax: EvaluatingMinMax): MutableList<EvaluatedMove>
 }
 
 
 
 internal class SingleThreadStrategy(progressCallback: ProgressCallback) : ConcurrencyStrategy(progressCallback) {
 
-    override fun evaluateMoves(game: ChessGameInterface, moves: Collection<Move>, evaluatingMinMax: EvaluatingMinMax): MutableList<EvaluatedMove> {
-        val totalNumberOfMoves = moves.size
+    override fun evaluateMoves(game: EngineChessGame, movesToEvaluate: Collection<Move>, evaluatingMinMax: EvaluatingMinMax): MutableList<EvaluatedMove> {
+        val totalNumberOfMoves = movesToEvaluate.size
         progressCallback(0, totalNumberOfMoves)
 
         val result = ArrayList<EvaluatedMove>(totalNumberOfMoves)
-        for ((moveIndex, move) in moves.withIndex()) {
+        for ((moveIndex, move) in movesToEvaluate.withIndex()) {
             val value = evaluatingMinMax.evaluateMove(game, move)
             result.add(EvaluatedMove(move, value))
 
@@ -63,12 +70,12 @@ internal class MultiThreadStrategy(
     }
 
 
-    override fun evaluateMoves(game: ChessGameInterface, moves: Collection<Move>, evaluatingMinMax: EvaluatingMinMax): MutableList<EvaluatedMove> {
+    override fun evaluateMoves(game: EngineChessGame, movesToEvaluate: Collection<Move>, evaluatingMinMax: EvaluatingMinMax): MutableList<EvaluatedMove> {
 
-        val movesToEvaluate = getEvaluableMoves(game, moves, evaluatingMinMax)
+        val callablesToEvaluate = getEvaluableMoves(game, movesToEvaluate, evaluatingMinMax)
 
         val result = try {
-            evaluate(movesToEvaluate)
+            evaluate(callablesToEvaluate)
         } catch (e: Exception) {
             e.printStackTrace()
             LinkedList<EvaluatedMove>()
@@ -103,23 +110,24 @@ internal class MultiThreadStrategy(
         return result
     }
 
-    private fun getEvaluableMoves(game: ChessGameInterface, moves: Collection<Move>, evaluatingMinMax: EvaluatingMinMax): LinkedList<Callable<EvaluatedMove>> {
-        assert(moves.isNotEmpty()) { "no moves were possible and therefore evaluable" }
+    private fun getEvaluableMoves(game: EngineChessGame, movesToEvaluate: Collection<Move>, evaluatingMinMax: EvaluatingMinMax): LinkedList<Callable<EvaluatedMove>> {
+        assert(movesToEvaluate.isNotEmpty()) { "no moves were possible and therefore evaluable" }
 
-        val totalNumberOfMoves = moves.size
+        val totalNumberOfMoves = movesToEvaluate.size
 
+        // TODO instead of generating one game per move, generate one game per thread
         val gameInstances = game.copyGame(totalNumberOfMoves).iterator()
 
-        val movesToEvaluate = LinkedList<Callable<EvaluatedMove>>()
-        for (move in moves) {
-            movesToEvaluate.add(
+        val callablesToEvaluate = LinkedList<Callable<EvaluatedMove>>()
+        for (move in movesToEvaluate) {
+            callablesToEvaluate.add(
                 MoveEvaluationCallable(
                     gameInstances.next(), move, evaluatingMinMax
                 )
             )
         }
 
-        return movesToEvaluate
+        return callablesToEvaluate
     }
 
     private fun submitCallables(movesToEvaluate: LinkedList<Callable<EvaluatedMove>>, completionService: CompletionService<EvaluatedMove>, numberOfMovesToSubmit: Int) {
@@ -131,7 +139,7 @@ internal class MultiThreadStrategy(
         }
     }
 
-    private class MoveEvaluationCallable internal constructor(private val game: ChessGameInterface, private val move: Move, private val evaluatingMinMax: EvaluatingMinMax) :
+    private class MoveEvaluationCallable internal constructor(private val game: EngineChessGame, private val move: Move, private val evaluatingMinMax: EvaluatingMinMax) :
         Callable<EvaluatedMove> {
 
         @Throws(Exception::class)

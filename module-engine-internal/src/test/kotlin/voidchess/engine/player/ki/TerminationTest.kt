@@ -2,7 +2,7 @@ package voidchess.engine.player.ki
 
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import voidchess.engine.board.ChessGame
+import voidchess.engine.board.EngineChessGameImpl
 import voidchess.common.board.move.Move
 import voidchess.engine.player.ki.evaluation.*
 
@@ -10,7 +10,8 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 
 import org.testng.Assert.assertEquals
-import voidchess.toChess960Config
+import voidchess.engine.board.EngineChessGame
+import voidchess.initChessGame
 import voidchess.toManualConfig
 import kotlin.system.exitProcess
 
@@ -29,17 +30,13 @@ internal class TerminationTest {
     @Test(dataProvider = "getPlayData")
     fun testPlay(chess960IndexOrDesc: String, moveDescs: List<String>) {
 
-        val game: ChessGame
+        val game: EngineChessGame
+        val moveArray = moveDescs.toTypedArray()
         game = try {
             val chess960 = chess960IndexOrDesc.toInt()
-            ChessGame(chess960.toChess960Config())
+            initChessGame(chess960, *moveArray)
         } catch (e: NumberFormatException) {
-            ChessGame(chess960IndexOrDesc.toManualConfig())
-        }
-
-        for (moveDesc in moveDescs) {
-            val move = Move.byCode(moveDesc)
-            game.move(move)
+            initChessGame(chess960IndexOrDesc, *moveArray)
         }
 
         testTermination(game)
@@ -49,14 +46,13 @@ internal class TerminationTest {
     fun testInvarianz() {
         val des = "black 0 Rook-white-a1-0 King-white-e1-0 Pawn-white-a5-false " + "Pawn-black-b7-false King-black-e8-0 Rook-black-h8-3"
 
-        val game = ChessGame(des.toManualConfig())
-        game.move(Move.byCode("b7-b5"))
+        val game = initChessGame(des, "b7-b5")
         testTermination(game)
         val newDes = "white 1 Rook-white-a1-0 King-white-e1-0 Pawn-white-a5-false " + "Pawn-black-b5-true King-black-e8-0 Rook-black-h8-3"
         assertEquals(game.toString(), newDes)
     }
 
-    private fun testTermination(game: ChessGame, pruner: SearchTreePruner = PrunerWithIrreversibleMoves(1, 1, 2, 2), staticEvaluation: EvaluatingStatically = EvaluatingAsIsNow) {
+    private fun testTermination(game: EngineChessGame, pruner: SearchTreePruner = PrunerWithIrreversibleMoves(1, 1, 2, 2), staticEvaluation: EvaluatingStatically = EvaluatingAsIsNow) {
         val numberFormat = NumberFormat.getPercentInstance()
         val dynamicEvaluation = EvaluatingMinMax(pruner, staticEvaluation)
 
@@ -72,17 +68,17 @@ internal class TerminationTest {
             val gameString = game.toString()
             throw RuntimeException(
                     e.toString() + "-after Moves:"
-                            + game.history + " -leading to position:"
+                            + game.completeHistory + " -leading to position:"
                             + gameString)
         } catch (e: AssertionError) {
-            val extendedE = AssertionError(e.message + " History:" + game.history)
+            val extendedE = AssertionError(e.message + " History:" + game.completeHistory)
             extendedE.stackTrace = e.stackTrace
             throw extendedE
         }
 
     }
 
-    internal fun testTermination(game: ChessGame, pruner: SearchTreePruner, move: Move) {
+    internal fun testTermination(game: EngineChessGameImpl, pruner: SearchTreePruner, move: Move) {
         val initDescription = game.toString()
         val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
 
@@ -96,14 +92,14 @@ internal class TerminationTest {
         try {
             dynamicEvaluation.evaluateMove(game, move)
             // Invariante: evaluateMove darf game nicht ändern
-            val msg = "after Move:" + move.toString() + " History:" + game.history
+            val msg = "after Move:" + move.toString() + " History:" + game.shortTermHistory
             assertEquals(game.toString(), initDescription, msg)
         } catch (e: Exception) {
             val gameToString = game.toString()
-            throw RuntimeException(e.toString() + "-after Moves:" + game.history + " -leading to position:"
+            throw RuntimeException(e.toString() + "-after Moves:" + game.shortTermHistory + " -leading to position:"
                     + gameToString)
         } catch (e: AssertionError) {
-            val extendedE = AssertionError(e.message + " History:" + game.history)
+            val extendedE = AssertionError(e.message + " History:" + game.shortTermHistory)
             extendedE.stackTrace = e.stackTrace
             throw extendedE
         }
@@ -125,21 +121,22 @@ internal class TerminationTest {
         }
 
         private fun benchmark(longTest: Boolean) {
-            val game = ChessGame().apply {
-                move(Move.byCode("e2-e4"))
-                move(Move.byCode("e7-e5"))
-                move(Move.byCode("g1-f3"))
-                move(Move.byCode("b8-c6"))
-                move(Move.byCode("f1-b5"))
-                move(Move.byCode("f8-c5"))
-
+            val moves: Array<String> = mutableListOf<String>().apply {
+                add("e2-e4")
+                add("e7-e5")
+                add("g1-f3")
+                add("b8-c6")
+                add("f1-b5")
+                add("f8-c5")
                 if(longTest) {
-                    move(Move.byCode("d2-d3"))
-                    move(Move.byCode("d7-d6"))
-                    move(Move.byCode("b1-c3"))
-                    move(Move.byCode("c8-g4"))
+                    add("d2-d3")
+                    add("d7-d6")
+                    add("b1-c3")
+                    add("c8-g4")
                 }
-            }
+            }.toTypedArray()
+
+            val game = initChessGame(518, *moves)
 
             val pruner = PrunerWithIrreversibleMoves(1, 2, 4, 2)
             val staticEvaluation = EvaluatingAsIsNow//new EvaluatingToConstant();//
@@ -200,13 +197,13 @@ internal class TerminationTest {
         }
 
         private fun loadTest(des: String) {
-            val game = ChessGame(des.toManualConfig())
+            val game = EngineChessGameImpl(des.toManualConfig())
             val pruner = PrunerWithIrreversibleMoves(2, 3, 4, 3)
             val staticEvaluation = EvaluatingAsIsNow
             loadTest(game, pruner, staticEvaluation, "Loadtest")
         }
 
-        private fun loadTest(game: ChessGame, pruner: SearchTreePruner, staticEvaluation: EvaluatingStatically, type: String) {
+        private fun loadTest(game: EngineChessGame, pruner: SearchTreePruner, staticEvaluation: EvaluatingStatically, type: String) {
             val decimalFormat = DecimalFormat("#.0")
             val computerPlayer = TerminationTest()
 

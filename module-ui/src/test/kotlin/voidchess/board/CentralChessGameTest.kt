@@ -13,7 +13,6 @@ import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.figures.Bishop
 import voidchess.common.figures.King
 import voidchess.initChessGame
-import java.lang.IllegalStateException
 import kotlin.test.*
 
 

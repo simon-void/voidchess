@@ -13,12 +13,12 @@ import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashSet
 
 
-internal class ChessGame private constructor(
-    private val board: ChessBoard,
+internal class EngineChessGameImpl private constructor(
     override val startConfig: StartConfig,
+    private val board: ChessBoard,
     private val mementoStack: ArrayDeque<Memento>,
     private val numberStack: NumberStack
-): ChessGameInterface, StaticChessBoard by board {
+): EngineChessGame, StaticChessBoard by board {
     private var supervisor: ChessGameSupervisor = ChessGameSupervisorDummy
     private var numberOfMovesWithoutHit: Int = 0
     override var hasHitFigure: Boolean = false
@@ -46,16 +46,18 @@ internal class ChessGame private constructor(
             } else MoveResult.NO_END
         }
 
-    val history: String
-        get() = board.historyToString(4)
-
     private val isDrawBecauseOfThreeTimesSamePosition: Boolean
         get() = mementoStack.countOccurrencesOfLastMemento() >= 3
 
     /**
      * copy-constructor
      */
-    private constructor(other: ChessGame, startConfig: StartConfig, movesPlayed: List<Move>) : this(
+    private constructor(
+        other: EngineChessGameImpl,
+        startConfig: StartConfig,
+        movesPlayed: List<Move>
+    ) : this(
+        other.startConfig,
         when (startConfig) {
             is StartConfig.ManualConfig -> ArrayChessBoard(startConfig)
             is StartConfig.ClassicConfig -> ArrayChessBoard(startConfig)
@@ -65,7 +67,6 @@ internal class ChessGame private constructor(
                 board.move(move, ChessGameSupervisorDummy)
             }
         },
-        other.startConfig,
         other.mementoStack.shallowCopy(),
         NumberStack(other.numberStack)
     ) {
@@ -74,10 +75,11 @@ internal class ChessGame private constructor(
     }
 
     constructor(
-        startConfig: StartConfig = StartConfig.ClassicConfig
+        startConfig: StartConfig = StartConfig.ClassicConfig,
+        movesSoFar: Iterable<Move> = emptyList()
     ) : this(
-        ArrayChessBoard(startConfig),
         startConfig,
+        ArrayChessBoard(startConfig),
         ArrayDeque<Memento>(64),
         NumberStack()
     ) {
@@ -86,14 +88,20 @@ internal class ChessGame private constructor(
 
         memorizeGame()
         hasHitFigure = numberOfMovesWithoutHit == 0
+
+        for(move in movesSoFar) {
+            move(move)
+        }
     }
 
-    override fun isMovable(from: Position, to: Position): Boolean {
-        val figure = getFigureOrNull(from)
-        return figure!=null && figure.isWhite == isWhiteTurn && figure.isMovable(to, board)
+    override fun <T> withMove(move: Move, workWithGameAfterMove: (MoveResult) -> T): T {
+        val moveResult = move(move)
+        val result = workWithGameAfterMove(moveResult)
+        undo()
+        return result
     }
 
-    override fun move(move: Move): MoveResult {
+    private fun move(move: Move): MoveResult {
         hasHitFigure = board.move(move, supervisor).hasHitFigure
 
         if (hasHitFigure) {
@@ -109,28 +117,24 @@ internal class ChessGame private constructor(
         return isEnd
     }
 
-    override fun undo() {
+    private fun undo() {
         numberOfMovesWithoutHit = numberStack.undo()
         mementoStack.removeLast()
 
         board.undo()
     }
 
-    override fun toString() = "${if (isWhiteTurn) "white" else "black"} $numberOfMovesWithoutHit $board"
-
-    override fun getCompleteHistory() = board.historyToString(null)
-
-    override fun initGame(chess960: Int) {
-        numberOfMovesWithoutHit = 0
-        mementoStack.clear()
-        numberStack.init()
-
-        board.init(StartConfig.Chess960Config(chess960))
-
-        memorizeGame()
+    internal fun isMovable(from: Position, to: Position): Boolean {
+        val figure = getFigureOrNull(from)
+        return figure!=null && figure.isWhite == isWhiteTurn && figure.isMovable(to, board)
     }
 
-    fun equalsOther(other: ChessGame): Boolean {
+    override fun toString() = "${if (isWhiteTurn) "white" else "black"} $numberOfMovesWithoutHit $board"
+
+    override val completeHistory: String get() = board.historyToString(null)
+    override val shortTermHistory: String get() = board.historyToString(4)
+
+    fun equalsOther(other: EngineChessGameImpl): Boolean {
         if (isWhiteTurn != other.isWhiteTurn) return false
 
         for (index in 0..63) {
@@ -179,7 +183,7 @@ internal class ChessGame private constructor(
     }
 
 
-    override fun countReachableMoves(): Pair<Int, Int> {
+    override fun countReachableMoves(): MoveCounter {
         var whiteCount = 0
         var blackCount = 0
 
@@ -192,17 +196,21 @@ internal class ChessGame private constructor(
             }
         }
 
-        return Pair(whiteCount, blackCount)
+        return MoveCounter(whiteCount, blackCount)
     }
 
-    override fun copyGame(neededInstances: Int): List<ChessGameInterface> {
-        val gameInstances = ArrayList<ChessGameInterface>(neededInstances)
+    override fun copyGame(numberOfInstances: Int): List<EngineChessGame> {
+        require(numberOfInstances>0) {"numberOfInstances must be bigger than 0 but was $numberOfInstances"}
+
+        // TODO the stacks can be shortened to when the last figure was taken! This should be a bit more efficient.
+
+        val gameInstances = ArrayList<EngineChessGame>(numberOfInstances)
         gameInstances.add(this)
 
-        if (neededInstances > 1) {
+        if (numberOfInstances > 1) {
             val moves = board.movesPlayed()
-            for (i in 1 until neededInstances) {
-                val copy = ChessGame(this, startConfig, moves)
+            for (i in 1 until numberOfInstances) {
+                val copy = EngineChessGameImpl(this, startConfig, moves)
                 gameInstances.add(copy)
             }
         }

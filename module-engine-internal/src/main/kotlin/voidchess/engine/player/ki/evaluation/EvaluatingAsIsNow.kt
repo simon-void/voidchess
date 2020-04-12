@@ -5,15 +5,15 @@ import voidchess.common.board.move.Position
 import voidchess.common.figures.Figure
 import voidchess.common.figures.King
 import voidchess.common.player.ki.evaluation.Ongoing
-import voidchess.engine.board.ChessGameInterface
+import voidchess.engine.board.EngineChessGame
 
 internal interface EvaluatingStatically {
-    fun getPreliminaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Double
-    fun getSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean): Double
+    fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean): Double
+    fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean): Double
 
-    fun getCheckmateMaterialEvaluation(game: ChessGameInterface, forWhite: Boolean): Double
+    fun getCheckmateMaterialEvaluation(game: EngineChessGame, forWhite: Boolean): Double
 
-    fun addSecondaryEvaluationTo(prelimEval: Double, game: ChessGameInterface, forWhite: Boolean) =
+    fun addSecondaryEvaluationTo(prelimEval: Double, game: EngineChessGame, forWhite: Boolean) =
         Ongoing(
             prelimEval, prelimEval + getSecondaryEvaluation(game, forWhite)
         )
@@ -21,12 +21,12 @@ internal interface EvaluatingStatically {
 
 internal object EvaluatingAsIsNow : EvaluatingStatically {
 
-    override fun getPreliminaryEvaluation(game: ChessGameInterface, forWhite: Boolean) = evaluateFigures(game, forWhite)
-    override fun getCheckmateMaterialEvaluation(game: ChessGameInterface, forWhite: Boolean) = evaluateFigures(game, forWhite) + evaluatePosition(game, forWhite)
+    override fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite)
+    override fun getCheckmateMaterialEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite) + evaluatePosition(game, forWhite)
 
-    override fun getSecondaryEvaluation(game: ChessGameInterface, forWhite: Boolean) = evaluateRuledArea(game, forWhite) + evaluatePosition(game, forWhite)
+    override fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateRuledArea(game, forWhite) + evaluatePosition(game, forWhite)
 
-    private fun evaluateFigures(game: ChessGameInterface, forWhite: Boolean): Double {
+    private fun evaluateFigures(game: EngineChessGame, forWhite: Boolean): Double {
         var whiteFigures = 0.0
         var blackFigures = 0.0
 
@@ -56,7 +56,7 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             blackFigures - whiteFigures
     }
 
-    private fun evaluateRuledArea(game: ChessGameInterface, forWhite: Boolean): Double {
+    private fun evaluateRuledArea(game: EngineChessGame, forWhite: Boolean): Double {
         val (whiteMoves, blackMoves) = game.countReachableMoves()
 
         return VALUE_OF_AREA * if (forWhite)
@@ -65,7 +65,7 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             blackMoves - whiteMoves
     }
 
-    private fun evaluatePosition(game: ChessGameInterface, forWhite: Boolean): Double {
+    private fun evaluatePosition(game: EngineChessGame, forWhite: Boolean): Double {
         var whiteEvaluation = 0.0
         var blackEvaluation = 0.0
         var foundWhiteQueen = false
@@ -111,7 +111,7 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             blackEvaluation - whiteEvaluation
     }
 
-    private fun evaluateBishop(game: ChessGameInterface, bishop: Figure): Double {
+    private fun evaluateBishop(game: EngineChessGame, bishop: Figure): Double {
         val isWhite = bishop.isWhite
         val startRow = if (isWhite) 0 else 7
         val bishopRow = bishop.position.row
@@ -138,7 +138,7 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             if (pos.row == 0 || pos.row == 7 || pos.column == 0 || pos.column == 7) BORDER_KNIGHT_PUNISHMENT
             else 0.0
 
-    private fun evaluatePawn(game: ChessGameInterface, pos: Position, isWhite: Boolean) =
+    private fun evaluatePawn(game: EngineChessGame, pos: Position, isWhite: Boolean) =
             evaluatePawnPosition(pos, isWhite) + evaluatePawnDefense(game, pos, isWhite)
 
     private fun evaluatePawnPosition(pos: Position, isWhite: Boolean): Double {
@@ -146,7 +146,7 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
         return MOVES_GONE_VALUE * if( isWhite) pos.row-1 else 6-pos.row
     }
 
-    private fun evaluatePawnDefense(game: ChessGameInterface, pos: Position, isWhite: Boolean): Double {
+    private fun evaluatePawnDefense(game: EngineChessGame, pos: Position, isWhite: Boolean): Double {
 
         val forwardRow = if (isWhite) pos.row + 1 else pos.row - 1
         val backwardRow = if (isWhite) pos.row - 1 else pos.row + 1
@@ -202,13 +202,13 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
         return 0.0
     }
 
-    private fun containsPawnOfColor(game: ChessGameInterface, pos: Position, white: Boolean): Boolean {
+    private fun containsPawnOfColor(game: EngineChessGame, pos: Position, white: Boolean): Boolean {
         val figure = game.getFigureOrNull(pos)
         return figure!=null && figure.isWhite == white && figure.isPawn()
     }
 
 
-    private fun evaluateKing(game: ChessGameInterface, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
+    private fun evaluateKing(game: EngineChessGame, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
         var value = evaluateCastling(king, queenOfOppositeColorStillOnBoard)
         value += evaluateKingDefense(game, king, queenOfOppositeColorStillOnBoard)
         return value
@@ -218,7 +218,7 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             if (queenOfOppositeColorStillOnBoard && !king.didCastling) NOT_YET_CASTLED_PUNISHMENT
             else 0.0
 
-    private fun evaluateKingDefense(game: ChessGameInterface, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
+    private fun evaluateKingDefense(game: EngineChessGame, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
         val isWhite = king.isWhite
         val kingsRow = king.position.row
         val groundRow = if (isWhite) 0 else 7
