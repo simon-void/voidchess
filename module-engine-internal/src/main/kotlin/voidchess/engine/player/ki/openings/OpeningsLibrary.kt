@@ -27,7 +27,7 @@ internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
         moves: List<Move>
     ): Move? {
         // assume that the whole library is based on classic chess
-        if(chess960StartIndex==518) return null
+        if(chess960StartIndex!=518) return null
 
         var currentNode: TreeNode<String> = openingsRootNode
         for (move in moves) {

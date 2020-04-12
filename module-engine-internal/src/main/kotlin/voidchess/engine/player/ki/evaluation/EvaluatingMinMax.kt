@@ -14,7 +14,8 @@ internal class EvaluatingMinMax(
 
     constructor() : this(PrunerWithIrreversibleMoves(), EvaluatingAsIsNow)
 
-    fun evaluateMove(game: EngineChessGame, move: Move): Evaluation {
+    // TODO make sure currentMaxOneLevelUp is provided one level up!!!
+    fun evaluateMove(game: EngineChessGame, move: Move, currentMaxOneLevelUp: Evaluation?=null): Evaluation {
         val depth = 0
         val forWhite = game.isWhiteTurn
 
@@ -24,7 +25,7 @@ internal class EvaluatingMinMax(
                     val thisMoveHasHitFigure = game.hasHitFigure
                     val thisMoveIsChess = game.isCheck
 
-                    getMin(game, forWhite, depth, thisMoveIsChess, thisMoveHasHitFigure, game.getAllMoves())
+                    getMin(game, forWhite, depth, thisMoveIsChess, thisMoveHasHitFigure, game.getAllMoves(), currentMaxOneLevelUp)
                 }
                 MoveResult.CHECKMATE -> CheckmateOther(depth + 1)
                 MoveResult.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
@@ -39,13 +40,14 @@ internal class EvaluatingMinMax(
                        depth: Int,
                        lastMove_isChess: Boolean,
                        lastMove_hasHitFigure: Boolean,
-                       minPossibleMovesBuffer: Collection<Move>
+                       minPossibleMovesBuffer: Collection<Move>,
+                       currentMaxOneLevelUp: Evaluation?
     ): Evaluation {
         assert(minPossibleMovesBuffer.isNotEmpty()) {
             "minPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"
         }
 
-        var minEvaluation: Evaluation? = null
+        var currentMinEvaluation: Evaluation? = null
 
         for (move in minPossibleMovesBuffer) {
 
@@ -55,7 +57,7 @@ internal class EvaluatingMinMax(
 
             var stopLookingForBetterMove = false
 
-            val currentEvaluation: Evaluation = game.withMove(move) {moveResult ->
+            val latestEvaluation: Evaluation = game.withMove(move) { moveResult ->
                 when(moveResult) {
                     MoveResult.NO_END -> {
                         val newDepth = depth + 1
@@ -86,7 +88,8 @@ internal class EvaluatingMinMax(
                                 newDepth,
                                 thisMoveIsChess,
                                 thisMoveHasHitFigure,
-                                maxPossibleMovesBuffer
+                                maxPossibleMovesBuffer,
+                                currentMinEvaluation
                             )
                         }
                     }
@@ -104,14 +107,19 @@ internal class EvaluatingMinMax(
                 }
             }
 
-            if(minEvaluation==null  || LowestEvaluationFirstComparator.compare(minEvaluation, currentEvaluation)>0) {
-                minEvaluation = currentEvaluation
+            if (currentMinEvaluation == null || latestEvaluation < currentMinEvaluation) {
+                currentMinEvaluation = latestEvaluation
+
+                // Alpha-Beta Pruning
+                if (currentMaxOneLevelUp != null && latestEvaluation <= currentMaxOneLevelUp) {
+                    stopLookingForBetterMove = true
+                }
             }
 
-            if(stopLookingForBetterMove) break
+            if (stopLookingForBetterMove) break
         }
 
-        return minEvaluation
+        return currentMinEvaluation
             ?: throw IllegalStateException(
                 "minPossibleMovesBuffer must have been empty! game: $game, latest moves: ${game.shortTermHistory}"
             )
@@ -122,13 +130,14 @@ internal class EvaluatingMinMax(
                        depth: Int,
                        lastMoveIsChess: Boolean,
                        lastMoveHasHitFigure: Boolean,
-                       maxPossibleMovesBuffer: Collection<Move>
+                       maxPossibleMovesBuffer: Collection<Move>,
+                       currentMinOneLevelUp: Evaluation?
     ): Evaluation {
         assert(maxPossibleMovesBuffer.isNotEmpty()) {
             "maxPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"
         }
 
-        var maxEvaluation: Evaluation? = null
+        var currentMaxEvaluation: Evaluation? = null
 
         for (move in maxPossibleMovesBuffer) {
 
@@ -138,7 +147,7 @@ internal class EvaluatingMinMax(
 
             var stopLookingForBetterMove = false
 
-            val currentEvaluation: Evaluation = game.withMove(move) {moveResult ->
+            val latestEvaluation: Evaluation = game.withMove(move) { moveResult ->
                 when(moveResult) {
                     MoveResult.NO_END -> {
                         val thisMoveHasHitFigure = game.hasHitFigure
@@ -167,7 +176,8 @@ internal class EvaluatingMinMax(
                                 depth,
                                 thisMoveIsChess,
                                 thisMoveHasHitFigure,
-                                minPossibleMovesBuffer
+                                minPossibleMovesBuffer,
+                                currentMaxEvaluation
                             )
                         }
                     }
@@ -181,14 +191,19 @@ internal class EvaluatingMinMax(
                 }
             }
 
-            if(maxEvaluation==null  || LowestEvaluationFirstComparator.compare(maxEvaluation, currentEvaluation)<0) {
-                maxEvaluation = currentEvaluation
+            if (currentMaxEvaluation == null || latestEvaluation > currentMaxEvaluation) {
+                currentMaxEvaluation = latestEvaluation
+
+                // Alpha-Beta Pruning
+                if (currentMinOneLevelUp != null && latestEvaluation >= currentMinOneLevelUp) {
+                    stopLookingForBetterMove = true
+                }
             }
 
-            if(stopLookingForBetterMove) break
+            if (stopLookingForBetterMove) break
         }
 
-        return maxEvaluation
+        return currentMaxEvaluation
             ?: throw IllegalStateException(
                 "maxPossibleMovesBuffer must have been empty! game: $game, latest moves: ${game.shortTermHistory}"
             )

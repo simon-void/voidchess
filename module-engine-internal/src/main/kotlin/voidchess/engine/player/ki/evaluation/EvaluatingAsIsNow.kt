@@ -21,9 +21,7 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
     fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite)
     fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateRuledArea(game, forWhite) + evaluatePosition(game, forWhite)
     fun addSecondaryEvaluationTo(prelimEval: Double, game: EngineChessGame, forWhite: Boolean) =
-        Ongoing(
-            prelimEval, prelimEval + getSecondaryEvaluation(game, forWhite)
-        )
+        Ongoing(prelimEval + getSecondaryEvaluation(game, forWhite))
 
     override fun getCheckmateMaterialEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite) + evaluatePosition(game, forWhite)
 

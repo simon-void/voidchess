@@ -4,9 +4,20 @@ import voidchess.common.helper.signAsInt
 import java.text.DecimalFormat
 
 
-sealed class Evaluation {
+sealed class Evaluation: Comparable<Evaluation> {
     abstract val type: EvaluationType
     abstract val msg: String
+
+    override operator fun compareTo(other: Evaluation): Int {
+        val typesCompared = type.compareTo(other.type)
+        return if (typesCompared != 0) typesCompared
+        else when (this) {
+            is Ongoing -> compareWith(other as Ongoing)
+            is CheckmateOther -> compareWith(other as CheckmateOther)
+            is CheckmateSelf ->compareWith(other as CheckmateSelf)
+            else -> 0
+        }
+    }
 }
 
 enum class EvaluationType {
@@ -14,8 +25,7 @@ enum class EvaluationType {
 }
 
 sealed class NumericalEvaluation : Evaluation() {
-    open val preliminaryEvaluation = .0
-    open val fullEvaluation = .0
+    open val numericValue = .0
     override fun toString(): String = this::class.java.simpleName
 }
 
@@ -69,14 +79,11 @@ data class CheckmateOther(val depth: Int) : Evaluation() {
     override val msg get() = "checkmate in $depth"
 }
 
-data class Ongoing(override val preliminaryEvaluation: Double, override val fullEvaluation: Double) : NumericalEvaluation() {
-    override val type = if (fullEvaluation < 0) EvaluationType.OngoingNegative else EvaluationType.OngoingPositive
-
-    fun compareWith(other: Ongoing) = (fullEvaluation - other.fullEvaluation).signAsInt
-
-    override val msg get() = format(
-        fullEvaluation
-    )
+data class Ongoing(override val numericValue: Double) : NumericalEvaluation() {
+    override val type = if (numericValue < 0) EvaluationType.OngoingNegative else EvaluationType.OngoingPositive
+    fun compareWith(other: Ongoing) = (numericValue - other.numericValue).signAsInt
+    override val msg get() = format(numericValue)
+    override fun toString(): String = "Ongoing($msg)"
 
     companion object {
         private val formatter = DecimalFormat().apply {
@@ -86,22 +93,4 @@ data class Ongoing(override val preliminaryEvaluation: Double, override val full
 
         fun format(value: Double): String = formatter.format(value)
     }
-}
-
-object LowestEvaluationFirstComparator : Comparator<Evaluation> {
-    override fun compare(e1: Evaluation, e2: Evaluation): Int {
-        val typesCompared = e1.type.compareTo(e2.type)
-        return if (typesCompared != 0) typesCompared
-        else when (e1.type) {
-            EvaluationType.OngoingPositive, EvaluationType.OngoingNegative -> (e1 as Ongoing).compareWith(e2 as Ongoing)
-            EvaluationType.OtherCheckmate -> (e1 as CheckmateOther).compareWith(e2 as CheckmateOther)
-            EvaluationType.SelfCheckmate -> (e1 as CheckmateSelf).compareWith(e2 as CheckmateSelf)
-            EvaluationType.FinalDraw -> 0
-        }
-    }
-}
-
-object HighestEvaluationFirstComparator : Comparator<Evaluation> {
-    override fun compare(e1: Evaluation, e2: Evaluation) =
-        LowestEvaluationFirstComparator.compare(e2, e1)
 }

@@ -16,31 +16,31 @@ internal class EvaluationMoveComparatorTest {
         set.add(
             EvaluatedMove(
                 Move.byCode("a2-a3"),
-                Ongoing(.0, -1.2)
+                Ongoing(-1.2)
             )
         )//8.
         set.add(
             EvaluatedMove(
                 Move.byCode("b2-b3"),
-                Ongoing(.0, -0.5)
+                Ongoing(-0.5)
             )
         )//7.
         set.add(
             EvaluatedMove(
                 Move.byCode("c2-c3"),
-                Ongoing(.0, 4.6)
+                Ongoing(4.6)
             )
         )//3.
         set.add(
             EvaluatedMove(
                 Move.byCode("d2-d3"),
-                Ongoing(.0, 2.1)
+                Ongoing(2.1)
             )
         )//4.
         set.add(
             EvaluatedMove(
                 Move.byCode("d2-d4"),
-                Ongoing(.0, .0)
+                Ongoing(.0)
             )
         )//5.
         set.add(
@@ -102,31 +102,31 @@ internal class EvaluationMoveComparatorTest {
         set.add(
             EvaluatedMove(
                 Move.byCode("a2-a3"),
-                Ongoing(.0, -1.2)
+                Ongoing(-1.2)
             )
         )//8.
         set.add(
             EvaluatedMove(
                 Move.byCode("b2-b3"),
-                Ongoing(.0, -0.5)
+                Ongoing(-0.5)
             )
         )//7.
         set.add(
             EvaluatedMove(
                 Move.byCode("c2-c3"),
-                Ongoing(.0, 4.6)
+                Ongoing(4.6)
             )
         )//3.
         set.add(
             EvaluatedMove(
                 Move.byCode("d2-d3"),
-                Ongoing(.0, 2.1)
+                Ongoing(2.1)
             )
         )//4.
         set.add(
             EvaluatedMove(
                 Move.byCode("d2-d4"),
-                Ongoing(.0, .0)
+                Ongoing(.0)
             )
         )//5.
         set.add(

@@ -22,15 +22,13 @@ internal class EvaluatingAsIsNowTest {
         assertEquals(prelimEvalForWhite, 0.0)
 
         val evalForWhite = Ongoing(
-            prelimEvalForWhite,
             prelimEvalForWhite + staticEval.getSecondaryEvaluation(game, true)
         )
         val evalForBlack = Ongoing(
-            prelimEvalForBlack,
             prelimEvalForBlack + staticEval.getSecondaryEvaluation(game, false)
         )
-        assertEquals(evalForWhite.fullEvaluation, evalForBlack.fullEvaluation, OK_DELTA)
-        assertEquals(evalForWhite.fullEvaluation, 0.0, OK_DELTA)
+        assertEquals(evalForWhite.numericValue, evalForBlack.numericValue, OK_DELTA)
+        assertEquals(evalForWhite.numericValue, 0.0, OK_DELTA)
     }
 
     @DataProvider
@@ -75,9 +73,9 @@ internal class EvaluatingAsIsNowTest {
 
         val evalForWhite = staticEval.addSecondaryEvaluationTo(prelimEvalForWhite, game, true)
         val evalForBlack = staticEval.addSecondaryEvaluationTo(prelimEvalForBlack, game, false)
-        assertEquals(evalForWhite.fullEvaluation, -evalForBlack.fullEvaluation, OK_DELTA)
+        assertEquals(evalForWhite.numericValue, -evalForBlack.numericValue, OK_DELTA)
         // it's highly unlikely that an asymmetric position is considered equal
-        assertNotEquals(evalForWhite.fullEvaluation, 0.0, OK_DELTA)
+        assertNotEquals(evalForWhite.numericValue, 0.0, OK_DELTA)
     }
 
     @Test(dataProvider = "asymmetricPositionProvider")
@@ -91,7 +89,7 @@ internal class EvaluatingAsIsNowTest {
 
         val evalNormal = staticEval.addSecondaryEvaluationTo(prelimEvalNormal, game, game.isWhiteTurn)
         val evalInverted = staticEval.addSecondaryEvaluationTo(prelimEvalInverted, invertedGame, invertedGame.isWhiteTurn)
-        assertEquals(evalNormal.fullEvaluation, evalInverted.fullEvaluation, OK_DELTA)
+        assertEquals(evalNormal.numericValue, evalInverted.numericValue, OK_DELTA)
     }
 
     @DataProvider

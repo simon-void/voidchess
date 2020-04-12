@@ -1,7 +1,6 @@
 package voidchess.ui
 
 import voidchess.common.player.ki.evaluation.*
-import voidchess.engine.player.ki.evaluation.*
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics
@@ -327,7 +326,7 @@ private fun Evaluation.getHappinessLevel(): HappinessLevel = when (this) {
     is CheckmateSelf -> HappinessLevel.BIG_GRIEF
     is Draw, is Stalemate, is ThreeFoldRepetition -> HappinessLevel.CONTENT
     is Ongoing -> {
-        val value = this.fullEvaluation
+        val value = this.numericValue
         when {
             value > HappinessLevel.MEDIUM_SMILE.value -> HappinessLevel.MEDIUM_SMILE
             value > HappinessLevel.LIGHT_SMILE.value -> HappinessLevel.LIGHT_SMILE

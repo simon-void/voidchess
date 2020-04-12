@@ -59,8 +59,8 @@ internal class SingleThreadStrategy(progressCallback: ProgressCallback) : Concur
 
 
 internal class MultiThreadStrategy(
-    progressCallback: ProgressCallback,
-    private val numberOfThreads: Int
+    private val numberOfThreads: Int,
+    progressCallback: ProgressCallback
 ) : ConcurrencyStrategy(progressCallback) {
 
     private val executorService: ExecutorService = Executors.newFixedThreadPool(numberOfThreads)

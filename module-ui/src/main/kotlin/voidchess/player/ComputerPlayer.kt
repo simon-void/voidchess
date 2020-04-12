@@ -12,6 +12,7 @@ import voidchess.engine.player.ki.KaiEngine
 import voidchess.ui.ComputerPlayerUI
 import voidchess.ui.TableInterface
 import voidchess.ui.Thumb
+import kotlin.system.measureTimeMillis
 
 class ComputerPlayer(
     private val table: TableInterface,
@@ -23,9 +24,27 @@ class ComputerPlayer(
     private var isWhite = false
 
     override fun play() {
+        fun <T: Any> ensureMinimumDurationInMs(minimumDuration: Int, f: ()->T): T {
+            // TODO in Kotlin 1.4 because of contracts "lateinit var" should be replacable by "val"
+            lateinit var result: T
+            val lookUpDurationInMillies = measureTimeMillis {
+                result = f()
+            }
+            val milliSecondsToWait = minimumDuration - lookUpDurationInMillies
+            if (milliSecondsToWait > 0) {
+                runCatching { Thread.sleep(milliSecondsToWait) }
+            }
+            return result
+        }
+
         ui.setBubbleText(null)
         ui.showThoughts(true)
-        val chosenMove = nextMove()
+
+        // for ergonomic reasons lets set the minimum successful look-up time to 300ms
+        val chosenMove: EvaluatedMove = ensureMinimumDurationInMs(500) {
+            nextMove()
+        }
+
         ui.setValue(chosenMove.value)
         table.move(chosenMove.move)
 

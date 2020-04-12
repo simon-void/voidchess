@@ -2,7 +2,7 @@ package voidchess.engine.player.ki.concurrent
 
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
-import org.testng.annotations.BeforeMethod
+import org.testng.annotations.AfterClass
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.*
@@ -17,8 +17,14 @@ import voidchess.initChessGame
 import voidchess.mirrorRow
 
 
-internal class SingleThreadStrategyTest {
-    private lateinit var strategy: SingleThreadStrategy
+internal class MultiThreadStrategyTest {
+    private val coresToUse = (Runtime.getRuntime().availableProcessors()-1).coerceAtLeast(1)
+    private val strategy = MultiThreadStrategy(coresToUse) { _, _ -> Unit }
+
+    @AfterClass
+    fun shutdown() {
+        strategy.shutdown()
+    }
 
     //best move with matt
     //color inverted matt
@@ -117,11 +123,6 @@ internal class SingleThreadStrategyTest {
         )
     }
 
-    @BeforeMethod
-    fun setup() {
-        strategy = SingleThreadStrategy { _, _ -> Unit }
-    }
-
     @Test
     fun testSortOrder() {
         val game = EngineChessGameImpl(StartConfig.ClassicConfig)
@@ -191,7 +192,7 @@ internal class SingleThreadStrategyTest {
         )
     }
 
-    @Test(dataProvider = "gameWithEvalPredicateProvider", dependsOnMethods = ["testMinMaxIsInvokedForEachPossibleMove"])
+    @Test(dataProvider = "gameWithEvalPredicateProvider")//, dependsOnMethods = ["testMinMaxIsInvokedForEachPossibleMove"])
     fun testMinMaxToEvalPredicate(
         game: EngineChessGameImpl,
         pruner: SearchTreePruner,

@@ -199,6 +199,13 @@ internal class EngineChessGameTest {
             val newDes = "black 1 King-white-e1-0 Pawn-white-c4-true King-black-e8-0"
             assertEquals(newDes, game.toString())
         }
+
+        des = "white 0 Rook-white-b1-1 King-white-h1-4 Knight-white-d4 King-black-a6-6"
+        game = EngineChessGameImpl(des.toManualConfig())
+        move = Move.byCode("d4-c6")
+        game.withMove(move) { moveResult ->
+            assertEquals(MoveResult.STALEMATE, moveResult)
+        }
     }
 
     @Test
@@ -283,8 +290,8 @@ internal class EngineChessGameTest {
     fun testIsMatt() {
         val des = "black 0 King-white-e1-0 Queen-black-h2 Pawn-black-f3-false King-black-e8-0"
         val game = initChessGame(des)
-        game.withMove(Move.byCode("h2-e2")) {endOption->
-            assertEquals(MoveResult.CHECKMATE, endOption)
+        game.withMove(Move.byCode("h2-e2")) {moveResult->
+            assertEquals(MoveResult.CHECKMATE, moveResult)
         }
     }
 
@@ -292,8 +299,8 @@ internal class EngineChessGameTest {
     fun testIsDrawBecauseOfNoMoves() {
         val des = "black 0 King-white-e1-0 Queen-black-h2 Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0"
         val game = EngineChessGameImpl(des.toManualConfig())
-        game.withMove(Move.byCode("h2-g2")) {endOption->
-            assertEquals(MoveResult.STALEMATE, endOption)
+        game.withMove(Move.byCode("h2-g2")) {moveResult->
+            assertEquals(MoveResult.STALEMATE, moveResult)
         }
     }
 
@@ -301,8 +308,8 @@ internal class EngineChessGameTest {
     fun testIsDrawBecauseOfLowMaterial() {
         val des = "white 0 King-white-e1-0 Bishop-black-g2 Knight-white-c2 Knight-white-e7 King-black-e8-0"
         val game = EngineChessGameImpl(des.toManualConfig())
-        game.withMove(Move.byCode("e1-f2")) {endOption->
-            assertEquals(MoveResult.DRAW, endOption)
+        game.withMove(Move.byCode("e1-f2")) {moveResult->
+            assertEquals(MoveResult.DRAW, moveResult)
         }
     }
 
@@ -315,10 +322,10 @@ internal class EngineChessGameTest {
         val des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 Knight-white-c2 Knight-white-e7 King-black-e8-0"
         val game = initChessGame(des, whiteMove, blackMove, whiteReturn, blackReturn, whiteMove, blackMove)
 
-        game.withMove(Move.byCode(whiteReturn)) { endOption1 ->
-            assertEquals(endOption1, MoveResult.NO_END)
-            game.withMove(Move.byCode(blackReturn)) { endOption2 ->
-                assertEquals(endOption2, MoveResult.THREE_TIMES_SAME_POSITION)
+        game.withMove(Move.byCode(whiteReturn)) { moveResult1 ->
+            assertEquals(moveResult1, MoveResult.NO_END)
+            game.withMove(Move.byCode(blackReturn)) { moveResult2 ->
+                assertEquals(moveResult2, MoveResult.THREE_TIMES_SAME_POSITION)
             }
         }
     }
@@ -327,19 +334,19 @@ internal class EngineChessGameTest {
     fun testIsDrawBecauseOf50HitlessMoves() {
         var des = "white 98 King-white-e1-0 Pawn-white-a2-false Pawn-black-b4-false King-black-e8-0"
         var game = EngineChessGameImpl(des.toManualConfig())
-        game.withMove(Move.byCode("a2-a4")) {endOption1->
-            assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption1)
-            game.withMove(Move.byCode("b4-a3")) {endOption2->
-                assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption2)
+        game.withMove(Move.byCode("a2-a4")) {moveResult1->
+            assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, moveResult1)
+            game.withMove(Move.byCode("b4-a3")) {moveResult2->
+                assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, moveResult2)
             }
         }
 
         des = "white 98 King-white-e1-0 Pawn-white-a2-false Pawn-black-b4-false King-black-e8-0"
         game = EngineChessGameImpl(des.toManualConfig())
-        game.withMove(Move.byCode("a2-a4")) {endOption1->
-            assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption1)
-            game.withMove(Move.byCode("b4-b3")) {endOption2->
-                assertEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption2)
+        game.withMove(Move.byCode("a2-a4")) {moveResult1->
+            assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, moveResult1)
+            game.withMove(Move.byCode("b4-b3")) {moveResult2->
+                assertEquals(MoveResult.FIFTY_MOVES_NO_HIT, moveResult2)
             }
         }
     }

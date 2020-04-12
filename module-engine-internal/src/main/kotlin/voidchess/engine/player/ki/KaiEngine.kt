@@ -15,7 +15,6 @@ import voidchess.engine.player.ki.openings.OpeningsLibrary
 import java.util.*
 import kotlin.math.pow
 import kotlin.random.Random
-import kotlin.system.measureTimeMillis
 import kotlin.IllegalArgumentException
 
 class KaiEngine(private val progressCallback: ProgressCallback): Engine {
@@ -79,7 +78,6 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
         movesSoFar: List<Move>,
         evaluatingMinMax: EvaluatingMinMax
     ): EvaluatedMove? {
-        fun wait(milliseconds: Long) { runCatching { Thread.sleep(milliseconds) } }
 
         val chess960StartIndex: Int? = when (startConfig) {
             is StartConfig.ClassicConfig -> startConfig.chess960Index
@@ -91,25 +89,14 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             return null
         }
 
-        var moveFoundInLib: EvaluatedMove? = null
-        val lookUpDurationInMillies = measureTimeMillis {
-            moveFoundInLib = openingsLibrary.nextMove(chess960StartIndex, movesSoFar)?.let { libraryMove ->
-                concurrencyStrategyCache.get(1).evaluateMove(
-                    StartConfig.Chess960Config(chess960StartIndex),
-                    movesSoFar,
-                    libraryMove,
-                    evaluatingMinMax
-                )
-            }
+        return openingsLibrary.nextMove(chess960StartIndex, movesSoFar)?.let { libraryMove ->
+            concurrencyStrategyCache.singleThreadStrategy.evaluateMove(
+                StartConfig.Chess960Config(chess960StartIndex),
+                movesSoFar,
+                libraryMove,
+                evaluatingMinMax
+            )
         }
-        if (moveFoundInLib != null) {
-            // for ergonomic reasons lets set the minimum successful look-up time to 300ms
-            val milliesToWait = 300 - lookUpDurationInMillies
-            if (milliesToWait > 0) {
-                wait(milliesToWait)
-            }
-        }
-        return moveFoundInLib
     }
 
     /**
@@ -136,10 +123,10 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
         // with bestMove will have a weight of 1
         // and a move that is almost okDistanceToBest apart will have a weight of almost 0
         val moveAndLinearWeight: List<Pair<Move, Double>> = LinkedList<Pair<Move, Double>>().apply {
-            val bestFullEvaluation = bestEval.fullEvaluation
+            val bestFullEvaluation = bestEval.numericValue
             for((move, evaluation) in sortedEvaluatedMoves) {
                 if(evaluation !is NumericalEvaluation) break
-                val distanceToBest = bestFullEvaluation-evaluation.fullEvaluation
+                val distanceToBest = bestFullEvaluation-evaluation.numericValue
                 if(distanceToBest>=okDistanceToBest) break
                 add(Pair(move, (okDistanceToBest-distanceToBest)/okDistanceToBest))
             }
@@ -170,70 +157,17 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
 
 private class ConcurrencyStrategyContainer(private val progressCallback: ProgressCallback) {
-    private var singleThreadStrategy = SingleThreadStrategy(progressCallback)
+    var singleThreadStrategy = SingleThreadStrategy(progressCallback)
     private var coresAndStrategy: Pair<Int, ConcurrencyStrategy> =
-        CoresToUseOption.coresToUse.let { it to MultiThreadStrategy(progressCallback, it) }
+        CoresToUseOption.coresToUse.let { it to MultiThreadStrategy(it, progressCallback) }
 
     fun get(numberOfCoresToUse: Int): ConcurrencyStrategy {
         if(numberOfCoresToUse==1) return singleThreadStrategy
         if( numberOfCoresToUse!=coresAndStrategy.first) {
             val oldStrategy = coresAndStrategy.second
-            coresAndStrategy = numberOfCoresToUse to MultiThreadStrategy(progressCallback, numberOfCoresToUse)
+            coresAndStrategy = numberOfCoresToUse to MultiThreadStrategy(numberOfCoresToUse, progressCallback)
             oldStrategy.shutdown()
         }
         return coresAndStrategy.second
     }
 }
-
-private object CoresToUseOption : Option {
-    override val name: String = "core#"
-    override val possibleValues: List<String> = {
-        Runtime.getRuntime().availableProcessors().let { maxCores ->
-            if (maxCores == 1) {
-                listOf(1)
-            } else {
-                listOf(
-                    maxCores - 1,
-                    maxCores
-                )
-            }
-        }.map { it.toString() }
-    }()
-    override var currentValue: String = possibleValues.let {values->
-        if(values.size==1) return@let values.first()
-        // on a two core system we want to use both cores
-        // if more cores are available we want to leave one core unoccupied by default
-        val (firstValue: String, secondValue: String) = values
-        return@let if(firstValue=="1") secondValue else firstValue
-    }
-
-    fun setCoresToUse(value: String) {
-        if(!possibleValues.contains(value)) {
-            throw IllegalArgumentException("unknown option for option $name, possible vaulues ${possibleValues.joinToString()} but was: $value")
-        }
-        currentValue = value
-    }
-
-    val coresToUse: Int get() = currentValue.toInt()
-}
-
-private object DifficultyOption: Option {
-    override val name: String = "Difficulty"
-    override val possibleValues: List<String> get() = listOf("level 1", "level 2")
-    override var currentValue: String = possibleValues.first()
-
-    fun setDifficulty(value: String) {
-        if (!possibleValues.contains(value)) {
-            throw IllegalArgumentException("unknown option for option $name, possible vaulues ${possibleValues.joinToString()} but was: $value")
-        }
-        currentValue = value
-    }
-
-    val pruner: SearchTreePruner get() = when(currentValue) {
-        "level 1" -> AllMovesOrNonePruner(1, 4, 3)
-        "level 2" -> PrunerWithIrreversibleMoves(1, 2, 4, 3)
-        else -> throw IllegalStateException("unknown current Difficulty value: $currentValue")
-    }
-}
-
-

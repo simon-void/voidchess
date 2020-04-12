@@ -21,16 +21,10 @@ internal class EvaluatingMinMaxTest {
         return arrayOf(
                 arrayOf(
                         EngineChessGameImpl("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false".toManualConfig()),
-                        AllMovesOrNonePruner(1, 4, 3),
-                        Move.byCode("g6-g5"),
-                        -9.5..-8.0,
-                        "pawn promotion"),
-                arrayOf(
-                        EngineChessGameImpl("white 0 King-white-h1-4 King-black-c8-6 Knight-white-d5 Rook-black-g8-8 Pawn-white-h2-false Pawn-black-h3-false".toManualConfig()),
                         easyPruner,
-                        Move.byCode("d5-e7"),
-                        2.7..3.3,
-                        "find knight fork with check")
+                        Move.byCode("g6-g5"),
+                        -10.0..-8.0,
+                        "pawn promotion")
         )
     }
 
@@ -40,14 +34,14 @@ internal class EvaluatingMinMaxTest {
         val evaluation = dynamicEvaluation.evaluateMove(game, move) as Ongoing
 
         assertTrue(
-                evaluation.preliminaryEvaluation in expectedEvalRange,
-                "eval should be in range $expectedEvalRange but was: ${evaluation.preliminaryEvaluation}. msg: $msg")
+                evaluation.numericValue in expectedEvalRange,
+                "eval should be in range $expectedEvalRange but was: ${evaluation.numericValue}. msg: $msg")
 
         val evaluationOfColorInverted = dynamicEvaluation.evaluateMove(game.copyGameWithInvertedColors(), move.mirrorRow()) as Ongoing
 
         assertTrue(
-                evaluationOfColorInverted.preliminaryEvaluation in expectedEvalRange,
-                "eval should be in range $expectedEvalRange but was: ${evaluationOfColorInverted.preliminaryEvaluation}. msg: $msg")
+                evaluationOfColorInverted.numericValue in expectedEvalRange,
+                "eval should be in range $expectedEvalRange but was: ${evaluationOfColorInverted.numericValue}. msg: $msg")
     }
 
     @Test
@@ -74,7 +68,7 @@ internal class EvaluatingMinMaxTest {
         // because a queen(9P) is exchanged against a bishop(3P).
         // Actually worse than than -6 because the white queen will probably move to d2 to gain space with the
         // expected sequence (after e7-e6) g5-d8 e8-d8 d1-d2
-        val combinedValue = (value as Ongoing).fullEvaluation
+        val combinedValue = (value as Ongoing).numericValue
         assertTrue(
                 combinedValue < -6.0 && combinedValue > -7.5, // the queen mobility isn't worth a pawn so combined value shouldn't be worse than -7
                 "Min-Max-computation out of bounds. expected value [-6, -7.5] but is: $combinedValue")
