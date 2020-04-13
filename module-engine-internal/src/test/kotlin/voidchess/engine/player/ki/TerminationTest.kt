@@ -10,10 +10,14 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 
 import org.testng.Assert.assertEquals
+import voidchess.common.board.other.StartConfig
+import voidchess.completeMoveHistory
 import voidchess.engine.board.EngineChessGame
+import voidchess.engine.player.ki.concurrent.SingleThreadStrategy
 import voidchess.initChessGame
 import voidchess.toManualConfig
 import kotlin.system.exitProcess
+import kotlin.system.measureTimeMillis
 
 
 internal class TerminationTest {
@@ -39,71 +43,17 @@ internal class TerminationTest {
             initChessGame(chess960IndexOrDesc, *moveArray)
         }
 
-        testTermination(game)
+        testTermination(game.startConfig, game.completeMoveHistory)
     }
 
     @Test
-    fun testInvarianz() {
+    fun testInvariance() {
         val des = "black 0 Rook-white-a1-0 King-white-e1-0 Pawn-white-a5-false " + "Pawn-black-b7-false King-black-e8-0 Rook-black-h8-3"
 
         val game = initChessGame(des, "b7-b5")
-        testTermination(game)
+        testTermination(game.startConfig, game.completeMoveHistory)
         val newDes = "white 1 Rook-white-a1-0 King-white-e1-0 Pawn-white-a5-false " + "Pawn-black-b5-true King-black-e8-0 Rook-black-h8-3"
         assertEquals(game.toString(), newDes)
-    }
-
-    private fun testTermination(game: EngineChessGame, pruner: SearchTreePruner = PrunerWithIrreversibleMoves(1, 1, 2, 2), staticEvaluation: EvaluatingStatically = EvaluatingAsIsNow) {
-        val numberFormat = NumberFormat.getPercentInstance()
-        val dynamicEvaluation = EvaluatingMinMax(pruner, staticEvaluation)
-
-        val possibleMoves = game.getAllMoves()
-        val numberOfPossibleMoves = possibleMoves.size.toDouble()
-        var moveIndex = 0
-        try {
-            for (move in possibleMoves) {
-                dynamicEvaluation.evaluateMove(game, move)
-                println(numberFormat.format(++moveIndex / numberOfPossibleMoves))
-            }
-        } catch (e: Exception) {
-            val gameString = game.toString()
-            throw RuntimeException(
-                    e.toString() + "-after Moves:"
-                            + game.completeHistory + " -leading to position:"
-                            + gameString)
-        } catch (e: AssertionError) {
-            val extendedE = AssertionError(e.message + " History:" + game.completeHistory)
-            extendedE.stackTrace = e.stackTrace
-            throw extendedE
-        }
-
-    }
-
-    internal fun testTermination(game: EngineChessGameImpl, pruner: SearchTreePruner, move: Move) {
-        val initDescription = game.toString()
-        val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
-
-        val possibleMoves = game.getAllMoves()
-
-        if (!possibleMoves.contains(move)) {
-            throw RuntimeException("suggested move:" + move.toString()
-                    + "not possible in initial position: " + initDescription)
-        }
-
-        try {
-            dynamicEvaluation.evaluateMove(game, move)
-            // Invariante: evaluateMove darf game nicht ändern
-            val msg = "after Move:" + move.toString() + " History:" + game.shortTermHistory
-            assertEquals(game.toString(), initDescription, msg)
-        } catch (e: Exception) {
-            val gameToString = game.toString()
-            throw RuntimeException(e.toString() + "-after Moves:" + game.shortTermHistory + " -leading to position:"
-                    + gameToString)
-        } catch (e: AssertionError) {
-            val extendedE = AssertionError(e.message + " History:" + game.shortTermHistory)
-            extendedE.stackTrace = e.stackTrace
-            throw extendedE
-        }
-
     }
 
     companion object {
@@ -111,113 +61,144 @@ internal class TerminationTest {
         @JvmStatic
         fun main(args: Array<String>) {
             if (args.size == 1) {
-                when (args[0]) {
-                    "benchmark1" -> benchmark(false)
-                    "benchmark2" -> benchmark(true)
+                args[0].let { param1 ->
+                    if(param1.startsWith("benchmark")) {
+                        benchmark(param1.substring("benchmark".length).toInt())
+                    }
                 }
             } else {
                 loadTest()
             }
         }
+    }
+}
 
-        private fun benchmark(longTest: Boolean) {
-            val moves: Array<String> = mutableListOf<String>().apply {
-                add("e2-e4")
-                add("e7-e5")
-                add("g1-f3")
-                add("b8-c6")
-                add("f1-b5")
-                add("f8-c5")
-                if(longTest) {
-                    add("d2-d3")
-                    add("d7-d6")
-                    add("b1-c3")
-                    add("c8-g4")
-                }
-            }.toTypedArray()
+private fun benchmark(benchmarkLevel: Int) {
+    val pruner: SearchTreePruner
+    val movesSoFarHistory: String
 
-            val game = initChessGame(518, *moves)
+    val closedPositionHistory = "e2-e4,e7-e5,g1-f3,b8-c6,f1-b5,f8-c5"
+    val openedPositionHistory = closedPositionHistory + "d2-d3,d7-d6,b1-c3,c8-g4"
 
-            val pruner = PrunerWithIrreversibleMoves(1, 2, 4, 2)
-            val staticEvaluation = EvaluatingAsIsNow//new EvaluatingToConstant();//
-            loadTest(game, pruner, staticEvaluation, "Benchmark" + if (longTest) "2" else "1")
+    when(benchmarkLevel) {
+        1 -> {
+            pruner = PrunerWithIrreversibleMoves(1, 2, 4, 2)
+            movesSoFarHistory = closedPositionHistory
         }
+        2 -> {
+            pruner = PrunerWithIrreversibleMoves(1, 2, 4, 2)
+            movesSoFarHistory = openedPositionHistory
+        }
+        3 -> {
+            pruner = AllMovesOrNonePruner(2, 5, 3)
+            movesSoFarHistory = openedPositionHistory
+        }
+        4 -> {
+            pruner = AllMovesOrNonePruner(3, 3, 3)
+            movesSoFarHistory = "d2-d3,d7-d6"
+        }
+        else -> throw IllegalArgumentException("unknown benchmark level: $benchmarkLevel")
+    }
 
-        private fun loadTest() {
-            // Loadtest
-            println("Loadtest: Start")
+    val movesSoFar = movesSoFarHistory.split(",").toTypedArray()
 
-            // Grundaufstellung ohne Bauern
-            val des = ("white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
-                    + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
-                    + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
-                    + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0")
-            loadTest(des)
+    val game = initChessGame(518, *movesSoFar)
+    val staticEvaluation = EvaluatingAsIsNow
+    loadTest(game, pruner, staticEvaluation, "Benchmark Level $benchmarkLevel")
+}
 
-            // Grundaufstellung mit Bauern vor König und ohne Läufer
+private fun loadTest() {
+    // Loadtest
+    println("load test: start")
+
+    // Grundaufstellung ohne Bauern
+    val des = ("white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
+            + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
+            + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
+            + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0")
+    loadTest(des)
+
+    // Grundaufstellung mit Bauern vor König und ohne Läufer
 //            des = ("white 0 Rook-white-a1-0 Knight-white-b1 "
 //                    + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rook-white-h1-0 "
 //                    + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
 //                    + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false " + "Rook-black-a8-0 Knight-black-b8 "
 //                    + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rook-black-h8-0")
-            // loadTest( des );
+    // loadTest( des );
 
-            // Grundaufstellung mit Bauern vor König und ohne Königsläufer
+    // Grundaufstellung mit Bauern vor König und ohne Königsläufer
 //            des = ("white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
 //                    + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rook-white-h1-0 "
 //                    + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
 //                    + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
 //                    + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
 //                    + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rook-black-h8-0")
-            // loadTest( des );
+    // loadTest( des );
 
-            // Grundaufstellung mit Bauern vor König
+    // Grundaufstellung mit Bauern vor König
 //            des = ("white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
 //                    + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
 //                    + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
 //                    + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
 //                    + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
 //                    + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0")
-            // loadTest( des );
+    // loadTest( des );
 
-            // Grundaufstellung mit Bauern vor König und ohne Damen
+    // Grundaufstellung mit Bauern vor König und ohne Damen
 //            des = ("white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
 //                    + "King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
 //                    + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
 //                    + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
 //                    + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
 //                    + "King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0")
-            // loadTest( des );
+    // loadTest( des );
 
-            // Zeit von
-            // Grundaufstellung mit Bauern vor König und ohne Königsläufer
-            // ist in etwa so groß wie
-            // Grundaufstellung mit Bauern vor König und ohne Dame!!! Warum?
-            exitProcess(0)
+    // Zeit von
+    // Grundaufstellung mit Bauern vor König und ohne Königsläufer
+    // ist in etwa so groß wie
+    // Grundaufstellung mit Bauern vor König und ohne Dame!!! Warum?
+    exitProcess(0)
+}
+
+private fun loadTest(des: String) {
+    val game = EngineChessGameImpl(des.toManualConfig())
+    val pruner = PrunerWithIrreversibleMoves(2, 3, 4, 3)
+    val staticEvaluation = EvaluatingAsIsNow
+    loadTest(game, pruner, staticEvaluation, "load test")
+}
+
+private fun loadTest(game: EngineChessGame, pruner: SearchTreePruner, staticEvaluation: EvaluatingStatically, type: String) {
+    val decimalFormat = DecimalFormat("#.0")
+
+    try {
+        println("$type (computation started)")
+        val durationInMs = measureTimeMillis {
+            testTermination(game.startConfig, game.completeMoveHistory, pruner, staticEvaluation)
         }
-
-        private fun loadTest(des: String) {
-            val game = EngineChessGameImpl(des.toManualConfig())
-            val pruner = PrunerWithIrreversibleMoves(2, 3, 4, 3)
-            val staticEvaluation = EvaluatingAsIsNow
-            loadTest(game, pruner, staticEvaluation, "Loadtest")
-        }
-
-        private fun loadTest(game: EngineChessGame, pruner: SearchTreePruner, staticEvaluation: EvaluatingStatically, type: String) {
-            val decimalFormat = DecimalFormat("#.0")
-            val computerPlayer = TerminationTest()
-
-            try {
-                println("$type: Berechnung gestartet")
-                val time = System.currentTimeMillis()
-                computerPlayer.testTermination(game, pruner, staticEvaluation)
-                println("Dauer: " + decimalFormat.format((System.currentTimeMillis() - time) / 1000.0) + "s")
-            } catch (e: RuntimeException) {
-                println(type + "fehler:" + e.message)
-            } finally {
-                println("$type: Ende")
-            }
-        }
+        println("duration: ${decimalFormat.format(durationInMs / 1000.0)}s")
+    } catch (e: RuntimeException) {
+        println("$type threw exception $e")
+    } finally {
+        println("$type (computation finished)")
     }
+}
 
+private fun testTermination(
+    startConfig: StartConfig,
+    movesSoFar: List<Move>,
+    pruner: SearchTreePruner = PrunerWithIrreversibleMoves(1, 1, 2, 2),
+    staticEvaluation: EvaluatingStatically = EvaluatingAsIsNow
+) {
+    val numberFormat = NumberFormat.getPercentInstance()
+    val dynamicEvaluation = EvaluatingMinMax(pruner, staticEvaluation)
+
+    val concurrencyStrategy = SingleThreadStrategy { movesComputed: Int, totalMoves: Int ->
+        println(numberFormat.format(movesComputed.toDouble() / totalMoves.toDouble()))
+    }
+    concurrencyStrategy.evaluateMovesBestMoveFirst(
+        startConfig = startConfig,
+        movesSoFar = movesSoFar,
+        evaluatingMinMax = dynamicEvaluation,
+        numericEvalOkRadius = KaiEngine.okDistanceToBest
+    )
 }

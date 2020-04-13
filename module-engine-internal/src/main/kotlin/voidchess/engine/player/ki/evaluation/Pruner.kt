@@ -12,7 +12,7 @@ internal interface SearchTreePruner {
 
     companion object {
         // everything higher seems to be unachievable at the moment
-        const val MAX_SEARCH_DEPTH = 5
+        const val MAX_SEARCH_DEPTH = 8
     }
 }
 

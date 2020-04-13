@@ -15,7 +15,7 @@ internal class EvaluatingMinMax(
     constructor() : this(PrunerWithIrreversibleMoves(), EvaluatingAsIsNow)
 
     // TODO make sure currentMaxOneLevelUp is provided one level up!!!
-    fun evaluateMove(game: EngineChessGame, move: Move, currentMaxOneLevelUp: Evaluation?=null): Evaluation {
+    fun evaluateMove(game: EngineChessGame, move: Move, currentMaxOneLevelUp: Evaluation?): Evaluation {
         val depth = 0
         val forWhite = game.isWhiteTurn
 

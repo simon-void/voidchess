@@ -31,13 +31,14 @@ internal class EvaluatingMinMaxTest {
     @Test(dataProvider = "gameWithObviousEvalProvider")
     fun testMinMaxEvaluatesToExpectedRange(game: EngineChessGameImpl, pruner: SearchTreePruner, move: Move, expectedEvalRange: ClosedRange<Double>, msg: String) {
         val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
-        val evaluation = dynamicEvaluation.evaluateMove(game, move) as Ongoing
+        val evaluation = dynamicEvaluation.evaluateMove(game, move, null) as Ongoing
 
         assertTrue(
                 evaluation.numericValue in expectedEvalRange,
                 "eval should be in range $expectedEvalRange but was: ${evaluation.numericValue}. msg: $msg")
 
-        val evaluationOfColorInverted = dynamicEvaluation.evaluateMove(game.copyGameWithInvertedColors(), move.mirrorRow()) as Ongoing
+        val evaluationOfColorInverted =
+            dynamicEvaluation.evaluateMove(game.copyGameWithInvertedColors(), move.mirrorRow(), null) as Ongoing
 
         assertTrue(
                 evaluationOfColorInverted.numericValue in expectedEvalRange,
@@ -50,7 +51,7 @@ internal class EvaluatingMinMaxTest {
         val game = EngineChessGameImpl(des.toManualConfig())
         val dynamicEvaluation = EvaluatingMinMax()
 
-        dynamicEvaluation.evaluateMove(game, Move.byCode("a6-b6"))
+        dynamicEvaluation.evaluateMove(game, Move.byCode("a6-b6"), null)
         // invariance: evaluateMove must not change the game configuration
         assertEquals(game.toString(), des)
     }
@@ -61,7 +62,7 @@ internal class EvaluatingMinMaxTest {
 
         val dynamicEvaluation = EvaluatingMinMax()
 
-        val value = dynamicEvaluation.evaluateMove(game, Move.byCode("e7-e6")) // the queen can be taken via g5-d8
+        val value = dynamicEvaluation.evaluateMove(game, Move.byCode("e7-e6"), null) // the queen can be taken via g5-d8
 
         // The best move for white is obviously taking the queen
         // so the value of the move e7-e6 should be around -6

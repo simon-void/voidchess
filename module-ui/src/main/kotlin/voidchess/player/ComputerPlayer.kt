@@ -41,7 +41,7 @@ class ComputerPlayer(
         ui.showThoughts(true)
 
         // for ergonomic reasons lets set the minimum successful look-up time to 300ms
-        val chosenMove: EvaluatedMove = ensureMinimumDurationInMs(500) {
+        val chosenMove: EvaluatedMove = ensureMinimumDurationInMs(300) {
             nextMove()
         }
 

@@ -3,6 +3,7 @@ package voidchess.engine.player.ki.concurrent
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
 import org.testng.annotations.AfterClass
+import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.*
@@ -19,7 +20,14 @@ import voidchess.mirrorRow
 
 internal class MultiThreadStrategyTest {
     private val coresToUse = (Runtime.getRuntime().availableProcessors()-1).coerceAtLeast(1)
-    private val strategy = MultiThreadStrategy(coresToUse) { _, _ -> Unit }
+    private val strategy = MultiThreadStrategy(coresToUse) { _, _ -> progressCallbackInvokedCounter++ }
+
+    var progressCallbackInvokedCounter = 0
+
+    @BeforeMethod
+    fun setup() {
+        progressCallbackInvokedCounter = 0
+    }
 
     @AfterClass
     fun shutdown() {
@@ -53,29 +61,6 @@ internal class MultiThreadStrategyTest {
             Move.byCode("d6-d7")
         ),
         arrayOf(1, initChessGame(518, "d2-d3", "d7-d6", "c1-g5", "e7-e6"), Move.byCode("g5-d8"))
-    )
-
-    //worst move goes into matt
-    //color inverted worst move goes into matt
-    //worst move by value
-    @DataProvider(name = "worstMoveProvider")
-    fun worstMoveBoardsProvider(): Array<Array<Any>> = arrayOf(
-        arrayOf(
-            1,
-            EngineChessGameImpl("white 0 King-white-g1-2 Pawn-white-g2-false Pawn-white-h2-false Rook-black-f4-2 King-black-e8-0".toManualConfig()),
-            Move.byCode("g1-h1")
-        ),
-        arrayOf(
-            1,
-            EngineChessGameImpl("black 0 King-black-g8-2 Pawn-black-g7-false Pawn-black-h7-false Rook-white-f4-2 King-white-e1-0".toManualConfig()),
-            Move.byCode("g8-h8")
-        ),
-        arrayOf(
-            1,
-            EngineChessGameImpl("white 0 King-white-e1-0 Rook-black-f2-2 Queen-black-d1 King-black-e8-0".toManualConfig()),
-            Move.byCode("e1-f2")
-        ),
-        arrayOf(1, initChessGame(518, "d2-d3", "d7-d6", "c1-g5"), Move.byCode("e7-e6"))
     )
 
     @DataProvider(name = "getFindBestResultData")
@@ -148,15 +133,6 @@ internal class MultiThreadStrategyTest {
         assertEquals(invertedComputedMove, bestMove.mirrorRow(), "best move (inverted board)")
     }
 
-    @Test(dataProvider = "worstMoveProvider")
-    fun testFindWorstMoveIn(depth: Int, game: EngineChessGameImpl, worstMove: Move) {
-        val computedMove = getWorstMoveIn(depth, game).move
-        assertEquals(computedMove, worstMove, "worst move")
-
-        val invertedComputedMove = getWorstMoveIn(depth, game.copyGameWithInvertedColors()).move
-        assertEquals(invertedComputedMove, worstMove.mirrorRow(), "best move (inverted board)")
-    }
-
     @Test(dataProvider = "getFindBestResultData", dependsOnMethods = ["testFindBestMoveIn"])
     fun testFindBestResultIn(game: EngineChessGameImpl, pruner: SearchTreePruner, expectedResult: Evaluation) {
         val resultSet = evaluate(pruner, game)
@@ -213,29 +189,24 @@ internal class MultiThreadStrategyTest {
     fun testMinMaxIsInvokedForEachPossibleMove() {
         val easyPruner = PrunerWithIrreversibleMoves(1, 2, 2, 2)
         val minMax = EvaluatingMinMax(easyPruner, EvaluatingAsIsNow)
-        val evaluatedMoves = strategy.evaluateMovesBestMoveFirst(
+        strategy.evaluateMovesBestMoveFirst(
             "white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false".toManualConfig(),
             emptyList(),
             minMax
         )
-        val actualMoves = evaluatedMoves.map { it.move }
         val expectedMoves = setOf("h1-g1", "h1-g2", "h1-h2", "a7-a8").map { Move.byCode(it) }.toSet()
 
-        assertEquals(actualMoves.toSet(), expectedMoves, "there should be one evaluation for each possible move")
+        // minus one because the function is also invoked once at the start to signal the start of the computation
         assertEquals(
-            actualMoves.size,
-            expectedMoves.size
-        ) //to make sure that the toSet-operation didn't remove a double evaluation
+            progressCallbackInvokedCounter - 1,
+            expectedMoves.size,
+            "there should be one progressCallback for each possible move"
+        )
     }
 
     private fun getBestMoveInIn(depth: Int, game: EngineChessGame): EvaluatedMove {
         val moves = evaluate(depth, game)
         return moves.first()
-    }
-
-    private fun getWorstMoveIn(depth: Int, game: EngineChessGame): EvaluatedMove {
-        val moves = evaluate(depth, game)
-        return moves.last()
     }
 
     private fun evaluate(depth: Int, game: EngineChessGame): List<EvaluatedMove> {

@@ -7,10 +7,10 @@ import voidchess.engine.player.ki.evaluation.SearchTreePruner
 
 internal object DifficultyOption: Option {
     private val levelsAndPruner: List<Pair<String, SearchTreePruner>> = listOf(
-        "level 1" to AllMovesOrNonePruner(1, 4, 3),
+        "level 1" to AllMovesOrNonePruner(1, 5, 3),
 //        "level 2" to PrunerWithIrreversibleMoves(1, 2, 4, 3),
-        "level 2" to AllMovesOrNonePruner(2, 4, 3),
-        "level 3" to AllMovesOrNonePruner(3, 5, 4)
+        "level 2" to AllMovesOrNonePruner(2, 5, 3)
+//        "level 3" to AllMovesOrNonePruner(3, 4, 3)
     )
     override val name: String = "Difficulty"
     override val possibleValues: List<String> get() = levelsAndPruner.map { it.first }

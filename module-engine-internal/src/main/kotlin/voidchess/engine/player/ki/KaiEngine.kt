@@ -53,7 +53,8 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
         val evaluatingMinMax = EvaluatingMinMax(pruner, staticEvaluation)
 
         val evaluatedMove = lookUpNextMove(startConfig, moves, evaluatingMinMax)
-            ?: concurrencyStrategyCache.get(coresToUse).evaluateMovesBestMoveFirst(startConfig, moves, evaluatingMinMax).pickOkMove()
+            ?: concurrencyStrategyCache.get(coresToUse)
+                .evaluateMovesBestMoveFirst(startConfig, moves, evaluatingMinMax, okDistanceToBest).pickOkMove()
 
         EngineAnswer.Success(evaluatedMove)
     }catch (e: Exception) {
@@ -117,8 +118,6 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
         fun pickEvaluateMoveBy(move: Move) = sortedEvaluatedMoves.first { it.move.equalsMove(move) }
 
-        val okDistanceToBest = .2
-
         // the weight lies between (0-1]
         // with bestMove will have a weight of 1
         // and a move that is almost okDistanceToBest apart will have a weight of almost 0
@@ -128,7 +127,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
                 if(evaluation !is NumericalEvaluation) break
                 val distanceToBest = bestFullEvaluation-evaluation.numericValue
                 if(distanceToBest>=okDistanceToBest) break
-                add(Pair(move, (okDistanceToBest-distanceToBest)/okDistanceToBest))
+                add(move to (okDistanceToBest-distanceToBest)/okDistanceToBest)
             }
         }
 
@@ -152,6 +151,10 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
         }
 
         return pickEvaluateMoveBy(moveWithPercentage.first)
+    }
+
+    companion object {
+        const val okDistanceToBest = .2
     }
 }
 
