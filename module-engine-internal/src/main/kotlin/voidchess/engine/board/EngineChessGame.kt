@@ -23,9 +23,9 @@ internal interface EngineChessGame : StaticChessBoard {
     val shortTermHistory: String
 
     fun <T> withMove(move: Move, workWithGameAfterMove: (MoveResult)->T): T
-    fun getAllMoves(): Collection<Move>
-    fun getCriticalMoves(): Collection<Move>
-    fun getTakingMoves(): Collection<Move>
+    fun getAllMoves(): ArrayList<Move>
+    fun getCriticalMoves(): ArrayList<Move>
+    fun getTakingMoves(): ArrayList<Move>
     fun countReachableMoves(): MoveCounter
 
     fun copyGame(numberOfInstances: Int): List<EngineChessGame>

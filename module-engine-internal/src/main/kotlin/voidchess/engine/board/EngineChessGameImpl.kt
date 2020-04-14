@@ -158,7 +158,7 @@ internal class EngineChessGameImpl private constructor(
         return !board.getKing(caseWhite).isSelectable(board)
     }
 
-    override fun getAllMoves(): List<Move> {
+    override fun getAllMoves(): ArrayList<Move> {
         val possibleMoves = ArrayList<Move>(64)
         board.forAllFiguresOfColor(isWhiteTurn) { figure ->
             figure.getPossibleMoves(board, possibleMoves)
@@ -166,16 +166,18 @@ internal class EngineChessGameImpl private constructor(
         return possibleMoves
     }
 
-    override fun getCriticalMoves(): Collection<Move> {
+    override fun getCriticalMoves(): ArrayList<Move> {
         val criticalMoves = LinkedHashSet<Move>()
         board.forAllFiguresOfColor(isWhiteTurn) { figure ->
             figure.getCriticalMoves(board, criticalMoves)
         }
-        return criticalMoves
+        return ArrayList<Move>(criticalMoves.size).apply {
+            addAll(criticalMoves)
+        }
     }
 
-    override fun getTakingMoves(): List<Move> {
-        val takingMoves = ArrayList<Move>(64)
+    override fun getTakingMoves(): ArrayList<Move> {
+        val takingMoves = ArrayList<Move>(16)
         board.forAllFiguresOfColor(isWhiteTurn) { figure ->
             figure.getPossibleTakingMoves(board, takingMoves)
         }
