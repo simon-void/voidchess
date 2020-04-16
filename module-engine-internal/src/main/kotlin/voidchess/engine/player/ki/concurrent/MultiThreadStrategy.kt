@@ -5,6 +5,7 @@ import voidchess.common.player.ki.ProgressCallback
 import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.common.player.ki.evaluation.Evaluation
 import voidchess.engine.board.EngineChessGame
+import voidchess.engine.player.ki.evaluation.BestResponseSet
 import voidchess.engine.player.ki.evaluation.EvaluatingMinMax
 import java.util.*
 import java.util.concurrent.*
@@ -32,8 +33,16 @@ internal class MultiThreadStrategy(
     ): MutableList<EvaluatedMove> {
 
         val currentMaxEvaluationRef = AtomicReference<Evaluation?>(null)
+        val bestResponsesRef = AtomicReference(BestResponseSet())
         val callablesToEvaluate =
-            getEvaluableMoves(game, movesToEvaluate, evaluatingMinMax, currentMaxEvaluationRef, numericEvalOkRadius)
+            getEvaluableMoves(
+                game,
+                movesToEvaluate,
+                evaluatingMinMax,
+                currentMaxEvaluationRef,
+                bestResponsesRef,
+                numericEvalOkRadius
+            )
 
         val result = try {
             evaluate(callablesToEvaluate)
@@ -77,6 +86,7 @@ internal class MultiThreadStrategy(
         movesToEvaluate: Collection<Move>,
         evaluatingMinMax: EvaluatingMinMax,
         currentMaxEvaluationRef: AtomicReference<Evaluation?>,
+        bestResponsesRef: AtomicReference<BestResponseSet>,
         numericEvalOkRadius: Double
     ): LinkedList<Callable<EvaluatedMove>> {
         assert(movesToEvaluate.isNotEmpty()) { "no moves were possible and therefore evaluable" }
@@ -90,7 +100,12 @@ internal class MultiThreadStrategy(
         for (move in movesToEvaluate) {
             callablesToEvaluate.add(
                 MoveEvaluationCallable(
-                    gameInstances.next(), move, evaluatingMinMax, currentMaxEvaluationRef, numericEvalOkRadius
+                    gameInstances.next(),
+                    move,
+                    evaluatingMinMax,
+                    currentMaxEvaluationRef,
+                    bestResponsesRef,
+                    numericEvalOkRadius
                 )
             )
         }
@@ -112,6 +127,7 @@ internal class MultiThreadStrategy(
         private val move: Move,
         private val evaluatingMinMax: EvaluatingMinMax,
         private val currentMaxEvaluationRef: AtomicReference<Evaluation?>,
+        private val bestResponsesRef: AtomicReference<BestResponseSet>,
         private val numericEvalOkRadius: Double
     ) : Callable<EvaluatedMove> {
 
@@ -119,9 +135,22 @@ internal class MultiThreadStrategy(
         override fun call(): EvaluatedMove? {
             return try {
                 val currentMaxEvaluation = currentMaxEvaluationRef.get()
+                val bestResponses = bestResponsesRef.get()
                 val currentOkEval: Evaluation? = getOkEval(currentMaxEvaluation, numericEvalOkRadius)
 
-                val latestEvaluation = evaluatingMinMax.evaluateMove(game, move, currentOkEval)
+                val (bestResponse, latestEvaluation) = evaluatingMinMax.evaluateMove(
+                    game,
+                    move,
+                    currentOkEval,
+                    bestResponses
+                )
+
+                if(bestResponse!=null) {
+                    bestResponsesRef.updateAndGet { mutableSet ->
+                        mutableSet.add(bestResponse)
+                        mutableSet
+                    }
+                }
 
                 if (currentOkEval == null || latestEvaluation > currentOkEval) {
                     currentMaxEvaluationRef.updateAndGet { latestMaxEvaluation: Evaluation? ->
