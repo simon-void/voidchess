@@ -14,7 +14,6 @@ internal class EvaluatingMinMax(
 
     constructor() : this(PrunerWithIrreversibleMoves(), EvaluatingAsIsNow)
 
-    // TODO make sure currentMaxOneLevelUp is provided one level up!!!
     fun evaluateMove(game: EngineChessGame, move: Move, currentMaxOneLevelUp: Evaluation?): Evaluation {
         val depth = 0
         val forWhite = game.isWhiteTurn
@@ -25,7 +24,17 @@ internal class EvaluatingMinMax(
                     val thisMoveHasHitFigure = game.hasHitFigure
                     val thisMoveIsChess = game.isCheck
 
-                    getMin(game, forWhite, depth, thisMoveIsChess, thisMoveHasHitFigure, game.getAllMoves(), currentMaxOneLevelUp)
+                    val (_, eval) = getMin(
+                        game,
+                        forWhite,
+                        depth,
+                        thisMoveIsChess,
+                        thisMoveHasHitFigure,
+                        game.getAllMoves(),
+                        currentMaxOneLevelUp,
+                        emptySet()
+                    )
+                    eval
                 }
                 MoveResult.CHECKMATE -> CheckmateOther(depth + 1)
                 MoveResult.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
@@ -41,15 +50,18 @@ internal class EvaluatingMinMax(
                        lastMove_isChess: Boolean,
                        lastMove_hasHitFigure: Boolean,
                        minPossibleMovesBuffer: ArrayList<Move>,
-                       currentMaxOneLevelUp: Evaluation?
-    ): Evaluation {
+                       currentMaxOneLevelUp: Evaluation?,
+                       movesToTryFirst: Set<Move>
+    ): EvaluatedMove {
         assert(minPossibleMovesBuffer.isNotEmpty()) {
             "minPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"
         }
 
         var currentMinEvaluation: Evaluation? = null
+        var currentBestMove: Move? = null
+        val bestResponses = mutableSetOf<Move>()
 
-        for (move in minPossibleMovesBuffer.shuffle()) {
+        for (move in minPossibleMovesBuffer.shuffle(movesToTryFirst)) {
 
             assert(game.isFreeArea(move.to) || !game.getFigure(move.to).isKing()) {
                 "getMin: ${game.getFigureOrNull(move.from)} hits King white Move $move"
@@ -82,15 +94,18 @@ internal class EvaluatingMinMax(
                         if (maxPossibleMovesBuffer.isEmpty()) {
                             strategy.getNumericEvaluation(game, forWhite)
                         }else{
-                            getMax(
+                            val (bestResponse, eval)= getMax(
                                 game,
                                 forWhite,
                                 newDepth,
                                 thisMoveIsChess,
                                 thisMoveHasHitFigure,
                                 maxPossibleMovesBuffer,
-                                currentMinEvaluation
+                                currentMinEvaluation,
+                                bestResponses
                             )
+                            bestResponses.add(bestResponse)
+                            eval
                         }
                     }
                     MoveResult.CHECKMATE -> {
@@ -109,6 +124,7 @@ internal class EvaluatingMinMax(
 
             if (currentMinEvaluation == null || latestEvaluation < currentMinEvaluation) {
                 currentMinEvaluation = latestEvaluation
+                currentBestMove = move
 
                 // Alpha-Beta Pruning
                 if (currentMaxOneLevelUp != null && latestEvaluation <= currentMaxOneLevelUp) {
@@ -119,7 +135,7 @@ internal class EvaluatingMinMax(
             if (stopLookingForBetterMove) break
         }
 
-        return currentMinEvaluation
+        return currentMinEvaluation?.let { eval-> currentBestMove?.let { move -> EvaluatedMove(move, eval) } }
             ?: throw IllegalStateException(
                 "minPossibleMovesBuffer must have been empty! game: $game, latest moves: ${game.shortTermHistory}"
             )
@@ -131,15 +147,18 @@ internal class EvaluatingMinMax(
                        lastMoveIsChess: Boolean,
                        lastMoveHasHitFigure: Boolean,
                        maxPossibleMovesBuffer: ArrayList<Move>,
-                       currentMinOneLevelUp: Evaluation?
-    ): Evaluation {
+                       currentMinOneLevelUp: Evaluation?,
+                       movesToTryFirst: Set<Move>
+    ): EvaluatedMove {
         assert(maxPossibleMovesBuffer.isNotEmpty()) {
             "maxPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"
         }
 
         var currentMaxEvaluation: Evaluation? = null
+        var currentBestMove: Move? = null
+        val bestResponses = mutableSetOf<Move>()
 
-        for (move in maxPossibleMovesBuffer.shuffle()) {
+        for (move in maxPossibleMovesBuffer.shuffle(movesToTryFirst)) {
 
             assert(game.isFreeArea(move.to) || !game.getFigure(move.to).isKing()) {
                 "getMax: ${game.getFigureOrNull(move.from)} hits King white Move $move"
@@ -170,15 +189,18 @@ internal class EvaluatingMinMax(
                         if (minPossibleMovesBuffer.isEmpty()) {
                             strategy.getNumericEvaluation(game, forWhite)
                         } else {
-                            getMin(
+                            val (bestResponse, eval)= getMin(
                                 game,
                                 forWhite,
                                 depth,
                                 thisMoveIsChess,
                                 thisMoveHasHitFigure,
                                 minPossibleMovesBuffer,
-                                currentMaxEvaluation
+                                currentMaxEvaluation,
+                                bestResponses
                             )
+                            bestResponses.add(bestResponse)
+                            eval
                         }
                     }
                     MoveResult.CHECKMATE -> {
@@ -193,6 +215,7 @@ internal class EvaluatingMinMax(
 
             if (currentMaxEvaluation == null || latestEvaluation > currentMaxEvaluation) {
                 currentMaxEvaluation = latestEvaluation
+                currentBestMove = move
 
                 // Alpha-Beta Pruning
                 if (currentMinOneLevelUp != null && latestEvaluation >= currentMinOneLevelUp) {
@@ -203,7 +226,7 @@ internal class EvaluatingMinMax(
             if (stopLookingForBetterMove) break
         }
 
-        return currentMaxEvaluation
+        return currentMaxEvaluation?.let { eval-> currentBestMove?.let { move -> EvaluatedMove(move, eval) } }
             ?: throw IllegalStateException(
                 "maxPossibleMovesBuffer must have been empty! game: $game, latest moves: ${game.shortTermHistory}"
             )
@@ -213,7 +236,7 @@ internal class EvaluatingMinMax(
 private val emptyMoveList: ArrayList<Move> = ArrayList(0)
 
 // this makes Alpha-Beta-Pruning 10-25% faster (due to increasing the chance of finding good moves earlier)
-private fun ArrayList<Move>.shuffle(): ArrayList<Move> {
+private fun ArrayList<Move>.shuffle(movesToTryFirst: Set<Move>): ArrayList<Move> {
     val maxIndex = this.size-1
     if(maxIndex>2) {
         for(i in 0 until (maxIndex/2)-1 step 2) {
@@ -221,6 +244,16 @@ private fun ArrayList<Move>.shuffle(): ArrayList<Move> {
             val inverseI = maxIndex-i
             this[i] = this[inverseI]
             this[inverseI] = temp
+        }
+    }
+    var indexToReplace = 0
+    movesToTryFirst.forEach { move->
+        val indexOfMoveToTryFirst = this.indexOf(move)
+        if(indexOfMoveToTryFirst>indexToReplace) {
+            val temp = this[indexToReplace]
+            this[indexToReplace] = this[indexOfMoveToTryFirst]
+            this[indexOfMoveToTryFirst] = temp
+            indexToReplace++
         }
     }
     return this

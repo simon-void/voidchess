@@ -97,6 +97,10 @@ private fun benchmark(benchmarkLevel: Int) {
             pruner = AllMovesOrNonePruner(3, 3, 3)
             movesSoFarHistory = "d2-d3,d7-d6"
         }
+        5 -> {
+            pruner = AllMovesOrNonePruner(3, 5, 3)
+            movesSoFarHistory = closedPositionHistory
+        }
         else -> throw IllegalArgumentException("unknown benchmark level: $benchmarkLevel")
     }
 
