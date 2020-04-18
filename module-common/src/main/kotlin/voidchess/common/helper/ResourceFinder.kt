@@ -13,13 +13,16 @@ import java.io.InputStream
  * @return an input stream to the file
  */
 @Throws(IOException::class)
-fun getResourceStream(relativePath: String): InputStream {
-    val file = File("module-ui/src/main/resources/$relativePath")
+fun getResourceStream(classFromModule: Class<*>, module: String, relativePath: String): InputStream {
+    val file = File("$module/src/main/resources/$relativePath")
     return if (file.exists()) {
         //should find file in file system
+        //println("loading from file: ${file.path}")
         FileInputStream(file)
     } else {
         //should find file in jar
-        file.javaClass.getResourceAsStream(relativePath)
+        val resourcePath = "/$relativePath"
+        //println("loading from module: <$module> resource: $resourcePath")
+        classFromModule.getResourceAsStream(resourcePath)
     }
 }

@@ -7,7 +7,7 @@ import java.awt.*
 import kotlin.system.exitProcess
 
 
-class ChessFrame : JFrame("  VoidChess960  ") {
+class ChessFrame : JFrame("  VoidChess  ") {
 
     init {
         iconImage = ImageLoader.icon

@@ -1,0 +1,40 @@
+WINDOWS
+-------
+
+jpackage --type exe \
+         --name VoidChess \
+         --description "a chess program" \
+         --vendor "StephanS" \
+         --app-version 3.2.0 \
+         --icon about/shortcut-icon.ico \
+         --input build/libs --dest build/installer \
+         --main-jar voidchess-3.2.0-all.jar \
+         --add-modules java.desktop \
+         --win-shortcut --win-menu
+
+Ubuntu
+------
+
+jpackage --type deb \
+         --name VoidChess \
+         --description "a chess program" \
+         --vendor "StephanS" \
+         --app-version 3.2.0 \
+         --icon about/shortcut-icon.png \
+         --input build/libs --dest build/installer \
+         --main-jar voidchess-3.2.0-all.jar \
+         --add-modules java.desktop \
+         --linux-shortcut --linux-menu-group Games
+
+macOS
+-----
+
+jpackage --type pkg \
+         --name VoidChess \
+         --description "a chess program" \
+         --vendor "StephanS" \
+         --app-version 3.2.0 \
+         --icon about/shortcut-icon.png \
+         --input build/libs --dest build/installer \
+         --main-jar voidchess-3.2.0-all.jar \
+         --add-modules java.desktop

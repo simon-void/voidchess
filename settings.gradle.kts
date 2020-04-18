@@ -1,4 +1,4 @@
 rootProject.name = "voidchess"
 
-include("module-common", "module-engine-internal", "module-ui")
+include("module-common", "module-engine", "module-ui")
 

@@ -8,7 +8,7 @@ import voidchess.common.helper.RuntimeFacade
 import voidchess.common.player.ki.Engine
 import voidchess.common.player.ki.EngineAnswer
 import voidchess.common.player.ki.evaluation.EvaluatedMove
-import voidchess.engine.player.ki.KaiEngine
+import voidchess.engine.KaiEngine
 import voidchess.ui.ComputerPlayerUI
 import voidchess.ui.TableInterface
 import voidchess.ui.Thumb
