@@ -7,6 +7,7 @@ import voidchess.common.board.move.Move
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
 import org.testng.annotations.DataProvider
+import voidchess.common.player.ki.evaluation.NumericalEvaluation
 import voidchess.common.player.ki.evaluation.Ongoing
 import voidchess.copyGameWithInvertedColors
 import voidchess.initChessGame
@@ -31,14 +32,16 @@ internal class EvaluatingMinMaxTest {
     @Test(dataProvider = "gameWithObviousEvalProvider")
     fun testMinMaxEvaluatesToExpectedRange(game: EngineChessGameImpl, pruner: SearchTreePruner, move: Move, expectedEvalRange: ClosedRange<Double>, msg: String) {
         val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
-        val evaluation = dynamicEvaluation.evaluateMove(game, move, null, BestResponseSet()) as Ongoing
+        val (_, evaluation) = dynamicEvaluation.evaluateMove(game, move, null, BestResponseSet())
+        require(evaluation is NumericalEvaluation)
 
         assertTrue(
                 evaluation.numericValue in expectedEvalRange,
                 "eval should be in range $expectedEvalRange but was: ${evaluation.numericValue}. msg: $msg")
 
-        val evaluationOfColorInverted =
-            dynamicEvaluation.evaluateMove(game.copyGameWithInvertedColors(), move.mirrorRow(), null, BestResponseSet()) as Ongoing
+        val (_, evaluationOfColorInverted) =
+            dynamicEvaluation.evaluateMove(game.copyGameWithInvertedColors(), move.mirrorRow(), null, BestResponseSet())
+        require(evaluationOfColorInverted is NumericalEvaluation)
 
         assertTrue(
                 evaluationOfColorInverted.numericValue in expectedEvalRange,
@@ -62,14 +65,15 @@ internal class EvaluatingMinMaxTest {
 
         val dynamicEvaluation = EvaluatingMinMax()
 
-        val value = dynamicEvaluation.evaluateMove(game, Move.byCode("e7-e6"), null, BestResponseSet()) // the queen can be taken via g5-d8
+        val (_, value) = dynamicEvaluation.evaluateMove(game, Move.byCode("e7-e6"), null, BestResponseSet()) // the queen can be taken via g5-d8
+        require(value is NumericalEvaluation)
 
         // The best move for white is obviously taking the queen
         // so the value of the move e7-e6 should be around -6
         // because a queen(9P) is exchanged against a bishop(3P).
         // Actually worse than than -6 because the white queen will probably move to d2 to gain space with the
         // expected sequence (after e7-e6) g5-d8 e8-d8 d1-d2
-        val combinedValue = (value as Ongoing).numericValue
+        val combinedValue = value.numericValue
         assertTrue(
                 combinedValue < -6.0 && combinedValue > -7.5, // the queen mobility isn't worth a pawn so combined value shouldn't be worse than -7
                 "Min-Max-computation out of bounds. expected value [-6, -7.5] but is: $combinedValue")
