@@ -9,7 +9,6 @@ import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.common.player.ki.evaluation.NumericalEvaluation
 import voidchess.engine.player.ki.concurrent.ConcurrencyStrategy
 import voidchess.engine.player.ki.concurrent.MultiThreadStrategy
-import voidchess.engine.player.ki.concurrent.SingleThreadStrategy
 import voidchess.engine.player.ki.evaluation.*
 import voidchess.engine.player.ki.openings.OpeningsLibrary
 import java.util.*
@@ -19,7 +18,7 @@ import kotlin.IllegalArgumentException
 
 class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
-    private val concurrencyStrategyCache = ConcurrencyStrategyContainer(progressCallback)
+    private val concurrencyStrategyCache = ConcurrencyStrategyContainer()
     private val openingsLibrary = OpeningsLibrary("openings.txt")
     private val staticEvaluation: EvaluatingStatically = EvaluatingAsIsNow
 
@@ -45,16 +44,14 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             return EngineAnswer.Error(validatorErrorMsg)
         }
 
-        //display that the computer is working
-        progressCallback(0, 1)
-
         val pruner = DifficultyOption.pruner
         val coresToUse = CoresToUseOption.coresToUse
         val evaluatingMinMax = EvaluatingMinMax(pruner, staticEvaluation)
 
-        val evaluatedMove = lookUpNextMove(startConfig, moves, evaluatingMinMax)
+        val evaluatedMove = openingsLibrary.lookUpNextMove(startConfig, moves, progressCallback)
             ?: concurrencyStrategyCache.get(coresToUse)
-                .evaluateMovesBestMoveFirst(startConfig, moves, evaluatingMinMax, okDistanceToBest).pickOkMove()
+                .evaluateMovesBestMoveFirst(startConfig, moves, evaluatingMinMax, okDistanceToBest, progressCallback)
+                .pickOkMove()
 
         EngineAnswer.Success(evaluatedMove)
     }catch (e: Exception) {
@@ -72,32 +69,6 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             movesApplied.add(move)
         }
         return null
-    }
-
-    private fun lookUpNextMove(
-        startConfig: StartConfig,
-        movesSoFar: List<Move>,
-        evaluatingMinMax: EvaluatingMinMax
-    ): EvaluatedMove? {
-
-        val chess960StartIndex: Int? = when (startConfig) {
-            is StartConfig.ClassicConfig -> startConfig.chess960Index
-            is StartConfig.Chess960Config -> startConfig.chess960Index
-            is StartConfig.ManualConfig -> null
-        }
-
-        if (chess960StartIndex == null || movesSoFar.size >= openingsLibrary.maxDepth) {
-            return null
-        }
-
-        return openingsLibrary.nextMove(chess960StartIndex, movesSoFar)?.let { libraryMove ->
-            concurrencyStrategyCache.singleThreadStrategy.evaluateMove(
-                StartConfig.Chess960Config(chess960StartIndex),
-                movesSoFar,
-                libraryMove,
-                evaluatingMinMax
-            )
-        }
     }
 
     /**
@@ -159,16 +130,14 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 }
 
 
-private class ConcurrencyStrategyContainer(private val progressCallback: ProgressCallback) {
-    var singleThreadStrategy = SingleThreadStrategy(progressCallback)
+private class ConcurrencyStrategyContainer {
     private var coresAndStrategy: Pair<Int, ConcurrencyStrategy> =
-        CoresToUseOption.coresToUse.let { it to MultiThreadStrategy(it, progressCallback) }
+        CoresToUseOption.coresToUse.let { it to MultiThreadStrategy(it) }
 
     fun get(numberOfCoresToUse: Int): ConcurrencyStrategy {
-        if(numberOfCoresToUse==1) return singleThreadStrategy
         if( numberOfCoresToUse!=coresAndStrategy.first) {
             val oldStrategy = coresAndStrategy.second
-            coresAndStrategy = numberOfCoresToUse to MultiThreadStrategy(numberOfCoresToUse, progressCallback)
+            coresAndStrategy = numberOfCoresToUse to MultiThreadStrategy(numberOfCoresToUse)
             oldStrategy.shutdown()
         }
         return coresAndStrategy.second

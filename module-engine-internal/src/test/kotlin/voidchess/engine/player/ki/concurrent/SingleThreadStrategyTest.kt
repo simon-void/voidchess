@@ -2,7 +2,6 @@ package voidchess.engine.player.ki.concurrent
 
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
-import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.*
@@ -18,12 +17,7 @@ import voidchess.mirrorRow
 
 
 internal class SingleThreadStrategyTest {
-    private lateinit var strategy: SingleThreadStrategy
-
-    @BeforeMethod
-    fun setup() {
-        strategy = SingleThreadStrategy { _, _ -> Unit }
-    }
+    private val strategy = SingleThreadStrategy
 
     //best move with matt
     //color inverted matt
@@ -181,14 +175,14 @@ internal class SingleThreadStrategyTest {
         // with alpha-beta pruning in place suboptimal moves are discarded and no longer returned
         // so only the invocations of the ProgressCallback can be compared
         var progressCallbackInvokedCounter = 0
-        strategy = SingleThreadStrategy { _, _ -> progressCallbackInvokedCounter++ }
         val easyPruner = PrunerWithIrreversibleMoves(1, 2, 2, 2)
         val minMax = EvaluatingMinMax(easyPruner, EvaluatingAsIsNow)
 
         strategy.evaluateMovesBestMoveFirst(
             "white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false".toManualConfig(),
             emptyList(),
-            minMax
+            minMax,
+            progressCallback = { _, _ -> progressCallbackInvokedCounter++ }
         )
         val expectedMoves = setOf("h1-g1", "h1-g2", "h1-h2", "a7-a8")
 

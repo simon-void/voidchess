@@ -1,21 +1,33 @@
 package voidchess.engine.player.ki.concurrent
 
 import voidchess.common.board.move.Move
+import voidchess.common.board.other.StartConfig
 import voidchess.common.player.ki.ProgressCallback
 import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.common.player.ki.evaluation.Evaluation
-import voidchess.common.player.ki.evaluation.NumericalEvaluation
-import voidchess.common.player.ki.evaluation.Ongoing
 import voidchess.engine.board.EngineChessGame
+import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.player.ki.evaluation.BestResponseSet
 import voidchess.engine.player.ki.evaluation.EvaluatingMinMax
 
 
-internal class SingleThreadStrategy(progressCallback: ProgressCallback) : ConcurrencyStrategy(progressCallback) {
+internal object SingleThreadStrategy : ConcurrencyStrategy() {
+
+    fun evaluateMove(
+        startConfig: StartConfig,
+        movesSoFar: List<Move>,
+        move: Move,
+        evaluatingMinMax: EvaluatingMinMax,
+        progressCallback: ProgressCallback = { _, _ -> }
+    ): EvaluatedMove {
+        val chessGame = EngineChessGameImpl(startConfig, movesSoFar)
+        return evaluateMoves(chessGame, listOf(move), progressCallback, evaluatingMinMax, .0).single()
+    }
 
     override fun evaluateMoves(
         game: EngineChessGame,
         movesToEvaluate: Collection<Move>,
+        progressCallback: ProgressCallback,
         evaluatingMinMax: EvaluatingMinMax,
         numericEvalOkRadius: Double
     ): MutableList<EvaluatedMove> {

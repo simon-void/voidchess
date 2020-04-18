@@ -7,12 +7,22 @@ import voidchess.common.helper.TreeNode
 import voidchess.common.helper.getResourceStream
 import voidchess.common.helper.splitAndTrim
 import voidchess.common.helper.trim
+import voidchess.common.player.ki.ProgressCallback
+import voidchess.common.player.ki.evaluation.EvaluatedMove
+import voidchess.engine.player.ki.concurrent.SingleThreadStrategy
+import voidchess.engine.player.ki.evaluation.AllMovesOrNonePruner
+import voidchess.engine.player.ki.evaluation.EvaluatingAsIsNow
+import voidchess.engine.player.ki.evaluation.EvaluatingMinMax
 
 import java.util.ArrayList
 import kotlin.random.Random
 
 
 internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
+    private val quickEvaluatingMinMax: EvaluatingMinMax = EvaluatingMinMax(
+        AllMovesOrNonePruner(1, 6, 1),
+        EvaluatingAsIsNow
+    )
     private val openingsRootNode: TreeNode<String>
 
     init {
@@ -20,9 +30,42 @@ internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
         openingsRootNode = parseOpenings(openingSequences)
     }
 
-    val maxDepth: Int get() = openingsRootNode.depth
+    private val maxDepth: Int get() = openingsRootNode.depth
 
-    fun nextMove(
+
+
+    fun lookUpNextMove(
+        startConfig: StartConfig,
+        movesSoFar: List<Move>,
+        progressCallback: ProgressCallback
+    ): EvaluatedMove? {
+
+        val chess960StartIndex: Int? = when (startConfig) {
+            is StartConfig.ClassicConfig -> startConfig.chess960Index
+            is StartConfig.Chess960Config -> startConfig.chess960Index
+            is StartConfig.ManualConfig -> null
+        }
+
+        if (chess960StartIndex == null || movesSoFar.size >= maxDepth) {
+            return null
+        }
+
+        return nextMove(chess960StartIndex, movesSoFar)?.let { libraryMove ->
+            progressCallback(0, 1)
+            SingleThreadStrategy.evaluateMove(
+                StartConfig.Chess960Config(chess960StartIndex),
+                movesSoFar,
+                libraryMove,
+                quickEvaluatingMinMax
+            ).also {
+                val milliSecondsToWait = 200L
+                runCatching { Thread.sleep(milliSecondsToWait) }
+                progressCallback(1, 1)
+            }
+        }
+    }
+
+    private fun nextMove(
         chess960StartIndex: Int,
         moves: List<Move>
     ): Move? {

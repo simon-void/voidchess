@@ -196,13 +196,13 @@ private fun testTermination(
     val numberFormat = NumberFormat.getPercentInstance()
     val dynamicEvaluation = EvaluatingMinMax(pruner, staticEvaluation)
 
-    val concurrencyStrategy = SingleThreadStrategy { movesComputed: Int, totalMoves: Int ->
-        println(numberFormat.format(movesComputed.toDouble() / totalMoves.toDouble()))
-    }
-    concurrencyStrategy.evaluateMovesBestMoveFirst(
+    SingleThreadStrategy.evaluateMovesBestMoveFirst(
         startConfig = startConfig,
         movesSoFar = movesSoFar,
         evaluatingMinMax = dynamicEvaluation,
-        numericEvalOkRadius = KaiEngine.okDistanceToBest
+        numericEvalOkRadius = KaiEngine.okDistanceToBest,
+        progressCallback = { movesComputed: Int, totalMoves: Int ->
+            println(numberFormat.format(movesComputed.toDouble() / totalMoves.toDouble()))
+        }
     )
 }

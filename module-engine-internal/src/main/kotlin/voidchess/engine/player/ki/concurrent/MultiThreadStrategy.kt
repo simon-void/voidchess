@@ -14,9 +14,8 @@ import kotlin.collections.ArrayList
 
 
 internal class MultiThreadStrategy(
-    private val numberOfThreads: Int,
-    progressCallback: ProgressCallback
-) : ConcurrencyStrategy(progressCallback) {
+    private val numberOfThreads: Int
+) : ConcurrencyStrategy() {
 
     private val executorService: ExecutorService = Executors.newFixedThreadPool(numberOfThreads)
 
@@ -28,6 +27,7 @@ internal class MultiThreadStrategy(
     override fun evaluateMoves(
         game: EngineChessGame,
         movesToEvaluate: Collection<Move>,
+        progressCallback: ProgressCallback,
         evaluatingMinMax: EvaluatingMinMax,
         numericEvalOkRadius: Double
     ): MutableList<EvaluatedMove> {
@@ -45,7 +45,7 @@ internal class MultiThreadStrategy(
             )
 
         val result = try {
-            evaluate(callablesToEvaluate)
+            evaluate(callablesToEvaluate, progressCallback)
         } catch (e: Exception) {
             e.printStackTrace()
             LinkedList<EvaluatedMove>()
@@ -57,7 +57,10 @@ internal class MultiThreadStrategy(
     }
 
     @Throws(InterruptedException::class, ExecutionException::class)
-    private fun evaluate(movesToEvaluate: LinkedList<Callable<EvaluatedMove>>): MutableList<EvaluatedMove> {
+    private fun evaluate(
+        movesToEvaluate: LinkedList<Callable<EvaluatedMove>>,
+        progressCallback: ProgressCallback
+    ): MutableList<EvaluatedMove> {
         val totalNumberOfMoves = movesToEvaluate.size
         val result = ArrayList<EvaluatedMove>(totalNumberOfMoves)
 
@@ -113,7 +116,11 @@ internal class MultiThreadStrategy(
         return callablesToEvaluate
     }
 
-    private fun submitCallables(movesToEvaluate: LinkedList<Callable<EvaluatedMove>>, completionService: CompletionService<EvaluatedMove>, numberOfMovesToSubmit: Int) {
+    private fun submitCallables(
+        movesToEvaluate: LinkedList<Callable<EvaluatedMove>>,
+        completionService: CompletionService<EvaluatedMove>,
+        numberOfMovesToSubmit: Int
+    ) {
         for (i in 0 until numberOfMovesToSubmit) {
             if (movesToEvaluate.isEmpty()) {
                 break
@@ -145,7 +152,7 @@ internal class MultiThreadStrategy(
                     bestResponses
                 )
 
-                if(bestResponse!=null) {
+                if (bestResponse != null) {
                     bestResponsesRef.updateAndGet { mutableSet ->
                         mutableSet.add(bestResponse)
                         mutableSet

@@ -11,6 +11,7 @@ import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.board.EngineChessGame
 import voidchess.common.board.move.Move
 import voidchess.common.board.other.StartConfig
+import voidchess.common.player.ki.ProgressCallback
 import voidchess.common.player.ki.evaluation.*
 import voidchess.copyGameWithInvertedColors
 import voidchess.engine.player.ki.evaluation.*
@@ -20,7 +21,8 @@ import voidchess.mirrorRow
 
 internal class MultiThreadStrategyTest {
     private val coresToUse = (Runtime.getRuntime().availableProcessors()-1).coerceAtLeast(1)
-    private val strategy = MultiThreadStrategy(coresToUse) { _, _ -> progressCallbackInvokedCounter++ }
+    private val progressCallback: ProgressCallback = { _, _ -> progressCallbackInvokedCounter++ }
+    private val strategy = MultiThreadStrategy(coresToUse)
 
     var progressCallbackInvokedCounter = 0
 
@@ -192,7 +194,8 @@ internal class MultiThreadStrategyTest {
         strategy.evaluateMovesBestMoveFirst(
             "white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false".toManualConfig(),
             emptyList(),
-            minMax
+            minMax,
+            progressCallback = progressCallback
         )
         val expectedMoves = setOf("h1-g1", "h1-g2", "h1-h2", "a7-a8").map { Move.byCode(it) }.toSet()
 
