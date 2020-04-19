@@ -42,12 +42,31 @@ allprojects {
     }
 }
 
-// TODO Distribution
-//    ----------------
-//   - check out Distributing the ShadowJar:
-//      https://imperceptiblethoughts.com/shadow/application-plugin/#distributing-the-shadow-jar
-//   - investigate using jlink to create a minimal JRE in a
-//      running only this project and system module 'java.desktop' (for swing/imageIO)
-//      e.g. via badass-runtime-plugin: https://badass-runtime-plugin.beryx.org/releases/latest/
-//   - and or the packaging tool that comes with Java 14 to create a native executable
-//      https://openjdk.java.net/jeps/343
+tasks {
+    register("buildInstaller") {
+        dependsOn("build")
+
+        doLast {
+            if (JavaVersion.current() < JavaVersion.VERSION_14) {
+                throw GradleException("Require Java 14+ to run 'jpackage' (currently ${JavaVersion.current()})")
+            }
+            val projectVersion = project.version.toString()
+            JPackage.buildInstaller(
+                name = "VoidChess",
+                description = "a chess program",
+                appVersion = projectVersion,
+                inputDir = "build/libs",
+                destinationDir = "build/installer",
+                mainJar = "voidchess-$projectVersion-all.jar",
+                addModules = listOf("java.desktop"),
+                winIcoIconPath = "about/shortcut-icon.ico",
+                winShortcut = true,
+                winMenu = true,
+                linuxPngIconPath = "about/shortcut-icon.png",
+                linuxShortcut = true,
+                linuxMenuGroup = "Games",
+                macIcnsIconPath = "about/shortcut-icon2.icns"
+            )
+        }
+    }
+}
