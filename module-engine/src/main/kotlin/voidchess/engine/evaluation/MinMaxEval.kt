@@ -5,13 +5,17 @@ import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.player.ki.evaluation.*
 import voidchess.engine.board.EngineChessGame
+import voidchess.engine.evaluation.leaf.MiddleGameEval
+import voidchess.engine.evaluation.leaf.StaticEval
 
 
-internal class EvaluatingMinMax(
+internal class MinMaxEval(
     private var pruner: SearchTreePruner,
-    private var strategy: EvaluatingStatically
+    private var strategy: StaticEval
 ) {
-    constructor() : this(PrunerWithIrreversibleMoves(), EvaluatingAsIsNow)
+    constructor() : this(PrunerWithIrreversibleMoves(),
+        MiddleGameEval
+    )
 
     fun evaluateMove(
         game: EngineChessGame,
@@ -39,7 +43,7 @@ internal class EvaluatingMinMax(
                         movesToTryFirst
                     )
                 }
-                MoveResult.CHECKMATE -> null to CheckmateOther(depth + 1)
+                MoveResult.CHECKMATE -> null to CheckmateOther(0)
                 MoveResult.THREE_TIMES_SAME_POSITION -> null to ThreeFoldRepetition
                 MoveResult.STALEMATE -> null to Stalemate
                 else -> null to Draw
@@ -114,7 +118,7 @@ internal class EvaluatingMinMax(
                     }
                     MoveResult.CHECKMATE -> {
                         stopLookingForBetterMove = true
-                        val secondaryMateEval = strategy.getCheckmateMaterialEvaluation(game, forWhite)
+                        val secondaryMateEval = strategy.getSecondaryCheckmateEvaluation(game, forWhite)
                         CheckmateSelf(
                             depth + 1,
                             secondaryMateEval
@@ -210,7 +214,7 @@ internal class EvaluatingMinMax(
                     }
                     MoveResult.CHECKMATE -> {
                         stopLookingForBetterMove = true
-                        CheckmateOther(depth + 1)
+                        CheckmateOther(depth)
                     }
                     MoveResult.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
                     MoveResult.STALEMATE -> Stalemate

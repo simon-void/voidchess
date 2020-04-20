@@ -12,6 +12,7 @@ import voidchess.common.board.other.StartConfig
 import voidchess.common.player.ki.evaluation.*
 import voidchess.copyGameWithInvertedColors
 import voidchess.engine.evaluation.*
+import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.initChessGame
 import voidchess.mirrorRow
 
@@ -50,13 +51,13 @@ internal class SingleThreadStrategyTest {
 
     @DataProvider(name = "getFindBestResultData")
     fun findBestResultData(): Array<Array<Any>> {
-        val mattIn2 =
+        val mattIn1 =
             EngineChessGameImpl("white 0 King-white-e3-2 Rook-white-e4-2 Bishop-white-f6 Rook-black-d8-2 Knight-black-c8 King-black-g8-1 Pawn-black-d7-false Pawn-black-e5-false Pawn-black-f7-false".toManualConfig())
         val stalemateIn1 =
             EngineChessGameImpl("white 0 King-white-a1-9 Rook-white-h2-2 Pawn-white-g2-false Rook-black-b2-5 King-black-g8-1 Pawn-black-b4-false Pawn-black-c3-false Pawn-black-g3-false Pawn-black-f7-false Pawn-black-g7-false".toManualConfig())
         val twoMovesAheadPruner = PrunerWithIrreversibleMoves(2, 2, 2, 2)
         return arrayOf(
-            arrayOf(mattIn2, twoMovesAheadPruner, CheckmateOther(2)),
+            arrayOf(mattIn1, twoMovesAheadPruner, CheckmateOther(1)),
             arrayOf(stalemateIn1, twoMovesAheadPruner, Stalemate)
         )
     }
@@ -176,11 +177,11 @@ internal class SingleThreadStrategyTest {
         // so only the invocations of the ProgressCallback can be compared
         var progressCallbackInvokedCounter = 0
         val easyPruner = PrunerWithIrreversibleMoves(1, 2, 2, 2)
-        val minMax = EvaluatingMinMax(easyPruner, EvaluatingAsIsNow)
+        val minMax = MinMaxEval(easyPruner, MiddleGameEval)
+        val startConfig = "white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false".toManualConfig()
 
         strategy.evaluateMovesBestMoveFirst(
-            "white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false".toManualConfig(),
-            emptyList(),
+            EngineChessGameImpl(startConfig, emptyList()),
             minMax,
             progressCallback = { _, _ -> progressCallbackInvokedCounter++ }
         )
@@ -205,9 +206,8 @@ internal class SingleThreadStrategyTest {
     }
 
     private fun evaluate(pruner: SearchTreePruner, game: EngineChessGame): List<EvaluatedMove> {
-        val dynEval = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
-        val movesSoFar = game.completeMoveHistory
-        return strategy.evaluateMovesBestMoveFirst(game.startConfig, movesSoFar, dynEval)
+        val dynEval = MinMaxEval(pruner, MiddleGameEval)
+        return strategy.evaluateMovesBestMoveFirst(game, dynEval)
     }
 }
 

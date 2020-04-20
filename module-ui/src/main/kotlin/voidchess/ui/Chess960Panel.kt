@@ -1,6 +1,7 @@
 package voidchess.ui
 
 import voidchess.board.CentralChessGame
+import voidchess.common.board.other.StartConfig
 
 import javax.swing.*
 import java.awt.*
@@ -76,7 +77,7 @@ class Chess960Panel internal constructor(private val game: CentralChessGame, pri
 
         classicButton.isEnabled = position != CLASSIC_CHESS_POSITION
 
-        game.initGame(position)
+        game.initGame(StartConfig.Chess960Config(position))
         gameUI.repaintAtOnce()
     }
 

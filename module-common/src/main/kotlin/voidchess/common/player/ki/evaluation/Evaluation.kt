@@ -71,7 +71,7 @@ data class CheckmateOther(val depth: Int) : Evaluation() {
 
     init {
         // TODO make depth a UInt when UInts no longer are experimental
-        assert(depth > 0)
+        assert(depth >= 0)
     }
 
     fun compareWith(other: CheckmateOther) = other.depth - depth

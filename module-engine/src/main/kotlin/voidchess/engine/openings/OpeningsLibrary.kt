@@ -11,17 +11,17 @@ import voidchess.common.player.ki.ProgressCallback
 import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.engine.concurrent.SingleThreadStrategy
 import voidchess.engine.evaluation.AllMovesOrNonePruner
-import voidchess.engine.evaluation.EvaluatingAsIsNow
-import voidchess.engine.evaluation.EvaluatingMinMax
+import voidchess.engine.evaluation.leaf.MiddleGameEval
+import voidchess.engine.evaluation.MinMaxEval
 
 import java.util.ArrayList
 import kotlin.random.Random
 
 
 internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
-    private val quickEvaluatingMinMax: EvaluatingMinMax = EvaluatingMinMax(
+    private val quickMinMaxEval: MinMaxEval = MinMaxEval(
         AllMovesOrNonePruner(1, 6, 1),
-        EvaluatingAsIsNow
+        MiddleGameEval
     )
     private val openingsRootNode: TreeNode<String>
 
@@ -56,7 +56,7 @@ internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
                 StartConfig.Chess960Config(chess960StartIndex),
                 movesSoFar,
                 libraryMove,
-                quickEvaluatingMinMax
+                quickMinMaxEval
             ).also {
                 val milliSecondsToWait = 200L
                 runCatching { Thread.sleep(milliSecondsToWait) }

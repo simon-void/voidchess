@@ -8,7 +8,7 @@ import voidchess.common.player.ki.evaluation.Evaluation
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.evaluation.BestResponseSet
-import voidchess.engine.evaluation.EvaluatingMinMax
+import voidchess.engine.evaluation.MinMaxEval
 
 
 internal object SingleThreadStrategy : ConcurrencyStrategy() {
@@ -17,18 +17,18 @@ internal object SingleThreadStrategy : ConcurrencyStrategy() {
         startConfig: StartConfig,
         movesSoFar: List<Move>,
         move: Move,
-        evaluatingMinMax: EvaluatingMinMax,
+        minMaxEval: MinMaxEval,
         progressCallback: ProgressCallback = { _, _ -> }
     ): EvaluatedMove {
         val chessGame = EngineChessGameImpl(startConfig, movesSoFar)
-        return evaluateMoves(chessGame, listOf(move), progressCallback, evaluatingMinMax, .0).single()
+        return evaluateMoves(chessGame, listOf(move), progressCallback, minMaxEval, .0).single()
     }
 
     override fun evaluateMoves(
         game: EngineChessGame,
         movesToEvaluate: Collection<Move>,
         progressCallback: ProgressCallback,
-        evaluatingMinMax: EvaluatingMinMax,
+        minMaxEval: MinMaxEval,
         numericEvalOkRadius: Double
     ): MutableList<EvaluatedMove> {
         val totalNumberOfMoves = movesToEvaluate.size
@@ -40,7 +40,7 @@ internal object SingleThreadStrategy : ConcurrencyStrategy() {
         for ((moveIndex, move) in movesToEvaluate.withIndex()) {
 
             val currentOkEval: Evaluation? = getOkEval(currentMaxEvaluation, numericEvalOkRadius)
-            val (bestResponse, latestEvaluation) = evaluatingMinMax.evaluateMove(
+            val (bestResponse, latestEvaluation) = minMaxEval.evaluateMove(
                 game,
                 move,
                 currentOkEval,

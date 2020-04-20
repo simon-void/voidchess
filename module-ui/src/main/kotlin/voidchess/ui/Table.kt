@@ -6,6 +6,7 @@ import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.ChessGameSupervisor
+import voidchess.common.board.other.StartConfig
 import voidchess.player.PlayerInterface
 
 
@@ -79,7 +80,12 @@ class Table constructor(
     override fun startGame() {
         whitePlayersTurn = true
         resign = false
-        game.initGame(panel960.positionCode)
+        game.initGame(StartConfig.Chess960Config(panel960.positionCode))
+//        game.initGame(
+//            StartConfig.ManualConfig(true, 0, listOf(
+//                "King-white-e4-5", "Queen-black-a8", "King-black-e8-0"
+//            ))
+//        )
         ui.startNewGame()
 
         whitePlayer.gameStarts()

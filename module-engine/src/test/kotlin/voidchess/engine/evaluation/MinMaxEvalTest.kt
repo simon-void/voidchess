@@ -9,12 +9,13 @@ import org.testng.Assert.assertTrue
 import org.testng.annotations.DataProvider
 import voidchess.common.player.ki.evaluation.NumericalEvaluation
 import voidchess.copyGameWithInvertedColors
+import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.initChessGame
 import voidchess.mirrorRow
 import voidchess.toManualConfig
 
 
-internal class EvaluatingMinMaxTest {
+internal class MinMaxEvalTest {
     @DataProvider(name = "gameWithObviousEvalProvider")
     fun obviousEvalProvider(): Array<Array<Any>> {
         val easyPruner = AllMovesOrNonePruner(1, 4, 3)
@@ -30,7 +31,9 @@ internal class EvaluatingMinMaxTest {
 
     @Test(dataProvider = "gameWithObviousEvalProvider")
     fun testMinMaxEvaluatesToExpectedRange(game: EngineChessGameImpl, pruner: SearchTreePruner, move: Move, expectedEvalRange: ClosedRange<Double>, msg: String) {
-        val dynamicEvaluation = EvaluatingMinMax(pruner, EvaluatingAsIsNow)
+        val dynamicEvaluation = MinMaxEval(pruner,
+            MiddleGameEval
+        )
         val (_, evaluation) = dynamicEvaluation.evaluateMove(game, move, null, BestResponseSet())
         require(evaluation is NumericalEvaluation)
 
@@ -51,7 +54,7 @@ internal class EvaluatingMinMaxTest {
     fun testEvaluateMoveHasNoSideEffects() {
         val des = "black 0 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false"
         val game = EngineChessGameImpl(des.toManualConfig())
-        val dynamicEvaluation = EvaluatingMinMax()
+        val dynamicEvaluation = MinMaxEval()
 
         dynamicEvaluation.evaluateMove(game, Move.byCode("a6-b6"), null, BestResponseSet())
         // invariance: evaluateMove must not change the game configuration
@@ -62,7 +65,7 @@ internal class EvaluatingMinMaxTest {
     fun testMinMaxScheme() {
         val game = initChessGame(518, "d2-d3", "d7-d6", "c1-g5")
 
-        val dynamicEvaluation = EvaluatingMinMax()
+        val dynamicEvaluation = MinMaxEval()
 
         val (_, value) = dynamicEvaluation.evaluateMove(game, Move.byCode("e7-e6"), null, BestResponseSet()) // the queen can be taken via g5-d8
         require(value is NumericalEvaluation)

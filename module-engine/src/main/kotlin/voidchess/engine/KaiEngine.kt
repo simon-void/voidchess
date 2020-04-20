@@ -7,9 +7,15 @@ import voidchess.common.board.move.Move
 import voidchess.common.player.ki.*
 import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.common.player.ki.evaluation.NumericalEvaluation
+import voidchess.engine.board.EngineChessGame
+import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.concurrent.ConcurrencyStrategy
 import voidchess.engine.concurrent.MultiThreadStrategy
 import voidchess.engine.evaluation.*
+import voidchess.engine.evaluation.leaf.KingToEdgeEndgameEval
+import voidchess.engine.evaluation.leaf.MiddleGameEval
+import voidchess.engine.evaluation.leaf.StaticEval
+import voidchess.engine.evaluation.leaf.getInventory
 import voidchess.engine.openings.OpeningsLibrary
 import java.util.*
 import kotlin.math.pow
@@ -20,7 +26,6 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
     private val concurrencyStrategyCache = ConcurrencyStrategyContainer()
     private val openingsLibrary = OpeningsLibrary("openings.txt")
-    private val staticEvaluation: EvaluatingStatically = EvaluatingAsIsNow
 
     override fun getSpec(): EngineSpec =
         EngineSpec(
@@ -48,32 +53,37 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             return EngineAnswer.Error(validatorErrorMsg)
         }
 
-        val pruner = DifficultyOption.pruner
-        val coresToUse = CoresToUseOption.coresToUse
-        val evaluatingMinMax = EvaluatingMinMax(pruner, staticEvaluation)
-
         val evaluatedMove = openingsLibrary.lookUpNextMove(startConfig, moves, progressCallback)
-            ?: concurrencyStrategyCache.get(coresToUse)
-                .evaluateMovesBestMoveFirst(startConfig, moves, evaluatingMinMax,
-                    okDistanceToBest, progressCallback)
-                .pickOkMove()
+            ?: computeNextMove(startConfig, moves)
 
         EngineAnswer.Success(evaluatedMove)
     }catch (e: Exception) {
         EngineAnswer.Error(e.toString())
     }
 
-    private fun validateMovesOrReturnErrorMsg(movesSoFar: List<Move>, startConfig: StartConfig): String? {
-        val basicGame: BasicChessGame = BasicChessGameImpl(startConfig)
-        val movesApplied = mutableListOf<Move>()
-        for(move in movesSoFar) {
-            if(!basicGame.isMovable(move.from, move.to)) {
-                return "$move is illegal with $startConfig after moves: ${movesApplied.joinToString()}"
+    private fun computeNextMove(startConfig: StartConfig, movesSoFar: List<Move>): EvaluatedMove {
+        val game = EngineChessGameImpl(startConfig, movesSoFar)
+        val coresToUse = CoresToUseOption.coresToUse
+        val pruner = DifficultyOption.pruner
+
+        val staticEval: StaticEval
+        val okDistance: Double
+
+        when(game.getEndgameOption()) {
+            EndgameOption.PushToEdge -> {
+                staticEval = KingToEdgeEndgameEval
+                okDistance = 0.0
             }
-            basicGame.move(move)
-            movesApplied.add(move)
+            else -> {
+                staticEval = MiddleGameEval
+                okDistance = okDistanceToBest
+            }
         }
-        return null
+
+        return concurrencyStrategyCache.get(coresToUse)
+            .evaluateMovesBestMoveFirst(
+                game, MinMaxEval(pruner, staticEval), okDistance, progressCallback
+            ).pickOkMove()
     }
 
     /**
@@ -129,6 +139,19 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
         return pickEvaluateMoveBy(moveWithPercentage.first)
     }
 
+    private fun validateMovesOrReturnErrorMsg(movesSoFar: List<Move>, startConfig: StartConfig): String? {
+        val basicGame: BasicChessGame = BasicChessGameImpl(startConfig)
+        val movesApplied = mutableListOf<Move>()
+        for(move in movesSoFar) {
+            if(!basicGame.isMovable(move.from, move.to)) {
+                return "$move is illegal with $startConfig after moves: ${movesApplied.joinToString()}"
+            }
+            basicGame.move(move)
+            movesApplied.add(move)
+        }
+        return null
+    }
+
     companion object {
         const val okDistanceToBest = .2
     }
@@ -146,5 +169,23 @@ private class ConcurrencyStrategyContainer {
             oldStrategy.shutdown()
         }
         return coresAndStrategy.second
+    }
+}
+
+internal enum class EndgameOption {
+    // TODO add more endgame options
+    No, Pawns, PushToEdge, PushToCorner;
+}
+
+internal fun EngineChessGame.getEndgameOption(): EndgameOption {
+    val inventory = this.getInventory()
+    return when {
+        inventory.hasOneSideOnlyKingLeft -> {
+            if (inventory.areRookOrQueenLeft) {
+                EndgameOption.PushToEdge
+            } else EndgameOption.PushToCorner
+        }
+        inventory.areOnlyPawnsLeft -> EndgameOption.Pawns
+        else                       -> EndgameOption.No
     }
 }

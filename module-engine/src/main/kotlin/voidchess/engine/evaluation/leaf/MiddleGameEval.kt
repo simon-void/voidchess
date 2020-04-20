@@ -1,4 +1,4 @@
-package voidchess.engine.evaluation
+package voidchess.engine.evaluation.leaf
 
 import voidchess.common.board.forAllFigures
 import voidchess.common.board.move.Position
@@ -7,53 +7,41 @@ import voidchess.common.figures.King
 import voidchess.common.player.ki.evaluation.Ongoing
 import voidchess.engine.board.EngineChessGame
 
-internal interface EvaluatingStatically {
-    fun getNumericEvaluation(game: EngineChessGame, forWhite: Boolean): Ongoing
-    fun getCheckmateMaterialEvaluation(game: EngineChessGame, forWhite: Boolean): Double
-}
 
-internal object EvaluatingAsIsNow : EvaluatingStatically {
+internal object MiddleGameEval : StaticEval() {
 
     override fun getNumericEvaluation(game: EngineChessGame, forWhite: Boolean): Ongoing {
-        val prelimEval = getPreliminaryEvaluation(game, forWhite)
-        return addSecondaryEvaluationTo(prelimEval, game, forWhite)
+        val prelimEval = getPreliminaryEvaluation(
+            game,
+            forWhite
+        )
+        return addSecondaryEvaluationTo(
+            prelimEval,
+            game,
+            forWhite
+        )
     }
-    fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite)
-    fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateRuledArea(game, forWhite) + evaluatePosition(game, forWhite)
+
+    fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean) =
+        evaluateFigures(game, forWhite)
+
+    fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateRuledArea(
+        game,
+        forWhite
+    ) + evaluatePosition(game, forWhite)
+
     fun addSecondaryEvaluationTo(prelimEval: Double, game: EngineChessGame, forWhite: Boolean) =
-        Ongoing(prelimEval + getSecondaryEvaluation(game, forWhite))
+        Ongoing(
+            prelimEval + getSecondaryEvaluation(
+                game,
+                forWhite
+            )
+        )
 
-    override fun getCheckmateMaterialEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(game, forWhite) + evaluatePosition(game, forWhite)
-
-    private fun evaluateFigures(game: EngineChessGame, forWhite: Boolean): Double {
-        var whiteFigures = 0.0
-        var blackFigures = 0.0
-
-        game.forAllFigures {figure->
-            if (figure.isWhite) {
-                when {
-                    figure.isPawn() -> whiteFigures += PAWN_VALUE
-                    figure.isRook() -> whiteFigures += Rook_VALUE
-                    figure.isKnight() -> whiteFigures += KNIGHT_VALUE
-                    figure.isBishop() -> whiteFigures += BISHOP_VALUE
-                    figure.isQueen() -> whiteFigures += QUEEN_VALUE
-                }
-            } else {
-                when {
-                    figure.isPawn() -> blackFigures += PAWN_VALUE
-                    figure.isRook() -> blackFigures += Rook_VALUE
-                    figure.isKnight() -> blackFigures += KNIGHT_VALUE
-                    figure.isBishop() -> blackFigures += BISHOP_VALUE
-                    figure.isQueen() -> blackFigures += QUEEN_VALUE
-                }
-            }
-        }
-
-        return if (forWhite)
-            whiteFigures - blackFigures
-        else
-            blackFigures - whiteFigures
-    }
+    override fun getSecondaryCheckmateEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(
+        game,
+        forWhite
+    ) + evaluatePosition(game, forWhite)
 
     private fun evaluateRuledArea(game: EngineChessGame, forWhite: Boolean): Double {
         val (whiteMoves, blackMoves) = game.countReachableMoves()
@@ -74,9 +62,17 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             val pos = figure.position
             if (figure.isPawn()) {
                 if (figure.isWhite) {
-                    whiteEvaluation += evaluatePawn(game, pos, true)
+                    whiteEvaluation += evaluatePawn(
+                        game,
+                        pos,
+                        true
+                    )
                 }else{
-                    blackEvaluation += evaluatePawn(game, pos, false)
+                    blackEvaluation += evaluatePawn(
+                        game,
+                        pos,
+                        false
+                    )
                 }
             } else if (figure.isKnight()) {
                 val value = evaluateKnight(pos)
@@ -86,7 +82,8 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
                     blackEvaluation += value
                 }
             } else if (figure.isBishop()) {
-                val value = evaluateBishop(game, figure)
+                val value =
+                    evaluateBishop(game, figure)
                 if (figure.isWhite) {
                     whiteEvaluation += value
                 }else{
@@ -101,8 +98,16 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             }
         }
 
-        whiteEvaluation += evaluateKing(game, game.whiteKing, foundBlackQueen)
-        blackEvaluation += evaluateKing(game, game.blackKing, foundWhiteQueen)
+        whiteEvaluation += evaluateKing(
+            game,
+            game.whiteKing,
+            foundBlackQueen
+        )
+        blackEvaluation += evaluateKing(
+            game,
+            game.blackKing,
+            foundWhiteQueen
+        )
 
         return if (forWhite)
             whiteEvaluation - blackEvaluation
@@ -125,7 +130,12 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
 
         if (bishopRow == blockingRow && (bishopColumn == 3 || bishopColumn == 4)) {
             val possiblePawnPos = Position[if (isWhite) 1 else 6, bishopColumn]
-            if(containsPawnOfColor(game, possiblePawnPos, isWhite)) {
+            if(containsPawnOfColor(
+                    game,
+                    possiblePawnPos,
+                    isWhite
+                )
+            ) {
                 return BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT
             }
         }
@@ -138,7 +148,14 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             else 0.0
 
     private fun evaluatePawn(game: EngineChessGame, pos: Position, isWhite: Boolean) =
-            evaluatePawnPosition(pos, isWhite) + evaluatePawnDefense(game, pos, isWhite)
+            evaluatePawnPosition(
+                pos,
+                isWhite
+            ) + evaluatePawnDefense(
+                game,
+                pos,
+                isWhite
+            )
 
     private fun evaluatePawnPosition(pos: Position, isWhite: Boolean): Double {
 
@@ -154,22 +171,49 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             val leftForwardPosition = Position[forwardRow, pos.column - 1]
             val leftBackwardPosition = Position[backwardRow, pos.column - 1]
             val leftPosition = Position[pos.row, pos.column - 1]
-            if (containsPawnOfColor(game, leftForwardPosition, isWhite)) {
+            if (containsPawnOfColor(
+                    game,
+                    leftForwardPosition,
+                    isWhite
+                )
+            ) {
                 return DEFENSE_VALUE
             }
-            if (containsPawnOfColor(game, leftBackwardPosition, isWhite)) {
+            if (containsPawnOfColor(
+                    game,
+                    leftBackwardPosition,
+                    isWhite
+                )
+            ) {
                 return DEFENSE_VALUE
             }
-            if (containsPawnOfColor(game, leftPosition, isWhite)) {
+            if (containsPawnOfColor(
+                    game,
+                    leftPosition,
+                    isWhite
+                )
+            ) {
                 return NEXT_TO_VALUE
             }
         } else {
             val rightPosition = Position[pos.row, 1]
             val rightForwardPosition = Position[forwardRow, 1]
             val rightBackwardPosition = Position[backwardRow, 1]
-            if (!(containsPawnOfColor(game, rightPosition, isWhite)
-                            || containsPawnOfColor(game, rightForwardPosition, isWhite)
-                            || containsPawnOfColor(game, rightBackwardPosition, isWhite))) {
+            if (!(containsPawnOfColor(
+                    game,
+                    rightPosition,
+                    isWhite
+                )
+                            || containsPawnOfColor(
+                    game,
+                    rightForwardPosition,
+                    isWhite
+                )
+                            || containsPawnOfColor(
+                    game,
+                    rightBackwardPosition,
+                    isWhite
+                ))) {
                 return UNPROTECTED_BORDER_PAWN_VALUE
             }
         }
@@ -178,22 +222,49 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             val rightForwardPosition = Position[forwardRow, pos.column + 1]
             val rightBackwardPosition = Position[backwardRow, pos.column + 1]
             val rightPosition = Position[pos.row, pos.column + 1]
-            if (containsPawnOfColor(game, rightForwardPosition, isWhite)) {
+            if (containsPawnOfColor(
+                    game,
+                    rightForwardPosition,
+                    isWhite
+                )
+            ) {
                 return DEFENSE_VALUE
             }
-            if (containsPawnOfColor(game, rightBackwardPosition, isWhite)) {
+            if (containsPawnOfColor(
+                    game,
+                    rightBackwardPosition,
+                    isWhite
+                )
+            ) {
                 return DEFENSE_VALUE
             }
-            if (containsPawnOfColor(game, rightPosition, isWhite)) {
+            if (containsPawnOfColor(
+                    game,
+                    rightPosition,
+                    isWhite
+                )
+            ) {
                 return NEXT_TO_VALUE
             }
         } else {
             val leftPosition = Position[pos.row, 6]
             val leftForwardPosition = Position[forwardRow, 6]
             val leftBackwardPosition = Position[backwardRow, 6]
-            if (!(containsPawnOfColor(game, leftPosition, isWhite)
-                            || containsPawnOfColor(game, leftForwardPosition, isWhite)
-                            || containsPawnOfColor(game, leftBackwardPosition, isWhite))) {
+            if (!(containsPawnOfColor(
+                    game,
+                    leftPosition,
+                    isWhite
+                )
+                            || containsPawnOfColor(
+                    game,
+                    leftForwardPosition,
+                    isWhite
+                )
+                            || containsPawnOfColor(
+                    game,
+                    leftBackwardPosition,
+                    isWhite
+                ))) {
                 return UNPROTECTED_BORDER_PAWN_VALUE
             }
         }
@@ -208,8 +279,15 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
 
 
     private fun evaluateKing(game: EngineChessGame, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
-        var value = evaluateCastling(king, queenOfOppositeColorStillOnBoard)
-        value += evaluateKingDefense(game, king, queenOfOppositeColorStillOnBoard)
+        var value = evaluateCastling(
+            king,
+            queenOfOppositeColorStillOnBoard
+        )
+        value += evaluateKingDefense(
+            game,
+            king,
+            queenOfOppositeColorStillOnBoard
+        )
         return value
     }
 
@@ -234,7 +312,12 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
             val maxColumn = (kingsColumn + 1).coerceAtMost(7)
             var value = 0.0
             for (column in minColumn..maxColumn) {
-                if (containsPawnOfColor(game, Position[secondRow, column], isWhite)) {
+                if (containsPawnOfColor(
+                        game,
+                        Position[secondRow, column],
+                        isWhite
+                    )
+                ) {
                     value += defenseValue
                 }
             }
@@ -245,12 +328,6 @@ internal object EvaluatingAsIsNow : EvaluatingStatically {
     }
 
     private const val VALUE_OF_AREA = 0.015
-
-    private const val PAWN_VALUE = 1.0
-    private const val Rook_VALUE = 4.5
-    private const val KNIGHT_VALUE = 3.0
-    private const val BISHOP_VALUE = 3.1
-    private const val QUEEN_VALUE = 9.0
 
     private const val BISHOP_ON_START_POSITION_PUNISHMENT = -0.45
     private const val BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT = -0.2

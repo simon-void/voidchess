@@ -15,6 +15,8 @@ import voidchess.completeMoveHistory
 import voidchess.engine.KaiEngine
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.concurrent.SingleThreadStrategy
+import voidchess.engine.evaluation.leaf.MiddleGameEval
+import voidchess.engine.evaluation.leaf.StaticEval
 import voidchess.initChessGame
 import voidchess.toManualConfig
 import kotlin.system.exitProcess
@@ -108,7 +110,7 @@ private fun benchmark(benchmarkLevel: Int) {
     val movesSoFar = movesSoFarHistory.split(",").toTypedArray()
 
     val game = initChessGame(518, *movesSoFar)
-    val staticEvaluation = EvaluatingAsIsNow
+    val staticEvaluation = MiddleGameEval
     loadTest(game, pruner, staticEvaluation, "Benchmark Level $benchmarkLevel")
 }
 
@@ -168,11 +170,11 @@ private fun loadTest() {
 private fun loadTest(des: String) {
     val game = EngineChessGameImpl(des.toManualConfig())
     val pruner = PrunerWithIrreversibleMoves(2, 3, 4, 3)
-    val staticEvaluation = EvaluatingAsIsNow
+    val staticEvaluation = MiddleGameEval
     loadTest(game, pruner, staticEvaluation, "load test")
 }
 
-private fun loadTest(game: EngineChessGame, pruner: SearchTreePruner, staticEvaluation: EvaluatingStatically, type: String) {
+private fun loadTest(game: EngineChessGame, pruner: SearchTreePruner, staticEvaluation: StaticEval, type: String) {
     val decimalFormat = DecimalFormat("#.0")
 
     try {
@@ -192,15 +194,14 @@ private fun testTermination(
     startConfig: StartConfig,
     movesSoFar: List<Move>,
     pruner: SearchTreePruner = PrunerWithIrreversibleMoves(1, 1, 2, 2),
-    staticEvaluation: EvaluatingStatically = EvaluatingAsIsNow
+    staticEvaluation: StaticEval = MiddleGameEval
 ) {
     val numberFormat = NumberFormat.getPercentInstance()
-    val dynamicEvaluation = EvaluatingMinMax(pruner, staticEvaluation)
+    val dynamicEvaluation = MinMaxEval(pruner, staticEvaluation)
 
     SingleThreadStrategy.evaluateMovesBestMoveFirst(
-        startConfig = startConfig,
-        movesSoFar = movesSoFar,
-        evaluatingMinMax = dynamicEvaluation,
+        chessGame = EngineChessGameImpl(startConfig, movesSoFar),
+        minMaxEval = dynamicEvaluation,
         numericEvalOkRadius = KaiEngine.okDistanceToBest,
         progressCallback = { movesComputed: Int, totalMoves: Int ->
             println(numberFormat.format(movesComputed.toDouble() / totalMoves.toDouble()))

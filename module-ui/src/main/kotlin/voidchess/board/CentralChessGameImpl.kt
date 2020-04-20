@@ -120,15 +120,14 @@ class CentralChessGameImpl private constructor(
 
     override fun getCompleteHistory() = board.historyToString(null)
 
-    private fun initGame() = initGame(518)    //classic chess starting configuration
+    private fun initGame() = initGame(StartConfig.ClassicConfig)    //classic chess starting configuration
 
-    override fun initGame(chess960: Int) {
+    override fun initGame(newConfig: StartConfig) {
         numberOfMovesWithoutHit = 0
         mementoStack.clear()
         numberStack.init()
-        startConfig = StartConfig.Chess960Config(chess960)
-
-        board.init(startConfig)
+        startConfig = newConfig
+        board.init(newConfig)
 
         memorizeGame()
     }

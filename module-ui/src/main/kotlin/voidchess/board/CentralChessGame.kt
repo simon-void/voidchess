@@ -24,7 +24,7 @@ interface CentralChessGame : StaticChessBoard {
      * @return all the moves played so far in a string representation
      */
     fun getCompleteHistory(): String
-    fun initGame(chess960: Int)
+    fun initGame(newConfig: StartConfig)
     fun isSelectable(pos: Position): Boolean
     fun isMovable(from: Position, to: Position): Boolean
     fun move(move: Move): MoveResult

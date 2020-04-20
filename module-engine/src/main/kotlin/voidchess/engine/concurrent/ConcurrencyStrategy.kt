@@ -5,7 +5,7 @@ import voidchess.common.board.move.Move
 import voidchess.common.board.other.StartConfig
 import voidchess.common.player.ki.ProgressCallback
 import voidchess.common.player.ki.evaluation.*
-import voidchess.engine.evaluation.EvaluatingMinMax
+import voidchess.engine.evaluation.MinMaxEval
 import voidchess.engine.board.EngineChessGameImpl
 
 internal abstract class ConcurrencyStrategy {
@@ -15,16 +15,14 @@ internal abstract class ConcurrencyStrategy {
      * The first element is the best choice for the computer voidchess.engine.player and the last element being the worst.
      */
     fun evaluateMovesBestMoveFirst(
-        startConfig: StartConfig,
-        movesSoFar: List<Move>,
-        evaluatingMinMax: EvaluatingMinMax,
+        chessGame: EngineChessGame,
+        minMaxEval: MinMaxEval,
         numericEvalOkRadius: Double = .0,
         progressCallback: ProgressCallback = { _, _ -> }
     ): List<EvaluatedMove> {
         require(numericEvalOkRadius>=.0) {"numericEvalOkRadius must be positive, but was $numericEvalOkRadius"}
-        val chessGame = EngineChessGameImpl(startConfig, movesSoFar)
         val possibleMoves = chessGame.getAllMoves()
-        return evaluateMoves(chessGame, possibleMoves, progressCallback, evaluatingMinMax, numericEvalOkRadius).apply { sortWith(HighestEvalFirst) }
+        return evaluateMoves(chessGame, possibleMoves, progressCallback, minMaxEval, numericEvalOkRadius).apply { sortWith(HighestEvalFirst) }
     }
 
     abstract fun shutdown()
@@ -33,7 +31,7 @@ internal abstract class ConcurrencyStrategy {
         game: EngineChessGame,
         movesToEvaluate: Collection<Move>,
         progressCallback: ProgressCallback,
-        evaluatingMinMax: EvaluatingMinMax,
+        minMaxEval: MinMaxEval,
         numericEvalOkRadius: Double
     ): MutableList<EvaluatedMove>
 
