@@ -64,13 +64,16 @@ internal data class GameInventory(
             numberOfWhiteRooks == 0 && numberOfWhiteKnights == 0 && numberOfWhiteBishops == 0 &&
             numberOfBlackQueens == 0 && numberOfBlackRooks == 0 && numberOfBlackKnights == 0 && numberOfBlackBishops == 0
 
+    val arePawnsLeft: Boolean = numberOfWhitePawns != 0 || numberOfBlackPawns != 0
+
     val hasOneSideOnlyKingLeft: Boolean = (numberOfWhiteQueens == 0 && numberOfWhiteRooks == 0 &&
             numberOfWhiteKnights == 0 && numberOfWhiteBishops == 0 && numberOfWhitePawns == 0) ||
             (numberOfBlackQueens == 0 && numberOfBlackRooks == 0 && numberOfBlackKnights == 0 &&
                     numberOfBlackBishops == 0 && numberOfBlackPawns == 0)
 
-    val areRookOrQueenLeft: Boolean = numberOfWhiteQueens != 0 || numberOfWhiteRooks != 0 ||
-            numberOfBlackQueens != 0 || numberOfBlackRooks != 0
+    val isQueenLeft: Boolean = numberOfWhiteQueens != 0 || numberOfBlackQueens != 0
+
+    val isRookLeft: Boolean = numberOfWhiteRooks != 0 || numberOfBlackRooks != 0
 }
 
 internal fun EngineChessGame.getInventory(): GameInventory {

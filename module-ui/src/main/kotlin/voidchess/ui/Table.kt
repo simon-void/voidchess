@@ -83,7 +83,9 @@ class Table constructor(
         game.initGame(StartConfig.Chess960Config(panel960.positionCode))
 //        game.initGame(
 //            StartConfig.ManualConfig(true, 0, listOf(
-//                "King-white-e4-5", "Queen-black-a8", "King-black-e8-0"
+//                "King-white-e4-5", "Queen-black-b8", "King-black-e8-0"
+//                "King-white-e4-5", "Bishop-black-a8", "Bishop-black-b8", "King-black-e8-0"
+//                "King-white-e4-5", "Rook-black-a8-0", "King-black-e8-0"
 //            ))
 //        )
         ui.startNewGame()

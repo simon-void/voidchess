@@ -12,6 +12,7 @@ import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.concurrent.ConcurrencyStrategy
 import voidchess.engine.concurrent.MultiThreadStrategy
 import voidchess.engine.evaluation.*
+import voidchess.engine.evaluation.leaf.KingToCornerEndgameEval
 import voidchess.engine.evaluation.leaf.KingToEdgeEndgameEval
 import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.engine.evaluation.leaf.StaticEval
@@ -64,17 +65,29 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
     private fun computeNextMove(startConfig: StartConfig, movesSoFar: List<Move>): EvaluatedMove {
         val game = EngineChessGameImpl(startConfig, movesSoFar)
         val coresToUse = CoresToUseOption.coresToUse
-        val pruner = DifficultyOption.pruner
 
+        val pruner: SearchTreePruner
         val staticEval: StaticEval
         val okDistance: Double
 
         when(game.getEndgameOption()) {
-            EndgameOption.PushToEdge -> {
+            EndgameOption.OneSidedWithQueen -> {
+                pruner  = AllMovesOrNonePruner(2, 2, 3)
                 staticEval = KingToEdgeEndgameEval
                 okDistance = 0.0
             }
+            EndgameOption.OneSidedWithRook -> {
+                pruner  = AllMovesOrNonePruner(3, 3, 3)
+                staticEval = KingToEdgeEndgameEval
+                okDistance = 0.0
+            }
+            EndgameOption.OneSidedWithOnlyBishopsAndOrKnights -> {
+                pruner  = AllMovesOrNonePruner(3, 3, 4)
+                staticEval = KingToCornerEndgameEval
+                okDistance = 0.0
+            }
             else -> {
+                pruner  = DifficultyOption.pruner
                 staticEval = MiddleGameEval
                 okDistance = okDistanceToBest
             }
@@ -174,18 +187,21 @@ private class ConcurrencyStrategyContainer {
 
 internal enum class EndgameOption {
     // TODO add more endgame options
-    No, Pawns, PushToEdge, PushToCorner;
+    No, OnlyPawns, OneSidedWithQueen, OneSidedWithRook, OneSidedWithOnlyBishopsAndOrKnights;
 }
 
 internal fun EngineChessGame.getEndgameOption(): EndgameOption {
     val inventory = this.getInventory()
     return when {
         inventory.hasOneSideOnlyKingLeft -> {
-            if (inventory.areRookOrQueenLeft) {
-                EndgameOption.PushToEdge
-            } else EndgameOption.PushToCorner
+            when {
+                inventory.isQueenLeft -> EndgameOption.OneSidedWithQueen
+                inventory.isRookLeft -> EndgameOption.OneSidedWithRook
+                inventory.arePawnsLeft -> EndgameOption.No // TODO
+                else -> EndgameOption.OneSidedWithOnlyBishopsAndOrKnights
+            }
         }
-        inventory.areOnlyPawnsLeft -> EndgameOption.Pawns
+        inventory.areOnlyPawnsLeft -> EndgameOption.OnlyPawns
         else                       -> EndgameOption.No
     }
 }
