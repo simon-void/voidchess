@@ -68,10 +68,10 @@ internal class MultiThreadStrategy(
         submitCallables(movesToEvaluate, ecs, numberOfThreads)
 
         for (i in 0 until totalNumberOfMoves) {
-            //wait for an evaluation to be finished
-            val evaluatedMove = ecs.take().get()
             //show the progress
             progressCallback(i, totalNumberOfMoves)
+            //wait for an evaluation to be finished
+            val evaluatedMove = ecs.take().get()
             //add a new move to be evaluated to the queue (if some are left)
             submitCallables(movesToEvaluate, ecs, 1)
             //add this evaluation to result set

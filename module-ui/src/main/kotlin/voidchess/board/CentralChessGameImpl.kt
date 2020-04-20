@@ -13,7 +13,7 @@ import java.util.*
 
 class CentralChessGameImpl private constructor(
     private val board: ChessBoard,
-    override val startConfig: StartConfig,
+    override var startConfig: StartConfig,
     private val mementoStack: ArrayDeque<Memento>,
     private val numberStack: NumberStack,
     private var supervisor: ChessGameSupervisor
@@ -126,8 +126,9 @@ class CentralChessGameImpl private constructor(
         numberOfMovesWithoutHit = 0
         mementoStack.clear()
         numberStack.init()
+        startConfig = StartConfig.Chess960Config(chess960)
 
-        board.init(StartConfig.Chess960Config(chess960))
+        board.init(startConfig)
 
         memorizeGame()
     }
