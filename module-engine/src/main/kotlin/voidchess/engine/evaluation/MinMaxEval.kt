@@ -100,7 +100,7 @@ internal class MinMaxEval(
                             }
 
                         if (maxPossibleMovesBuffer.isEmpty()) {
-                            strategy.getNumericEvaluation(game, forWhite)
+                            strategy.getNumericEvaluation(game, forWhite, forWhite)
                         } else {
                             val (bestResponse, eval) = getMax(
                                 game,
@@ -118,7 +118,7 @@ internal class MinMaxEval(
                     }
                     MoveResult.CHECKMATE -> {
                         stopLookingForBetterMove = true
-                        val secondaryMateEval = strategy.getSecondaryCheckmateEvaluation(game, forWhite)
+                        val secondaryMateEval = strategy.getSecondaryCheckmateEvaluation(game, forWhite, forWhite)
                         CheckmateSelf(
                             depth + 1,
                             secondaryMateEval
@@ -196,7 +196,7 @@ internal class MinMaxEval(
                             }
 
                         if (minPossibleMovesBuffer.isEmpty()) {
-                            strategy.getNumericEvaluation(game, forWhite)
+                            strategy.getNumericEvaluation(game, forWhite, !forWhite)
                         } else {
                             val (bestResponse, eval) = getMin(
                                 game,

@@ -18,7 +18,6 @@ import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.engine.evaluation.leaf.StaticEval
 import voidchess.engine.evaluation.leaf.getInventory
 import voidchess.engine.openings.OpeningsLibrary
-import java.util.*
 import kotlin.math.pow
 import kotlin.random.Random
 import kotlin.IllegalArgumentException
@@ -86,6 +85,11 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
                 staticEval = KingToCornerEndgameEval
                 okDistance = 0.0
             }
+            EndgameOption.OnlyPawns -> {
+                pruner  = AllMovesOrNonePruner(3, 6, 3)
+                staticEval = MiddleGameEval
+                okDistance = 0.0
+            }
             else -> {
                 pruner  = DifficultyOption.pruner
                 staticEval = MiddleGameEval
@@ -120,7 +124,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
         // the weight lies between (0-1]
         // with bestMove will have a weight of 1
         // and a move that is almost okDistanceToBest apart will have a weight of almost 0
-        val moveAndLinearWeight: List<Pair<Move, Double>> = LinkedList<Pair<Move, Double>>().apply {
+        val moveAndLinearWeight: List<Pair<Move, Double>> = mutableListOf<Pair<Move, Double>>().apply {
             val bestFullEvaluation = bestEval.numericValue
             for((move, evaluation) in sortedEvaluatedMoves) {
                 if(evaluation !is NumericalEvaluation) break
@@ -187,21 +191,26 @@ private class ConcurrencyStrategyContainer {
 
 internal enum class EndgameOption {
     // TODO add more endgame options
-    No, OnlyPawns, OneSidedWithQueen, OneSidedWithRook, OneSidedWithOnlyBishopsAndOrKnights;
+    No,
+    OnlyPawns,
+    OneSidedWithQueen,
+    OneSidedWithRook,
+    OneSidedWithOnlyBishopsAndOrKnights,
+    OneSidedWithOnlyPawnsAndBishopsAndOrKnights;
 }
 
 internal fun EngineChessGame.getEndgameOption(): EndgameOption {
     val inventory = this.getInventory()
     return when {
+        inventory.areOnlyPawnsLeft -> EndgameOption.OnlyPawns
         inventory.hasOneSideOnlyKingLeft -> {
             when {
                 inventory.isQueenLeft -> EndgameOption.OneSidedWithQueen
                 inventory.isRookLeft -> EndgameOption.OneSidedWithRook
-                inventory.arePawnsLeft -> EndgameOption.No // TODO
+                inventory.arePawnsLeft -> EndgameOption.OneSidedWithOnlyPawnsAndBishopsAndOrKnights
                 else -> EndgameOption.OneSidedWithOnlyBishopsAndOrKnights
             }
         }
-        inventory.areOnlyPawnsLeft -> EndgameOption.OnlyPawns
-        else                       -> EndgameOption.No
+        else -> EndgameOption.No
     }
 }

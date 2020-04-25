@@ -17,8 +17,8 @@ internal class MiddleGameEvalTest {
     @Test(dataProvider = "symmetricPositionProvider")
     fun testSymmetricPositionLeadsToEqualEvaluation(game: EngineChessGameImpl) {
         val staticEval = MiddleGameEval
-        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true)
-        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false)
+        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true, true)
+        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false, false)
         assertEquals(prelimEvalForWhite, prelimEvalForBlack)
         assertEquals(prelimEvalForWhite, 0.0)
 
@@ -67,8 +67,8 @@ internal class MiddleGameEvalTest {
     @Test(dataProvider = "asymmetricPositionProvider")
     fun testAsymmetricPositionLeadsToInverseEvaluation(game: EngineChessGameImpl) {
         val staticEval = MiddleGameEval
-        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true)
-        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false)
+        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true, true)
+        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false, false)
         if (prelimEvalForWhite != 0.0 || prelimEvalForBlack != 0.0)
             assertEquals(prelimEvalForWhite, -prelimEvalForBlack)
 
@@ -83,8 +83,8 @@ internal class MiddleGameEvalTest {
     fun testInvertedAsymmetricPositionLeadsToSameEvaluation(game: EngineChessGameImpl) {
         val staticEval = MiddleGameEval
         val invertedGame = game.copyGameWithInvertedColors()
-        val prelimEvalNormal = staticEval.getPreliminaryEvaluation(game, game.isWhiteTurn)
-        val prelimEvalInverted = staticEval.getPreliminaryEvaluation(invertedGame, invertedGame.isWhiteTurn)
+        val prelimEvalNormal = staticEval.getPreliminaryEvaluation(game, game.isWhiteTurn, game.isWhiteTurn)
+        val prelimEvalInverted = staticEval.getPreliminaryEvaluation(invertedGame, invertedGame.isWhiteTurn, game.isWhiteTurn)
         if (prelimEvalNormal != 0.0 || prelimEvalInverted != 0.0)
             assertEquals(prelimEvalNormal, prelimEvalInverted)
 

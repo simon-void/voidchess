@@ -10,10 +10,15 @@ import voidchess.engine.board.EngineChessGame
 
 internal object MiddleGameEval : StaticEval() {
 
-    override fun getNumericEvaluation(game: EngineChessGame, forWhite: Boolean): Ongoing {
+    override fun getNumericEvaluation(
+        game: EngineChessGame,
+        forWhite: Boolean,
+        isWhiteTurn: Boolean // not used in this case
+    ): Ongoing {
         val prelimEval = getPreliminaryEvaluation(
             game,
-            forWhite
+            forWhite,
+            isWhiteTurn
         )
         return addSecondaryEvaluationTo(
             prelimEval,
@@ -22,8 +27,8 @@ internal object MiddleGameEval : StaticEval() {
         )
     }
 
-    fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean) =
-        evaluateFigures(game, forWhite)
+    fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean, isWhiteTurn: Boolean) =
+        evaluateFigures(game, forWhite, isWhiteTurn)
 
     fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateRuledArea(
         game,
@@ -38,9 +43,14 @@ internal object MiddleGameEval : StaticEval() {
             )
         )
 
-    override fun getSecondaryCheckmateEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateFigures(
+    override fun getSecondaryCheckmateEvaluation(
+        game: EngineChessGame,
+        forWhite: Boolean,
+        isWhiteTurn: Boolean
+    ) = evaluateFigures(
         game,
-        forWhite
+        forWhite,
+        isWhiteTurn
     ) + evaluatePosition(game, forWhite)
 
     private fun evaluateRuledArea(game: EngineChessGame, forWhite: Boolean): Double {

@@ -1,24 +1,17 @@
 optimizations:
+-are type checks (e.g. is King) slower that isKing(), isQueen, ... calls?? If not remove those functions
 -is isNotBound easier to compute than !isBound??
 -get possibleMoves shouldn't iterate over every reachable move in case of checkLines or boundLines
 -a StaticChessBoard with optimized and immutable data structure for StaticEvaluation
--are type checks (e.g. is King) slower that isKing(), isQueen, ... calls?? If not remove those functions
 -is there an efficient way to compute if a pawn is a passed pawn?? (because there should be a passed-pawn bonus)
 -CheckmateOther/Self's depth should be of type UInt
--inline fun ChessGameInterface.simulateMove(move: Move, crossinline checkNewPosition(ChessGame)->Unit) {
-  this.move(move)
-  checkNewPosition(this)
-  this.undo()
-}
--remove ChessGame.informFiguresOfMove or/and at least let
-BasicChessBoard.forAllFigures(OfColor) not iterate over all 64 fields (a board should have an array of white and one for black figures)
+-BasicChessBoard.forAllFigures(OfColor) shouldn't iterate over all 64 fields (a board should have an array of white and one for black figures)
 
 
 features:
-- bundle with minimal JRE (see https://badass-runtime-plugin.beryx.org/releases/latest/)
+- different chess engine implementations:
+  - AWS lambda version of chess engine which computes each possible move in parallel (Step Functions)
+  - Rust version
+- make everything non-ui Kotlin-multiplatform
+- new UI written in Flutter
 - resizable interface (inclusive full-screen)
-- pure chess engine module with 2-way channels (so different engines (written e.g. in Go, Rust, ...) can be used)
--> AWS lambda version of chess engine which computes each possible move in parallel (Step Functions)
-
-bugs:
-- fix on JDK>8 (can't read files from jar file, probably because of module stuff)

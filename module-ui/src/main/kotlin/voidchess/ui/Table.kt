@@ -86,6 +86,7 @@ class Table constructor(
 //                "King-white-e4-5", "Queen-black-b8", "King-black-e8-0"
 //                "King-white-e4-5", "Bishop-black-a8", "Bishop-black-b8", "King-black-e8-0"
 //                "King-white-e4-5", "Rook-black-a8-0", "King-black-e8-0"
+//                  "King-white-h1-9", "Pawn-black-c7-false", "Pawn-black-e7-false", "King-black-g8-0"
 //            ))
 //        )
         ui.startNewGame()

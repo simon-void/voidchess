@@ -7,8 +7,12 @@ import kotlin.math.abs
 import kotlin.math.max
 
 internal object KingToCornerEndgameEval : StaticEval() {
-    override fun getNumericEvaluation(game: EngineChessGame, forWhite: Boolean): Ongoing {
-        val materialEvalForWhite = evaluateFigures(game, true)
+    override fun getNumericEvaluation(
+        game: EngineChessGame,
+        forWhite: Boolean,
+        isWhiteTurn: Boolean // not used in this case
+    ): Ongoing {
+        val materialEvalForWhite = evaluateFigures(game, true, isWhiteTurn)
         val whiteIsWinning = materialEvalForWhite > 0
 
         val winningKingPos: Position

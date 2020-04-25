@@ -25,7 +25,7 @@ dependencies {
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = "3.2.1"
+    version = "3.2.2"
 
     repositories {
         mavenCentral()
@@ -36,7 +36,7 @@ allprojects {
         withType<KotlinCompile> {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
-                jvmTarget = "11"
+                jvmTarget = "12"
             }
         }
     }
