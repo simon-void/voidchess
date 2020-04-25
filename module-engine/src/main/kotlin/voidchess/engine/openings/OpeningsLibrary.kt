@@ -6,7 +6,6 @@ import voidchess.common.board.other.StartConfig
 import voidchess.common.helper.TreeNode
 import voidchess.common.helper.getResourceStream
 import voidchess.common.helper.splitAndTrim
-import voidchess.common.helper.trim
 import voidchess.common.player.ki.ProgressCallback
 import voidchess.common.player.ki.evaluation.EvaluatedMove
 import voidchess.engine.concurrent.SingleThreadStrategy
@@ -15,24 +14,18 @@ import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.engine.evaluation.MinMaxEval
 
 import java.util.ArrayList
-import kotlin.random.Random
 
 
-internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
+internal class OpeningsLibrary(
+    openingSequences: List<String>
+) {
+    private val openingsRootNode: TreeNode<KnownMove, String> = parseOpenings(openingSequences)
     private val quickMinMaxEval: MinMaxEval = MinMaxEval(
         AllMovesOrNonePruner(1, 6, 1),
         MiddleGameEval
     )
-    private val openingsRootNode: TreeNode<String>
-
-    init {
-        val openingSequences = loadOpeningSequencesFromFile(relativePathToOpeningsFile)
-        openingsRootNode = parseOpenings(openingSequences)
-    }
 
     private val maxDepth: Int get() = openingsRootNode.depth
-
-
 
     fun lookUpNextMove(
         startConfig: StartConfig,
@@ -72,33 +65,25 @@ internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
         // assume that the whole library is based on classic chess
         if(chess960StartIndex!=518) return null
 
-        var currentNode: TreeNode<String> = openingsRootNode
+        var currentNode: TreeNode<KnownMove, String> = openingsRootNode
         for (move in moves) {
             currentNode = currentNode.getChild(move.toString()) ?: return null
         }
 
-        val movesFound: List<Move> = currentNode.childData.map { moveCode -> Move.byCode(moveCode)}
-        return movesFound[Random.nextInt(movesFound.size)]
+        val movesFound: List<Move> = currentNode.childData.filter { it.isRecommended }.map { knownMove -> Move.byCode(knownMove.move)}
+        return movesFound.shuffled().firstOrNull()
     }
 
-    private fun loadOpeningSequencesFromFile(relativePathToOpeningsFile: String): List<String> = try {
-        getResourceStream(javaClass, "module-engine", relativePathToOpeningsFile)
-            .bufferedReader().useLines { lines ->
-            lines.map { it.trim() }.filter { !(it.isEmpty() || it.startsWith('#')) }.toList()
+    private fun parseOpenings(openingSequences: List<String>): TreeNode<KnownMove, String> {
+        val root = TreeNode.getRoot(KnownMove("root", false)) { knownMove ->
+            knownMove.move
         }
-    } catch (e: Exception) {
-        println("OpeningsLibrary couldn't load $relativePathToOpeningsFile: $e")
-        emptyList()
-    }
-
-    private fun parseOpenings(openingSequences: List<String>): TreeNode<String> {
-        val root = TreeNode.getRoot("root")
 
         for (openingSequence in openingSequences) {
             var currentNode = root
-            val moves = splitAndCheckOpeningSequence(openingSequence)
-            for (move in moves.trim()) {
-                currentNode = currentNode.addChild(move)
+            val knownMoves = splitAndCheckOpeningSequence(openingSequence)
+            for (knownMove in knownMoves) {
+                currentNode = currentNode.addChild(knownMove)
             }
         }
 
@@ -107,7 +92,20 @@ internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
 
     companion object {
 
-        fun splitAndCheckOpeningSequence(openingSequence: String): List<String> {
+        fun loadFromFile(relativePathToOpeningsFile: String): OpeningsLibrary {
+            val openingSequence = try {
+                getResourceStream(OpeningsLibrary::class.java, "module-engine", relativePathToOpeningsFile)
+                    .bufferedReader().useLines { lines ->
+                        lines.map { it.trim() }.filter { !(it.isEmpty() || it.startsWith('#')) }.toList()
+                    }
+            } catch (e: Exception) {
+                println("OpeningsLibrary couldn't load $relativePathToOpeningsFile: $e")
+                emptyList<String>()
+            }
+            return OpeningsLibrary(openingSequence)
+        }
+
+        fun splitAndCheckOpeningSequence(openingSequence: String): List<KnownMove> {
             if (openingSequence.isBlank()) {
                 return emptyList()
             }
@@ -117,22 +115,44 @@ internal class OpeningsLibrary(relativePathToOpeningsFile: String) {
             require(!openingSequence.endsWith(separator)) { "opening sequence ends with separator: $openingSequence" }
 
             val textMoves = openingSequence.splitAndTrim(separator)
-            val checkedMoves = ArrayList<String>(textMoves.size)
+            val checkedMoves = ArrayList<KnownMove>(textMoves.size)
 
             val game = BasicChessGameImpl(StartConfig.ClassicConfig)
 
             for (textMove in textMoves) {
-                require(Move.isValid(textMove)) { "illegal move format'$textMove' in opening sequence: $openingSequence" }
-                val move = Move.byCode(textMove)
-                val isMoveExecutable = game.isMovable(
-                        move.from, move.to
-                )
+                val knownMove = KnownMove.from(textMove)
+                val move = Move.byCode(knownMove.move)
+                val isMoveExecutable = game.isMovable(move.from, move.to)
                 require(isMoveExecutable) { "illegal move '$textMove' in opening sequence: $openingSequence" }
                 game.move(move)
 
-                checkedMoves.add(textMove)
+                checkedMoves.add(knownMove)
             }
             return checkedMoves
         }
     }
+}
+
+data class KnownMove(
+    val move: String,
+    val isRecommended: Boolean
+): Comparable<KnownMove> {
+    companion object {
+        private val moveFromBookRegex = """^([a-h][1-8]-[a-h][1-8])|(\([a-h][1-8]-[a-h][1-8]\))$""".toRegex()
+        fun from(text: String): KnownMove {
+            require(moveFromBookRegex matches text) {"text: $text doesn't match the expected pattern of either 'e1-d2' or '(e1-d2)'"}
+            val isRecommended: Boolean
+            val move: String
+            if(text.startsWith('(')) {
+                isRecommended = false
+                move = text.substring(1, 6) // remove the outer brackets
+            }else{
+                isRecommended = true
+                move = text
+            }
+            return KnownMove(move, isRecommended)
+        }
+    }
+
+    override fun compareTo(other: KnownMove) = move.compareTo(other.move)
 }

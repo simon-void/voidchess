@@ -137,7 +137,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
                 if(move.to.row==0 || move.to.row==7) {
                     ExtendedMove.Promotion(move, movingFigure, getFigureOrNull(move.to))
                 }else if(abs(move.from.row-move.to.row) ==2) {
-                    ExtendedMove.PawnDoubleJump(move,  movingFigure as Pawn)
+                    ExtendedMove.PawnDoubleJump(move, movingFigure)
                 }else if(move.from.column!=move.to.column && toFigure==null) {
                     val pawnTakenByEnpassant = getFigure(Position[move.from.row, move.to.column])
                     ExtendedMove.Enpassant(move, pawnTakenByEnpassant)

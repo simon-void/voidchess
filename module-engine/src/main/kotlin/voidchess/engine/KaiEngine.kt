@@ -25,7 +25,7 @@ import kotlin.IllegalArgumentException
 class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
     private val concurrencyStrategyCache = ConcurrencyStrategyContainer()
-    private val openingsLibrary = OpeningsLibrary("openings.txt")
+    private val openingsLibrary: OpeningsLibrary = OpeningsLibrary.loadFromFile("openings.txt")
 
     override fun getSpec(): EngineSpec =
         EngineSpec(
