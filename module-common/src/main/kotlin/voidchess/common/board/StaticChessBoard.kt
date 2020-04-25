@@ -2,8 +2,7 @@ package voidchess.common.board
 
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
-import voidchess.common.figures.Figure
-import voidchess.common.figures.King
+import voidchess.common.figures.*
 
 
 interface StaticChessBoard {
@@ -66,17 +65,17 @@ val StaticChessBoard.isDrawBecauseOfLowMaterial: Boolean
         var numberOfBlackKnights = 0
 
         this.forAllFigures { figure ->
-            if (figure.isPawn()
-                || figure.isRook()
-                || figure.isQueen()
+            if (figure is Pawn
+                || figure is Rook
+                || figure is Queen
             ) {
                 return false
-            } else if (figure.isBishop()) {
+            } else if (figure is Bishop) {
                 if (figure.isWhite)
                     numberOfWhiteBishops++
                 else
                     numberOfBlackBishops++
-            } else if (figure.isKnight()) {
+            } else if (figure is Knight) {
                 if (figure.isWhite)
                     numberOfWhiteKnights++
                 else

@@ -94,7 +94,7 @@ class King : CastlingFigure {
                         middlePosition = Position[groundRow, column]
                         val middleFigure = game.getFigureOrNull(middlePosition)
                         if (middleFigure!=null) {
-                            if (!middleFigure.canCastle() || middleFigure.isRook()) {
+                            if (!middleFigure.canCastle() || middleFigure is Rook) {
                                 return false
                             }
                         }
@@ -103,7 +103,7 @@ class King : CastlingFigure {
                     middlePosition = Position[groundRow, 3]
                     val middleFigure = game.getFigureOrNull(middlePosition)
                     if (middleFigure!=null) {
-                        if (!middleFigure.canCastle() || middleFigure.isRook()) {
+                        if (!middleFigure.canCastle() || middleFigure is Rook) {
                             return false
                         }
                     }

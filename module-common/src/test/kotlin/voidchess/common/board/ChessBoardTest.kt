@@ -6,6 +6,9 @@ import voidchess.common.assertFiguresKnowTherePosition
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.ChessGameSupervisorDummy
+import voidchess.common.figures.King
+import voidchess.common.figures.Queen
+import voidchess.common.figures.Rook
 import voidchess.common.toChess960Config
 import voidchess.common.toManualConfig
 import kotlin.test.*
@@ -25,11 +28,11 @@ class ChessBoardTest {
     fun testInit() {
         val board = ArrayChessBoard()
         var figure = board.getFigure(Position.byCode("a1"))
-        assertTrue(figure.isRook())
+        assertTrue(figure is Rook)
         assertTrue(figure.isWhite)
 
         figure = board.getFigure(Position.byCode("e8"))
-        assertTrue(figure.isKing())
+        assertTrue(figure is King)
         assertFalse(figure.isWhite)
 
         val nullFigure = board.getFigureOrNull(Position.byCode("e3"))
@@ -64,7 +67,7 @@ class ChessBoardTest {
         val board = ArrayChessBoard()
         val des = "  white   0   Queen-white-c1     King-white-e1-0    King-black-e8-0     "
         board.init(des.toManualConfig())
-        assertTrue(board.getFigure(Position.byCode("c1")).isQueen())
+        assertTrue(board.getFigure(Position.byCode("c1")) is Queen)
     }
 
     @Test

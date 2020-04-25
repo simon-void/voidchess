@@ -4,7 +4,7 @@ import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.getFirstFigureInDir
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
-import voidchess.common.figures.King
+import voidchess.common.figures.*
 
 
 fun StaticChessBoard.isInCheck(king: King): Boolean {
@@ -22,7 +22,7 @@ private fun isCheckByKing(game: StaticChessBoard, kingPos: Position): Boolean {
     Direction.values().forEach {
         kingPos.step(it)?.let { pos ->
             game.getFigureOrNull(pos)?.let { figure ->
-                if (figure.isKing()) {
+                if (figure is King) {
                     return true
                 }
             }
@@ -37,14 +37,14 @@ private fun isCheckByPawn(game: StaticChessBoard, kingPos: Position, isWhite: Bo
 
     kingPos.step(Direction.getDiagonal(forwardDir, Direction.RIGHT))?.let { pos ->
         game.getFigureOrNull(pos)?.let { figure ->
-            if (figure.isPawn() && figure.isWhite != isWhite) {
+            if (figure is Pawn && figure.isWhite != isWhite) {
                 return true
             }
         }
     }
     kingPos.step(Direction.getDiagonal(forwardDir, Direction.LEFT))?.let { pos ->
         game.getFigureOrNull(pos)?.let { figure ->
-            if (figure.isPawn() && figure.isWhite != isWhite) {
+            if (figure is Pawn && figure.isWhite != isWhite) {
                 return true
             }
         }
@@ -56,7 +56,7 @@ private fun isCheckByPawn(game: StaticChessBoard, kingPos: Position, isWhite: Bo
 private fun isCheckByKnight(game: StaticChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
     kingPos.forEachKnightPos { pos ->
         game.getFigureOrNull(pos)?.let { figure ->
-            if (figure.isWhite != isWhite && figure.isKnight()) {
+            if (figure.isWhite != isWhite && figure is Knight) {
                 return true
             }
         }
@@ -68,7 +68,7 @@ private fun isCheckByKnight(game: StaticChessBoard, kingPos: Position, isWhite: 
 private fun isCheckByBishopOrQueen(game: StaticChessBoard, kingPos: Position, isWhite: Boolean): Boolean {
     Direction.diagonalDirs.forEach { diagonal ->
         game.getFirstFigureInDir(diagonal, kingPos)?.let { figure ->
-            if (figure.isWhite != isWhite && (figure.isQueen() || figure.isBishop())) {
+            if (figure.isWhite != isWhite && (figure is Queen || figure is Bishop)) {
                 return true
             }
         }
@@ -84,7 +84,7 @@ private fun isCheckByRookOrQueen(game: StaticChessBoard, kingPos: Position, isWh
 
     Direction.straightDirs.forEach { diagonal ->
         game.getFirstFigureInDir(diagonal, kingPos)?.let { figure ->
-            if (figure.isWhite != isWhite && (figure.isQueen() || figure.isRook())) {
+            if (figure.isWhite != isWhite && (figure is Queen || figure is Rook)) {
                 return true
             }
         }
@@ -103,7 +103,7 @@ private fun isDoubleHorizontalCheckAfterPawnPromotion(
 
     kingPos.step(Direction.LEFT)?.let { sidePos ->
         game.getFigureOrNull(sidePos)?.let { figure ->
-            if (figure.isWhite != isWhite && (figure.isQueen() || figure.isRook())) {
+            if (figure.isWhite != isWhite && (figure is Queen || figure is Rook)) {
                 kingSideAttackerPos = sidePos
             }
         }
@@ -111,7 +111,7 @@ private fun isDoubleHorizontalCheckAfterPawnPromotion(
     if (kingSideAttackerPos == null) {
         kingPos.step(Direction.RIGHT)?.let { sidePos ->
             game.getFigureOrNull(sidePos)?.let { figure ->
-                if (figure.isWhite != isWhite && (figure.isQueen() || figure.isRook())) {
+                if (figure.isWhite != isWhite && (figure is Queen || figure is Rook)) {
                     kingSideAttackerPos = sidePos
                 }
             }
@@ -123,7 +123,7 @@ private fun isDoubleHorizontalCheckAfterPawnPromotion(
     val dirOfPossibleSecondStraightAttacker = if (isWhite) Direction.UP else Direction.DOWN
 
     game.getFirstFigureInDir(dirOfPossibleSecondStraightAttacker, kingPos)?.let { figure ->
-        if (figure.isWhite != isWhite && (figure.isQueen() || figure.isRook())) {
+        if (figure.isWhite != isWhite && (figure is Queen || figure is Rook)) {
             return true
         }
     }

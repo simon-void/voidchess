@@ -5,6 +5,8 @@ import voidchess.common.board.getFirstFigureInDir
 import voidchess.common.board.getKing
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
+import voidchess.common.figures.Knight
+import voidchess.common.figures.Pawn
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -64,7 +66,7 @@ fun checkAttackLines(game: StaticChessBoard, isWhite: Boolean): AttackLines {
     )) {
         kingPos.step(forwardDiagonalDir)?.let { forwardDiagonalPos ->
             game.getFigureOrNull(forwardDiagonalPos)?.let { possiblyPawn ->
-                if(possiblyPawn.isWhite!=isWhite && possiblyPawn.isPawn()) {
+                if(possiblyPawn.isWhite!=isWhite && possiblyPawn is Pawn) {
                     checkLines.add(PawnCheck(forwardDiagonalPos, kingPos))
                 }
             }
@@ -73,7 +75,7 @@ fun checkAttackLines(game: StaticChessBoard, isWhite: Boolean): AttackLines {
 
     kingPos.forEachKnightPos {possibleKnightPos->
         game.getFigureOrNull(possibleKnightPos)?.let { figure ->
-            if(figure.isKnight()&&figure.isWhite!=isWhite) {
+            if(figure is Knight &&figure.isWhite!=isWhite) {
                 checkLines.add(KnightCheck(possibleKnightPos, kingPos))
             }
         }

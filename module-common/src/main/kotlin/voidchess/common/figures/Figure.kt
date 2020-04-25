@@ -24,14 +24,6 @@ abstract class Figure constructor(
     val typeInfo: Int = if (isWhite) type.index else (type.index + 7)
     open val canBeHitEnpassant = false
 
-    fun isPawn() = type == FigureType.PAWN
-    fun isRook() = type == FigureType.ROOK
-    fun isKnight() = type == FigureType.KNIGHT
-    fun isBishop() = type == FigureType.BISHOP
-    fun isQueen() = type == FigureType.QUEEN
-
-    fun isKing() = type == FigureType.KING
-
     fun hasDifferentColor(other: Figure) = isWhite != other.isWhite
 
     open fun canCastle(): Boolean {
@@ -111,7 +103,7 @@ abstract class Figure constructor(
         getPossibleTakingMoves(game, result)
 
         // this doesn't make sense for king; and pawn and knight overwrite getCriticalMoves altogether.
-        if(isPawn()||isKnight()||isKing()) return
+        if(this is Pawn||this is Knight||this is King) return
 
         // for simplicity lets only consider checks while not in check and figure unbound
         val attackLines = game.getCachedAttackLines()
@@ -136,8 +128,8 @@ abstract class Figure constructor(
     }
 
     private fun isBound(toPos: Position, game: ChessBoard, attackLines: AttackLines): Boolean {
-        if( isKing()) {
-            return (this as King).canNotMoveThereBecauseOfCheck(toPos, game, attackLines)
+        if( this is King) {
+            return canNotMoveThereBecauseOfCheck(toPos, game, attackLines)
         }
 
         if(attackLines.noCheck) {

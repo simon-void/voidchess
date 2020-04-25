@@ -3,7 +3,7 @@ package voidchess.engine.evaluation.leaf
 import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.forAllFigures
 import voidchess.common.board.move.Position
-import voidchess.common.figures.Figure
+import voidchess.common.figures.*
 import voidchess.common.player.ki.evaluation.Ongoing
 import voidchess.engine.board.EngineChessGame
 
@@ -31,29 +31,29 @@ internal abstract class StaticEval {
         var containsOnlyPawns = true
 
         game.forAllFigures { figure ->
-            if (!figure.isKing()) {
+            if (figure !is King) {
                 if (figure.isWhite) {
-                    if (figure.isPawn()) {
+                    if (figure is Pawn) {
                         whiteFigures += PAWN_VALUE
                     } else {
                         containsOnlyPawns = false
-                        when {
-                            figure.isRook() -> whiteFigures += ROOK_VALUE
-                            figure.isKnight() -> whiteFigures += KNIGHT_VALUE
-                            figure.isBishop() -> whiteFigures += BISHOP_VALUE
-                            figure.isQueen() -> whiteFigures += QUEEN_VALUE
+                        when (figure) {
+                            is Rook -> whiteFigures += ROOK_VALUE
+                            is Knight -> whiteFigures += KNIGHT_VALUE
+                            is Bishop -> whiteFigures += BISHOP_VALUE
+                            is Queen -> whiteFigures += QUEEN_VALUE
                         }
                     }
                 } else {
-                    if (figure.isPawn()) {
+                    if (figure is Pawn) {
                         blackFigures += PAWN_VALUE
                     } else {
                         containsOnlyPawns = false
-                        when {
-                            figure.isRook() -> blackFigures += ROOK_VALUE
-                            figure.isKnight() -> blackFigures += KNIGHT_VALUE
-                            figure.isBishop() -> blackFigures += BISHOP_VALUE
-                            figure.isQueen() -> blackFigures += QUEEN_VALUE
+                        when (figure) {
+                            is Rook -> blackFigures += ROOK_VALUE
+                            is Knight -> blackFigures += KNIGHT_VALUE
+                            is Bishop -> blackFigures += BISHOP_VALUE
+                            is Queen -> blackFigures += QUEEN_VALUE
                         }
                     }
                 }
@@ -66,7 +66,7 @@ internal abstract class StaticEval {
             val blackKingPos = game.blackKing.position
 
             game.forAllFigures { figure ->
-                if(figure.isPawn()) {
+                if(figure is Pawn) {
                     if(game.isPassedPawn(figure.position, figure.isWhite)) {
                         val pawnKingPos: Position
                         val opposingKingPos: Position
@@ -113,7 +113,7 @@ private fun StaticChessBoard.isPassedPawn(pawnPos: Position, isPawnWhite: Boolea
         }
         for(row in rowProgression) {
             this.getFigureOrNull(Position[row, column])?.let { figure ->
-                if(figure.isPawn()&&figure.isWhite!=isPawnWhite) {
+                if(figure is Pawn && figure.isWhite!=isPawnWhite) {
                     return false
                 }
             }
@@ -224,20 +224,20 @@ internal fun EngineChessGame.getInventory(): GameInventory {
 
     this.forAllFigures { figure ->
         if (figure.isWhite) {
-            when {
-                figure.isPawn() -> numberOfWhitePawns++
-                figure.isRook() -> numberOfWhiteRooks++
-                figure.isKnight() -> numberOfWhiteKnights++
-                figure.isBishop() -> numberOfWhiteBishops++
-                figure.isQueen() -> numberOfWhiteQueens++
+            when (figure) {
+                is Pawn -> numberOfWhitePawns++
+                is Rook -> numberOfWhiteRooks++
+                is Knight -> numberOfWhiteKnights++
+                is Bishop -> numberOfWhiteBishops++
+                is Queen -> numberOfWhiteQueens++
             }
         }else{
-            when {
-                figure.isPawn() -> numberOfBlackPawns++
-                figure.isRook() -> numberOfBlackRooks++
-                figure.isKnight() -> numberOfBlackKnights++
-                figure.isBishop() -> numberOfBlackBishops++
-                figure.isQueen() -> numberOfBlackQueens++
+            when (figure) {
+                is Pawn -> numberOfBlackPawns++
+                is Rook -> numberOfBlackRooks++
+                is Knight -> numberOfBlackKnights++
+                is Bishop -> numberOfBlackBishops++
+                is Queen -> numberOfBlackQueens++
             }
         }
     }

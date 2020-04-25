@@ -8,6 +8,7 @@ import voidchess.common.board.move.Position
 import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.board.other.StartConfig
+import voidchess.common.figures.King
 import java.util.*
 
 
@@ -149,7 +150,7 @@ class CentralChessGameImpl private constructor(
 
     private fun noMovesLeft(caseWhite: Boolean): Boolean {
         board.forAllFiguresOfColor(caseWhite) { figure ->
-            if (!figure.isKing() && figure.isSelectable(board)) {
+            if (figure !is King && figure.isSelectable(board)) {
                 return false
             }
         }

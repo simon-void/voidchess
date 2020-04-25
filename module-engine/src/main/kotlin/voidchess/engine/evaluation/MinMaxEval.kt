@@ -3,6 +3,7 @@ package voidchess.engine.evaluation
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
+import voidchess.common.figures.King
 import voidchess.common.player.ki.evaluation.*
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.evaluation.leaf.MiddleGameEval
@@ -71,7 +72,7 @@ internal class MinMaxEval(
 
         for (move in minPossibleMovesBuffer.shuffle(movesToTryFirst)) {
 
-            assert(game.isFreeArea(move.to) || !game.getFigure(move.to).isKing()) {
+            assert(game.isFreeArea(move.to) || game.getFigure(move.to) !is King) {
                 "getMin: ${game.getFigureOrNull(move.from)} hits King white Move $move"
             }
 
@@ -169,7 +170,7 @@ internal class MinMaxEval(
 
         for (move in maxPossibleMovesBuffer.shuffle(movesToTryFirst)) {
 
-            assert(game.isFreeArea(move.to) || !game.getFigure(move.to).isKing()) {
+            assert(game.isFreeArea(move.to) || game.getFigure(move.to) !is King) {
                 "getMax: ${game.getFigureOrNull(move.from)} hits King white Move $move"
             }
 

@@ -122,8 +122,8 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
         val movingFigure: Figure = clearFigure(move.from)
         val toFigure: Figure? = getFigureOrNull(move.to)
 
-        val extendedMove: ExtendedMove = when(movingFigure.type) {
-            FigureType.KING -> {
+        val extendedMove: ExtendedMove = when(movingFigure) {
+            is King -> {
                 if(toFigure!=null && toFigure.isWhite==movingFigure.isWhite) {
                     val isKingSideCastling = move.from.column<move.to.column
                     val kingToColumn = if (isKingSideCastling) 6 else 2
@@ -133,7 +133,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
                     ExtendedMove.Normal(move, toFigure)
                 }
             }
-            FigureType.PAWN -> {
+            is Pawn -> {
                 if(move.to.row==0 || move.to.row==7) {
                     ExtendedMove.Promotion(move, movingFigure, getFigureOrNull(move.to))
                 }else if(abs(move.from.row-move.to.row) ==2) {

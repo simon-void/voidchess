@@ -2,8 +2,7 @@ package voidchess.engine.evaluation.leaf
 
 import voidchess.common.board.forAllFigures
 import voidchess.common.board.move.Position
-import voidchess.common.figures.Figure
-import voidchess.common.figures.King
+import voidchess.common.figures.*
 import voidchess.common.player.ki.evaluation.Ongoing
 import voidchess.engine.board.EngineChessGame
 
@@ -70,7 +69,7 @@ internal object MiddleGameEval : StaticEval() {
 
         game.forAllFigures {figure->
             val pos = figure.position
-            if (figure.isPawn()) {
+            if (figure is Pawn) {
                 if (figure.isWhite) {
                     whiteEvaluation += evaluatePawn(
                         game,
@@ -84,14 +83,14 @@ internal object MiddleGameEval : StaticEval() {
                         false
                     )
                 }
-            } else if (figure.isKnight()) {
+            } else if (figure is Knight) {
                 val value = evaluateKnight(pos)
                 if (figure.isWhite) {
                     whiteEvaluation += value
                 }else{
                     blackEvaluation += value
                 }
-            } else if (figure.isBishop()) {
+            } else if (figure is Bishop) {
                 val value =
                     evaluateBishop(game, figure)
                 if (figure.isWhite) {
@@ -99,7 +98,7 @@ internal object MiddleGameEval : StaticEval() {
                 }else{
                     blackEvaluation += value
                 }
-            } else if (figure.isQueen()) {
+            } else if (figure is Queen) {
                 if (figure.isWhite) {
                     foundWhiteQueen = true
                 }else {
@@ -284,7 +283,7 @@ internal object MiddleGameEval : StaticEval() {
 
     private fun containsPawnOfColor(game: EngineChessGame, pos: Position, white: Boolean): Boolean {
         val figure = game.getFigureOrNull(pos)
-        return figure!=null && figure.isWhite == white && figure.isPawn()
+        return figure is Pawn && figure.isWhite == white
     }
 
 
