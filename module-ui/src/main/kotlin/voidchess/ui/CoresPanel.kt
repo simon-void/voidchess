@@ -5,10 +5,9 @@ import voidchess.common.player.ki.Option
 
 import javax.swing.*
 import java.awt.*
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
+import java.util.prefs.Preferences
 
-class CoresPanel constructor(private val player: ComputerPlayer) : JPanel(), ActionListener {
+class CoresPanel constructor(private val player: ComputerPlayer) : JPanel() {
 
     private val coresOption: Option = player.getEngineSpec().coresToUseOption
     private val comboBox = JComboBox<String>().apply{
@@ -30,8 +29,22 @@ class CoresPanel constructor(private val player: ComputerPlayer) : JPanel(), Act
 
     init {
         background = Color.WHITE
-        comboBox.addActionListener(this)
+
+        val preferences = Preferences.userNodeForPackage(CoresPanel::class.java)
+        val coresPrefKey = "coresOption"
+        val selectedByDefault = comboBox.selectedItem as String
+
         add(comboBox)
+        comboBox.addActionListener {
+            val numberOfCoresToUse = comboBox.selectedItem as String
+            player.setOption(coresOption.name, numberOfCoresToUse)
+            preferences.put(coresPrefKey, numberOfCoresToUse)
+        }
+
+        val savedOption: String = preferences.get(coresPrefKey, comboBox.selectedItem as String)
+        if(savedOption!=selectedByDefault && coresOption.possibleValues.contains(savedOption)) {
+            comboBox.selectedItem = savedOption
+        }
     }
 
     /**
@@ -41,10 +54,5 @@ class CoresPanel constructor(private val player: ComputerPlayer) : JPanel(), Act
 
     override fun setEnabled(enable: Boolean) {
         comboBox.isEnabled = enable
-    }
-
-    override fun actionPerformed(event: ActionEvent) {
-        val numberOfCoresToUse = comboBox.selectedItem as String
-        player.setOption(coresOption.name, numberOfCoresToUse)
     }
 }

@@ -25,7 +25,7 @@ dependencies {
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = "3.2.2"
+    version = "3.2.3"
 
     repositories {
         mavenCentral()
