@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta name="viewport" content="minimum-scale=0.6, maximum-scale=1.0, initial-scale=1.0, minim,width=860" />
+
+  <title>VoidChess</title>
+
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lora&display=swap');
+    
+    .body_look {
+      background-image:
+      linear-gradient(45deg, #ddd 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ddd 75%),
+      linear-gradient(45deg, transparent 75%, #ddd 75%),
+      linear-gradient(45deg, #ddd 25%, #eee 25%);
+      background-size:400px 400px;       
+      background-position:0 0, 0 0, -200px -200px, 200px 200px;
+
+      font-family: 'Lora', serif;
+      font-size: larger;
+
+      margin-top: 15px;
+    }
+
+    .basic_look {
+      margin-left: auto;
+      margin-right: auto;
+      width: 780px;
+      background-color: #cdf;
+      padding: 10px 20px;
+      border: solid 1px black;
+    }
+
+    .headline{
+      font-size: xx-large;
+      font-weight: bold;
+      text-shadow: 0 2px lightslategray, 2px 0 lightslategray;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    
+    .minor_headline{
+      font-size: x-large;
+      font-weight: bold;
+      text-shadow: 0 1px lightslategray, 1px 0 lightslategray;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    table {
+      font-size: 100%;
+    }
+
+    .pic {
+      margin-top: 20px;
+      border: 1px solid black;
+      border-radius: 6px;
+      box-shadow: 4px 4px lightslategray;
+    }
+
+    .footer {
+      font-size: small;
+	  margin-top: 30px;
+    }
+
+  </style>
+</head>
+
+<body class="body_look">
+<div class="basic_look">
+<div class="headline">VoidChess</div>
+
+<div>is a simple chess programm for Window, Linux and macOS. It's actually still beatable, but you have to work for it. 
+You can play a normal game or with Fischer random chess (aka chess960)-starting positions.
+<br><br>Have Fun :)
+</div>
+
+<img class="pic" src="./voidchess.png" alt="VoidChess screenshot">
+
+<div class="headline">Downloads</div>
+
+<table border="1" summary = "Downloadtable">
+<thead>
+<tr>
+<th scope="col"> Name </th>
+<th scope="col"> Description </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./download/VoidChess-3.2.3.msi">VoidChess-3.2.3.msi</a> </td>
+<td> installer for Windows.</td>
+</tr>
+<tr>
+<td><a href="./download/voidchess_3.2.3-1_amd64.deb">voidchess_3.2.3-1_amd64.deb</a> </td>
+<td> installer for Ubuntu/Kubuntu/Debian/...</td>
+</tr>
+<tr>
+<td><a href="./download/VoidChess-3.2.3.pkg">VoidChess-3.2.3.pkg</a> </td>
+<td> installer for macOS</td>
+</tr>
+<tr>
+<td><a href="https://github.com/simon-void/voidchess">source code</a> </td>
+<td> the source code is on GitHub</td>
+</tr>
+</tbody>
+</table>
+
+</br>
+
+<table border="1">
+<thead>
+  <tr>
+    <th scope="col">download size</th>
+    <th scope="col">installation size</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td style="text-align: center;">35 MB</td>
+    <td style="text-align: center;">70-75 MB</td>
+  </tr>
+</tbody>
+</table>
+
+<div class="minor_headline">Changelog</div>
+
+<ul>
+  <li>3.2.3: options (difficulty level, number of cores to use) are saved</li>
+  <li>3.2.2: implemented basic pawn endgame strategies and better opening library support</li>
+  <li>3.2.1: fixed broken chess960 positions and implemented basic endgame tactics (how to win with only queen, rook or two bishops)</li>
+</ul>
+
+<div class="footer"></div>
+</div>
+</body></html>
