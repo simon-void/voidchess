@@ -11,8 +11,7 @@ import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.board.EngineChessGame
 import voidchess.common.board.move.Move
 import voidchess.common.board.other.StartConfig
-import voidchess.common.player.ki.ProgressCallback
-import voidchess.common.player.ki.evaluation.*
+import voidchess.common.engine.*
 import voidchess.copyGameWithInvertedColors
 import voidchess.engine.evaluation.*
 import voidchess.engine.evaluation.leaf.MiddleGameEval
@@ -173,10 +172,10 @@ internal class MultiThreadStrategyTest {
 
     @Test(dataProvider = "gameWithEvalPredicateProvider")//, dependsOnMethods = ["testMinMaxIsInvokedForEachPossibleMove"])
     fun testMinMaxToEvalPredicate(
-        game: EngineChessGameImpl,
-        pruner: SearchTreePruner,
-        evalTest: (Evaluation) -> Boolean,
-        msg: String
+            game: EngineChessGameImpl,
+            pruner: SearchTreePruner,
+            evalTest: (Evaluation) -> Boolean,
+            msg: String
     ) {
         val bestPossibleEval = evaluate(pruner, game).bestPossibleEval()
         assertTrue(evalTest(bestPossibleEval), "evalTest returned false on eval $bestPossibleEval. msg: $msg")

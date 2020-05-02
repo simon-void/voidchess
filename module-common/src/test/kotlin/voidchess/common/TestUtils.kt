@@ -4,7 +4,6 @@ import voidchess.common.board.*
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import voidchess.common.board.move.PositionProgression
-import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Figure
 import kotlin.test.assertEquals
@@ -17,17 +16,13 @@ fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessBoard = ArrayC
     StartConfig.Chess960Config(chess960)
 ).apply {
     for (moveCode in moveCodes) {
-        move(Move.byCode(moveCode), ChessGameSupervisorDummy)
+        move(Move.byCode(moveCode))
     }
 }
 
 fun ChessBoard.getPossibleMovesFrom(posCode: String): List<Move> {
     val figure = getFigure(Position.byCode(posCode))
     return figure.getPossibleMoves(this)
-}
-
-fun ChessBoard.move(move: Move) {
-    this.move(move, ChessGameSupervisorDummy)
 }
 
 fun ChessBoard.isMovable(from: Position, to: Position, isWhite: Boolean): Boolean {

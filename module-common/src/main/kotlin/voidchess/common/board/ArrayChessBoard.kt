@@ -6,7 +6,6 @@ import voidchess.common.board.move.Move
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.board.move.ExtendedMove
-import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.other.boardInstanciator
 import voidchess.common.figures.*
@@ -19,7 +18,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
     override var isWhiteTurn: Boolean = true
 
     private val board: Array<Figure?> = arrayOfNulls(64)
-    // TODO use kotlin.ArrayDeque if that is no longer experimental
+    // TODO use kotlin.ArrayDeque if that is no longer experimental (in Kotlin 1.4)
     private val extendedMoveStack = ArrayDeque<ExtendedMove>(16)
 
     // the alternative to creating dummy instances for white and black king is 'lateinit'
@@ -114,8 +113,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
      * @return true if a figure got hit
      */
     override fun move(
-        move: Move,
-        supervisor: ChessGameSupervisor
+        move: Move
     ): ExtendedMove {
         clearCheckComputation()
 
@@ -160,7 +158,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
             }
             is ExtendedMove.Promotion -> {
                 val toPos: Position = extendedMove.move.to
-                val promotedPawn: Figure = when (supervisor.askForPawnChange(toPos)) {
+                val promotedPawn: Figure = when (move.pawnPromotionType) {
                     PawnPromotion.QUEEN -> Queen(movingFigure.isWhite, toPos)
                     PawnPromotion.ROOK -> Rook(movingFigure.isWhite, toPos)
                     PawnPromotion.KNIGHT -> Knight(movingFigure.isWhite, toPos)
@@ -306,3 +304,6 @@ private fun ArrayDeque<ExtendedMove>.getLatestMoves(count: Int?): String {
 
     return latestExtendedMoves.map { it.move }.joinToString(separator = ",") { it.toString() }
 }
+
+// TODO replace with real implementation on Move
+private val Move.pawnPromotionType: PawnPromotion get() = PawnPromotion.QUEEN

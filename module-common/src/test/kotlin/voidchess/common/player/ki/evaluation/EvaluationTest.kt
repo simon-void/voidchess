@@ -2,6 +2,7 @@ package voidchess.common.player.ki.evaluation
 
 import org.testng.Assert.*
 import org.testng.annotations.Test
+import voidchess.common.engine.*
 
 
 internal class EvaluationTest {

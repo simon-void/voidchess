@@ -3,7 +3,6 @@ package voidchess.common.board
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.common.board.other.StartConfig
 
 
@@ -17,5 +16,4 @@ interface BasicChessGame : StaticChessBoard {
      */
     fun move(move: Move): Boolean
     fun getLatestExtendedMove(): ExtendedMove
-    fun useSupervisor(supervisor: ChessGameSupervisor)
 }

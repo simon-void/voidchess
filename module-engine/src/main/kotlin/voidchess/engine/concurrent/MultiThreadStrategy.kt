@@ -1,9 +1,9 @@
 package voidchess.engine.concurrent
 
 import voidchess.common.board.move.Move
-import voidchess.common.player.ki.ProgressCallback
-import voidchess.common.player.ki.evaluation.EvaluatedMove
-import voidchess.common.player.ki.evaluation.Evaluation
+import voidchess.common.engine.ProgressCallback
+import voidchess.common.engine.EvaluatedMove
+import voidchess.common.engine.Evaluation
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.evaluation.BestResponseSet
 import voidchess.engine.evaluation.MinMaxEval
@@ -25,11 +25,11 @@ internal class MultiThreadStrategy(
 
 
     override fun evaluateMoves(
-        game: EngineChessGame,
-        movesToEvaluate: Collection<Move>,
-        progressCallback: ProgressCallback,
-        minMaxEval: MinMaxEval,
-        numericEvalOkRadius: Double
+            game: EngineChessGame,
+            movesToEvaluate: Collection<Move>,
+            progressCallback: ProgressCallback,
+            minMaxEval: MinMaxEval,
+            numericEvalOkRadius: Double
     ): MutableList<EvaluatedMove> {
 
         val currentMaxEvaluationRef = AtomicReference<Evaluation?>(null)
@@ -58,8 +58,8 @@ internal class MultiThreadStrategy(
 
     @Throws(InterruptedException::class, ExecutionException::class)
     private fun evaluate(
-        movesToEvaluate: LinkedList<Callable<EvaluatedMove>>,
-        progressCallback: ProgressCallback
+            movesToEvaluate: LinkedList<Callable<EvaluatedMove>>,
+            progressCallback: ProgressCallback
     ): MutableList<EvaluatedMove> {
         val totalNumberOfMoves = movesToEvaluate.size
         val result = ArrayList<EvaluatedMove>(totalNumberOfMoves)
@@ -85,12 +85,12 @@ internal class MultiThreadStrategy(
     }
 
     private fun getEvaluableMoves(
-        game: EngineChessGame,
-        movesToEvaluate: Collection<Move>,
-        minMaxEval: MinMaxEval,
-        currentMaxEvaluationRef: AtomicReference<Evaluation?>,
-        bestResponsesRef: AtomicReference<BestResponseSet>,
-        numericEvalOkRadius: Double
+            game: EngineChessGame,
+            movesToEvaluate: Collection<Move>,
+            minMaxEval: MinMaxEval,
+            currentMaxEvaluationRef: AtomicReference<Evaluation?>,
+            bestResponsesRef: AtomicReference<BestResponseSet>,
+            numericEvalOkRadius: Double
     ): LinkedList<Callable<EvaluatedMove>> {
         assert(movesToEvaluate.isNotEmpty()) { "no moves were possible and therefore evaluable" }
 
@@ -117,9 +117,9 @@ internal class MultiThreadStrategy(
     }
 
     private fun submitCallables(
-        movesToEvaluate: LinkedList<Callable<EvaluatedMove>>,
-        completionService: CompletionService<EvaluatedMove>,
-        numberOfMovesToSubmit: Int
+            movesToEvaluate: LinkedList<Callable<EvaluatedMove>>,
+            completionService: CompletionService<EvaluatedMove>,
+            numberOfMovesToSubmit: Int
     ) {
         for (i in 0 until numberOfMovesToSubmit) {
             if (movesToEvaluate.isEmpty()) {
@@ -130,12 +130,12 @@ internal class MultiThreadStrategy(
     }
 
     private class MoveEvaluationCallable internal constructor(
-        private val game: EngineChessGame,
-        private val move: Move,
-        private val minMaxEval: MinMaxEval,
-        private val currentMaxEvaluationRef: AtomicReference<Evaluation?>,
-        private val bestResponsesRef: AtomicReference<BestResponseSet>,
-        private val numericEvalOkRadius: Double
+            private val game: EngineChessGame,
+            private val move: Move,
+            private val minMaxEval: MinMaxEval,
+            private val currentMaxEvaluationRef: AtomicReference<Evaluation?>,
+            private val bestResponsesRef: AtomicReference<BestResponseSet>,
+            private val numericEvalOkRadius: Double
     ) : Callable<EvaluatedMove> {
 
         @Throws(Exception::class)

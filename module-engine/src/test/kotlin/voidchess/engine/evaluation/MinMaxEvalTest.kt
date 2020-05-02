@@ -7,7 +7,7 @@ import voidchess.common.board.move.Move
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
 import org.testng.annotations.DataProvider
-import voidchess.common.player.ki.evaluation.NumericalEvaluation
+import voidchess.common.engine.NumericalEvaluation
 import voidchess.copyGameWithInvertedColors
 import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.initChessGame

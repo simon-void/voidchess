@@ -3,7 +3,7 @@ package voidchess.engine.evaluation.leaf
 import voidchess.common.board.forAllFigures
 import voidchess.common.board.move.Position
 import voidchess.common.figures.*
-import voidchess.common.player.ki.evaluation.Ongoing
+import voidchess.common.engine.Ongoing
 import voidchess.engine.board.EngineChessGame
 
 
@@ -35,12 +35,12 @@ internal object MiddleGameEval : StaticEval() {
     ) + evaluatePosition(game, forWhite)
 
     fun addSecondaryEvaluationTo(prelimEval: Double, game: EngineChessGame, forWhite: Boolean) =
-        Ongoing(
-            prelimEval + getSecondaryEvaluation(
-                game,
-                forWhite
+            Ongoing(
+                    prelimEval + getSecondaryEvaluation(
+                            game,
+                            forWhite
+                    )
             )
-        )
 
     override fun getSecondaryCheckmateEvaluation(
         game: EngineChessGame,

@@ -2,9 +2,9 @@ package voidchess.engine.concurrent
 
 import voidchess.common.board.move.Move
 import voidchess.common.board.other.StartConfig
-import voidchess.common.player.ki.ProgressCallback
-import voidchess.common.player.ki.evaluation.EvaluatedMove
-import voidchess.common.player.ki.evaluation.Evaluation
+import voidchess.common.engine.ProgressCallback
+import voidchess.common.engine.EvaluatedMove
+import voidchess.common.engine.Evaluation
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.evaluation.BestResponseSet
@@ -25,11 +25,11 @@ internal object SingleThreadStrategy : ConcurrencyStrategy() {
     }
 
     override fun evaluateMoves(
-        game: EngineChessGame,
-        movesToEvaluate: Collection<Move>,
-        progressCallback: ProgressCallback,
-        minMaxEval: MinMaxEval,
-        numericEvalOkRadius: Double
+            game: EngineChessGame,
+            movesToEvaluate: Collection<Move>,
+            progressCallback: ProgressCallback,
+            minMaxEval: MinMaxEval,
+            numericEvalOkRadius: Double
     ): MutableList<EvaluatedMove> {
         val totalNumberOfMoves = movesToEvaluate.size
         progressCallback(0, totalNumberOfMoves)

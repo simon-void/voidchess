@@ -4,7 +4,7 @@ import org.testng.Assert.assertEquals
 import org.testng.Assert.assertNotEquals
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import voidchess.common.player.ki.evaluation.Ongoing
+import voidchess.common.engine.Ongoing
 import voidchess.engine.board.EngineChessGameImpl
 import voidchess.copyGameWithInvertedColors
 import voidchess.engine.evaluation.leaf.MiddleGameEval
@@ -23,10 +23,10 @@ internal class MiddleGameEvalTest {
         assertEquals(prelimEvalForWhite, 0.0)
 
         val evalForWhite = Ongoing(
-            prelimEvalForWhite + staticEval.getSecondaryEvaluation(game, true)
+                prelimEvalForWhite + staticEval.getSecondaryEvaluation(game, true)
         )
         val evalForBlack = Ongoing(
-            prelimEvalForBlack + staticEval.getSecondaryEvaluation(game, false)
+                prelimEvalForBlack + staticEval.getSecondaryEvaluation(game, false)
         )
         assertEquals(evalForWhite.numericValue, evalForBlack.numericValue, OK_DELTA)
         assertEquals(evalForWhite.numericValue, 0.0, OK_DELTA)

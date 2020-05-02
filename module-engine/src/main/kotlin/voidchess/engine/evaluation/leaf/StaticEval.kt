@@ -4,7 +4,7 @@ import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.forAllFigures
 import voidchess.common.board.move.Position
 import voidchess.common.figures.*
-import voidchess.common.player.ki.evaluation.Ongoing
+import voidchess.common.engine.Ongoing
 import voidchess.engine.board.EngineChessGame
 
 internal abstract class StaticEval {

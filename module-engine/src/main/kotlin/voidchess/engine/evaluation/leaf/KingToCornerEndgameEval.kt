@@ -1,10 +1,9 @@
 package voidchess.engine.evaluation.leaf
 
 import voidchess.common.board.move.Position
-import voidchess.common.player.ki.evaluation.Ongoing
+import voidchess.common.engine.Ongoing
 import voidchess.engine.board.EngineChessGame
 import kotlin.math.abs
-import kotlin.math.max
 
 internal object KingToCornerEndgameEval : StaticEval() {
     override fun getNumericEvaluation(

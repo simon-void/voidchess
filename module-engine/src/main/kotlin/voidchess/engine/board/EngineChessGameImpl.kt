@@ -4,8 +4,6 @@ import voidchess.common.board.*
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.move.Position
-import voidchess.common.board.other.ChessGameSupervisor
-import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.King
 import voidchess.engine.evaluation.SearchTreePruner
@@ -20,7 +18,6 @@ internal class EngineChessGameImpl private constructor(
     private val mementoStack: ArrayDeque<Memento>,
     private val numberStack: NumberStack
 ): EngineChessGame, StaticChessBoard by board {
-    private var supervisor: ChessGameSupervisor = ChessGameSupervisorDummy
     private var numberOfMovesWithoutHit: Int = 0
     override var hasHitFigure: Boolean = false
 
@@ -65,7 +62,7 @@ internal class EngineChessGameImpl private constructor(
             is StartConfig.Chess960Config -> ArrayChessBoard(startConfig)
         }.also { board ->
             for (move in movesPlayed) {
-                board.move(move, ChessGameSupervisorDummy)
+                board.move(move)
             }
         },
         other.mementoStack.shallowCopy(),
@@ -103,7 +100,7 @@ internal class EngineChessGameImpl private constructor(
     }
 
     private fun move(move: Move): MoveResult {
-        hasHitFigure = board.move(move, supervisor).hasHitFigure
+        hasHitFigure = board.move(move).hasHitFigure
 
         if (hasHitFigure) {
             numberStack.figureHit()

@@ -5,7 +5,6 @@ import voidchess.common.board.check.AttackLines
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.figures.Figure
 import voidchess.common.board.move.Position
-import voidchess.common.board.other.ChessGameSupervisor
 import voidchess.common.board.other.StartConfig
 
 
@@ -16,7 +15,7 @@ interface ChessBoard : StaticChessBoard {
     fun init(startConfig: StartConfig)
 
     /**@return true if a figure got hit */
-    fun move(move: Move, supervisor: ChessGameSupervisor): ExtendedMove
+    fun move(move: Move): ExtendedMove
     /**@return true if a figure got hit */
     fun undo(): Boolean
     /** "normal" moves only, no special cases (castling, enpassant, pawn promotion)

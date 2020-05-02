@@ -5,7 +5,6 @@ import org.testng.annotations.Test
 import voidchess.common.assertFiguresKnowTherePosition
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.figures.King
 import voidchess.common.figures.Queen
 import voidchess.common.figures.Rook
@@ -132,10 +131,10 @@ class ChessBoardTest {
         val threeMoves = mutableListOf(Move.byCode("e2-e4"), Move.byCode("e7-e5"), thirdMove)
         val board = ArrayChessBoard()
         twoMoves.forEach {
-            board.move(it, ChessGameSupervisorDummy)
+            board.move(it)
         }
         assertEquals(twoMoves, board.movesPlayed())
-        board.move(thirdMove, ChessGameSupervisorDummy)
+        board.move(thirdMove)
         assertEquals(threeMoves, board.movesPlayed())
         board.undo()
         assertEquals(twoMoves, board.movesPlayed())
