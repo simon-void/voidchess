@@ -211,11 +211,12 @@ internal class EngineChessGameImpl private constructor(
         var blackCount = 0
 
         board.forAllFigures { figure->
-            val count = figure.countReachableMoves(board)
-            if(figure.isWhite) {
-                whiteCount += count
-            }else{
-                blackCount += count
+            figure.forPossibleMoves(board) {
+                if(figure.isWhite) {
+                    whiteCount ++
+                }else{
+                    blackCount ++
+                }
             }
         }
 
