@@ -103,22 +103,25 @@ class Pawn : Figure {
         return to.row == oneForwardRow && abs(to.column - position.column) == 1
     }
 
-    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachReachablePos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachDiagonalReachablePos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getCriticalMoves(game: ChessBoard, result: MutableSet<Move>) =
-            getPossibleMoves(game, result)
+    override fun forCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
+        forPossibleMoves(game) {
+            result.add(it)
+        }
+    }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer) {
         fun checkLinePassesThroughPawnColumn(attackerPos: Position, kingPos: Position): Boolean {
             val attackerColumnSign = (position.column - attackerPos.column).sign
             val kingColumnSign = (position.column - kingPos.column).sign
@@ -126,12 +129,12 @@ class Pawn : Figure {
         }
         // a pawn can only intercept a check by taking the attacker diagonally (possibly through enpassent)
         if (isOneStepForwardDiagonally(checkLine.attackerPos)) {
-            result.add(Move[position, checkLine.attackerPos])
+            informOf(Move[position, checkLine.attackerPos])
         } else if (game.getFigure(checkLine.attackerPos).canBeHitEnpassant) {
             // now i only have to test if my pawn is to the side of the attacker pawn
             if (position.row == checkLine.attackerPos.row && abs(position.column - checkLine.attackerPos.column) == 1) {
                 val oneForwardRow = if (isWhite) position.row + 1 else position.row - 1
-                result.add(Move[position, Position[oneForwardRow, checkLine.attackerPos.column]])
+                informOf(Move[position, Position[oneForwardRow, checkLine.attackerPos.column]])
             }
         }
         // or/and by stepping forward into the line
@@ -140,7 +143,7 @@ class Pawn : Figure {
             if (!checkLine.posProgression.hasSinglePos) {
                 checkLine.posProgression.forEachReachablePos { interceptPos->
                     if (isStraightReachable(interceptPos, game)) {
-                        result.add(Move[position, interceptPos])
+                        informOf(Move[position, interceptPos])
                         return
                     }
                 }
@@ -148,21 +151,21 @@ class Pawn : Figure {
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer) {
         when {
             boundLine.boundFigureToAttackerDirection.isDiagonal -> {
                 if(isOneStepForwardDiagonally(boundLine.attackerPos)) {
-                    result.add(Move[position, boundLine.attackerPos])
+                    informOf(Move[position, boundLine.attackerPos])
                 }
             }
             boundLine.boundFigureToAttackerDirection.isVertical -> {
                 val oneForwardPos = position.step(forwardDirection) ?: throw IllegalStateException("pawn left board with single step from $position")
                 if( game.isFreeArea(oneForwardPos)) {
-                    result.add(Move[position, oneForwardPos])
+                    informOf(Move[position, oneForwardPos])
                     if(hasNotMovedYet()) {
                         val twoForwardPos = oneForwardPos.step(forwardDirection) ?: throw IllegalStateException("pawn left board with double step from $position")
                         if( game.isFreeArea(twoForwardPos)) {
-                            result.add(Move[position, twoForwardPos])
+                            informOf(Move[position, twoForwardPos])
                         }
                     }
                 }

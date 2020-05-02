@@ -3,11 +3,11 @@ package voidchess.common.figures
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.common.board.getFigure
-import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
+import voidchess.common.getCriticalMoves
+import voidchess.common.getPossibleMoves
 import voidchess.common.initChessBoard
 import voidchess.common.toTargetPosAsStringSet
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -47,12 +47,10 @@ class KnightTest {
         val game = initChessBoard(des)
 
         val knight1 = game.getFigure(Position.byCode("a1"))
-        val moveIter1 = LinkedList<Move>()
-        knight1.getPossibleMoves(game, moveIter1)
+        val moveIter1 = knight1.getPossibleMoves(game)
         assertEquals(2, moveIter1.size)
         val knight2 = game.getFigure(Position.byCode("g6"))
-        val moveIter2 = LinkedList<Move>()
-        knight2.getPossibleMoves(game, moveIter2)
+        val moveIter2 = knight2.getPossibleMoves(game)
         assertEquals(6, moveIter2.size)
     }
 
@@ -60,12 +58,10 @@ class KnightTest {
     fun testGetCriticalMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val knight = game.getFigure(Position.byCode(posCode))
-        val actualIrreversibleResults = TreeSet<Move>()
-        knight.getCriticalMoves(game, actualIrreversibleResults)
+        val actualIrreversibleResults = knight.getCriticalMoves(game)
         assertEquals(expectedMoveToCodes, actualIrreversibleResults.toTargetPosAsStringSet(), "knight can move irreversibly to")
 
-        val actualTakingResults = TreeSet<Move>()
-        knight.getCriticalMoves(game, actualTakingResults)
+        val actualTakingResults = knight.getCriticalMoves(game)
         assertEquals(expectedMoveToCodes, actualTakingResults.toTargetPosAsStringSet(), "knight can take on")
     }
 

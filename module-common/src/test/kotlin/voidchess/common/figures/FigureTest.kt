@@ -7,7 +7,6 @@ import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import voidchess.common.initChessBoard
-import java.util.*
 
 
 class FigureTest {
@@ -101,8 +100,8 @@ class FigureTest {
         val game = initChessBoard(gameDes)
         val figure = game.getFigure(Position.byCode(figurePos))
 
-        val shouldNotBeBoundButAre = LinkedList<String>()
-        val shouldBeBoundButAreNot = LinkedList<String>()
+        val shouldNotBeBoundButAre = mutableListOf<String>()
+        val shouldBeBoundButAreNot = mutableListOf<String>()
         for(isNotBoundPosCode in isNotBoundPosCodes) {
             val isNotBoundPos = Position.byCode(isNotBoundPosCode)
             if(figure.isBound(isNotBoundPos, game)) {
@@ -176,7 +175,7 @@ class FigureTest {
         val queenByte = queen.typeInfo
         val kingByte = king.typeInfo
 
-        val figureByteList = LinkedList<Int>()
+        val figureByteList = mutableListOf<Int>()
         //Die byte-Werte müssen paarweise disjunkt sein
         figureByteList.add(pawnByte)
         assertFalse(

@@ -44,19 +44,19 @@ class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPo
         forReachableTakeableEndPos(game, Direction.DOWN_LEFT, informOf)
     }
 
-    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachReachablePos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachReachableTakeableEndPos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getReachableCheckingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableCheckingMoves(game: ChessBoard, informOf: MoveInformer) {
         val opponentKingPos = game.getKing(!isWhite).position
         val currentPos = position
         forEachReachablePos(game) { checkingPos ->
@@ -64,25 +64,25 @@ class Queen(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPo
                 if(game.simulateSimplifiedMove(this, checkingPos) { boardAfterMove ->
                         isReachable(opponentKingPos, boardAfterMove)}
                 ) {
-                    result.add(Move[currentPos, checkingPos])
+                    informOf(Move[currentPos, checkingPos])
                 }
             }
         }
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer) {
         // a queen can intersect a check at up to three positions. but the overhead to check this upper bound is probably to high
         checkLine.posProgression.forEachReachablePos {checkInterceptPos->
-            addMoveIfReachable(checkInterceptPos, game, result)
+            addMoveIfReachable(checkInterceptPos, game, informOf)
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer) {
         boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
-            result.add(Move[position, posBetweenThisAndAttacker])
+            informOf(Move[position, posBetweenThisAndAttacker])
         }
         boundLine.possibleMovesToKing.forEachReachablePos {posBetweenThisAndKing->
-            result.add(Move[position, posBetweenThisAndKing])
+            informOf(Move[position, posBetweenThisAndKing])
         }
     }
 

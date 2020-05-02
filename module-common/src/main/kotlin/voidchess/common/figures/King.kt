@@ -165,23 +165,23 @@ class King : CastlingFigure {
             boardAfterMove.isInCheck(this)
         }
 
-    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
-    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleTakingMoves(..)")
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
+    override fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
+    override fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleTakingMoves(..)")
+    override fun forPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
+    override fun forPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer) = throw UnsupportedOperationException("King doesn't support this method. Use getPossibleMoves(..)")
 
-    override fun getPossibleMoves(game: ChessBoard, result: MutableCollection<Move>) {
+    override fun forPossibleMoves(game: ChessBoard, informOf: MoveInformer) {
         val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
             for(direction in Direction.values()) {
                 position.step(direction)?.let { possibleKingPos->
                     if(isAccessible(game, possibleKingPos) && !isKingCheckAt(possibleKingPos, game)) {
-                        result.add(Move[position, possibleKingPos])
+                        informOf(Move[position, possibleKingPos])
                     }
                 }
             }
             if(canCastle()) {
-                getPossibleCastlingMovesAssertNoCheckAndCanCastle(game, result)
+                forPossibleCastlingMovesAssertNoCheckAndCanCastle(game, informOf)
             }
         } else {
             // isSingleCheck || isDoubleCheck
@@ -193,7 +193,7 @@ class King : CastlingFigure {
                         }
                     }
                     if (isAccessible(game, possibleKingPos) && !isKingCheckAt(possibleKingPos, game)) {
-                        result.add(Move[position, possibleKingPos])
+                        informOf(Move[position, possibleKingPos])
                     }
                 }
 
@@ -201,14 +201,14 @@ class King : CastlingFigure {
         }
     }
 
-    private fun getPossibleCastlingMovesAssertNoCheckAndCanCastle(game: ChessBoard, result: MutableCollection<Move>) {
+    private fun forPossibleCastlingMovesAssertNoCheckAndCanCastle(game: ChessBoard, informOf: MoveInformer) {
         if (canCastle()) {
             for (column in position.column + 1..7) {
                 val pos = Position[position.row, column]
                 val figure = game.getFigureOrNull(pos)
                 if (figure != null && figure.canCastle() && isShortCastlingReachable(pos, game)) {
                     if (!isKingAtCheckWhileOrAfterCastling(position, pos, game)) {
-                        result.add(Move[position, pos])
+                        informOf(Move[position, pos])
                     }
                     break
                 }
@@ -218,7 +218,7 @@ class King : CastlingFigure {
                 val figure = game.getFigureOrNull(pos)
                 if (figure != null && figure.canCastle() && isLongCastlingReachable(pos, game)) {
                     if (!isKingAtCheckWhileOrAfterCastling(position, pos, game)) {
-                        result.add(Move[position, pos])
+                        informOf(Move[position, pos])
                     }
                     break
                 }
@@ -227,7 +227,7 @@ class King : CastlingFigure {
     }
 
     // the king ignores the 'OrCheck'-part (because he can't go setting the other king in check)
-    override fun getPossibleTakingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+    override fun forPossibleTakingMoves(game: ChessBoard, informOf: MoveInformer) {
         val attackLines = game.getCachedAttackLines()
         Direction.values().forEach directionLoop@ { direction ->
             position.step(direction)?.let { possibleKingPos->
@@ -238,7 +238,7 @@ class King : CastlingFigure {
                 }
                 game.getFigureOrNull(possibleKingPos)?.let { figure ->
                     if (figure.isWhite!=isWhite && !isKingCheckAt(possibleKingPos, game)) {
-                        result.add(Move[position, possibleKingPos])
+                        informOf(Move[position, possibleKingPos])
                     }
                 }
             }
@@ -246,14 +246,18 @@ class King : CastlingFigure {
         }
     }
 
-    override fun getCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
+    override fun forCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
         // taking moves
-        getPossibleTakingMoves(game, result)
+        forPossibleTakingMoves(game) {
+            result.add(it)
+        }
         // plus castling
         if (canCastle()) {
             val attackLines = game.getCachedAttackLines()
             if(attackLines.noCheck) {
-                getPossibleCastlingMovesAssertNoCheckAndCanCastle(game, result)
+                forPossibleCastlingMovesAssertNoCheckAndCanCastle(game) {
+                    result.add(it)
+                }
             }
         }
     }

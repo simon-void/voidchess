@@ -24,19 +24,19 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         return figure == null || hasDifferentColor(figure)
     }
 
-    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachReachablePos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachReachableTakeableEndPos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
+    override fun forCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
         fun doesFork(game: ChessBoard, knightPos: Position): Boolean {
             var heavyFigureCounter = 0
             knightPos.forEachKnightPos { attackedPos ->
@@ -65,7 +65,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         }
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer) {
         // the accessibility of the target field doesn't need to be checked because
         // all checkInterceptPositions are guaranteed to be either empty
         // or to contain the attacker (who has a different color)
@@ -73,25 +73,25 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
             val horizontalDifference = abs(position.row - checkInterceptPos.row)
             val verticalDifference = abs(position.column - checkInterceptPos.column)
             if(horizontalDifference+verticalDifference==3 && horizontalDifference!=0 && verticalDifference!=0) {
-                result.add(Move[position, checkInterceptPos])
+                informOf(Move[position, checkInterceptPos])
             }
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer) {
         // a bound move can't move at all!
     }
 
-    override fun getPossibleTakingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+    override fun forPossibleTakingMoves(game: ChessBoard, informOf: MoveInformer) {
         val attackLines = game.getCachedAttackLines()
         // a bound knight can't move at all, so only consider cases where he isn't
         if(attackLines.boundLineByBoundFigurePos[position]==null) {
             when {
-                attackLines.noCheck -> getReachableTakingMoves(game, result)
+                attackLines.noCheck -> forReachableTakingMoves(game, informOf)
                 attackLines.isSingleCheck -> {
                     val attackerPos = attackLines.checkLines.first().attackerPos
                     if(isReachable(attackerPos, game)) {
-                        result.add(Move[position, attackerPos])
+                        informOf(Move[position, attackerPos])
                     }
                 }
             }

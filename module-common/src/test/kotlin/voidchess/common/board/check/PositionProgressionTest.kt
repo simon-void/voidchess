@@ -9,7 +9,6 @@ import org.testng.Assert.assertEquals
 import org.testng.annotations.DataProvider
 import voidchess.common.board.move.PositionProgression
 import voidchess.common.toList
-import java.util.*
 
 internal class PositionProgressionTest {
     @Test(dataProvider = "getForEachReachablePosData")
@@ -43,8 +42,8 @@ internal class PositionProgressionTest {
 
     @Test(dataProvider = "getContainsData")
     fun testContainsData(positionProgression: PositionProgression, containsPosCodes: Set<String>, doesNotContainPosCodes: Set<String>) {
-        val shouldNotContainButDoes = LinkedList<String>()
-        val shouldContainButDoesNot = LinkedList<String>()
+        val shouldNotContainButDoes = mutableListOf<String>()
+        val shouldContainButDoesNot = mutableListOf<String>()
         for(containsPosCode in containsPosCodes) {
             val containsPosCodePos = Position.byCode(containsPosCode)
             if(!positionProgression.contains(containsPosCodePos)) {

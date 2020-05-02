@@ -2,12 +2,9 @@ package voidchess.common.figures
 
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import voidchess.common.*
 import voidchess.common.board.getFigure
-import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.common.initChessBoard
-import voidchess.common.toTargetPosAsStringSet
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -39,8 +36,7 @@ class PawnTest {
         val game = initChessBoard(gameDes)
 
         val pawn = game.getFigure(Position.byCode(pawnPosCode)) as Pawn
-        val moveIter1 = LinkedList<Move>()
-        pawn.getReachableMoves(game, moveIter1)
+        val moveIter1 = pawn.getReachableMoves(game)
         val actualPossibleToCodes = moveIter1.asSequence().map { it.to.toString() }.toSet()
         assertEquals(expectedPossibleToCodes, actualPossibleToCodes, "reachable positions the pawn can move to")
     }
@@ -56,8 +52,7 @@ class PawnTest {
         val game = initChessBoard(gameDes)
 
         val pawn = game.getFigure(Position.byCode(pawnPosCode)) as Pawn
-        val moveIter1 = LinkedList<Move>()
-        pawn.getPossibleMoves(game, moveIter1)
+        val moveIter1 = pawn.getPossibleMoves(game)
         val actualPossibleToCodes = moveIter1.asSequence().map { it.to.toString() }.toSet()
         assertEquals(expectedPossibleToCodes, actualPossibleToCodes, "possible positions the pawn can move to")
     }
@@ -90,10 +85,8 @@ class PawnTest {
     fun testGetPossibleIrreversibleMoves(gameDes: String, posCode: String) {
         val game = initChessBoard(gameDes)
         val pawn = game.getFigure(Position.byCode(posCode)) as Pawn
-        val actualResults = TreeSet<Move>()
-        pawn.getCriticalMoves(game, actualResults)
-        val expectedResults = LinkedList<Move>()
-        pawn.getPossibleMoves(game, expectedResults)
+        val actualResults = pawn.getCriticalMoves(game)
+        val expectedResults = pawn.getPossibleMoves(game)
         assertEquals(expectedResults.toTargetPosAsStringSet(), actualResults.toTargetPosAsStringSet(), "pawn can move to irreversibly")
     }
 
@@ -107,8 +100,7 @@ class PawnTest {
     fun testGetPossibleTakingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val pawn = game.getFigure(Position.byCode(posCode)) as Pawn
-        val results = LinkedList<Move>()
-        pawn.getPossibleTakingMoves(game, results)
+        val results = pawn.getPossibleTakingMoves(game)
         val actualMoveToCodes = results.toTargetPosAsStringSet()
         assertEquals(expectedMoveToCodes, actualMoveToCodes, "pawn can take on")
     }

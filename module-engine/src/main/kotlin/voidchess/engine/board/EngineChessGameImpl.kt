@@ -162,7 +162,9 @@ internal class EngineChessGameImpl private constructor(
     override fun getAllMoves(): ArrayList<Move> {
         val possibleMoves = ArrayList<Move>(64)
         board.forAllFiguresOfColor(isWhiteTurn) { figure ->
-            figure.getPossibleMoves(board, possibleMoves)
+            figure.forPossibleMoves(board) {
+                possibleMoves.add(it)
+            }
         }
         return possibleMoves
     }
@@ -170,7 +172,7 @@ internal class EngineChessGameImpl private constructor(
     override fun getCriticalMoves(): ArrayList<Move> {
         val criticalMoves = LinkedHashSet<Move>()
         board.forAllFiguresOfColor(isWhiteTurn) { figure ->
-            figure.getCriticalMoves(board, criticalMoves)
+            figure.forCriticalMoves(board, criticalMoves)
         }
         return ArrayList<Move>(criticalMoves.size).apply {
             addAll(criticalMoves)
@@ -180,13 +182,31 @@ internal class EngineChessGameImpl private constructor(
     override fun getTakingMoves(): ArrayList<Move> {
         val takingMoves = ArrayList<Move>(16)
         board.forAllFiguresOfColor(isWhiteTurn) { figure ->
-            figure.getPossibleTakingMoves(board, takingMoves)
+            figure.forPossibleTakingMoves(board) {
+                takingMoves.add(it)
+            }
         }
         return takingMoves
     }
 
 
     override fun countReachableMoves(): MoveCounter {
+        var whiteCount = 0
+        var blackCount = 0
+
+        board.forAllFigures { figure->
+            val count = figure.countReachableMoves(board)
+            if(figure.isWhite) {
+                whiteCount += count
+            }else{
+                blackCount += count
+            }
+        }
+
+        return MoveCounter(whiteCount, blackCount)
+    }
+
+    override fun countAllMoves(): MoveCounter {
         var whiteCount = 0
         var blackCount = 0
 

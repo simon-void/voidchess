@@ -2,16 +2,14 @@ package voidchess.common.player.ki.evaluation
 
 import org.testng.annotations.Test
 import voidchess.common.board.move.Move
-import java.util.TreeSet
-
 import org.testng.Assert.assertEquals
-import voidchess.common.player.ki.evaluation.*
+import kotlin.test.assertFalse
 
 internal class EvaluationMoveComparatorTest {
     @Test
     fun testHighestEvalFirstOrderingInSortedSet() {
 
-        val set = TreeSet(HighestEvalFirst)
+        val set = mutableSetOf<EvaluatedMove>()
 
         set.add(
             EvaluatedMove(
@@ -57,7 +55,7 @@ internal class EvaluationMoveComparatorTest {
         )//10.
         set.add(
             EvaluatedMove(
-                Move.byCode("f2-f3"),
+                Move.byCode("f2-f4"),
                 CheckmateSelf(1, -2.0)
             )
         )//11.
@@ -80,7 +78,7 @@ internal class EvaluationMoveComparatorTest {
             )
         )//2.
 
-        val fromBestToWorst = set.iterator()
+        val fromBestToWorst: Iterator<EvaluatedMove> = set.sortedWith(HighestEvalFirst).iterator()
 
         assertEquals(fromBestToWorst.next().move, Move.byCode("h2-h3"))
         assertEquals(fromBestToWorst.next().move, Move.byCode("h2-h4"))
@@ -92,12 +90,14 @@ internal class EvaluationMoveComparatorTest {
         assertEquals(fromBestToWorst.next().move, Move.byCode("a2-a3"))
         assertEquals(fromBestToWorst.next().move, Move.byCode("g2-g3"))
         assertEquals(fromBestToWorst.next().move, Move.byCode("f2-f3"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("f2-f4"))
+        assertFalse(fromBestToWorst.hasNext())
     }
 
     @Test
     fun testLowestEvalFirstOrderingInSortedSet() {
 
-        val set = TreeSet(LowestEvalFirst)
+        val set = mutableSetOf<EvaluatedMove>()
 
         set.add(
             EvaluatedMove(
@@ -143,7 +143,7 @@ internal class EvaluationMoveComparatorTest {
         )//10.
         set.add(
             EvaluatedMove(
-                Move.byCode("f2-f3"),
+                Move.byCode("f2-f4"),
                 CheckmateSelf(1, -2.0)
             )
         )//11.
@@ -166,17 +166,19 @@ internal class EvaluationMoveComparatorTest {
             )
         )//2.
 
-        val fromBestToWorst = set.descendingIterator()
+        val fromBestToWorst = set.sortedWith(LowestEvalFirst).iterator()
 
-        assertEquals(fromBestToWorst.next().move, Move.byCode("h2-h3"))
-        assertEquals(fromBestToWorst.next().move, Move.byCode("h2-h4"))
-        assertEquals(fromBestToWorst.next().move, Move.byCode("c2-c3"))
-        assertEquals(fromBestToWorst.next().move, Move.byCode("d2-d3"))
-        assertEquals(fromBestToWorst.next().move, Move.byCode("d2-d4"))
-        assertEquals(fromBestToWorst.next().move, Move.byCode("e2-e3"))
-        assertEquals(fromBestToWorst.next().move, Move.byCode("b2-b3"))
-        assertEquals(fromBestToWorst.next().move, Move.byCode("a2-a3"))
-        assertEquals(fromBestToWorst.next().move, Move.byCode("g2-g3"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("f2-f4"))
         assertEquals(fromBestToWorst.next().move, Move.byCode("f2-f3"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("g2-g3"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("a2-a3"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("b2-b3"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("e2-e3"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("d2-d4"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("d2-d3"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("c2-c3"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("h2-h4"))
+        assertEquals(fromBestToWorst.next().move, Move.byCode("h2-h3"))
+        assertFalse(fromBestToWorst.hasNext())
     }
 }

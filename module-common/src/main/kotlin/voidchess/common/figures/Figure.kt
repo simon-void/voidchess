@@ -10,6 +10,8 @@ import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 
+typealias MoveInformer = (Move) -> Unit
+typealias PositionInformer = (Position) -> Unit
 
 abstract class Figure constructor(
         // a figure's color
@@ -41,28 +43,28 @@ abstract class Figure constructor(
     abstract fun isReachable(toPos: Position, game: StaticChessBoard): Boolean
     abstract fun countReachableMoves(game: StaticChessBoard): Int
     abstract fun isSelectable(game: ChessBoard): Boolean
-    internal open fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
-    internal open fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
-    internal open fun getReachableCheckingMoves(game: ChessBoard, result: MutableCollection<Move>): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
+    internal open fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
+    internal open fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
+    internal open fun forReachableCheckingMoves(game: ChessBoard, informOf: MoveInformer): Unit = throw NotImplementedError("not implemented in class ${javaClass.simpleName}")
 
     fun isMovable(toPos: Position, game: ChessBoard): Boolean {
         return isReachable(toPos, game) && !isBound(toPos, game)
     }
 
-    open fun getPossibleMoves(game: ChessBoard, result: MutableCollection<Move>) {
+    open fun forPossibleMoves(game: ChessBoard, informOf: MoveInformer) {
         val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
             val boundLine = attackLines.boundLineByBoundFigurePos[position]
             if(boundLine==null) {
-                getReachableMoves(game, result)
+                forReachableMoves(game, informOf)
             }else{
-                getPossibleMovesWhileBoundAndNoCheck(game, boundLine, result)
+                forPossibleMovesWhileBoundAndNoCheck(game, boundLine, informOf)
             }
         } else if(attackLines.isSingleCheck) {
             val checkLine = attackLines.checkLines.first()
             val boundLine = attackLines.boundLineByBoundFigurePos[position]
             if(boundLine==null) {
-                getPossibleMovesWhileUnboundAndCheck(game, checkLine, result)
+                forPossibleMovesWhileUnboundAndCheck(game, checkLine, informOf)
             }
             // no need for else, a figure that is bound can't intercept a check
         }
@@ -72,22 +74,22 @@ abstract class Figure constructor(
      * let's only look for checks to give if our king is not in check.
      * (for minimizing the code complexity)
      */
-    open fun getPossibleTakingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+    open fun forPossibleTakingMoves(game: ChessBoard, informOf: MoveInformer) {
         val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
             val boundLine = attackLines.boundLineByBoundFigurePos[position]
             if(boundLine==null) {
-                getReachableTakingMoves(game, result)
+                forReachableTakingMoves(game, informOf)
             }else{
                 if(isReachable(boundLine.attackerPos, game)) {
-                    result.add(Move[position, boundLine.attackerPos])
+                    informOf(Move[position, boundLine.attackerPos])
                 }
             }
         } else if(attackLines.isSingleCheck) {
             val checkLine = attackLines.checkLines.first()
             val boundLine = attackLines.boundLineByBoundFigurePos[position]
             if(boundLine==null && isReachable(checkLine.attackerPos, game)) {
-                result.add(Move[position, checkLine.attackerPos])
+                informOf(Move[position, checkLine.attackerPos])
             }
             // no need for else, a figure that is bound can't intercept a check
         }
@@ -98,28 +100,36 @@ abstract class Figure constructor(
      * 1) can't be reversed (e.g. a figure is taken, a king castles or a pawn move)
      * 2) if a knight forks
      * 3) if a check is given
+     *
+     * because critical moves aren't unique, they are collected in a Set.
      */
-    open fun getCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
-        getPossibleTakingMoves(game, result)
-
+    open fun forCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
         // this doesn't make sense for king; and pawn and knight overwrite getCriticalMoves altogether.
-        if(this is Pawn||this is Knight||this is King) return
+        if(this is Pawn||this is Knight||this is King) throw IllegalStateException("Pawn, King and Knight should override this method, but ${javaClass.simpleName} didn't")
+
+        forPossibleTakingMoves(game) {
+            result.add(it)
+        }
 
         // for simplicity lets only consider checks while not in check and figure unbound
         val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
             if(attackLines.boundLineByBoundFigurePos[position]==null) {
-                getReachableCheckingMoves(game, result)
+                forReachableCheckingMoves(game) {
+                    result.add(it)
+                }
             }
         }
     }
 
-    protected abstract fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>)
-    protected abstract fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>)
+    protected abstract fun forPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer)
+    protected abstract fun forPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer)
 
-    protected fun addMoveIfReachable(pos: Position, game: StaticChessBoard, result: MutableCollection<Move>) =
-            if(isReachable(pos, game)) result.add(Move[position, pos])
-            else false
+    protected fun addMoveIfReachable(pos: Position, game: StaticChessBoard, informOf: MoveInformer) =
+        if (isReachable(pos, game)) {
+            informOf(Move[position, pos])
+            true
+        } else false
 
     internal fun isBound(toPos: Position, game: ChessBoard): Boolean {
         assert(isReachable(toPos, game)) { "the assumption of isBound is that toPos is confirmed reachable" }
@@ -158,7 +168,7 @@ abstract class Figure constructor(
         return true
     }
 
-    protected inline fun forEachReachablePos(game: StaticChessBoard, direction: Direction, informOf: (Position) -> Unit) {
+    protected inline fun forEachReachablePos(game: StaticChessBoard, direction: Direction, informOf: PositionInformer) {
         var currentPos: Position = position
 
         while (true) {
@@ -175,7 +185,7 @@ abstract class Figure constructor(
         }
     }
 
-    protected inline fun forReachableTakeableEndPos(game: StaticChessBoard, direction: Direction, informOf: (Position) -> Unit) {
+    protected inline fun forReachableTakeableEndPos(game: StaticChessBoard, direction: Direction, informOf: PositionInformer) {
         game.getFirstFigureInDir(direction, position)?.let { figure ->
             if(figure.isWhite!=isWhite) {
                 informOf(figure.position)

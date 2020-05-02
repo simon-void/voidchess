@@ -2,15 +2,10 @@ package voidchess.common.figures
 
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import voidchess.common.*
 import voidchess.common.board.ArrayChessBoard
-import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import voidchess.common.board.getFigure
-import voidchess.common.initChessBoard
-import voidchess.common.toFromPosAsStringSet
-import voidchess.common.toManualConfig
-import voidchess.common.toTargetPosAsStringSet
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -47,8 +42,7 @@ class BishopTest {
         val game = ArrayChessBoard(des.toManualConfig())
 
         val bishop = game.getFigure(Position.byCode(bishopPosCode))
-        val moveIter = LinkedList<Move>()
-        bishop.getPossibleMoves(game, moveIter)
+        val moveIter = bishop.getPossibleMoves(game)
         assertEquals(expectedNumberOfMoves, moveIter.size)
     }
 
@@ -65,8 +59,7 @@ class BishopTest {
         val game = ArrayChessBoard(des.toManualConfig())
 
         val bishop = game.getFigure(Position.byCode("d2"))
-        val moveIter = LinkedList<Move>()
-        bishop.getReachableMoves(game, moveIter)
+        val moveIter = bishop.getReachableMoves(game)
         assertEquals(6, moveIter.size)
     }
 
@@ -101,8 +94,7 @@ class BishopTest {
     fun testGetReachableCheckingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val bishop = game.getFigure(Position.byCode(posCode))
-        val actualReachableCheckingResults = TreeSet<Move>()
-        bishop.getReachableCheckingMoves(game, actualReachableCheckingResults)
+        val actualReachableCheckingResults = bishop.getReachableCheckingMoves(game)
         val actualMoveToCodes = actualReachableCheckingResults.toTargetPosAsStringSet()
         assertEquals(expectedMoveToCodes, actualMoveToCodes, "bishop can critical move to")
         assertEquals(if(expectedMoveToCodes.isEmpty()) emptySet() else setOf(posCode), actualReachableCheckingResults.toFromPosAsStringSet(), "bishop's from position should be unique")
@@ -123,12 +115,10 @@ class BishopTest {
     fun testGetCriticalMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val bishop = game.getFigure(Position.byCode(posCode))
-        val actualIrreversibleResults = TreeSet<Move>()
-        bishop.getCriticalMoves(game, actualIrreversibleResults)
+        val actualIrreversibleResults = bishop.getCriticalMoves(game)
         assertEquals(expectedMoveToCodes, actualIrreversibleResults.toTargetPosAsStringSet(), "bishop can move irreversibly to")
 
-        val actualTakingResults = TreeSet<Move>()
-        bishop.getCriticalMoves(game, actualTakingResults)
+        val actualTakingResults = bishop.getCriticalMoves(game)
         assertEquals(expectedMoveToCodes, actualTakingResults.toTargetPosAsStringSet(), "bishop can take on")
     }
 

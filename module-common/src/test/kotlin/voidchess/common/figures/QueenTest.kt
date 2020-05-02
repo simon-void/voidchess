@@ -2,15 +2,10 @@ package voidchess.common.figures
 
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import voidchess.common.*
 import voidchess.common.board.ArrayChessBoard
 import voidchess.common.board.getFigure
-import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.common.initChessBoard
-import voidchess.common.toFromPosAsStringSet
-import voidchess.common.toManualConfig
-import voidchess.common.toTargetPosAsStringSet
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -43,8 +38,7 @@ class QueenTest {
         val game = ArrayChessBoard(des.toManualConfig())
 
         val queen = game.getFigure(Position.byCode(queenPosCode))
-        val moveIter = LinkedList<Move>()
-        queen.getPossibleMoves(game, moveIter)
+        val moveIter = queen.getPossibleMoves(game)
         assertEquals(expectedNumberOfMoves, moveIter.size)
     }
 
@@ -59,8 +53,7 @@ class QueenTest {
     fun testGetReachableCheckingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val queen = game.getFigure(Position.byCode(posCode))
-        val actualReachableCheckingResults = TreeSet<Move>()
-        queen.getReachableCheckingMoves(game, actualReachableCheckingResults)
+        val actualReachableCheckingResults = queen.getReachableCheckingMoves(game)
         assertEquals(expectedMoveToCodes, actualReachableCheckingResults.toTargetPosAsStringSet(), "queen can critical move to")
         assertEquals(if(expectedMoveToCodes.isEmpty()) emptySet() else setOf(posCode), actualReachableCheckingResults.toFromPosAsStringSet(), "queen's from position should be unique")
     }
@@ -75,12 +68,10 @@ class QueenTest {
     fun testGetCriticalMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val queen = game.getFigure(Position.byCode(posCode))
-        val actualIrreversibleResults = TreeSet<Move>()
-        queen.getCriticalMoves(game, actualIrreversibleResults)
+        val actualIrreversibleResults = queen.getCriticalMoves(game)
         assertEquals(expectedMoveToCodes, actualIrreversibleResults.toTargetPosAsStringSet(), "queen can move irreversibly to")
 
-        val actualTakingResults = TreeSet<Move>()
-        queen.getCriticalMoves(game, actualTakingResults)
+        val actualTakingResults = queen.getCriticalMoves(game)
         assertEquals(expectedMoveToCodes, actualTakingResults.toTargetPosAsStringSet(), "queen can take on")
     }
 

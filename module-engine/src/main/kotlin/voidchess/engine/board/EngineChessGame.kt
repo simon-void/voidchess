@@ -27,6 +27,7 @@ internal interface EngineChessGame : StaticChessBoard {
     fun getCriticalMoves(): ArrayList<Move>
     fun getTakingMoves(): ArrayList<Move>
     fun countReachableMoves(): MoveCounter
+    fun countAllMoves(): MoveCounter
 
     fun copyGame(numberOfInstances: Int): List<EngineChessGame>
 }

@@ -43,19 +43,19 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         forReachableTakeableEndPos(game, Direction.DOWN_LEFT, informOf)
     }
 
-    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachReachablePos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachReachableTakeableOrCheckEndPos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getReachableCheckingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableCheckingMoves(game: ChessBoard, informOf: MoveInformer) {
         val opponentKingPos = game.getKing(!isWhite).position
         val currentPos = position
         if(!currentPos.hasSameColor(opponentKingPos)) {
@@ -68,7 +68,7 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
                     if(game.simulateSimplifiedMove(this, checkPos) { boardAfterMove ->
                             isReachable(opponentKingPos, boardAfterMove)}
                     ) {
-                        result.add(Move[currentPos, checkPos])
+                        informOf(Move[currentPos, checkPos])
                     }
                 }
             }
@@ -78,17 +78,17 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         checkReachOf(halfSum-opponentKingPos.column, halfSum-opponentKingPos.row)
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer) {
         when {
             checkLine.posProgression.hasSinglePos -> {
                 if(position.hasSameColor(checkLine.attackerPos)) {
-                    addMoveIfReachable(checkLine.attackerPos, game, result)
+                    addMoveIfReachable(checkLine.attackerPos, game, informOf)
                 }
             }
             checkLine.isDiagonalCheck -> {
                 if(position.hasSameColor(checkLine.attackerPos)) {
                     checkLine.posProgression.forEachReachablePos { diagonalPos->
-                        if(addMoveIfReachable(diagonalPos, game, result)) {
+                        if(addMoveIfReachable(diagonalPos, game, informOf)) {
                             // a bishop can only intersect with a diagonal attacker at a single point
                             return
                         }
@@ -99,7 +99,7 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
                 var hasAlreadyAddedAPosition = false
                 checkLine.posProgression.forEachReachablePos { straightPos->
                     if(position.hasSameColor(straightPos)) {
-                        if(addMoveIfReachable(straightPos, game, result)) {
+                        if(addMoveIfReachable(straightPos, game, informOf)) {
                             // a bishop can only intersect with a straight attacker at max two points
                             if(hasAlreadyAddedAPosition) return
                             else hasAlreadyAddedAPosition = true
@@ -110,13 +110,13 @@ class Bishop(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer) {
         if(boundLine.boundFigureToAttackerDirection.isDiagonal) {
             boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
-                result.add(Move[position, posBetweenThisAndAttacker])
+                informOf(Move[position, posBetweenThisAndAttacker])
             }
             boundLine.possibleMovesToKing.forEachReachablePos {posBetweenThisAndKing->
-                result.add(Move[position, posBetweenThisAndKing])
+                informOf(Move[position, posBetweenThisAndKing])
             }
         }
     }

@@ -7,7 +7,6 @@ import voidchess.common.board.move.PositionProgression
 import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Figure
-import java.util.*
 import kotlin.test.assertEquals
 
 
@@ -23,10 +22,8 @@ fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessBoard = ArrayC
 }
 
 fun ChessBoard.getPossibleMovesFrom(posCode: String): List<Move> {
-    val moveList = LinkedList<Move>()
     val figure = getFigure(Position.byCode(posCode))
-    figure.getPossibleMoves(this, moveList)
-    return moveList
+    return figure.getPossibleMoves(this)
 }
 
 fun ChessBoard.move(move: Move) {
@@ -37,18 +34,6 @@ fun ChessBoard.isMovable(from: Position, to: Position, isWhite: Boolean): Boolea
     val figure = this.getFigure(from)
     assertEquals(isWhite, figure.isWhite, "color")
     return figure.isMovable(to, this)
-}
-
-fun StaticChessBoard.countFigures(): Int {
-    var figureCount = 0
-    for (row in 0..7) {
-        for (column in 0..7) {
-            if (this.getFigureOrNull(Position[row, column]) != null) {
-                figureCount++
-            }
-        }
-    }
-    return figureCount
 }
 
 fun StaticChessBoard.assertFiguresKnowTherePosition() {
@@ -69,7 +54,7 @@ fun StaticChessBoard.assertFiguresKnowTherePosition() {
 }
 
 fun PositionProgression.toList(): List<Position> {
-    val list = LinkedList<Position>()
+    val list = mutableListOf<Position>()
     forEachReachablePos { position -> list.add(position) }
     return list
 }
@@ -91,4 +76,42 @@ fun Int.toChess960Config(): StartConfig.Chess960Config {
     val chess960Index = this
     check(chess960Index in 0 until 960) { "expected value to be within 0-959 but was: $chess960Index" }
     return StartConfig.Chess960Config(chess960Index)
+}
+
+fun Figure.getPossibleMoves(game: ChessBoard): List<Move> {
+    val moves = mutableListOf<Move>()
+    this.forPossibleMoves(game) {
+        moves.add(it)
+    }
+    return moves
+}
+
+fun Figure.getPossibleTakingMoves(game: ChessBoard): List<Move> {
+    val moves = mutableListOf<Move>()
+    this.forPossibleTakingMoves(game) {
+        moves.add(it)
+    }
+    return moves
+}
+
+fun Figure.getReachableMoves(game: ChessBoard): List<Move> {
+    val moves = mutableListOf<Move>()
+    this.forReachableMoves(game) {
+        moves.add(it)
+    }
+    return moves
+}
+
+fun Figure.getCriticalMoves(game: ChessBoard): Set<Move> {
+    val moves = mutableSetOf<Move>()
+    this.forCriticalMoves(game, moves)
+    return moves
+}
+
+fun Figure.getReachableCheckingMoves(game: ChessBoard): List<Move> {
+    val moves = mutableListOf<Move>()
+    this.forReachableCheckingMoves(game) {
+        moves.add(it)
+    }
+    return moves
 }

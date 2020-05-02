@@ -43,19 +43,19 @@ class Rook : CastlingFigure {
         forReachableTakeableEndPos(game, Direction.RIGHT, informOf)
     }
 
-    override fun getReachableMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachReachablePos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getReachableTakingMoves(game: StaticChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer) {
         forEachReachableTakeableEndPos(game) {
-            result.add(Move[position, it])
+            informOf(Move[position, it])
         }
     }
 
-    override fun getReachableCheckingMoves(game: ChessBoard, result: MutableCollection<Move>) {
+    override fun forReachableCheckingMoves(game: ChessBoard, informOf: MoveInformer) {
         val opponentKingPos = game.getKing(!isWhite).position
         val currentPos = position
         val possiblePos1 = Position[currentPos.row, opponentKingPos.column]
@@ -65,7 +65,7 @@ class Rook : CastlingFigure {
             if (game.simulateSimplifiedMove(this, possiblePos1) { boardAfterMove ->
                     isReachable(opponentKingPos, boardAfterMove)}
             ) {
-                result.add(Move[currentPos, possiblePos1])
+                informOf(Move[currentPos, possiblePos1])
             }
         }
         // check position 2
@@ -73,20 +73,20 @@ class Rook : CastlingFigure {
             if (game.simulateSimplifiedMove(this, possiblePos2) { boardAfterMove ->
                     isReachable(opponentKingPos, boardAfterMove)}
             ) {
-                result.add(Move[currentPos, possiblePos2])
+                informOf(Move[currentPos, possiblePos2])
             }
         }
     }
 
-    override fun getPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer) {
         when {
             checkLine.posProgression.hasSinglePos -> {
-                addMoveIfReachable(checkLine.attackerPos, game, result)
+                addMoveIfReachable(checkLine.attackerPos, game, informOf)
             }
             checkLine.isDiagonalCheck -> {
                 var hasAlreadyAddedAPosition = false
                 checkLine.posProgression.forEachReachablePos {diagonalPos->
-                    if(addMoveIfReachable(diagonalPos, game, result)) {
+                    if(addMoveIfReachable(diagonalPos, game, informOf)) {
                         // a rook can only intersect with a diagonal attacker at max two points
                         if(hasAlreadyAddedAPosition) return
                         else hasAlreadyAddedAPosition = true
@@ -95,7 +95,7 @@ class Rook : CastlingFigure {
             }
             else -> { // isStraightCheck!
                 checkLine.posProgression.forEachReachablePos {straightPos->
-                    if(addMoveIfReachable(straightPos, game, result)) {
+                    if(addMoveIfReachable(straightPos, game, informOf)) {
                         // a rook can only intersect with a straight attacker at one point
                         return
                     }
@@ -104,13 +104,13 @@ class Rook : CastlingFigure {
         }
     }
 
-    override fun getPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, result: MutableCollection<Move>) {
+    override fun forPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer) {
         if(boundLine.boundFigureToAttackerDirection.isStraight) {
             boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
-                result.add(Move[position, posBetweenThisAndAttacker])
+                informOf(Move[position, posBetweenThisAndAttacker])
             }
             boundLine.possibleMovesToKing.forEachReachablePos {posBetweenThisAndKing->
-                result.add(Move[position, posBetweenThisAndKing])
+                informOf(Move[position, posBetweenThisAndKing])
             }
         }
     }

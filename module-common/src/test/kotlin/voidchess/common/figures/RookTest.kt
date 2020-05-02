@@ -2,15 +2,11 @@ package voidchess.common.figures
 
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import voidchess.common.*
 import voidchess.common.board.ArrayChessBoard
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.common.initChessBoard
-import voidchess.common.toFromPosAsStringSet
-import voidchess.common.toManualConfig
-import voidchess.common.toTargetPosAsStringSet
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -54,8 +50,7 @@ class RookTest {
         val game = ArrayChessBoard(des.toManualConfig())
 
         val rook = game.getFigure(Position.byCode(rookPosCode))
-        val moveIter = LinkedList<Move>()
-        rook.getPossibleMoves(game, moveIter)
+        val moveIter = rook.getPossibleMoves(game)
         assertEquals(expectedNumberOfMoves, moveIter.size)
     }
 
@@ -68,8 +63,7 @@ class RookTest {
     fun testGetReachableCheckingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val rook = game.getFigure(Position.byCode(posCode))
-        val actualReachableCheckingResults = TreeSet<Move>()
-        rook.getReachableCheckingMoves(game, actualReachableCheckingResults)
+        val actualReachableCheckingResults = rook.getReachableCheckingMoves(game)
         assertEquals(
             expectedMoveToCodes,
             actualReachableCheckingResults.toTargetPosAsStringSet(),
@@ -96,16 +90,14 @@ class RookTest {
     fun testGetCriticalMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val rook = game.getFigure(Position.byCode(posCode))
-        val actualIrreversibleResults = TreeSet<Move>()
-        rook.getCriticalMoves(game, actualIrreversibleResults)
+        val actualIrreversibleResults = rook.getCriticalMoves(game)
         assertEquals(
             expectedMoveToCodes,
             actualIrreversibleResults.toTargetPosAsStringSet(),
             "rook can move irreversibly to"
         )
 
-        val actualTakingResults = TreeSet<Move>()
-        rook.getCriticalMoves(game, actualTakingResults)
+        val actualTakingResults = rook.getCriticalMoves(game)
         assertEquals(expectedMoveToCodes, actualTakingResults.toTargetPosAsStringSet(), "rook can take on")
     }
 

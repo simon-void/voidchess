@@ -7,8 +7,6 @@ import voidchess.common.board.ChessBoard
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.common.board.other.ChessGameSupervisorDummy
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -184,8 +182,7 @@ internal class KingTest {
     fun testGetPossibleIrreversibleMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val king = game.getFigure(Position.byCode(posCode))
-        val results = TreeSet<Move>()
-        king.getCriticalMoves(game, results)
+        val results = king.getCriticalMoves(game)
         val actualMoveToCodes = results.toTargetPosAsStringSet()
         assertEquals(expectedMoveToCodes, actualMoveToCodes, "king can move to irreversibly")
     }
@@ -200,8 +197,7 @@ internal class KingTest {
     fun testGetPossibleTakingMoves(gameDes: String, posCode: String, expectedMoveToCodes: Set<String>) {
         val game = initChessBoard(gameDes)
         val king = game.getFigure(Position.byCode(posCode))
-        val results = LinkedList<Move>()
-        king.getPossibleTakingMoves(game, results)
+        val results = king.getPossibleTakingMoves(game)
         val actualMoveToCodes = results.toTargetPosAsStringSet()
         assertEquals(expectedMoveToCodes, actualMoveToCodes, "king can take on")
     }
