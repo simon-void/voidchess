@@ -1,11 +1,23 @@
 package voidchess
 
-import voidchess.ui.ChessFrame
-import javax.swing.SwingUtilities
+import voidchess.central.TableImpl
+import voidchess.central.player.EnginePlayer
+import voidchess.central.player.UiPlayer
+import voidchess.common.integration.ComputerPlayerUI
+import voidchess.common.integration.HumanPlayer
+import voidchess.ui.initializeUI
+
 
 fun main() {
     runCatching {
-        //Swing UI updates have to come from the SwingHandler or something
-        SwingUtilities.invokeLater { ChessFrame() }
+        val enginePlayer = EnginePlayer()
+        val uiPlayer = UiPlayer()
+        val (humanPlayer: HumanPlayer, computerPlayerUI: ComputerPlayerUI) = initializeUI(
+            enginePlayer.getEngineConfig(),
+            uiPlayer
+        )
+        TableImpl(humanPlayer, computerPlayerUI, uiPlayer, enginePlayer)
+
+        Unit
     }
 }

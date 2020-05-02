@@ -3,20 +3,24 @@ package voidchess.common.board
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
-import voidchess.common.board.other.ChessGameSupervisor
-import voidchess.common.board.other.ChessGameSupervisorDummy
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.King
 
 
 class BasicChessGameImpl private constructor(
     private val board: ChessBoard,
-    private var supervisor: ChessGameSupervisor,
     startConfig: StartConfig
 ): BasicChessGame, StaticChessBoard by board {
     private var latestExtendedMove: ExtendedMove? = null
     private var isOngoing: Boolean = true
     private val isWhiteTurn get() = board.isWhiteTurn
+
+    constructor(
+        startConfig: StartConfig = StartConfig.ClassicConfig
+    ): this(
+        ArrayChessBoard(startConfig),
+        startConfig
+    )
 
     init {
         initGame(startConfig)
@@ -26,14 +30,6 @@ class BasicChessGameImpl private constructor(
         isOngoing = true
         board.init(startConfig)
     }
-
-    constructor(
-        startConfig: StartConfig
-    ): this(
-        ArrayChessBoard(startConfig),
-        ChessGameSupervisorDummy,
-        startConfig
-    )
 
     private fun isEnd(): Boolean {
         fun noMovesLeft(caseWhite: Boolean): Boolean {
@@ -54,10 +50,6 @@ class BasicChessGameImpl private constructor(
         return false
     }
 
-    override fun useSupervisor(supervisor: ChessGameSupervisor) {
-        this.supervisor = supervisor
-    }
-
     override fun isSelectable(pos: Position): Boolean {
         val figure = getFigureOrNull(pos)
         return isOngoing && figure!=null && figure.isWhite == isWhiteTurn && figure.isSelectable(board)
@@ -70,7 +62,7 @@ class BasicChessGameImpl private constructor(
 
     override fun move(move: Move): Boolean {
         if(isOngoing) {
-            latestExtendedMove = board.move(move, supervisor)
+            latestExtendedMove = board.move(move)
             isOngoing = !isEnd()
         }
         return !isOngoing

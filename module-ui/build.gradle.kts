@@ -15,7 +15,6 @@ dependencies {
     testImplementation(Deps.mockk)
 
     implementation(project(":module-common"))
-    implementation(project(":module-engine"))
 }
 
 tasks {

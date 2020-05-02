@@ -2,7 +2,7 @@ package voidchess.engine.player.ki
 
 import org.testng.annotations.Test
 import voidchess.common.board.other.StartConfig
-import voidchess.common.player.ki.Engine
+import voidchess.common.engine.Engine
 import voidchess.engine.KaiEngine
 
 internal class KaiEngineTest {

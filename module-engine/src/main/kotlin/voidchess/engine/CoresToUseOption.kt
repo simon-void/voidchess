@@ -1,6 +1,6 @@
 package voidchess.engine
 
-import voidchess.common.player.ki.Option
+import voidchess.common.engine.Option
 
 
 internal object CoresToUseOption : Option {

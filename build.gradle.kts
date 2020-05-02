@@ -19,13 +19,15 @@ application {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
+    implementation(project(":module-common"))
     implementation(project(":module-ui"))
+    implementation(project(":module-central"))
 }
 
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = "3.2.3"
+    version = "3.3.0"
 
     repositories {
         mavenCentral()

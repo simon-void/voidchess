@@ -3,8 +3,8 @@ package voidchess.engine.evaluation
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
+import voidchess.common.engine.*
 import voidchess.common.figures.King
-import voidchess.common.player.ki.evaluation.*
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.engine.evaluation.leaf.StaticEval
@@ -19,10 +19,10 @@ internal class MinMaxEval(
     )
 
     fun evaluateMove(
-        game: EngineChessGame,
-        move: Move,
-        currentMaxOneLevelUp: Evaluation?,
-        movesToTryFirst: BestResponseSet
+            game: EngineChessGame,
+            move: Move,
+            currentMaxOneLevelUp: Evaluation?,
+            movesToTryFirst: BestResponseSet
     ): Pair<Move?, Evaluation> {
         val depth = 0
         val forWhite = game.isWhiteTurn
@@ -53,14 +53,14 @@ internal class MinMaxEval(
     }
 
     private fun getMin(
-        game: EngineChessGame,
-        forWhite: Boolean,
-        depth: Int,
-        lastMove_isChess: Boolean,
-        lastMove_hasHitFigure: Boolean,
-        minPossibleMovesBuffer: ArrayList<Move>,
-        currentMaxOneLevelUp: Evaluation?,
-        movesToTryFirst: BestResponseSet
+            game: EngineChessGame,
+            forWhite: Boolean,
+            depth: Int,
+            lastMove_isChess: Boolean,
+            lastMove_hasHitFigure: Boolean,
+            minPossibleMovesBuffer: ArrayList<Move>,
+            currentMaxOneLevelUp: Evaluation?,
+            movesToTryFirst: BestResponseSet
     ): Pair<Move, Evaluation> {
         assert(minPossibleMovesBuffer.isNotEmpty()) {
             "minPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"
@@ -121,8 +121,8 @@ internal class MinMaxEval(
                         stopLookingForBetterMove = true
                         val secondaryMateEval = strategy.getSecondaryCheckmateEvaluation(game, forWhite, forWhite)
                         CheckmateSelf(
-                            depth + 1,
-                            secondaryMateEval
+                                depth + 1,
+                                secondaryMateEval
                         )
                     }
                     MoveResult.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
@@ -151,14 +151,14 @@ internal class MinMaxEval(
     }
 
     private fun getMax(
-        game: EngineChessGame,
-        forWhite: Boolean,
-        depth: Int,
-        lastMoveIsChess: Boolean,
-        lastMoveHasHitFigure: Boolean,
-        maxPossibleMovesBuffer: ArrayList<Move>,
-        currentMinOneLevelUp: Evaluation?,
-        movesToTryFirst: BestResponseSet
+            game: EngineChessGame,
+            forWhite: Boolean,
+            depth: Int,
+            lastMoveIsChess: Boolean,
+            lastMoveHasHitFigure: Boolean,
+            maxPossibleMovesBuffer: ArrayList<Move>,
+            currentMinOneLevelUp: Evaluation?,
+            movesToTryFirst: BestResponseSet
     ): Pair<Move, Evaluation> {
         assert(maxPossibleMovesBuffer.isNotEmpty()) {
             "maxPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"

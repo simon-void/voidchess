@@ -2,11 +2,8 @@ package voidchess.engine.concurrent
 
 import voidchess.engine.board.EngineChessGame
 import voidchess.common.board.move.Move
-import voidchess.common.board.other.StartConfig
-import voidchess.common.player.ki.ProgressCallback
-import voidchess.common.player.ki.evaluation.*
+import voidchess.common.engine.*
 import voidchess.engine.evaluation.MinMaxEval
-import voidchess.engine.board.EngineChessGameImpl
 
 internal abstract class ConcurrencyStrategy {
 
@@ -28,21 +25,21 @@ internal abstract class ConcurrencyStrategy {
     abstract fun shutdown()
 
     protected abstract fun evaluateMoves(
-        game: EngineChessGame,
-        movesToEvaluate: Collection<Move>,
-        progressCallback: ProgressCallback,
-        minMaxEval: MinMaxEval,
-        numericEvalOkRadius: Double
+            game: EngineChessGame,
+            movesToEvaluate: Collection<Move>,
+            progressCallback: ProgressCallback,
+            minMaxEval: MinMaxEval,
+            numericEvalOkRadius: Double
     ): MutableList<EvaluatedMove>
 
     companion object {
         // TODO Kotlin 1.4 contract: result==null <=> currentMaxEvaluation==null
         fun getOkEval(
-            currentMaxEvaluation: Evaluation?,
-            numericEvalOkRadius: Double
+                currentMaxEvaluation: Evaluation?,
+                numericEvalOkRadius: Double
         ): Evaluation? = currentMaxEvaluation?.let { currentMax ->
             if(currentMax is NumericalEvaluation) {
-                Ongoing(currentMax.numericValue-numericEvalOkRadius)
+                Ongoing(currentMax.numericValue - numericEvalOkRadius)
             }else{
                 currentMax
             }

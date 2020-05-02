@@ -6,8 +6,8 @@ import voidchess.common.board.other.StartConfig
 import voidchess.common.helper.TreeNode
 import voidchess.common.helper.getResourceStream
 import voidchess.common.helper.splitAndTrim
-import voidchess.common.player.ki.ProgressCallback
-import voidchess.common.player.ki.evaluation.EvaluatedMove
+import voidchess.common.engine.ProgressCallback
+import voidchess.common.engine.EvaluatedMove
 import voidchess.engine.concurrent.SingleThreadStrategy
 import voidchess.engine.evaluation.AllMovesOrNonePruner
 import voidchess.engine.evaluation.leaf.MiddleGameEval

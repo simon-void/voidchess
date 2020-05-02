@@ -4,9 +4,7 @@ import voidchess.common.board.BasicChessGame
 import voidchess.common.board.BasicChessGameImpl
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
-import voidchess.common.player.ki.*
-import voidchess.common.player.ki.evaluation.EvaluatedMove
-import voidchess.common.player.ki.evaluation.NumericalEvaluation
+import voidchess.common.engine.*
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.concurrent.ConcurrencyStrategy
@@ -27,15 +25,23 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
     private val concurrencyStrategyCache = ConcurrencyStrategyContainer()
     private val openingsLibrary: OpeningsLibrary = OpeningsLibrary.loadFromFile("openings.txt")
 
-    override fun getSpec(): EngineSpec =
-        EngineSpec(
-            name = "Kai",
-            coresToUseOption = CoresToUseOption,
-            difficultyOption = DifficultyOption,
-            supportsChess960 = true
-        )
+    override fun getConfig(): EngineConfig {
+        val kaiEngine = this
+        return object : EngineConfig {
+            override fun getSpec() = EngineSpec(
+                name = "Kai",
+                coresToUseOption = CoresToUseOption,
+                difficultyOption = DifficultyOption,
+                supportsChess960 = true
+            )
 
-    override fun setOption(name: String, value: String) {
+            override fun setOption(name: String, value: String) {
+                kaiEngine.setOption(name, value)
+            }
+        }
+    }
+
+    private fun setOption(name: String, value: String) {
         when(name) {
             CoresToUseOption.name -> CoresToUseOption.setCoresToUse(
                 value
