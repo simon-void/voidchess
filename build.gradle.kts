@@ -21,13 +21,13 @@ dependencies {
 
     implementation(project(":module-common"))
     implementation(project(":module-ui"))
-    implementation(project(":module-central"))
+    implementation(project(":module-united"))
 }
 
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = "3.3.0"
+    version = "3.2.4"
 
     repositories {
         mavenCentral()

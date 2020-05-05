@@ -1,6 +1,6 @@
 package voidchess
 
-import voidchess.central.board.*
+import voidchess.united.board.*
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.*
 

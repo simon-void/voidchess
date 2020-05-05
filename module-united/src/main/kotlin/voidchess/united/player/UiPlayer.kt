@@ -1,11 +1,11 @@
-package voidchess.central.player
+package voidchess.united.player
 
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.other.StartConfig
 import voidchess.common.integration.HumanPlayer
 import voidchess.common.integration.TableAdapter
-import voidchess.central.Table
+import voidchess.united.Table
 import voidchess.common.board.move.ExtendedMove
 
 

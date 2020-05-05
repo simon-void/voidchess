@@ -36,49 +36,50 @@ class PawnTest {
         val game = initChessBoard(gameDes)
 
         val pawn = game.getFigure(Position.byCode(pawnPosCode)) as Pawn
-        val moveIter1 = pawn.getReachableMoves(game)
-        val actualPossibleToCodes = moveIter1.asSequence().map { it.to.toString() }.toSet()
-        assertEquals(expectedPossibleToCodes, actualPossibleToCodes, "reachable positions the pawn can move to")
+        val actualReachableMoveCodes: Set<String> = pawn.getReachableMoves(game).map { it.toString() }.toSet()
+        assertEquals(expectedPossibleToCodes, actualReachableMoveCodes, "reachable moves the pawn can make")
     }
 
     @DataProvider
     fun getGetReachableMovesData(): Array<Array<Any>> = arrayOf(
-        arrayOf("black 0 King-black-g7-2 Pawn-black-e4-false Queen-white-d4 King-white-e1-0", "e4", setOf("e3")),
-        arrayOf("black 0 King-black-g7-2 Pawn-black-e4-false Pawn-white-d4-true King-white-e1-0", "e4", setOf("e3", "d3"))
+        arrayOf("black 0 King-black-g7-2 Pawn-black-e4-false Queen-white-d4 King-white-e1-0", "e4", setOf("e4-e3")),
+        arrayOf("black 0 King-black-g7-2 Pawn-black-e4-false Pawn-white-d4-true King-white-e1-0", "e4", setOf("e4-e3", "e4-d3")),
+        arrayOf("black 0 King-black-g7-2 Pawn-black-b2-false Queen-white-a1 King-white-h1-0", "b2", setOf("b2Qb1", "b2Qa1"))
     )
 
     @Test(dataProvider = "getGetPossibleMovesData")
-    fun testGetPossibleMoves(gameDes: String, pawnPosCode: String, expectedPossibleToCodes: Set<String>) {
+    fun testGetPossibleMoves(gameDes: String, pawnPosCode: String, expectedPossibleMoveCodes: Set<String>) {
         val game = initChessBoard(gameDes)
 
         val pawn = game.getFigure(Position.byCode(pawnPosCode)) as Pawn
-        val moveIter1 = pawn.getPossibleMoves(game)
-        val actualPossibleToCodes = moveIter1.asSequence().map { it.to.toString() }.toSet()
-        assertEquals(expectedPossibleToCodes, actualPossibleToCodes, "possible positions the pawn can move to")
+        val actualMoveCodes: Set<String> = pawn.getPossibleMoves(game).map { it.toString() }.toSet()
+        assertEquals(expectedPossibleMoveCodes, actualMoveCodes, "possible moves the pawn can make")
     }
 
     @DataProvider
     fun getGetPossibleMovesData(): Array<Array<Any>> = arrayOf(
-        arrayOf("black 0 Pawn-white-a4-true Pawn-black-b4-false King-black-e8-0 King-white-e1-0", "b4", setOf("a3", "b3")),
-        arrayOf("black 0 King-black-e8-0 Pawn-black-h7-false King-white-e1-0", "h7", setOf("h6", "h5")),
-        arrayOf("black 0 King-black-h8-2 Pawn-black-h7-false Queen-white-h4 King-white-e1-0", "h7", setOf("h6", "h5")),
-        arrayOf("black 0 King-black-h8-2 Pawn-black-h7-false Queen-white-h5 King-white-e1-0", "h7", setOf("h6")),
+        arrayOf("black 0 Pawn-white-a4-true Pawn-black-b4-false King-black-e8-0 King-white-e1-0", "b4", setOf("b4-a3", "b4-b3")),
+        arrayOf("black 0 King-black-e8-0 Pawn-black-h7-false King-white-e1-0", "h7", setOf("h7-h6", "h7-h5")),
+        arrayOf("black 0 King-black-h8-2 Pawn-black-h7-false Queen-white-h4 King-white-e1-0", "h7", setOf("h7-h6", "h7-h5")),
+        arrayOf("black 0 King-black-h8-2 Pawn-black-h7-false Queen-white-h5 King-white-e1-0", "h7", setOf("h7-h6")),
         arrayOf("black 0 King-black-h8-2 Pawn-black-h7-false Queen-white-h6 King-white-e1-0", "h7", setOf<String>()),
         arrayOf("black 0 King-black-h8-2 Pawn-black-g7-false Queen-white-e5 King-white-e1-0", "g7", setOf<String>()),
-        arrayOf("black 0 King-black-h8-2 Pawn-black-g7-false Queen-white-f6 King-white-e1-0", "g7", setOf("f6")),
-        arrayOf("black 0 King-black-h7-2 Pawn-black-g7-false Queen-white-f5 King-white-e1-0", "g7", setOf("g6")),
-        arrayOf("black 0 King-black-h6-2 Pawn-black-g7-false Queen-white-f4 King-white-e1-0", "g7", setOf("g5")),
+        arrayOf("black 0 King-black-h8-2 Pawn-black-g7-false Queen-white-f6 King-white-e1-0", "g7", setOf("g7-f6")),
+        arrayOf("black 0 King-black-h7-2 Pawn-black-g7-false Queen-white-f5 King-white-e1-0", "g7", setOf("g7-g6")),
+        arrayOf("black 0 King-black-h6-2 Pawn-black-g7-false Queen-white-f4 King-white-e1-0", "g7", setOf("g7-g5")),
         arrayOf("black 0 King-black-h7-2 Pawn-black-g7-false Queen-white-a7 King-white-e1-0", "g7", setOf<String>()),
-        arrayOf("white 0 King-black-h7-2 Pawn-white-a4-false Pawn-black-b5-true King-white-c4-8", "a4", setOf("b5")),
-        arrayOf("white 0 King-black-h7-2 Pawn-white-a5-false Pawn-black-b5-true King-white-c4-8", "a5", setOf("b6")),
-        arrayOf("white 0 Pawn-white-b2-false King-white-d3-2 Rook-black-a3-1 King-black-e8-0", "b2", setOf("a3", "b3")),
-        arrayOf("white 0 Pawn-white-b2-false King-white-d4-2 Rook-black-a4-1 King-black-e8-0", "b2", setOf("b4")),
+        arrayOf("white 0 King-black-h7-2 Pawn-white-a4-false Pawn-black-b5-true King-white-c4-8", "a4", setOf("a4-b5")),
+        arrayOf("white 0 King-black-h7-2 Pawn-white-a5-false Pawn-black-b5-true King-white-c4-8", "a5", setOf("a5-b6")),
+        arrayOf("white 0 Pawn-white-b2-false King-white-d3-2 Rook-black-a3-1 King-black-e8-0", "b2", setOf("b2-a3", "b2-b3")),
+        arrayOf("white 0 Pawn-white-b2-false King-white-d4-2 Rook-black-a4-1 King-black-e8-0", "b2", setOf("b2-b4")),
         arrayOf("white 0 Pawn-white-b3-false King-white-d5-4 Rook-black-a5-1 King-black-e8-0", "b3", setOf<String>()),
         arrayOf("white 0 King-white-g2-2 Pawn-white-e5-false Queen-black-d5 King-black-e8-0", "e5", setOf<String>()),
         arrayOf("white 0 King-white-g2-2 Pawn-white-e6-false Queen-black-d5 King-black-e8-0", "e6", setOf<String>()),
         arrayOf("white 0 King-white-g2-2 Pawn-white-e7-false Queen-black-d5 King-black-e8-0", "e7", setOf<String>()),
         arrayOf("black 0 King-black-g7-2 Pawn-black-e4-false Queen-white-d4 King-white-e1-0", "e4", setOf<String>()),
-        arrayOf("black 0 King-black-g7-2 Pawn-black-e3-false Queen-white-d4 King-white-e1-0", "e3", setOf<String>())
+        arrayOf("black 0 King-black-g7-2 Pawn-black-e3-false Queen-white-d4 King-white-e1-0", "e3", setOf<String>()),
+        arrayOf("black 0 King-black-g7-2 Pawn-black-e2-false Queen-white-d1 King-white-h1-0", "e2", setOf("e2Qe1", "e2Qd1")),
+        arrayOf("black 0 King-black-g7-2 Pawn-black-b2-false Queen-white-a1 King-white-h1-0", "b2", setOf("b2Qa1"))
     )
 
     @Test(dataProvider = "getGetCriticalMovesData")

@@ -1,14 +1,18 @@
 package voidchess.ui.player
 
 import voidchess.common.board.BasicChessGame
+import voidchess.common.board.getFigure
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move
+import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
+import voidchess.common.figures.Pawn
 import voidchess.common.integration.HumanPlayer
 import voidchess.common.integration.TableAdapter
 import voidchess.ui.swing.ChessboardComponent
 import voidchess.ui.swing.PosType
+import javax.swing.JOptionPane
 
 
 internal class SwingPlayerImpl(
@@ -99,8 +103,32 @@ internal class SwingPlayerImpl(
             }
         } else {
             if (game.isMovable(lockedFrom, pos)) {
-                move(Move[lockedFrom, pos])
+                // check if move is a pawn transformation
+                val move: Move = if (game.getFigure(lockedFrom) is Pawn && (pos.row == 0 || pos.row == 7)) {
+                    val pawnPromotionType = askForPawnPromotionType()
+                    Move[lockedFrom, pos, pawnPromotionType]
+                } else {
+                    Move[lockedFrom, pos]
+                }
+                move(move)
             }
+        }
+    }
+
+    private fun askForPawnPromotionType(): PawnPromotion {
+        val figs = arrayOf("Queen", "Knight", "Rook", "Bishop")
+        val out = JOptionPane.showInputDialog(null,
+            "Promote pawn to what type?",
+            "pawn promotion",
+            JOptionPane.QUESTION_MESSAGE, null,
+            figs,
+            "Queen") as String
+
+        return when (out) {
+            "Queen" -> PawnPromotion.QUEEN
+            "Rook" -> PawnPromotion.ROOK
+            "Knight" -> PawnPromotion.KNIGHT
+            else -> PawnPromotion.BISHOP
         }
     }
 

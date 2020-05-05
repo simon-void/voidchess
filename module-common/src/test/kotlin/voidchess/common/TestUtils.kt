@@ -9,8 +9,13 @@ import voidchess.common.figures.Figure
 import kotlin.test.assertEquals
 
 
-fun initChessBoard(gameDes: String): ChessBoard =
-    ArrayChessBoard(gameDes.toManualConfig())
+fun initChessBoard(gameDes: String, vararg moveCodes: String): ChessBoard = ArrayChessBoard(
+    gameDes.toManualConfig()
+).apply {
+    for (moveCode in moveCodes) {
+        move(Move.byCode(moveCode))
+    }
+}
 
 fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessBoard = ArrayChessBoard(
     StartConfig.Chess960Config(chess960)

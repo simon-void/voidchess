@@ -1,18 +1,28 @@
 package voidchess.common.board.move
 
 
-class Move private constructor(@JvmField val from: Position, @JvmField val to: Position): Comparable<Move> {
+class Move private constructor(
+    val from: Position,
+    val to: Position,
+    val pawnPromotionType: PawnPromotion?
+) {
     private val index = getMoveIndex(from.index, to.index)
 
     fun equalsMove(move: Move) = this === move //index == move.index
     override fun equals(other: Any?) = this === other //other is Move && index == other.index
-    override fun toString() = "$from-$to"
     override fun hashCode() = index
-
-    override fun compareTo(other: Move) = index.compareTo(other.index)
+    override fun toString(): String {
+        val char = when(pawnPromotionType) {
+            null -> '-'
+            PawnPromotion.QUEEN -> 'Q'
+            PawnPromotion.ROOK -> 'R'
+            PawnPromotion.KNIGHT -> 'K'
+            PawnPromotion.BISHOP -> 'B'
+        }
+        return "$from$char$to"
+    }
 
     companion object {
-        @JvmStatic
         private val moves = Array(64 * 64) {
             // optimized from: reverse (toIndex * 64) + fromIndex
             // val fromIndex = it % 64
@@ -21,65 +31,54 @@ class Move private constructor(@JvmField val from: Position, @JvmField val to: P
             val toIndex = it shr 6
             return@Array Move(
                 Position.byIndex(fromIndex),
-                Position.byIndex(toIndex)
+                Position.byIndex(toIndex),
+                null
             )
         }
 
-        @JvmStatic
         operator fun get(from: Position, to: Position) = moves[getMoveIndex(
             from.index,
             to.index
         )]
 
-        @JvmStatic
+        operator fun get(from: Position, to: Position, pawnPromotion: PawnPromotion) = Move(from, to, pawnPromotion)
+
         fun byCode(code: String): Move {
             val fromColumn = code[0].toInt() - 97
             val fromRow = code[1].toInt() - 49
             val toColumn = code[3].toInt() - 97
             val toRow = code[4].toInt() - 49
-
-            return get(
-                Position[fromRow, fromColumn],
-                Position[toRow, toColumn]
-            )
-        }
-
-        @JvmStatic
-        fun byCheckedCode(code: String): Move {
-            val fromColumn = code[0].toInt() - 97
-            val fromRow = code[1].toInt() - 49
-            val toColumn = code[3].toInt() - 97
-            val toRow = code[4].toInt() - 49
-
-            if(!(Position.inBounds(fromRow, fromColumn) && Position.inBounds(toRow, toColumn))) {
-                throw IllegalArgumentException("moveCode $code isn't valid")
+            val pawnPromotion: PawnPromotion = when(val char = code[2]) {
+                '-' -> return get(Position[fromRow, fromColumn], Position[toRow, toColumn])
+                'Q' -> PawnPromotion.QUEEN
+                'K' -> PawnPromotion.KNIGHT
+                'R' -> PawnPromotion.ROOK
+                'B' -> PawnPromotion.BISHOP
+                else -> throw IllegalArgumentException("unexpected separation character '$char'. Allowed values: -RKBQ")
             }
 
             return get(
                 Position[fromRow, fromColumn],
-                Position[toRow, toColumn]
+                Position[toRow, toColumn],
+                pawnPromotion
             )
         }
 
-        @JvmStatic
-        fun isValid(code: String?): Boolean {
-            if (code == null || code.length != 5 || code[2] != '-') {
+        fun byCheckedCode(code: String): Move {
+            require(isValid(code)) {"moveCode $code isn't valid"}
+            return byCode(code)
+        }
+
+        private val moveRegex = """^[a-h][1-8][-RKBQ][a-h][1-8]$""".toRegex()
+        private val pawnPromotionMoveRegex = """^(a2[RKBQ]a1)|(b2[RKBQ]b1)|(c2[RKBQ]c1)|(d2[RKBQ]d1)|(e2[RKBQ]e1)|(f2[RKBQ]f1)|(g2[RKBQ]g1)|(h2[RKBQ]h1)|(a7[RKBQ]a8)|(b7[RKBQ]b8)|(c7[RKBQ]c8)|(d7[RKBQ]d8)|(e7[RKBQ]e8)|(f7[RKBQ]f8)|(g7[RKBQ]g8)|(h7[RKBQ]h8)$""".toRegex()
+        private fun isValid(code: String): Boolean {
+            if (code.length != 5 || !moveRegex.matches(code)) {
                 return false
             }
-
-            val fromColumn = code[0].toInt() - 97
-            val fromRow = code[1].toInt() - 49
-            val toColumn = code[3].toInt() - 97
-            val toRow = code[4].toInt() - 49
-
-            return fromColumn in 0..7 &&
-                    fromRow in 0..7 &&
-                    toColumn in 0..7 &&
-                    toRow in 0..7
+            return code[2]=='-' || pawnPromotionMoveRegex matches code
         }
 
         // optimized from: (toIndex * 64) + fromIndex
-        @JvmStatic
-        private fun getMoveIndex(fromIndex: Int, toIndex: Int) =  (toIndex shl 6) or fromIndex
+        private fun getMoveIndex(fromIndex: Int, toIndex: Int): Int =  (toIndex shl 6) or fromIndex
     }
 }

@@ -159,6 +159,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
             is ExtendedMove.Promotion -> {
                 val toPos: Position = extendedMove.move.to
                 val promotedPawn: Figure = when (move.pawnPromotionType) {
+                    null -> throw IllegalArgumentException("pawn promotion move $move doesn't contain a promotion type")
                     PawnPromotion.QUEEN -> Queen(movingFigure.isWhite, toPos)
                     PawnPromotion.ROOK -> Rook(movingFigure.isWhite, toPos)
                     PawnPromotion.KNIGHT -> Knight(movingFigure.isWhite, toPos)
@@ -304,6 +305,3 @@ private fun ArrayDeque<ExtendedMove>.getLatestMoves(count: Int?): String {
 
     return latestExtendedMoves.map { it.move }.joinToString(separator = ",") { it.toString() }
 }
-
-// TODO replace with real implementation on Move
-private val Move.pawnPromotionType: PawnPromotion get() = PawnPromotion.QUEEN

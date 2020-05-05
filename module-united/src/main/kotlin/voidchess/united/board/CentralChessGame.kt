@@ -1,4 +1,4 @@
-package voidchess.central.board
+package voidchess.united.board
 
 import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.other.StartConfig

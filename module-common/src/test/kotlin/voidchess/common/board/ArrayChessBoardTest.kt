@@ -8,12 +8,13 @@ import voidchess.common.board.move.Position
 import voidchess.common.figures.King
 import voidchess.common.figures.Queen
 import voidchess.common.figures.Rook
+import voidchess.common.initChessBoard
 import voidchess.common.toChess960Config
 import voidchess.common.toManualConfig
 import kotlin.test.*
 
 
-class ChessBoardTest {
+class ArrayChessBoardTest {
     private val initial = "Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 " +
             "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 " +
             "Pawn-white-a2-false Pawn-white-b2-false Pawn-white-c2-false Pawn-white-d2-false " +
@@ -139,4 +140,25 @@ class ChessBoardTest {
         board.undo()
         assertEquals(twoMoves, board.movesPlayed())
     }
+
+    @Test(expectedExceptions = [IllegalArgumentException::class])
+    fun testHandleMissingPromotionTypeWhenPawnPromotion() {
+        val des = "black 0 King-white-e1-0 Pawn-black-g2-false King-black-e8-0"
+        initChessBoard(des, "g2-g1")
+    }
+
+    @Test(dataProvider = "getHandlePawnPromotionData")
+    fun testHandlePawnPromotion(promotionType: Char, figureDes: String) {
+        val des = "black 0 King-white-e1-0 Pawn-black-g2-false King-black-e8-0"
+        val game = initChessBoard(des, "g2${promotionType}g1")
+        assertEquals("King-white-e1-0 $figureDes King-black-e8-0", game.toString())
+    }
+
+    @DataProvider
+    fun getHandlePawnPromotionData(): Array<Array<Any>> = arrayOf(
+        arrayOf('Q', "Queen-black-g1"),
+        arrayOf('K', "Knight-black-g1"),
+        arrayOf('B', "Bishop-black-g1"),
+        arrayOf('R', "Rook-black-g1-0")
+    )
 }

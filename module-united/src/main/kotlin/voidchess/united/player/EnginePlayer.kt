@@ -1,6 +1,6 @@
-package voidchess.central.player
+package voidchess.united.player
 
-import voidchess.central.board.CentralChessGame
+import voidchess.united.board.CentralChessGame
 import voidchess.common.board.move.MoveResult
 import voidchess.common.helper.RuntimeFacade
 import voidchess.common.engine.Engine
@@ -8,7 +8,7 @@ import voidchess.common.engine.EngineAnswer
 import voidchess.common.engine.EvaluatedMove
 import voidchess.engine.KaiEngine
 import voidchess.common.integration.ComputerPlayerUI
-import voidchess.central.Table
+import voidchess.united.Table
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.engine.EngineConfig
 import voidchess.common.integration.Thumb

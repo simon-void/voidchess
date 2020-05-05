@@ -1,4 +1,4 @@
-package voidchess.central
+package voidchess.united
 
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move

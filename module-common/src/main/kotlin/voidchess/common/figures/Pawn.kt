@@ -7,6 +7,7 @@ import voidchess.common.board.check.CheckLine
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Move
+import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import kotlin.math.abs
 import kotlin.math.sign
@@ -104,14 +105,14 @@ class Pawn : Figure {
     }
 
     override fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer) {
-        forEachReachablePos(game) {
-            informOf(Move[position, it])
+        forEachReachablePos(game) { to ->
+            informOf(getPromotionSafeMove(position, to))
         }
     }
 
     override fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer) {
-        forEachDiagonalReachablePos(game) {
-            informOf(Move[position, it])
+        forEachDiagonalReachablePos(game) { to ->
+            informOf(getPromotionSafeMove(position, to))
         }
     }
 
@@ -129,12 +130,12 @@ class Pawn : Figure {
         }
         // a pawn can only intercept a check by taking the attacker diagonally (possibly through enpassent)
         if (isOneStepForwardDiagonally(checkLine.attackerPos)) {
-            informOf(Move[position, checkLine.attackerPos])
+            informOf(getPromotionSafeMove(position, checkLine.attackerPos))
         } else if (game.getFigure(checkLine.attackerPos).canBeHitEnpassant) {
             // now i only have to test if my pawn is to the side of the attacker pawn
             if (position.row == checkLine.attackerPos.row && abs(position.column - checkLine.attackerPos.column) == 1) {
                 val oneForwardRow = if (isWhite) position.row + 1 else position.row - 1
-                informOf(Move[position, Position[oneForwardRow, checkLine.attackerPos.column]])
+                informOf(getPromotionSafeMove(position, Position[oneForwardRow, checkLine.attackerPos.column]))
             }
         }
         // or/and by stepping forward into the line
@@ -143,7 +144,7 @@ class Pawn : Figure {
             if (!checkLine.posProgression.hasSinglePos) {
                 checkLine.posProgression.forEachReachablePos { interceptPos->
                     if (isStraightReachable(interceptPos, game)) {
-                        informOf(Move[position, interceptPos])
+                        informOf(getPromotionSafeMove(position, interceptPos))
                         return
                     }
                 }
@@ -155,17 +156,17 @@ class Pawn : Figure {
         when {
             boundLine.boundFigureToAttackerDirection.isDiagonal -> {
                 if(isOneStepForwardDiagonally(boundLine.attackerPos)) {
-                    informOf(Move[position, boundLine.attackerPos])
+                    informOf(getPromotionSafeMove(position, boundLine.attackerPos))
                 }
             }
             boundLine.boundFigureToAttackerDirection.isVertical -> {
                 val oneForwardPos = position.step(forwardDirection) ?: throw IllegalStateException("pawn left board with single step from $position")
                 if( game.isFreeArea(oneForwardPos)) {
-                    informOf(Move[position, oneForwardPos])
+                    informOf(getPromotionSafeMove(position, oneForwardPos))
                     if(hasNotMovedYet()) {
                         val twoForwardPos = oneForwardPos.step(forwardDirection) ?: throw IllegalStateException("pawn left board with double step from $position")
                         if( game.isFreeArea(twoForwardPos)) {
-                            informOf(Move[position, twoForwardPos])
+                            informOf(getPromotionSafeMove(position, twoForwardPos))
                         }
                     }
                 }
@@ -190,4 +191,11 @@ class Pawn : Figure {
     }
 
     override fun toString() = "${super.toString()}-$canBeHitEnpassant"
+}
+
+// instead of only returning a move for the Queen, should be a second one for the Knight (and a third for the Rook) be returned?
+private fun getPromotionSafeMove(from: Position, to: Position): Move = if (to.row == 0 || to.row == 7) {
+    Move[from, to, PawnPromotion.QUEEN]
+} else {
+    Move[from, to]
 }

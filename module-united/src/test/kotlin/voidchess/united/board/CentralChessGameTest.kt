@@ -1,4 +1,4 @@
-package voidchess.central.board
+package voidchess.united.board
 
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
@@ -186,13 +186,26 @@ class CentralChessGameTest {
         assertEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption)
     }
 
-    @Test
-    fun testHandleTransformPawn() {
-        // TODO("rewrite whole test after the pawn promotion is encoded in Move")
+    @Test(expectedExceptions = [IllegalArgumentException::class])
+    fun testHandleMissingPromotionTypeWhenPawnPromotion() {
         val des = "black 0 King-white-e1-0 Pawn-black-g2-false King-black-e8-0"
-        val game = initChessGame(des, "g2-g1")
-        assertEquals(game.toString(), "white 1 King-white-e1-0 Queen-black-g1 King-black-e8-0")
+        initChessGame(des, "g2-g1")
     }
+
+    @Test(dataProvider = "getHandlePawnPromotionData")
+    fun testHandlePawnPromotion(promotionType: Char, figureDes: String) {
+        val des = "black 0 King-white-e1-0 Pawn-black-g2-false King-black-e8-0"
+        val game = initChessGame(des, "g2${promotionType}g1")
+        assertEquals("white 1 King-white-e1-0 $figureDes King-black-e8-0", game.toString())
+    }
+
+    @DataProvider
+    fun getHandlePawnPromotionData(): Array<Array<Any>> = arrayOf(
+        arrayOf('Q', "Queen-black-g1"),
+        arrayOf('K', "Knight-black-g1"),
+        arrayOf('B', "Bishop-black-g1"),
+        arrayOf('R', "Rook-black-g1-0")
+    )
 
     @Test
     fun testIsSelectable() {

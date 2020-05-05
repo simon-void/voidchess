@@ -1,13 +1,13 @@
-package voidchess.central
+package voidchess.united
 
-import voidchess.central.board.CentralChessGame
-import voidchess.central.board.CentralChessGameImpl
-import voidchess.central.player.EnginePlayer
-import voidchess.central.player.UiPlayer
+import voidchess.united.board.CentralChessGame
+import voidchess.united.board.CentralChessGameImpl
+import voidchess.united.player.EnginePlayer
+import voidchess.united.player.UiPlayer
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResult
 import voidchess.common.board.other.StartConfig
-import voidchess.central.player.Player
+import voidchess.united.player.Player
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.integration.ComputerPlayerUI
 import voidchess.common.integration.HumanPlayer
