@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     id("com.github.johnrengelman.shadow")
@@ -15,11 +13,4 @@ dependencies {
 
     implementation(project(":module-common"))
     implementation(project(":module-engine"))
-    implementation(project(":module-ui"))
-}
-
-tasks {
-    test {
-        useTestNG()
-    }
 }

@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     id("com.github.johnrengelman.shadow")
@@ -12,10 +10,4 @@ dependencies {
     testImplementation(Deps.testNG)
     testImplementation(Deps.mockitoCore)
     testImplementation(Deps.mockk)
-}
-
-tasks {
-    test {
-        useTestNG()
-    }
 }

@@ -2,62 +2,83 @@ package voidchess.ui.player
 
 import voidchess.common.board.BasicChessGame
 import voidchess.common.board.getFigure
-import voidchess.common.board.move.ExtendedMove
-import voidchess.common.board.move.Move
-import voidchess.common.board.move.PawnPromotion
-import voidchess.common.board.move.Position
+import voidchess.common.board.move.*
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Pawn
-import voidchess.common.integration.HumanPlayer
+import voidchess.common.helper.ColdPromise
 import voidchess.common.integration.TableAdapter
 import voidchess.ui.swing.ChessboardComponent
 import voidchess.ui.swing.PosType
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import javax.swing.JOptionPane
+import javax.swing.SwingUtilities
 
 
 internal class SwingPlayerImpl(
     private val ui: ChessboardComponent,
     private val game: BasicChessGame,
     private val tableAdapter: TableAdapter
-) : BoardUiListener, HumanPlayer {
+) : BoardUiListener {
 
-    private lateinit var panelEnable: EnableUI
+    private lateinit var gameUIDisable: EnableUI
+    private lateinit var resignSetEnabled: EnableButton
     private var mouseHoverWhileInactivePos: Position? = null
     private var from: Position? = null
     private var isMyTurn: Boolean = false
     private var isWhitePlayer: Boolean = true
+    private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
 
-    fun postConstruct(panelEnable: EnableUI) {
-        this.panelEnable = panelEnable
+    fun postConstruct(disableGameUI: EnableUI, resignSetEnabled: EnableButton) {
+        this.gameUIDisable = disableGameUI        // ChessPanel.stop
+        this.resignSetEnabled = resignSetEnabled  // ChessPanel.enableResign
     }
 
-    override fun playFirstMove() {
-        play()
-    }
-
-    override fun playAfter(opponentsMove: ExtendedMove) {
-        game.move(opponentsMove.move)
-        ui.repaintAfterMove(opponentsMove)
-        play()
-    }
-
-    private fun play() {
-        isMyTurn = true
-        mouseMovedOver(mouseHoverWhileInactivePos)
-    }
-
-    fun move(move: Move) {
+    private fun move(move: Move) {
         game.move(move)
-        dropMarkedPositions()
-        isMyTurn = false
-        val extendedMove = tableAdapter.moved(move)
-        ui.repaintAfterMove(extendedMove)
+        val humanMoveResult = tableAdapter.move(move)
+        ui.repaintAfterMove(humanMoveResult.extendedHumanMove)
+
+        when(humanMoveResult) {
+            is HumanMoveResult.GameEnds -> {
+                gameEnds()
+            }
+            is HumanMoveResult.Ongoing -> {
+                waitForComputer(humanMoveResult.computerMovePromise)
+            }
+        }
     }
 
-    override fun gameEnds() {
+    private fun waitForComputer(computerMovePromise: ColdPromise<ComputerMoveResult>) {
+        isMyTurn = false
+        resignSetEnabled(false)
+        dropMarkedPositions()
+
+        executorService.submit {
+            computerMovePromise.computeAndCallback { computerMoveResult ->
+                game.move(computerMoveResult.extendedComputerMove.move)
+                SwingUtilities.invokeLater {
+                    ui.repaintAfterMove(computerMoveResult.extendedComputerMove)
+
+                    when (computerMoveResult) {
+                        is ComputerMoveResult.GameEnds -> {
+                            gameEnds()
+                        }
+                        is ComputerMoveResult.Ongoing -> {
+                            isMyTurn = true
+                            resignSetEnabled(true)
+                            mouseMovedOver(mouseHoverWhileInactivePos)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun gameEnds() {
         isMyTurn = false
         dropMarkedPositions()
-        panelEnable()
+        gameUIDisable()
     }
 
     private fun dropMarkedPositions() {
@@ -139,13 +160,22 @@ internal class SwingPlayerImpl(
 
     override fun resignSelected() {
         tableAdapter.resign()
+        gameEnds()
     }
 
     override fun startSelected(chess960Index: Int) {
-        game.initGame(StartConfig.Chess960Config(chess960Index))
+        val startConfig = StartConfig.Chess960Config(chess960Index)
+        game.initGame(startConfig)
         ui.startNewGame()
-        tableAdapter.startGame(StartConfig.Chess960Config(chess960Index), isWhitePlayer)
+        isMyTurn = isWhitePlayer
+        if(isMyTurn) {
+            tableAdapter.humanStartsGame(startConfig)
+        } else {
+            val computerMovePromise = tableAdapter.computerStartsGame(startConfig)
+            waitForComputer(computerMovePromise)
+        }
     }
 }
 
 typealias EnableUI = ()->Unit
+typealias EnableButton = (Boolean)->Unit

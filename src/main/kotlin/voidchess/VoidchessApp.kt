@@ -1,23 +1,21 @@
 package voidchess
 
 import voidchess.united.TableImpl
-import voidchess.united.player.EnginePlayer
-import voidchess.united.player.UiPlayer
+import voidchess.united.EngineAdapter
 import voidchess.common.integration.ComputerPlayerUI
-import voidchess.common.integration.HumanPlayer
 import voidchess.ui.initializeUI
 import javax.swing.JOptionPane
 
 
 fun main() {
     runCatching {
-        val enginePlayer = EnginePlayer()
-        val uiPlayer = UiPlayer()
-        val (humanPlayer: HumanPlayer, computerPlayerUI: ComputerPlayerUI) = initializeUI(
-            enginePlayer.getEngineConfig(),
-            uiPlayer
+        val engineAdapter = EngineAdapter()
+        val table = TableImpl(engineAdapter)
+        val computerPlayerUI: ComputerPlayerUI = initializeUI(
+            engineAdapter.getEngineConfig(),
+            table
         )
-        TableImpl(humanPlayer, computerPlayerUI, uiPlayer, enginePlayer)
+        table.postConstruct(computerPlayerUI)
 
         Unit
     }.onFailure { exception ->

@@ -12,7 +12,7 @@ import java.util.*
 internal fun initChessGame(startConfig: StartConfig, vararg moveCodes: String): EngineChessGame =
     EngineChessGameImpl(
         startConfig,
-        moveCodes.map { Move.byCheckedCode(it) }
+        moveCodes.map { Move.byCode(it) }
     )
 
 internal fun initChessGame(chess960: Int, vararg moveCodes: String): EngineChessGame = initChessGame(chess960.toChess960Config(), *moveCodes)
@@ -27,7 +27,7 @@ internal val EngineChessGame.completeMoveHistory: List<Move>
         if (history.isBlank()) {
             emptyList<Move>()
         } else {
-            history.split(",").map { Move.byCheckedCode(it) }
+            history.split(",").map { Move.byCode(it) }
         }
     }
 

@@ -41,6 +41,10 @@ allprojects {
                 jvmTarget = "12"
             }
         }
+
+        withType<Test> {
+            useTestNG()
+        }
     }
 }
 

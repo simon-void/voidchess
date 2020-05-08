@@ -44,6 +44,8 @@ class Move private constructor(
         operator fun get(from: Position, to: Position, pawnPromotion: PawnPromotion) = Move(from, to, pawnPromotion)
 
         fun byCode(code: String): Move {
+            require(isValid(code)) {"moveCode $code isn't valid"}
+
             val fromColumn = code[0].toInt() - 97
             val fromRow = code[1].toInt() - 49
             val toColumn = code[3].toInt() - 97
@@ -64,13 +66,8 @@ class Move private constructor(
             )
         }
 
-        fun byCheckedCode(code: String): Move {
-            require(isValid(code)) {"moveCode $code isn't valid"}
-            return byCode(code)
-        }
-
         private val moveRegex = """^[a-h][1-8][-RKBQ][a-h][1-8]$""".toRegex()
-        private val pawnPromotionMoveRegex = """^(a2[RKBQ]a1)|(b2[RKBQ]b1)|(c2[RKBQ]c1)|(d2[RKBQ]d1)|(e2[RKBQ]e1)|(f2[RKBQ]f1)|(g2[RKBQ]g1)|(h2[RKBQ]h1)|(a7[RKBQ]a8)|(b7[RKBQ]b8)|(c7[RKBQ]c8)|(d7[RKBQ]d8)|(e7[RKBQ]e8)|(f7[RKBQ]f8)|(g7[RKBQ]g8)|(h7[RKBQ]h8)$""".toRegex()
+        private val pawnPromotionMoveRegex = """^(a2[RKBQ][ab]1)|(b2[RKBQ][abc]1)|(c2[RKBQ][bcd]1)|(d2[RKBQ][cde]1)|(e2[RKBQ][def]1)|(f2[RKBQ][efg]1)|(g2[RKBQ][fgh]1)|(h2[RKBQ][gh]1)|(a7[RKBQ][ab]8)|(b7[RKBQ][abc]8)|(c7[RKBQ][bcd]8)|(d7[RKBQ][cde]8)|(e7[RKBQ][def]8)|(f7[RKBQ][efg]8)|(g7[RKBQ][fgh]8)|(h7[RKBQ][gh]8)$""".toRegex()
         private fun isValid(code: String): Boolean {
             if (code.length != 5 || !moveRegex.matches(code)) {
                 return false

@@ -3,7 +3,7 @@ package voidchess.engine.board
 import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
-import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.MoveResultType
 
 
 internal interface EngineChessGame : StaticChessBoard {
@@ -22,7 +22,7 @@ internal interface EngineChessGame : StaticChessBoard {
     val completeHistory: String
     val shortTermHistory: String
 
-    fun <T> withMove(move: Move, workWithGameAfterMove: (MoveResult)->T): T
+    fun <T> withMove(move: Move, workWithGameAfterMove: (MoveResultType)->T): T
     fun getAllMoves(): ArrayList<Move>
     fun getCriticalMoves(): ArrayList<Move>
     fun getTakingMoves(): ArrayList<Move>

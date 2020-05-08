@@ -5,7 +5,7 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
-import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.MoveResultType
 import voidchess.common.board.move.Position
 import voidchess.common.figures.Bishop
 import voidchess.common.figures.King
@@ -126,7 +126,7 @@ class CentralChessGameTest {
         val des = "black 0 King-white-e1-0 Queen-black-h2 " + "Pawn-black-f3-false King-black-e8-0"
         val game = initChessGame(des)
         val endOption = game.move(Move.byCode("h2-e2"))
-        assertEquals(MoveResult.CHECKMATE, endOption)
+        assertEquals(MoveResultType.CHECKMATE, endOption)
     }
 
     @Test
@@ -134,7 +134,7 @@ class CentralChessGameTest {
         val des = "black 0 King-white-e1-0 Queen-black-h2 " + "Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0"
         val game = initChessGame(des)
         val endOption = game.move(Move.byCode("h2-g2"))
-        assertEquals(MoveResult.STALEMATE, endOption)
+        assertEquals(MoveResultType.STALEMATE, endOption)
     }
 
     @Test
@@ -142,7 +142,7 @@ class CentralChessGameTest {
         val des = "white 0 King-white-e1-0 Bishop-black-g2 " + "Knight-white-c2 Knight-white-e7 King-black-e8-0"
         val game = initChessGame(des)
         val endOption = game.move(Move.byCode("e1-f2"))
-        assertEquals(MoveResult.DRAW, endOption)
+        assertEquals(MoveResultType.DRAW, endOption)
     }
 
     @Test
@@ -154,16 +154,16 @@ class CentralChessGameTest {
         val blackMove = Move.byCode("g2-h3")
         val blackReturn = Move.byCode("h3-g2")
 
-        assertEquals(game.move(whiteMove), MoveResult.NO_END)
-        assertEquals(game.move(blackMove), MoveResult.NO_END)
-        assertEquals(game.move(whiteReturn), MoveResult.NO_END)
-        assertEquals(game.move(blackReturn), MoveResult.NO_END)
+        assertEquals(game.move(whiteMove), MoveResultType.NO_END)
+        assertEquals(game.move(blackMove), MoveResultType.NO_END)
+        assertEquals(game.move(whiteReturn), MoveResultType.NO_END)
+        assertEquals(game.move(blackReturn), MoveResultType.NO_END)
 
-        assertEquals(game.move(whiteMove), MoveResult.NO_END)
-        assertEquals(game.move(blackMove), MoveResult.NO_END)
-        assertEquals(game.move(whiteReturn), MoveResult.NO_END)
+        assertEquals(game.move(whiteMove), MoveResultType.NO_END)
+        assertEquals(game.move(blackMove), MoveResultType.NO_END)
+        assertEquals(game.move(whiteReturn), MoveResultType.NO_END)
         //        assertEquals(game.move(blackReturn), MoveResult.NO_END);
-        assertEquals(game.move(blackReturn), MoveResult.THREE_TIMES_SAME_POSITION)
+        assertEquals(game.move(blackReturn), MoveResultType.THREE_TIMES_SAME_POSITION)
 
         //        assertEquals(game.move(whiteMove), MoveResult.THREE_TIMES_SAME_POSITION);
     }
@@ -172,18 +172,18 @@ class CentralChessGameTest {
     fun testIsDrawBecauseOf50HitlessMoves() {
         var des = "white 98 King-white-e1-0 Pawn-white-a2-false " + "Pawn-black-b4-false King-black-e8-0"
         var game = initChessGame(des)
-        var endOption: MoveResult
+        var endOption: MoveResultType
         endOption = game.move(Move.byCode("a2-a4"))
-        assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption)
+        assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
         endOption = game.move(Move.byCode("b4-a3"))
-        assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption)
+        assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
 
         des = "white 98 King-white-e1-0 Pawn-white-a2-false " + "Pawn-black-b4-false King-black-e8-0"
         game = initChessGame(des)
         endOption = game.move(Move.byCode("a2-a4"))
-        assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption)
+        assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
         endOption = game.move(Move.byCode("b4-b3"))
-        assertEquals(MoveResult.FIFTY_MOVES_NO_HIT, endOption)
+        assertEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
     }
 
     @Test(expectedExceptions = [IllegalArgumentException::class])
@@ -307,7 +307,7 @@ class CentralChessGameTest {
     @Test(dataProvider = "getCompleteHistoryData")
     fun testGetCompleteHistory(initialPos: Int, expectedCompleteHistory: String) {
         val game = initChessGame(initialPos)
-        val moves = expectedCompleteHistory.split(',').map { Move.byCheckedCode(it) }
+        val moves = expectedCompleteHistory.split(',').map { Move.byCode(it) }
         for(move in moves) {
             assertTrue(game.isMovable(move.from, move.to), "move $move isn't allowed in sequence $expectedCompleteHistory")
             game.move(move)

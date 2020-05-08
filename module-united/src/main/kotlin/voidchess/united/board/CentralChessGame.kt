@@ -4,7 +4,7 @@ import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move
-import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.MoveResultType
 import voidchess.common.board.move.Position
 
 
@@ -26,6 +26,6 @@ internal interface CentralChessGame : StaticChessBoard {
     fun initGame(newConfig: StartConfig)
     fun isSelectable(pos: Position): Boolean
     fun isMovable(from: Position, to: Position): Boolean
-    fun move(move: Move): MoveResult
+    fun move(move: Move): MoveResultType
     fun getLatestExtendedMove(): ExtendedMove
 }

@@ -1,13 +1,7 @@
 package voidchess.united
 
-import voidchess.common.board.move.ExtendedMove
-import voidchess.common.board.move.Move
-import voidchess.common.board.move.MoveResult
-import voidchess.common.board.other.StartConfig
+import voidchess.common.integration.TableAdapter
 
 
-interface Table {
-    fun startGame(startConfig: StartConfig, humanIsWhite: Boolean)
-    fun stopGame(endOption: MoveResult)
-    fun move(move: Move): ExtendedMove
+interface Table: TableAdapter {
 }

@@ -106,10 +106,18 @@ internal class ChessPanel(
 
     fun stop() {
         startButton.text = startString
+        startButton.isEnabled = true
         switchButton.isEnabled = true
         panel960.isEnabled = true
         difficultyPanel.isEnabled = true
         coresPanel.isEnabled = true
+    }
+
+    fun enableResign(enable: Boolean) {
+        // TODO resign should be always possible, even if computer it's the computer's turn
+        // refactor once we switched to coroutines and cancel computerMove Job
+        check(startButton.text == resignString) {"button should be in resign mode but is in start mode"}
+        startButton.isEnabled = enable
     }
 
     companion object {

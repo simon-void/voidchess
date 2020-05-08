@@ -9,7 +9,7 @@ internal fun initChessGame(chess960: Int, vararg moveCodes: String): CentralChes
     chess960.toChess960Config()
 ).apply {
     for(moveCode in moveCodes) {
-        move(Move.byCheckedCode(moveCode))
+        move(Move.byCode(moveCode))
     }
 }
 
@@ -17,7 +17,7 @@ internal fun initChessGame(des: String, vararg moveCodes: String): CentralChessG
     des.toManualConfig()
 ).apply {
     for(moveCode in moveCodes) {
-        move(Move.byCheckedCode(moveCode))
+        move(Move.byCode(moveCode))
     }
 }
 

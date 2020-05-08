@@ -2,7 +2,7 @@ package voidchess.engine.evaluation
 
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
-import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.MoveResultType
 import voidchess.common.engine.*
 import voidchess.common.figures.King
 import voidchess.engine.board.EngineChessGame
@@ -29,7 +29,7 @@ internal class MinMaxEval(
 
         return game.withMove(move) { moveResult ->
             when (moveResult) {
-                MoveResult.NO_END -> {
+                MoveResultType.NO_END -> {
                     val thisMoveHasHitFigure = game.hasHitFigure
                     val thisMoveIsChess = game.isCheck
 
@@ -44,9 +44,9 @@ internal class MinMaxEval(
                         movesToTryFirst
                     )
                 }
-                MoveResult.CHECKMATE -> null to CheckmateOther(0)
-                MoveResult.THREE_TIMES_SAME_POSITION -> null to ThreeFoldRepetition
-                MoveResult.STALEMATE -> null to Stalemate
+                MoveResultType.CHECKMATE -> null to CheckmateOther(0)
+                MoveResultType.THREE_TIMES_SAME_POSITION -> null to ThreeFoldRepetition
+                MoveResultType.STALEMATE -> null to Stalemate
                 else -> null to Draw
             }
         }
@@ -80,7 +80,7 @@ internal class MinMaxEval(
 
             val latestEvaluation: Evaluation = game.withMove(move) { moveResult ->
                 when (moveResult) {
-                    MoveResult.NO_END -> {
+                    MoveResultType.NO_END -> {
                         val newDepth = depth + 1
 
                         val thisMoveHasHitFigure = game.hasHitFigure
@@ -117,7 +117,7 @@ internal class MinMaxEval(
                             eval
                         }
                     }
-                    MoveResult.CHECKMATE -> {
+                    MoveResultType.CHECKMATE -> {
                         stopLookingForBetterMove = true
                         val secondaryMateEval = strategy.getSecondaryCheckmateEvaluation(game, forWhite, forWhite)
                         CheckmateSelf(
@@ -125,8 +125,8 @@ internal class MinMaxEval(
                                 secondaryMateEval
                         )
                     }
-                    MoveResult.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
-                    MoveResult.STALEMATE -> Stalemate
+                    MoveResultType.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
+                    MoveResultType.STALEMATE -> Stalemate
                     else -> Draw
                 }
             }
@@ -178,7 +178,7 @@ internal class MinMaxEval(
 
             val latestEvaluation: Evaluation = game.withMove(move) { moveResult ->
                 when (moveResult) {
-                    MoveResult.NO_END -> {
+                    MoveResultType.NO_END -> {
                         val thisMoveHasHitFigure = game.hasHitFigure
                         val thisMoveIsChess = game.isCheck
 
@@ -213,12 +213,12 @@ internal class MinMaxEval(
                             eval
                         }
                     }
-                    MoveResult.CHECKMATE -> {
+                    MoveResultType.CHECKMATE -> {
                         stopLookingForBetterMove = true
                         CheckmateOther(depth)
                     }
-                    MoveResult.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
-                    MoveResult.STALEMATE -> Stalemate
+                    MoveResultType.THREE_TIMES_SAME_POSITION -> ThreeFoldRepetition
+                    MoveResultType.STALEMATE -> Stalemate
                     else -> Draw
                 }
             }

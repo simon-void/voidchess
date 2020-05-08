@@ -5,7 +5,7 @@ import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.Move
-import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.MoveResultType
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Bishop
@@ -173,7 +173,7 @@ internal class EngineChessGameTest {
 
         des = "white 0 King-white-h1-3 King-black-b7-3 Pawn-white-c7-false"
         game = EngineChessGameImpl(des.toManualConfig())
-        move = Move.byCode("c7-c8")
+        move = Move.byCode("c7Qc8")
         game.withMove(move) {}
         assertEquals(des, game.toString())
 
@@ -204,7 +204,7 @@ internal class EngineChessGameTest {
         game = EngineChessGameImpl(des.toManualConfig())
         move = Move.byCode("d4-c6")
         game.withMove(move) { moveResult ->
-            assertEquals(MoveResult.STALEMATE, moveResult)
+            assertEquals(MoveResultType.STALEMATE, moveResult)
         }
     }
 
@@ -291,7 +291,7 @@ internal class EngineChessGameTest {
         val des = "black 0 King-white-e1-0 Queen-black-h2 Pawn-black-f3-false King-black-e8-0"
         val game = initChessGame(des)
         game.withMove(Move.byCode("h2-e2")) {moveResult->
-            assertEquals(MoveResult.CHECKMATE, moveResult)
+            assertEquals(MoveResultType.CHECKMATE, moveResult)
         }
     }
 
@@ -300,7 +300,7 @@ internal class EngineChessGameTest {
         val des = "black 0 King-white-e1-0 Queen-black-h2 Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0"
         val game = EngineChessGameImpl(des.toManualConfig())
         game.withMove(Move.byCode("h2-g2")) {moveResult->
-            assertEquals(MoveResult.STALEMATE, moveResult)
+            assertEquals(MoveResultType.STALEMATE, moveResult)
         }
     }
 
@@ -309,7 +309,7 @@ internal class EngineChessGameTest {
         val des = "white 0 King-white-e1-0 Bishop-black-g2 Knight-white-c2 Knight-white-e7 King-black-e8-0"
         val game = EngineChessGameImpl(des.toManualConfig())
         game.withMove(Move.byCode("e1-f2")) {moveResult->
-            assertEquals(MoveResult.DRAW, moveResult)
+            assertEquals(MoveResultType.DRAW, moveResult)
         }
     }
 
@@ -323,9 +323,9 @@ internal class EngineChessGameTest {
         val game = initChessGame(des, whiteMove, blackMove, whiteReturn, blackReturn, whiteMove, blackMove)
 
         game.withMove(Move.byCode(whiteReturn)) { moveResult1 ->
-            assertEquals(moveResult1, MoveResult.NO_END)
+            assertEquals(moveResult1, MoveResultType.NO_END)
             game.withMove(Move.byCode(blackReturn)) { moveResult2 ->
-                assertEquals(moveResult2, MoveResult.THREE_TIMES_SAME_POSITION)
+                assertEquals(moveResult2, MoveResultType.THREE_TIMES_SAME_POSITION)
             }
         }
     }
@@ -335,18 +335,18 @@ internal class EngineChessGameTest {
         var des = "white 98 King-white-e1-0 Pawn-white-a2-false Pawn-black-b4-false King-black-e8-0"
         var game = EngineChessGameImpl(des.toManualConfig())
         game.withMove(Move.byCode("a2-a4")) {moveResult1->
-            assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, moveResult1)
+            assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, moveResult1)
             game.withMove(Move.byCode("b4-a3")) {moveResult2->
-                assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, moveResult2)
+                assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, moveResult2)
             }
         }
 
         des = "white 98 King-white-e1-0 Pawn-white-a2-false Pawn-black-b4-false King-black-e8-0"
         game = EngineChessGameImpl(des.toManualConfig())
         game.withMove(Move.byCode("a2-a4")) {moveResult1->
-            assertNotEquals(MoveResult.FIFTY_MOVES_NO_HIT, moveResult1)
+            assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, moveResult1)
             game.withMove(Move.byCode("b4-b3")) {moveResult2->
-                assertEquals(MoveResult.FIFTY_MOVES_NO_HIT, moveResult2)
+                assertEquals(MoveResultType.FIFTY_MOVES_NO_HIT, moveResult2)
             }
         }
     }
@@ -355,8 +355,8 @@ internal class EngineChessGameTest {
     fun testHandleTransformPawn() {
         val des = "black 0 King-white-e1-0 Pawn-black-g2-false King-black-e8-0"
         val game = EngineChessGameImpl(des.toManualConfig())
-        game.withMove(Move.byCode("g2-g1")) {
-            val newDes = "white 1 King-white-e1-0 Queen-black-g1 King-black-e8-0"
+        game.withMove(Move.byCode("g2Bg1")) {
+            val newDes = "white 1 King-white-e1-0 Bishop-black-g1 King-black-e8-0"
             assertEquals(newDes, game.toString())
         }
     }
@@ -501,7 +501,7 @@ internal class EngineChessGameTest {
                 ("black 0 King-white-h1-3 Pawn-white-c7-false "
                         + "Pawn-black-b5-false Pawn-black-d5-false Pawn-black-b6-false Pawn-black-d6-false "
                         + "Knight-black-a7 King-black-b7-3-false").toManualConfig(),
-            arrayOf("b7-c6", "c7-c8"),
+            arrayOf("b7-c6", "c7Qc8"),
             1
         ),
         arrayOf(
@@ -531,7 +531,7 @@ internal class EngineChessGameTest {
         ),
         arrayOf(
             "white 0 Rook-black-e1-8 Pawn-black-e2-false King-white-f2-3 Bishop-white-f1 Knight-white-g4 Queen-black-e8 King-black-g7-3".toManualConfig(),
-            arrayOf("f2-e1", "e2-f1"),
+            arrayOf("f2-e1", "e2Qf1"),
             2
         ),
         arrayOf(

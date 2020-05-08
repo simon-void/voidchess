@@ -3,7 +3,7 @@ package voidchess.united.board
 import voidchess.common.board.*
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move
-import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.MoveResultType
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.King
@@ -23,24 +23,24 @@ internal class CentralChessGameImpl private constructor(
     override val isWhiteTurn: Boolean get() = board.isWhiteTurn
     override val isCheck get() = board.getCachedAttackLines().isCheck
 
-    private val isEnd: MoveResult
+    private val isEnd: MoveResultType
         get() {
             if (noMovesLeft(isWhiteTurn)) {
                 return if (isCheck) {
-                    MoveResult.CHECKMATE
+                    MoveResultType.CHECKMATE
                 } else {
-                    MoveResult.STALEMATE
+                    MoveResultType.STALEMATE
                 }
             }
             if (isDrawBecauseOfLowMaterial) {
-                return MoveResult.DRAW
+                return MoveResultType.DRAW
             }
             if (isDrawBecauseOfThreeTimesSamePosition) {
-                return MoveResult.THREE_TIMES_SAME_POSITION
+                return MoveResultType.THREE_TIMES_SAME_POSITION
             }
             return if (numberOfMovesWithoutHit == 100) {
-                MoveResult.FIFTY_MOVES_NO_HIT
-            } else MoveResult.NO_END
+                MoveResultType.FIFTY_MOVES_NO_HIT
+            } else MoveResultType.NO_END
         }
 
     private val isDrawBecauseOfThreeTimesSamePosition: Boolean
@@ -70,7 +70,7 @@ internal class CentralChessGameImpl private constructor(
         return figure!=null && figure.isWhite == isWhiteTurn && figure.isMovable(to, board)
     }
 
-    override fun move(move: Move): MoveResult {
+    override fun move(move: Move): MoveResultType {
         latestExtendedMove = board.move(move)
 
         if (hasHitFigure) {

@@ -3,7 +3,6 @@ package voidchess.ui
 import voidchess.common.board.BasicChessGameImpl
 import voidchess.common.engine.EngineConfig
 import voidchess.common.integration.ComputerPlayerUI
-import voidchess.common.integration.HumanPlayer
 import voidchess.common.integration.TableAdapter
 import voidchess.ui.player.SwingPlayerImpl
 import voidchess.ui.swing.Chess960Panel
@@ -18,7 +17,7 @@ import javax.swing.SwingUtilities
 fun initializeUI(
     engineConfig: EngineConfig,
     tableAdapter: TableAdapter
-): Pair<HumanPlayer, ComputerPlayerUI> {
+): ComputerPlayerUI {
 
     val game = BasicChessGameImpl()
     val chessboardComponent = ChessboardComponent(game)
@@ -37,12 +36,12 @@ fun initializeUI(
         chessboardComponent,
         computerPlayerUI
     ).also {
-        humanPlayer.postConstruct(it::stop)
+        humanPlayer.postConstruct(it::stop, it::enableResign)
     }
     //Swing UI updates have to come from the SwingHandler or something
     SwingUtilities.invokeLater {
         ChessFrame(chessPanel)
     }
 
-    return humanPlayer to computerPlayerUI
+    return computerPlayerUI
 }

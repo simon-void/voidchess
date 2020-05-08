@@ -2,7 +2,7 @@ package voidchess.engine.board
 
 import voidchess.common.board.*
 import voidchess.common.board.move.Move
-import voidchess.common.board.move.MoveResult
+import voidchess.common.board.move.MoveResultType
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.King
@@ -24,24 +24,24 @@ internal class EngineChessGameImpl private constructor(
     override val isWhiteTurn: Boolean get() = board.isWhiteTurn
     override val isCheck get() = board.getCachedAttackLines().isCheck
 
-    private val isEnd: MoveResult
+    private val isEnd: MoveResultType
         get() {
             if (noMovesLeft(isWhiteTurn)) {
                 return if (isCheck) {
-                    MoveResult.CHECKMATE
+                    MoveResultType.CHECKMATE
                 } else {
-                    MoveResult.STALEMATE
+                    MoveResultType.STALEMATE
                 }
             }
             if (isDrawBecauseOfLowMaterial) {
-                return MoveResult.DRAW
+                return MoveResultType.DRAW
             }
             if (isDrawBecauseOfThreeTimesSamePosition) {
-                return MoveResult.THREE_TIMES_SAME_POSITION
+                return MoveResultType.THREE_TIMES_SAME_POSITION
             }
             return if (numberOfMovesWithoutHit == 100) {
-                MoveResult.FIFTY_MOVES_NO_HIT
-            } else MoveResult.NO_END
+                MoveResultType.FIFTY_MOVES_NO_HIT
+            } else MoveResultType.NO_END
         }
 
     private val isDrawBecauseOfThreeTimesSamePosition: Boolean
@@ -92,14 +92,14 @@ internal class EngineChessGameImpl private constructor(
         }
     }
 
-    override fun <T> withMove(move: Move, workWithGameAfterMove: (MoveResult) -> T): T {
+    override fun <T> withMove(move: Move, workWithGameAfterMove: (MoveResultType) -> T): T {
         val moveResult = move(move)
         val result = workWithGameAfterMove(moveResult)
         undo()
         return result
     }
 
-    private fun move(move: Move): MoveResult {
+    private fun move(move: Move): MoveResultType {
         hasHitFigure = board.move(move).hasHitFigure
 
         if (hasHitFigure) {

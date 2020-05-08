@@ -54,7 +54,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
     }
 
     override fun evaluateMovesBestMoveFirst(movesSoFar: List<String>, startConfig: StartConfig): EngineAnswer = try {
-        val moves = movesSoFar.map { Move.byCheckedCode(it) }
+        val moves = movesSoFar.map { Move.byCode(it) }
         validateMovesOrReturnErrorMsg(moves, startConfig)?.let { validatorErrorMsg->
             return EngineAnswer.Error(validatorErrorMsg)
         }
