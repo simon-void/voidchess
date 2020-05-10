@@ -9,6 +9,7 @@ import voidchess.engine.board.EngineChessGame
 import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.concurrent.ConcurrencyStrategy
 import voidchess.engine.concurrent.MultiThreadStrategy
+import voidchess.engine.concurrent.SuspendStrategy
 import voidchess.engine.evaluation.*
 import voidchess.engine.evaluation.leaf.KingToCornerEndgameEval
 import voidchess.engine.evaluation.leaf.KingToEdgeEndgameEval
@@ -188,7 +189,7 @@ private class ConcurrencyStrategyContainer {
     fun get(numberOfCoresToUse: Int): ConcurrencyStrategy {
         if( numberOfCoresToUse!=coresAndStrategy.first) {
             val oldStrategy = coresAndStrategy.second
-            coresAndStrategy = numberOfCoresToUse to MultiThreadStrategy(numberOfCoresToUse)
+            coresAndStrategy = numberOfCoresToUse to SuspendStrategy(numberOfCoresToUse)
             oldStrategy.shutdown()
         }
         return coresAndStrategy.second

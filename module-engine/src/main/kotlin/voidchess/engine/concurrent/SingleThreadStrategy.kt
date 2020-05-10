@@ -60,6 +60,4 @@ internal object SingleThreadStrategy : ConcurrencyStrategy() {
 
         return result
     }
-
-    override fun shutdown() {}
 }

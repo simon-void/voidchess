@@ -22,7 +22,7 @@ internal abstract class ConcurrencyStrategy {
         return evaluateMoves(chessGame, possibleMoves, progressCallback, minMaxEval, numericEvalOkRadius).apply { sortWith(HighestEvalFirst) }
     }
 
-    abstract fun shutdown()
+    open fun shutdown() {}
 
     protected abstract fun evaluateMoves(
             game: EngineChessGame,
