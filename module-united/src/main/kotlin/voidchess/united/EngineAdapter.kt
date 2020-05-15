@@ -1,5 +1,7 @@
 package voidchess.united
 
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.isActive
 import voidchess.united.board.CentralChessGame
 import voidchess.common.board.move.MoveResultType
 import voidchess.common.engine.Engine
@@ -26,8 +28,8 @@ class EngineAdapter {
         this.game = game
     }
 
-    fun play(): Move {
-        fun <T: Any> ensureMinimumDurationInMs(minimumDuration: Int, f: ()->T): T {
+    suspend fun play(): Move = coroutineScope {
+        suspend fun <T: Any> ensureMinimumDurationInMs(minimumDuration: Int, f: suspend ()->T): T {
             // TODO in Kotlin 1.4 because of contracts "lateinit var" should be replacable by "val"
             lateinit var result: T
             val lookUpDurationInMillies = measureTimeMillis {
@@ -50,11 +52,11 @@ class EngineAdapter {
 
         ui.setValue(chosenMove.value)
 
-        return chosenMove.move
+        chosenMove.move
     }
 
     //lets see if the library contains a next move, else we compute the next move
-    private fun nextMove(): EvaluatedMove {
+    private suspend fun nextMove(): EvaluatedMove {
         val movesSoFar: List<String> = game.getCompleteHistory().split(',').let {
             if (it.size == 1 && it.first() == "") {
                 emptyList()
@@ -105,8 +107,10 @@ class EngineAdapter {
         ui.setBubbleText("check")
     }
 
-    private fun setProgress(computedMoves: Int, totalMoves: Int) {
-        ui.setProgress(computedMoves, totalMoves)
+    private suspend fun setProgress(computedMoves: Int, totalMoves: Int) = coroutineScope {
+        if(isActive) {
+            ui.setProgress(computedMoves, totalMoves)
+        }
     }
 
     fun getEngineConfig(): EngineConfig = engine.getConfig()

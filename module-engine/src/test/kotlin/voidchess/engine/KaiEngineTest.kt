@@ -1,5 +1,6 @@
 package voidchess.engine
 
+import kotlinx.coroutines.runBlocking
 import org.testng.annotations.Test
 import voidchess.common.board.other.StartConfig
 import voidchess.common.engine.Engine
@@ -35,7 +36,7 @@ internal class KaiEngineTest {
 //        )
 
     @Test//(dataProvider = "getPlayData")
-    fun `test evaluateMovesBestMoveFirst`() {
+    fun `test evaluateMovesBestMoveFirst`() = runBlocking {
 
         val singleCoreKaiEngine: Engine = KaiEngine { _, _ -> }
 

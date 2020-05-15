@@ -1,6 +1,6 @@
 package voidchess.common.board.move
 
-import voidchess.common.helper.ColdPromise
+import voidchess.common.integration.ColdPromise
 
 sealed class HumanMoveResult(
     val extendedHumanMove: ExtendedMove

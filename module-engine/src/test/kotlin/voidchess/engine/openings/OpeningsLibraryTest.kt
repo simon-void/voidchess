@@ -1,5 +1,6 @@
 package voidchess.engine.openings
 
+import kotlinx.coroutines.runBlocking
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
 import org.testng.annotations.DataProvider
@@ -50,7 +51,7 @@ internal class OpeningsLibraryTest {
     }
 
     @Test
-    fun testLookUpNextMove() {
+    fun testLookUpNextMove() = runBlocking {
         val openingsLibrary = OpeningsLibrary(listOf("e2-e4, e7-e5, (d2-d4), e5-d4"))
 
         var nextMove = openingsLibrary.lookUpNextMove(StartConfig.ClassicConfig, listOf(Move.byCode("e2-e4"))) { _, _->}

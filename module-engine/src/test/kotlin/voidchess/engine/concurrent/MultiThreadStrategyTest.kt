@@ -1,5 +1,6 @@
 package voidchess.engine.concurrent
 
+import kotlinx.coroutines.runBlocking
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
 import org.testng.annotations.AfterClass
@@ -188,7 +189,7 @@ internal class MultiThreadStrategyTest {
     }
 
     @Test
-    fun testMinMaxIsInvokedForEachPossibleMove() {
+    fun testMinMaxIsInvokedForEachPossibleMove() = runBlocking {
         val easyPruner = PrunerWithIrreversibleMoves(1, 2, 2, 2)
         val minMax = MinMaxEval(easyPruner, MiddleGameEval)
         val startConfig = "white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false".toManualConfig()
@@ -218,9 +219,9 @@ internal class MultiThreadStrategyTest {
         return evaluate(pruner, game)
     }
 
-    private fun evaluate(pruner: SearchTreePruner, game: EngineChessGame): List<EvaluatedMove> {
+    private fun evaluate(pruner: SearchTreePruner, game: EngineChessGame): List<EvaluatedMove> = runBlocking {
         val dynEval = MinMaxEval(pruner, MiddleGameEval)
-        return strategy.evaluateMovesBestMoveFirst(game, dynEval)
+        return@runBlocking strategy.evaluateMovesBestMoveFirst(game, dynEval)
     }
 }
 

@@ -27,7 +27,7 @@ internal class OpeningsLibrary(
 
     private val maxDepth: Int get() = openingsRootNode.depth
 
-    fun lookUpNextMove(
+    suspend fun lookUpNextMove(
         startConfig: StartConfig,
         movesSoFar: List<Move>,
         progressCallback: ProgressCallback

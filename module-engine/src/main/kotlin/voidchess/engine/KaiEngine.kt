@@ -7,9 +7,7 @@ import voidchess.common.board.move.Move
 import voidchess.common.engine.*
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.board.EngineChessGameImpl
-import voidchess.engine.concurrent.ConcurrencyStrategy
 import voidchess.engine.concurrent.MultiThreadStrategy
-import voidchess.engine.concurrent.SuspendStrategy
 import voidchess.engine.evaluation.*
 import voidchess.engine.evaluation.leaf.KingToCornerEndgameEval
 import voidchess.engine.evaluation.leaf.KingToEdgeEndgameEval
@@ -19,7 +17,6 @@ import voidchess.engine.evaluation.leaf.getInventory
 import voidchess.engine.openings.OpeningsLibrary
 import kotlin.math.pow
 import kotlin.random.Random
-import kotlin.IllegalArgumentException
 
 class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
@@ -54,7 +51,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
         }
     }
 
-    override fun evaluateMovesBestMoveFirst(movesSoFar: List<String>, startConfig: StartConfig): EngineAnswer = try {
+    override suspend fun evaluateMovesBestMoveFirst(movesSoFar: List<String>, startConfig: StartConfig): EngineAnswer = try {
         val moves = movesSoFar.map { Move.byCode(it) }
         validateMovesOrReturnErrorMsg(moves, startConfig)?.let { validatorErrorMsg->
             return EngineAnswer.Error(validatorErrorMsg)
@@ -68,7 +65,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
         EngineAnswer.Error(e.toString())
     }
 
-    private fun computeNextMove(startConfig: StartConfig, movesSoFar: List<Move>): EvaluatedMove {
+    private suspend fun computeNextMove(startConfig: StartConfig, movesSoFar: List<Move>): EvaluatedMove {
         val game = EngineChessGameImpl(startConfig, movesSoFar)
         val coresToUse = CoresToUseOption.coresToUse
 
@@ -183,13 +180,13 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
 
 private class ConcurrencyStrategyContainer {
-    private var coresAndStrategy: Pair<Int, ConcurrencyStrategy> =
+    private var coresAndStrategy: Pair<Int, MultiThreadStrategy> =
         CoresToUseOption.coresToUse.let { it to MultiThreadStrategy(it) }
 
-    fun get(numberOfCoresToUse: Int): ConcurrencyStrategy {
+    fun get(numberOfCoresToUse: Int): MultiThreadStrategy {
         if( numberOfCoresToUse!=coresAndStrategy.first) {
             val oldStrategy = coresAndStrategy.second
-            coresAndStrategy = numberOfCoresToUse to SuspendStrategy(numberOfCoresToUse)
+            coresAndStrategy = numberOfCoresToUse to MultiThreadStrategy(numberOfCoresToUse)
             oldStrategy.shutdown()
         }
         return coresAndStrategy.second

@@ -1,6 +1,6 @@
 package voidchess
 
-import voidchess.united.TableImpl
+import voidchess.united.Table
 import voidchess.united.EngineAdapter
 import voidchess.common.integration.ComputerPlayerUI
 import voidchess.ui.initializeUI
@@ -10,7 +10,7 @@ import javax.swing.JOptionPane
 fun main() {
     runCatching {
         val engineAdapter = EngineAdapter()
-        val table = TableImpl(engineAdapter)
+        val table = Table(engineAdapter)
         val computerPlayerUI: ComputerPlayerUI = initializeUI(
             engineAdapter.getEngineConfig(),
             table

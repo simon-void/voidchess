@@ -22,7 +22,7 @@ interface EngineConfig {
 
 interface Engine {
     fun getConfig(): EngineConfig
-    fun evaluateMovesBestMoveFirst(movesSoFar: List<String>, startConfig: StartConfig): EngineAnswer
+    suspend fun evaluateMovesBestMoveFirst(movesSoFar: List<String>, startConfig: StartConfig): EngineAnswer
 }
 
 sealed class EngineAnswer {
@@ -30,4 +30,4 @@ sealed class EngineAnswer {
     class Error(val errorMsg: String): EngineAnswer()
 }
 
-typealias ProgressCallback = (Int, Int) -> Unit
+typealias ProgressCallback = suspend (Int, Int) -> Unit

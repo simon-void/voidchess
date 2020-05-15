@@ -10,6 +10,9 @@ import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.engine.evaluation.leaf.StaticEval
 
 
+typealias EnsureNotCanceled = ()-> Unit
+private val ensureNothing: EnsureNotCanceled = {}
+
 internal class MinMaxEval(
     private var pruner: SearchTreePruner,
     private var strategy: StaticEval
@@ -22,7 +25,8 @@ internal class MinMaxEval(
             game: EngineChessGame,
             move: Move,
             currentMaxOneLevelUp: Evaluation?,
-            movesToTryFirst: BestResponseSet
+            movesToTryFirst: BestResponseSet,
+            ensureNotCanceled: EnsureNotCanceled = ensureNothing
     ): Pair<Move?, Evaluation> {
         val depth = 0
         val forWhite = game.isWhiteTurn
@@ -41,7 +45,8 @@ internal class MinMaxEval(
                         thisMoveHasHitFigure,
                         game.getAllMoves(),
                         currentMaxOneLevelUp,
-                        movesToTryFirst
+                        movesToTryFirst,
+                        ensureNotCanceled
                     )
                 }
                 MoveResultType.CHECKMATE -> null to CheckmateOther(0)
@@ -60,11 +65,13 @@ internal class MinMaxEval(
             lastMove_hasHitFigure: Boolean,
             minPossibleMovesBuffer: ArrayList<Move>,
             currentMaxOneLevelUp: Evaluation?,
-            movesToTryFirst: BestResponseSet
+            movesToTryFirst: BestResponseSet,
+            ensureNotCanceled: EnsureNotCanceled
     ): Pair<Move, Evaluation> {
         assert(minPossibleMovesBuffer.isNotEmpty()) {
             "minPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"
         }
+        ensureNotCanceled()
 
         var currentMinEvaluation: Evaluation? = null
         var currentBestMove: Move? = null
@@ -111,7 +118,8 @@ internal class MinMaxEval(
                                 thisMoveHasHitFigure,
                                 maxPossibleMovesBuffer,
                                 currentMinEvaluation,
-                                bestResponses
+                                bestResponses,
+                                ensureNotCanceled
                             )
                             bestResponses.add(bestResponse)
                             eval
@@ -158,11 +166,13 @@ internal class MinMaxEval(
             lastMoveHasHitFigure: Boolean,
             maxPossibleMovesBuffer: ArrayList<Move>,
             currentMinOneLevelUp: Evaluation?,
-            movesToTryFirst: BestResponseSet
+            movesToTryFirst: BestResponseSet,
+            ensureNotCanceled: EnsureNotCanceled
     ): Pair<Move, Evaluation> {
         assert(maxPossibleMovesBuffer.isNotEmpty()) {
             "maxPossibleMovesBuffer mustn't be empty. history: ${game.completeHistory}"
         }
+        ensureNotCanceled()
 
         var currentMaxEvaluation: Evaluation? = null
         var currentBestMove: Move? = null
@@ -207,7 +217,8 @@ internal class MinMaxEval(
                                 thisMoveHasHitFigure,
                                 minPossibleMovesBuffer,
                                 currentMaxEvaluation,
-                                bestResponses
+                                bestResponses,
+                                ensureNotCanceled
                             )
                             bestResponses.add(bestResponse)
                             eval

@@ -1,181 +1,123 @@
 package voidchess.engine.concurrent
 
+import kotlinx.coroutines.*
 import voidchess.common.board.move.Move
-import voidchess.common.engine.ProgressCallback
 import voidchess.common.engine.EvaluatedMove
 import voidchess.common.engine.Evaluation
+import voidchess.common.engine.HighestEvalFirst
+import voidchess.common.engine.ProgressCallback
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.evaluation.BestResponseSet
 import voidchess.engine.evaluation.MinMaxEval
-import java.util.*
-import java.util.concurrent.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.collections.ArrayList
 
 
 internal class MultiThreadStrategy(
-    private val numberOfThreads: Int
-) : ConcurrencyStrategy() {
+    numberOfThreads: Int
+): ConcurrencyStrategy() {
 
     private val executorService: ExecutorService = Executors.newFixedThreadPool(numberOfThreads)
+    private val dispatcher: CoroutineDispatcher get() = executorService.asCoroutineDispatcher()
 
-    override fun shutdown() {
+    fun shutdown() {
         executorService.shutdown()
     }
 
+    /**
+     * @return a sorted set of all possible moves sorted by a value of "how good it is for the computer voidchess.engine.player".
+     * The first element is the best choice for the computer voidchess.engine.player and the last element being the worst.
+     */
+    override suspend fun evaluateMovesBestMoveFirst(
+        chessGame: EngineChessGame,
+        minMaxEval: MinMaxEval,
+        numericEvalOkRadius: Double,
+        progressCallback: ProgressCallback
+    ): List<EvaluatedMove> {
+        require(numericEvalOkRadius>=.0) {"numericEvalOkRadius must be positive, but was $numericEvalOkRadius"}
+        val possibleMoves = chessGame.getAllMoves()
+        return evaluateMoves(chessGame, possibleMoves, progressCallback, minMaxEval, numericEvalOkRadius).apply { sortWith(
+            HighestEvalFirst
+        ) }
+    }
 
-    override fun evaluateMoves(
-            game: EngineChessGame,
-            movesToEvaluate: Collection<Move>,
-            progressCallback: ProgressCallback,
-            minMaxEval: MinMaxEval,
-            numericEvalOkRadius: Double
-    ): MutableList<EvaluatedMove> {
-
-        val currentMaxEvaluationRef = AtomicReference<Evaluation?>(null)
-        val bestResponsesRef = AtomicReference(BestResponseSet())
-        val callablesToEvaluate =
-            getEvaluableMoves(
+    private suspend fun evaluateMoves(
+        game: EngineChessGame,
+        movesToEvaluate: Collection<Move>,
+        progressCallback: ProgressCallback,
+        minMaxEval: MinMaxEval,
+        numericEvalOkRadius: Double
+    ): MutableList<EvaluatedMove> = coroutineScope{
+        withContext(dispatcher) {
+            evaluateMovesWithCoroutines(
                 game,
                 movesToEvaluate,
+                progressCallback,
                 minMaxEval,
-                currentMaxEvaluationRef,
-                bestResponsesRef,
                 numericEvalOkRadius
             )
-
-        val result = try {
-            evaluate(callablesToEvaluate, progressCallback)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            LinkedList<EvaluatedMove>()
-        }
-
-        assert(result.isNotEmpty()) { "no evaluation of a possible moves was successful" }
-
-        return result
+        }.toMutableList()
     }
 
-    @Throws(InterruptedException::class, ExecutionException::class)
-    private fun evaluate(
-            movesToEvaluate: LinkedList<Callable<EvaluatedMove>>,
-            progressCallback: ProgressCallback
-    ): MutableList<EvaluatedMove> {
-        val totalNumberOfMoves = movesToEvaluate.size
-        val result = ArrayList<EvaluatedMove>(totalNumberOfMoves)
+    internal suspend fun evaluateMovesWithCoroutines(
+        game: EngineChessGame,
+        movesToEvaluate: Collection<Move>,
+        progressCallback: ProgressCallback,
+        minMaxEval: MinMaxEval,
+        numericEvalOkRadius: Double
+    ): List<EvaluatedMove> = coroutineScope{
+        progressCallback(0, movesToEvaluate.size)
+        val numberOfMoves = movesToEvaluate.size
+        val movesComputedCounter = AtomicInteger(0)
+        suspend fun incProgress() = progressCallback(movesComputedCounter.incrementAndGet(), numberOfMoves)
+        val ensureCoroutineActive = fun () {ensureActive()}
+        val gameAndMovePairs = game.copyGame(numberOfMoves).zip(movesToEvaluate)
 
-        val ecs = ExecutorCompletionService<EvaluatedMove>(executorService)
-        submitCallables(movesToEvaluate, ecs, numberOfThreads)
+        val bestResponsesRef = AtomicReference(BestResponseSet())
+        val currentMaxEvaluationRef = AtomicReference<Evaluation?>(null)
 
-        for (i in 0 until totalNumberOfMoves) {
-            //show the progress
-            progressCallback(i, totalNumberOfMoves)
-            //wait for an evaluation to be finished
-            val evaluatedMove = ecs.take().get()
-            //add a new move to be evaluated to the queue (if some are left)
-            submitCallables(movesToEvaluate, ecs, 1)
-            //add this evaluation to result set
-            if (evaluatedMove != null) {
-                result.add(evaluatedMove)
-            }
-        }
-        progressCallback(totalNumberOfMoves, totalNumberOfMoves)
+        return@coroutineScope coroutineScope {
+            val evaluatedMoveDeferreds: List<Deferred<EvaluatedMove?>> = gameAndMovePairs.map { (gameCopy, move) ->
+                async {
+                    ensureActive()
+                    val currentMaxEvaluation = currentMaxEvaluationRef.get()
+                    val currentOkEval: Evaluation? = getOkEval(currentMaxEvaluation, numericEvalOkRadius)
 
-        return result
-    }
+                    val (bestResponse, latestEvaluation) = minMaxEval.evaluateMove(
+                        gameCopy,
+                        move,
+                        currentOkEval,
+                        bestResponsesRef.get(),
+                        ensureCoroutineActive
+                    )
 
-    private fun getEvaluableMoves(
-            game: EngineChessGame,
-            movesToEvaluate: Collection<Move>,
-            minMaxEval: MinMaxEval,
-            currentMaxEvaluationRef: AtomicReference<Evaluation?>,
-            bestResponsesRef: AtomicReference<BestResponseSet>,
-            numericEvalOkRadius: Double
-    ): LinkedList<Callable<EvaluatedMove>> {
-        assert(movesToEvaluate.isNotEmpty()) { "no moves were possible and therefore evaluable" }
-
-        val totalNumberOfMoves = movesToEvaluate.size
-
-        // TODO instead of generating one game per move, generate one game per thread
-        val gameInstances = game.copyGame(totalNumberOfMoves).iterator()
-
-        val callablesToEvaluate = LinkedList<Callable<EvaluatedMove>>()
-        for (move in movesToEvaluate) {
-            callablesToEvaluate.add(
-                MoveEvaluationCallable(
-                    gameInstances.next(),
-                    move,
-                    minMaxEval,
-                    currentMaxEvaluationRef,
-                    bestResponsesRef,
-                    numericEvalOkRadius
-                )
-            )
-        }
-
-        return callablesToEvaluate
-    }
-
-    private fun submitCallables(
-            movesToEvaluate: LinkedList<Callable<EvaluatedMove>>,
-            completionService: CompletionService<EvaluatedMove>,
-            numberOfMovesToSubmit: Int
-    ) {
-        for (i in 0 until numberOfMovesToSubmit) {
-            if (movesToEvaluate.isEmpty()) {
-                break
-            }
-            completionService.submit(movesToEvaluate.removeFirst())
-        }
-    }
-
-    private class MoveEvaluationCallable internal constructor(
-            private val game: EngineChessGame,
-            private val move: Move,
-            private val minMaxEval: MinMaxEval,
-            private val currentMaxEvaluationRef: AtomicReference<Evaluation?>,
-            private val bestResponsesRef: AtomicReference<BestResponseSet>,
-            private val numericEvalOkRadius: Double
-    ) : Callable<EvaluatedMove> {
-
-        @Throws(Exception::class)
-        override fun call(): EvaluatedMove? {
-            return try {
-                val currentMaxEvaluation = currentMaxEvaluationRef.get()
-                val bestResponses = bestResponsesRef.get()
-                val currentOkEval: Evaluation? = getOkEval(currentMaxEvaluation, numericEvalOkRadius)
-
-                val (bestResponse, latestEvaluation) = minMaxEval.evaluateMove(
-                    game,
-                    move,
-                    currentOkEval,
-                    bestResponses
-                )
-
-                if (bestResponse != null) {
-                    bestResponsesRef.updateAndGet { mutableSet ->
-                        mutableSet.add(bestResponse)
-                        mutableSet
-                    }
-                }
-
-                if (currentOkEval == null || latestEvaluation > currentOkEval) {
-                    currentMaxEvaluationRef.updateAndGet { latestMaxEvaluation: Evaluation? ->
-                        if (latestMaxEvaluation == null || latestEvaluation > latestMaxEvaluation) {
-                            latestEvaluation
-                        } else {
-                            latestMaxEvaluation
+                    if (bestResponse != null) {
+                        bestResponsesRef.updateAndGet { mutableSet ->
+                            mutableSet.add(bestResponse)
+                            mutableSet
                         }
                     }
-                    EvaluatedMove(move, latestEvaluation)
-                } else {
-                    null
+
+                    if (currentOkEval == null || latestEvaluation > currentOkEval) {
+                        currentMaxEvaluationRef.updateAndGet { latestMaxEvaluation: Evaluation? ->
+                            if (latestMaxEvaluation == null || latestEvaluation > latestMaxEvaluation) {
+                                latestEvaluation
+                            } else {
+                                latestMaxEvaluation
+                            }
+                        }
+                        EvaluatedMove(move, latestEvaluation)
+                    } else {
+                        null
+                    }.also {
+                        incProgress()
+                    }
                 }
-            } catch (e: Exception) {
-                //print out the error
-                e.printStackTrace()
-                null
             }
+
+            evaluatedMoveDeferreds.awaitAll().filterNotNull()
         }
     }
 }

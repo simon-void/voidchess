@@ -27,7 +27,7 @@ dependencies {
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = "3.2.4"
+    version = "3.3"
 
     repositories {
         mavenCentral()
@@ -65,10 +65,10 @@ tasks {
                 destinationDir = "build/installer",
                 mainJar = "voidchess-$projectVersion-all.jar",
                 addModules = listOf("java.desktop"),
-                winIcoIconPath = "about/shortcut-icon.ico",
+                winIcoIconPath = "about/shortcut-icon.ico2",
                 winShortcut = true,
                 winMenu = true,
-                linuxPngIconPath = "about/shortcut-icon.png",
+                linuxPngIconPath = "about/shortcut-icon2.png",
                 linuxShortcut = true,
                 linuxMenuGroup = "Games",
                 macIcnsIconPath = "about/shortcut-icon2.icns"

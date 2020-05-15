@@ -1,5 +1,6 @@
 package voidchess.engine
 
+import kotlinx.coroutines.runBlocking
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.engine.board.EngineChessGameImpl
@@ -199,7 +200,7 @@ private fun testTermination(
     movesSoFar: List<Move>,
     pruner: SearchTreePruner = PrunerWithIrreversibleMoves(1, 1, 2, 2),
     staticEvaluation: StaticEval = MiddleGameEval
-) {
+) = runBlocking {
     val numberFormat = NumberFormat.getPercentInstance()
     val dynamicEvaluation = MinMaxEval(pruner, staticEvaluation)
 

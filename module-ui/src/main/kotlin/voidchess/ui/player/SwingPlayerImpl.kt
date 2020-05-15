@@ -5,11 +5,10 @@ import voidchess.common.board.getFigure
 import voidchess.common.board.move.*
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Pawn
-import voidchess.common.helper.ColdPromise
+import voidchess.common.integration.ColdPromise
 import voidchess.common.integration.TableAdapter
 import voidchess.ui.swing.ChessboardComponent
 import voidchess.ui.swing.PosType
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
@@ -27,7 +26,8 @@ internal class SwingPlayerImpl(
     private var from: Position? = null
     private var isMyTurn: Boolean = false
     private var isWhitePlayer: Boolean = true
-    private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
+    private val singleThreadExecutor = Executors.newSingleThreadExecutor()
+    private var computeMoveJob: ColdPromise<*>? = null
 
     fun postConstruct(disableGameUI: EnableUI, resignSetEnabled: EnableButton) {
         this.gameUIDisable = disableGameUI        // ChessPanel.stop
@@ -51,11 +51,12 @@ internal class SwingPlayerImpl(
 
     private fun waitForComputer(computerMovePromise: ColdPromise<ComputerMoveResult>) {
         isMyTurn = false
-        resignSetEnabled(false)
         dropMarkedPositions()
 
-        executorService.submit {
+        singleThreadExecutor.submit {
+            computeMoveJob = computerMovePromise
             computerMovePromise.computeAndCallback { computerMoveResult ->
+                computeMoveJob = null
                 game.move(computerMoveResult.extendedComputerMove.move)
                 SwingUtilities.invokeLater {
                     ui.repaintAfterMove(computerMoveResult.extendedComputerMove)
@@ -66,7 +67,6 @@ internal class SwingPlayerImpl(
                         }
                         is ComputerMoveResult.Ongoing -> {
                             isMyTurn = true
-                            resignSetEnabled(true)
                             mouseMovedOver(mouseHoverWhileInactivePos)
                         }
                     }
@@ -159,6 +159,8 @@ internal class SwingPlayerImpl(
     }
 
     override fun resignSelected() {
+        computeMoveJob?.cancel()
+        computeMoveJob = null
         tableAdapter.resign()
         gameEnds()
     }

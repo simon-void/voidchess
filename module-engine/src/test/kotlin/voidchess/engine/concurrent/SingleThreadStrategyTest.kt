@@ -1,5 +1,6 @@
 package voidchess.engine.concurrent
 
+import kotlinx.coroutines.runBlocking
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
 import org.testng.annotations.DataProvider
@@ -172,7 +173,7 @@ internal class SingleThreadStrategyTest {
     }
 
     @Test
-    fun testMinMaxIsInvokedForEachPossibleMove() {
+    fun testMinMaxIsInvokedForEachPossibleMove() = runBlocking {
         // with alpha-beta pruning in place suboptimal moves are discarded and no longer returned
         // so only the invocations of the ProgressCallback can be compared
         var progressCallbackInvokedCounter = 0
@@ -205,9 +206,9 @@ internal class SingleThreadStrategyTest {
         return evaluate(pruner, game)
     }
 
-    private fun evaluate(pruner: SearchTreePruner, game: EngineChessGame): List<EvaluatedMove> {
+    private fun evaluate(pruner: SearchTreePruner, game: EngineChessGame): List<EvaluatedMove> = runBlocking {
         val dynEval = MinMaxEval(pruner, MiddleGameEval)
-        return strategy.evaluateMovesBestMoveFirst(game, dynEval)
+        return@runBlocking strategy.evaluateMovesBestMoveFirst(game, dynEval)
     }
 }
 

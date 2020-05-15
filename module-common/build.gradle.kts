@@ -6,8 +6,6 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    testImplementation(Deps.kotlinTest)
-    testImplementation(Deps.testNG)
-    testImplementation(Deps.mockitoCore)
-    testImplementation(Deps.mockk)
+    Deps.coroutineDeps.forEach { implementation(it) }
+    Deps.testDeps.forEach { testImplementation(it) }
 }

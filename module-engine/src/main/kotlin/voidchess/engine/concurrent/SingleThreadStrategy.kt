@@ -5,26 +5,52 @@ import voidchess.common.board.other.StartConfig
 import voidchess.common.engine.ProgressCallback
 import voidchess.common.engine.EvaluatedMove
 import voidchess.common.engine.Evaluation
+import voidchess.common.engine.HighestEvalFirst
 import voidchess.engine.board.EngineChessGame
 import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.evaluation.BestResponseSet
 import voidchess.engine.evaluation.MinMaxEval
 
 
-internal object SingleThreadStrategy : ConcurrencyStrategy() {
+private val progressNothing: ProgressCallback = { _, _ -> }
 
-    fun evaluateMove(
+internal object SingleThreadStrategy: ConcurrencyStrategy() {
+
+    suspend fun evaluateMove(
         startConfig: StartConfig,
         movesSoFar: List<Move>,
         move: Move,
         minMaxEval: MinMaxEval,
-        progressCallback: ProgressCallback = { _, _ -> }
+        progressCallback: ProgressCallback = progressNothing
     ): EvaluatedMove {
         val chessGame = EngineChessGameImpl(startConfig, movesSoFar)
         return evaluateMoves(chessGame, listOf(move), progressCallback, minMaxEval, .0).single()
     }
 
-    override fun evaluateMoves(
+    /**
+     * @return a sorted set of all possible moves sorted by a value of "how good it is for the computer voidchess.engine.player".
+     * The first element is the best choice for the computer voidchess.engine.player and the last element being the worst.
+     */
+    override suspend fun evaluateMovesBestMoveFirst(
+        chessGame: EngineChessGame,
+        minMaxEval: MinMaxEval,
+        numericEvalOkRadius: Double,
+        progressCallback: ProgressCallback
+    ): List<EvaluatedMove> {
+        require(numericEvalOkRadius>=.0) {"numericEvalOkRadius must be positive, but was $numericEvalOkRadius"}
+        val possibleMoves = chessGame.getAllMoves()
+        return evaluateMoves(
+            chessGame,
+            possibleMoves,
+            progressCallback,
+            minMaxEval,
+            numericEvalOkRadius
+        ).apply {
+            sortWith(HighestEvalFirst)
+        }
+    }
+
+    private suspend fun evaluateMoves(
             game: EngineChessGame,
             movesToEvaluate: Collection<Move>,
             progressCallback: ProgressCallback,
