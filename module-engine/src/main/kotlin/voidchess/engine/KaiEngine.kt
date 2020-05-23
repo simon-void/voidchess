@@ -18,9 +18,9 @@ import voidchess.engine.openings.OpeningsLibrary
 import kotlin.math.pow
 import kotlin.random.Random
 
+
 class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
-    private val concurrencyStrategyCache = ConcurrencyStrategyContainer()
     private val openingsLibrary: OpeningsLibrary = OpeningsLibrary.loadFromFile("openings.txt")
 
     override fun getConfig(): EngineConfig {
@@ -67,7 +67,6 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
     private suspend fun computeNextMove(startConfig: StartConfig, movesSoFar: List<Move>): EvaluatedMove {
         val game = EngineChessGameImpl(startConfig, movesSoFar)
-        val coresToUse = CoresToUseOption.coresToUse
 
         val pruner: SearchTreePruner
         val staticEval: StaticEval
@@ -101,9 +100,8 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             }
         }
 
-        return concurrencyStrategyCache.get(coresToUse)
-            .evaluateMovesBestMoveFirst(
-                game, MinMaxEval(pruner, staticEval), okDistance, progressCallback
+        return MultiThreadStrategy.evaluateMovesBestMoveFirst(
+            game, MinMaxEval(pruner, staticEval), CoresToUseOption.coresToUse, okDistance, progressCallback
             ).pickOkMove()
     }
 
@@ -175,21 +173,6 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
     companion object {
         const val okDistanceToBest = .2
-    }
-}
-
-
-private class ConcurrencyStrategyContainer {
-    private var coresAndStrategy: Pair<Int, MultiThreadStrategy> =
-        CoresToUseOption.coresToUse.let { it to MultiThreadStrategy(it) }
-
-    fun get(numberOfCoresToUse: Int): MultiThreadStrategy {
-        if( numberOfCoresToUse!=coresAndStrategy.first) {
-            val oldStrategy = coresAndStrategy.second
-            coresAndStrategy = numberOfCoresToUse to MultiThreadStrategy(numberOfCoresToUse)
-            oldStrategy.shutdown()
-        }
-        return coresAndStrategy.second
     }
 }
 

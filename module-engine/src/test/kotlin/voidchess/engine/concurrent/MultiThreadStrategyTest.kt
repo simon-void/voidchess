@@ -1,9 +1,9 @@
 package voidchess.engine.concurrent
 
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.testng.Assert.assertEquals
 import org.testng.Assert.assertTrue
-import org.testng.annotations.AfterClass
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -23,18 +23,13 @@ import voidchess.mirrorRow
 internal class MultiThreadStrategyTest {
     private val coresToUse = (Runtime.getRuntime().availableProcessors()-1).coerceAtLeast(1)
     private val progressCallback: ProgressCallback = { _, _ -> progressCallbackInvokedCounter++ }
-    private val strategy = MultiThreadStrategy(coresToUse)
+    private val strategy = MultiThreadStrategy
 
     private var progressCallbackInvokedCounter = 0
 
     @BeforeMethod
     fun setup() {
         progressCallbackInvokedCounter = 0
-    }
-
-    @AfterClass
-    fun shutdown() {
-        strategy.shutdown()
     }
 
     //best move with matt
@@ -194,11 +189,14 @@ internal class MultiThreadStrategyTest {
         val minMax = MinMaxEval(easyPruner, MiddleGameEval)
         val startConfig = "white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false".toManualConfig()
 
-        strategy.evaluateMovesBestMoveFirst(
-            EngineChessGameImpl(startConfig, emptyList()),
-            minMax,
-            progressCallback = progressCallback
-        )
+        withTimeout(1000L) {
+            strategy.evaluateMovesBestMoveFirst(
+                EngineChessGameImpl(startConfig, emptyList()),
+                minMax,
+                coresToUse = coresToUse,
+                progressCallback = progressCallback
+            )
+        }
         val expectedMoves = setOf("h1-g1", "h1-g2", "h1-h2", "a7-a8").map { Move.byCode(it) }.toSet()
 
         // minus one because the function is also invoked once at the start to signal the start of the computation
@@ -221,7 +219,9 @@ internal class MultiThreadStrategyTest {
 
     private fun evaluate(pruner: SearchTreePruner, game: EngineChessGame): List<EvaluatedMove> = runBlocking {
         val dynEval = MinMaxEval(pruner, MiddleGameEval)
-        return@runBlocking strategy.evaluateMovesBestMoveFirst(game, dynEval)
+        return@runBlocking withTimeout(1000L) {
+            strategy.evaluateMovesBestMoveFirst(game, dynEval, coresToUse)
+        }
     }
 }
 

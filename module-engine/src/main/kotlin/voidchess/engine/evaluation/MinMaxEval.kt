@@ -75,7 +75,7 @@ internal class MinMaxEval(
 
         var currentMinEvaluation: Evaluation? = null
         var currentBestMove: Move? = null
-        val bestResponses = BestResponseSet()
+        val bestResponses = BestResponseSet.unsynced()
 
         for (move in minPossibleMovesBuffer.shuffle(movesToTryFirst)) {
 
@@ -176,7 +176,7 @@ internal class MinMaxEval(
 
         var currentMaxEvaluation: Evaluation? = null
         var currentBestMove: Move? = null
-        val bestResponses = BestResponseSet()
+        val bestResponses = BestResponseSet.unsynced()
 
         for (move in maxPossibleMovesBuffer.shuffle(movesToTryFirst)) {
 

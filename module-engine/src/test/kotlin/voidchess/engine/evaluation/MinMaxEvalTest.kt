@@ -34,7 +34,7 @@ internal class MinMaxEvalTest {
         val dynamicEvaluation = MinMaxEval(pruner,
             MiddleGameEval
         )
-        val (_, evaluation) = dynamicEvaluation.evaluateMove(game, move, null, BestResponseSet())
+        val (_, evaluation) = dynamicEvaluation.evaluateMove(game, move, null, BestResponseSet.unsynced())
         require(evaluation is NumericalEvaluation)
 
         assertTrue(
@@ -42,7 +42,7 @@ internal class MinMaxEvalTest {
                 "eval should be in range $expectedEvalRange but was: ${evaluation.numericValue}. msg: $msg")
 
         val (_, evaluationOfColorInverted) =
-            dynamicEvaluation.evaluateMove(game.copyGameWithInvertedColors(), move.mirrorRow(), null, BestResponseSet())
+            dynamicEvaluation.evaluateMove(game.copyGameWithInvertedColors(), move.mirrorRow(), null, BestResponseSet.unsynced())
         require(evaluationOfColorInverted is NumericalEvaluation)
 
         assertTrue(
@@ -56,7 +56,7 @@ internal class MinMaxEvalTest {
         val game = EngineChessGameImpl(des.toManualConfig())
         val dynamicEvaluation = MinMaxEval()
 
-        dynamicEvaluation.evaluateMove(game, Move.byCode("a6-b6"), null, BestResponseSet())
+        dynamicEvaluation.evaluateMove(game, Move.byCode("a6-b6"), null, BestResponseSet.unsynced())
         // invariance: evaluateMove must not change the game configuration
         assertEquals(game.toString(), des)
     }
@@ -67,7 +67,7 @@ internal class MinMaxEvalTest {
 
         val dynamicEvaluation = MinMaxEval()
 
-        val (_, value) = dynamicEvaluation.evaluateMove(game, Move.byCode("e7-e6"), null, BestResponseSet()) // the queen can be taken via g5-d8
+        val (_, value) = dynamicEvaluation.evaluateMove(game, Move.byCode("e7-e6"), null, BestResponseSet.unsynced()) // the queen can be taken via g5-d8
         require(value is NumericalEvaluation)
 
         // The best move for white is obviously taking the queen

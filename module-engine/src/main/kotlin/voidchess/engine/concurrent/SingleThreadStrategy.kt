@@ -31,11 +31,11 @@ internal object SingleThreadStrategy: ConcurrencyStrategy() {
      * @return a sorted set of all possible moves sorted by a value of "how good it is for the computer voidchess.engine.player".
      * The first element is the best choice for the computer voidchess.engine.player and the last element being the worst.
      */
-    override suspend fun evaluateMovesBestMoveFirst(
+    suspend fun evaluateMovesBestMoveFirst(
         chessGame: EngineChessGame,
         minMaxEval: MinMaxEval,
-        numericEvalOkRadius: Double,
-        progressCallback: ProgressCallback
+        numericEvalOkRadius: Double = .0,
+        progressCallback: ProgressCallback = { _, _ -> }
     ): List<EvaluatedMove> {
         require(numericEvalOkRadius>=.0) {"numericEvalOkRadius must be positive, but was $numericEvalOkRadius"}
         val possibleMoves = chessGame.getAllMoves()
@@ -61,7 +61,7 @@ internal object SingleThreadStrategy: ConcurrencyStrategy() {
         progressCallback(0, totalNumberOfMoves)
 
         var currentMaxEvaluation: Evaluation? = null
-        val bestResponses = BestResponseSet()
+        val bestResponses = BestResponseSet.unsynced()
         val result = ArrayList<EvaluatedMove>(totalNumberOfMoves)
         for ((moveIndex, move) in movesToEvaluate.withIndex()) {
 
