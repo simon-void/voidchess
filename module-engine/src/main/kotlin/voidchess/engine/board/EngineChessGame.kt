@@ -1,6 +1,7 @@
 package voidchess.engine.board
 
 import voidchess.common.board.StaticChessBoard
+import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResultType
@@ -14,7 +15,7 @@ internal interface EngineChessGame : StaticChessBoard {
      */
     val startConfig: StartConfig
     val isWhiteTurn: Boolean
-    val hasHitFigure: Boolean
+    val latestExtendedMove: ExtendedMove
     val isCheck: Boolean
     /**
      * @return all the moves played so far in a string representation
@@ -24,10 +25,8 @@ internal interface EngineChessGame : StaticChessBoard {
 
     fun <T> withMove(move: Move, workWithGameAfterMove: (MoveResultType)->T): T
     fun getAllMoves(): ArrayList<Move>
-    fun getCriticalMoves(): ArrayList<Move>
-    fun getTakingMoves(): ArrayList<Move>
-    fun countReachableMoves(): MoveCounter
     fun countAllMoves(): MoveCounter
+    fun countReachableMoves(): MoveCounter
 
     fun copyGame(numberOfInstances: Int): List<EngineChessGame>
 }

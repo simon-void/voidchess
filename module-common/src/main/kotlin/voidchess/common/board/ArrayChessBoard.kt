@@ -128,7 +128,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
                     val rookToColumn = if (isKingSideCastling) 5 else 3
                     ExtendedMove.Castling(move, Move[move.from, Position[move.to.row, kingToColumn]], Move[move.to, Position[move.to.row, rookToColumn]])
                 }else{
-                    ExtendedMove.Normal(move, toFigure)
+                    ExtendedMove.Normal(move, toFigure, movingFigure.type)
                 }
             }
             is Pawn -> {
@@ -140,10 +140,10 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
                     val pawnTakenByEnpassant = getFigure(Position[move.from.row, move.to.column])
                     ExtendedMove.Enpassant(move, pawnTakenByEnpassant)
                 }else{
-                    ExtendedMove.Normal(move, toFigure)
+                    ExtendedMove.Normal(move, toFigure, movingFigure.type)
                 }
             }
-            else -> ExtendedMove.Normal(move, toFigure)
+            else -> ExtendedMove.Normal(move, toFigure, movingFigure.type)
         }
 
         when(extendedMove) {

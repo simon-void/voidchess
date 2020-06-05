@@ -1,12 +1,12 @@
 package voidchess.engine.evaluation
 
 import voidchess.common.board.getFigure
+import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResultType
 import voidchess.common.engine.*
 import voidchess.common.figures.King
 import voidchess.engine.board.EngineChessGame
-import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.engine.evaluation.leaf.StaticEval
 
 
@@ -17,10 +17,6 @@ internal class MinMaxEval(
     private var pruner: SearchTreePruner,
     private var strategy: StaticEval
 ) {
-    constructor() : this(PrunerWithIrreversibleMoves(),
-        MiddleGameEval
-    )
-
     fun evaluateMove(
             game: EngineChessGame,
             move: Move,
@@ -33,22 +29,17 @@ internal class MinMaxEval(
 
         return game.withMove(move) { moveResult ->
             when (moveResult) {
-                MoveResultType.NO_END -> {
-                    val thisMoveHasHitFigure = game.hasHitFigure
-                    val thisMoveIsChess = game.isCheck
-
-                    getMin(
+                MoveResultType.NO_END -> getMin(
                         game,
                         forWhite,
                         depth,
-                        thisMoveIsChess,
-                        thisMoveHasHitFigure,
+                        game.isCheck,
+                        game.latestExtendedMove,
                         game.getAllMoves(),
                         currentMaxOneLevelUp,
                         movesToTryFirst,
                         ensureNotCanceled
-                    )
-                }
+                )
                 MoveResultType.CHECKMATE -> null to CheckmateOther(0)
                 MoveResultType.THREE_TIMES_SAME_POSITION -> null to ThreeFoldRepetition
                 MoveResultType.STALEMATE -> null to Stalemate
@@ -61,8 +52,8 @@ internal class MinMaxEval(
             game: EngineChessGame,
             forWhite: Boolean,
             depth: Int,
-            lastMove_isChess: Boolean,
-            lastMove_hasHitFigure: Boolean,
+            lastMoveIsChess: Boolean,
+            lastMoveExtendedMove: ExtendedMove,
             minPossibleMovesBuffer: ArrayList<Move>,
             currentMaxOneLevelUp: Evaluation?,
             movesToTryFirst: BestResponseSet,
@@ -76,6 +67,7 @@ internal class MinMaxEval(
         var currentMinEvaluation: Evaluation? = null
         var currentBestMove: Move? = null
         val bestResponses = BestResponseSet.unsynced()
+        val newDepth = depth + 1
 
         for (move in minPossibleMovesBuffer.shuffle(movesToTryFirst)) {
 
@@ -88,48 +80,39 @@ internal class MinMaxEval(
             val latestEvaluation: Evaluation = game.withMove(move) { moveResult ->
                 when (moveResult) {
                     MoveResultType.NO_END -> {
-                        val newDepth = depth + 1
-
-                        val thisMoveHasHitFigure = game.hasHitFigure
                         val thisMoveIsChess = game.isCheck
+                        val thisMoveExtendedMove = game.latestExtendedMove
 
-                        val maxPossibleMovesBuffer =
-                            when (pruner.continueMaxDynamicEvaluationBy(
-                                newDepth,
-                                thisMoveIsChess,
-                                thisMoveHasHitFigure,
-                                lastMove_isChess,
-                                lastMove_hasHitFigure
-                            )) {
-                                ContinueEvalBy.StaticEval -> emptyMoveList
-                                ContinueEvalBy.AllMoves -> game.getAllMoves()
-                                ContinueEvalBy.IrreversibleMoves -> game.getCriticalMoves()
-                                ContinueEvalBy.TakingMoves -> game.getTakingMoves()
-                            }
-
-                        if (maxPossibleMovesBuffer.isEmpty()) {
-                            strategy.getNumericEvaluation(game, forWhite, forWhite)
-                        } else {
+                        if (pruner.continueMaxDynamicEvaluationBy(
+                                        newDepth,
+                                        thisMoveIsChess,
+                                        lastMoveIsChess,
+                                        thisMoveExtendedMove,
+                                        lastMoveExtendedMove
+                                )) {
+                            val maxPossibleMovesBuffer = game.getAllMoves()
                             val (bestResponse, eval) = getMax(
-                                game,
-                                forWhite,
-                                newDepth,
-                                thisMoveIsChess,
-                                thisMoveHasHitFigure,
-                                maxPossibleMovesBuffer,
-                                currentMinEvaluation,
-                                bestResponses,
-                                ensureNotCanceled
+                                    game,
+                                    forWhite,
+                                    newDepth,
+                                    thisMoveIsChess,
+                                    thisMoveExtendedMove,
+                                    maxPossibleMovesBuffer,
+                                    currentMinEvaluation,
+                                    bestResponses,
+                                    ensureNotCanceled
                             )
                             bestResponses.add(bestResponse)
                             eval
+                        } else {
+                            strategy.getNumericEvaluation(game, forWhite, forWhite)
                         }
                     }
                     MoveResultType.CHECKMATE -> {
                         stopLookingForBetterMove = true
                         val secondaryMateEval = strategy.getSecondaryCheckmateEvaluation(game, forWhite, forWhite)
                         CheckmateSelf(
-                                depth + 1,
+                                newDepth,
                                 secondaryMateEval
                         )
                     }
@@ -163,7 +146,7 @@ internal class MinMaxEval(
             forWhite: Boolean,
             depth: Int,
             lastMoveIsChess: Boolean,
-            lastMoveHasHitFigure: Boolean,
+            lastMoveExtendedMove: ExtendedMove,
             maxPossibleMovesBuffer: ArrayList<Move>,
             currentMinOneLevelUp: Evaluation?,
             movesToTryFirst: BestResponseSet,
@@ -189,39 +172,32 @@ internal class MinMaxEval(
             val latestEvaluation: Evaluation = game.withMove(move) { moveResult ->
                 when (moveResult) {
                     MoveResultType.NO_END -> {
-                        val thisMoveHasHitFigure = game.hasHitFigure
                         val thisMoveIsChess = game.isCheck
+                        val thisMoveExtendedMove = game.latestExtendedMove
 
-                        val minPossibleMovesBuffer =
-                            when (pruner.continueMinDynamicEvaluationBy(
-                                depth,
-                                thisMoveIsChess,
-                                thisMoveHasHitFigure,
-                                lastMoveIsChess,
-                                lastMoveHasHitFigure
-                            )) {
-                                ContinueEvalBy.StaticEval -> emptyMoveList
-                                ContinueEvalBy.AllMoves -> game.getAllMoves()
-                                ContinueEvalBy.IrreversibleMoves -> game.getCriticalMoves()
-                                ContinueEvalBy.TakingMoves -> game.getTakingMoves()
-                            }
-
-                        if (minPossibleMovesBuffer.isEmpty()) {
-                            strategy.getNumericEvaluation(game, forWhite, !forWhite)
-                        } else {
+                        if (pruner.continueMinDynamicEvaluationBy(
+                                        depth,
+                                        thisMoveIsChess,
+                                        lastMoveIsChess,
+                                        thisMoveExtendedMove,
+                                        lastMoveExtendedMove
+                                )) {
+                            val minPossibleMovesBuffer = game.getAllMoves()
                             val (bestResponse, eval) = getMin(
-                                game,
-                                forWhite,
-                                depth,
-                                thisMoveIsChess,
-                                thisMoveHasHitFigure,
-                                minPossibleMovesBuffer,
-                                currentMaxEvaluation,
-                                bestResponses,
-                                ensureNotCanceled
+                                    game,
+                                    forWhite,
+                                    depth,
+                                    thisMoveIsChess,
+                                    thisMoveExtendedMove,
+                                    minPossibleMovesBuffer,
+                                    currentMaxEvaluation,
+                                    bestResponses,
+                                    ensureNotCanceled
                             )
                             bestResponses.add(bestResponse)
                             eval
+                        } else {
+                            strategy.getNumericEvaluation(game, forWhite, !forWhite)
                         }
                     }
                     MoveResultType.CHECKMATE -> {
@@ -253,8 +229,6 @@ internal class MinMaxEval(
             )
     }
 }
-
-private val emptyMoveList: ArrayList<Move> = ArrayList(0)
 
 // this makes Alpha-Beta-Pruning 10-25% faster (due to increasing the chance of finding good moves earlier)
 private fun ArrayList<Move>.shuffle(movesToTryFirst: BestResponseSet): ArrayList<Move> {

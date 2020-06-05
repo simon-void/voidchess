@@ -416,19 +416,18 @@ internal class EngineChessGameTest {
                 + "Pawn-white-g2-false Bishop-white-e7 King-black-e8-0 "
                 + "Knight-black-g5 Pawn-white-a6-false")
         val game = EngineChessGameImpl(des.toManualConfig())
-        assertTrue(game.hasHitFigure)            //da numberWithoutHit=0 ist in 'des'
         game.withMove(Move.byCode("g2-h3")) {
-            assertTrue(game.hasHitFigure)
+            assertTrue(game.latestExtendedMove.hasHitFigure)
             game.withMove(Move.byCode("g5-h3")) {
-                assertTrue(game.hasHitFigure)
+                assertTrue(game.latestExtendedMove.hasHitFigure)
                 game.withMove(Move.byCode("h2-h3")) {
-                    assertTrue(game.hasHitFigure)
+                    assertTrue(game.latestExtendedMove.hasHitFigure)
                     game.withMove(Move.byCode("e8-e7")) {
-                        assertTrue(game.hasHitFigure)
+                        assertTrue(game.latestExtendedMove.hasHitFigure)
                         game.withMove(Move.byCode("a6-a7")) {
-                            assertFalse(game.hasHitFigure)
+                            assertFalse(game.latestExtendedMove.hasHitFigure)
                             game.withMove(Move.byCode("e7-d7")) {
-                                assertFalse(game.hasHitFigure)
+                                assertFalse(game.latestExtendedMove.hasHitFigure)
                             }
                         }
                     }

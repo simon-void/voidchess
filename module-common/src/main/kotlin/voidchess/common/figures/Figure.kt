@@ -74,6 +74,7 @@ abstract class Figure constructor(
      * let's only look for checks to give if our king is not in check.
      * (for minimizing the code complexity)
      */
+    //TODO remove
     open fun forPossibleTakingMoves(game: ChessBoard, informOf: MoveInformer) {
         val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
@@ -103,6 +104,7 @@ abstract class Figure constructor(
      *
      * because critical moves aren't unique, they are collected in a Set.
      */
+    //TODO remove
     open fun forCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
         // this doesn't make sense for king; and pawn and knight overwrite getCriticalMoves altogether.
         if(this is Pawn||this is Knight||this is King) throw IllegalStateException("Pawn, King and Knight should override this method, but ${javaClass.simpleName} didn't")

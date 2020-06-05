@@ -56,7 +56,7 @@ internal class SingleThreadStrategyTest {
             EngineChessGameImpl("white 0 King-white-e3-2 Rook-white-e4-2 Bishop-white-f6 Rook-black-d8-2 Knight-black-c8 King-black-g8-1 Pawn-black-d7-false Pawn-black-e5-false Pawn-black-f7-false".toManualConfig())
         val stalemateIn1 =
             EngineChessGameImpl("white 0 King-white-a1-9 Rook-white-h2-2 Pawn-white-g2-false Rook-black-b2-5 King-black-g8-1 Pawn-black-b4-false Pawn-black-c3-false Pawn-black-g3-false Pawn-black-f7-false Pawn-black-g7-false".toManualConfig())
-        val twoMovesAheadPruner = PrunerWithIrreversibleMoves(2, 2, 2, 2)
+        val twoMovesAheadPruner = PrunerWithPawnMoves(2, 2, 2, 2)
         return arrayOf(
             arrayOf(mattIn1, twoMovesAheadPruner, CheckmateOther(1)),
             arrayOf(stalemateIn1, twoMovesAheadPruner, Stalemate)
@@ -65,7 +65,7 @@ internal class SingleThreadStrategyTest {
 
     @DataProvider(name = "gameWithObviousEvalProvider")
     fun obviousEvalProvider(): Array<Array<Any>> {
-        val easyPruner = AllMovesOrNonePruner(1, 4, 3)
+        val easyPruner = SingleFullMovePruner( 4, 3)
         return arrayOf(
             arrayOf(
                 EngineChessGameImpl("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false".toManualConfig()),
@@ -84,7 +84,7 @@ internal class SingleThreadStrategyTest {
 
     @DataProvider(name = "gameWithEvalPredicateProvider")
     fun evalPredicateProvider(): Array<Array<Any>> {
-        val level2Pruner = AllMovesOrNonePruner(2, 4, 3)
+        val level2Pruner = DefaultPruner(2, 4, 3)
         return arrayOf(
             arrayOf(
                 EngineChessGameImpl("black 0 Rook-white-b1-1 King-white-g3-4 Pawn-white-h3-false Knight-white-d4 Pawn-white-f4-false King-black-a5-6".toManualConfig()),
@@ -177,7 +177,7 @@ internal class SingleThreadStrategyTest {
         // with alpha-beta pruning in place suboptimal moves are discarded and no longer returned
         // so only the invocations of the ProgressCallback can be compared
         var progressCallbackInvokedCounter = 0
-        val easyPruner = PrunerWithIrreversibleMoves(1, 2, 2, 2)
+        val easyPruner = SingleFullMovePrunerWithPawnMoves( 2, 2, 2)
         val minMax = MinMaxEval(easyPruner, MiddleGameEval)
         val startConfig = "white 0 King-white-h1-4 King-black-h7-6 Pawn-white-a7-false".toManualConfig()
 
@@ -202,7 +202,11 @@ internal class SingleThreadStrategyTest {
     }
 
     private fun evaluate(depth: Int, game: EngineChessGame): List<EvaluatedMove> {
-        val pruner = PrunerWithIrreversibleMoves(depth, depth, depth + 1, depth + 1)
+        val pruner = if(depth==1) {
+            SingleFullMovePrunerWithPawnMoves(depth, depth + 1, depth + 1)
+        } else {
+            PrunerWithPawnMoves(depth, depth, depth + 1, depth + 1)
+        }
         return evaluate(pruner, game)
     }
 

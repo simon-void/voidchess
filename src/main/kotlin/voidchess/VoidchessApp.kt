@@ -23,7 +23,7 @@ fun main() {
             null,
             """
             An exception occurred: $exception
-            If the exception is "bad", please consider logging an Issue here:
+            Please consider logging an Issue here:
             https://github.com/simon-void/voidchess/issues
             """.trimIndent(),
             "VoidChess error",

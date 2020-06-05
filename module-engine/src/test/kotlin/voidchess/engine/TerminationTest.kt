@@ -85,23 +85,23 @@ private fun benchmark(benchmarkLevel: Int) {
 
     when(benchmarkLevel) {
         1 -> {
-            pruner = PrunerWithIrreversibleMoves(1, 2, 4, 2)
+            pruner = SingleFullMovePrunerWithPawnMoves( 2, 4, 2)
             movesSoFarHistory = closedPositionHistory
         }
         2 -> {
-            pruner = PrunerWithIrreversibleMoves(1, 2, 4, 2)
+            pruner = SingleFullMovePrunerWithPawnMoves( 2, 4, 2)
             movesSoFarHistory = openedPositionHistory
         }
         3 -> {
-            pruner = AllMovesOrNonePruner(2, 5, 3)
+            pruner = DefaultPruner(2, 5, 3)
             movesSoFarHistory = openedPositionHistory
         }
         4 -> {
-            pruner = AllMovesOrNonePruner(3, 3, 3)
+            pruner = DefaultPruner(3, 3, 3)
             movesSoFarHistory = "d2-d3,d7-d6"
         }
         5 -> {
-            pruner = AllMovesOrNonePruner(3, 5, 3)
+            pruner = DefaultPruner(3, 5, 3)
             movesSoFarHistory = closedPositionHistory
         }
         else -> throw IllegalArgumentException("unknown benchmark level: $benchmarkLevel")
@@ -169,7 +169,7 @@ private fun loadTest() {
 
 private fun loadTest(des: String) {
     val game = EngineChessGameImpl(des.toManualConfig())
-    val pruner = PrunerWithIrreversibleMoves(2, 3, 4, 3)
+    val pruner = PrunerWithPawnMoves(2, 3, 4, 3)
     val staticEvaluation = MiddleGameEval
     loadTest(game, pruner, staticEvaluation, "load test")
 }
@@ -196,10 +196,10 @@ private fun loadTest(game: EngineChessGame, pruner: SearchTreePruner, staticEval
 }
 
 private fun testTermination(
-    startConfig: StartConfig,
-    movesSoFar: List<Move>,
-    pruner: SearchTreePruner = PrunerWithIrreversibleMoves(1, 1, 2, 2),
-    staticEvaluation: StaticEval = MiddleGameEval
+        startConfig: StartConfig,
+        movesSoFar: List<Move>,
+        pruner: SearchTreePruner = SingleFullMovePrunerWithPawnMoves( 1, 2, 2),
+        staticEvaluation: StaticEval = MiddleGameEval
 ) = runBlocking {
     val numberFormat = NumberFormat.getPercentInstance()
     val dynamicEvaluation = MinMaxEval(pruner, staticEvaluation)

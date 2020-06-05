@@ -74,22 +74,22 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
         when(game.getEndgameOption()) {
             EndgameOption.OneSidedWithQueen -> {
-                pruner  = AllMovesOrNonePruner(2, 2, 3)
+                pruner  = DefaultPruner(2, 2, 3)
                 staticEval = KingToEdgeEndgameEval
                 okDistance = 0.0
             }
             EndgameOption.OneSidedWithRook -> {
-                pruner  = AllMovesOrNonePruner(3, 3, 3)
+                pruner  = DefaultPruner(3, 3, 3)
                 staticEval = KingToEdgeEndgameEval
                 okDistance = 0.0
             }
             EndgameOption.OneSidedWithOnlyBishopsAndOrKnights -> {
-                pruner  = AllMovesOrNonePruner(3, 3, 4)
+                pruner  = DefaultPruner(3, 3, 4)
                 staticEval = KingToCornerEndgameEval
                 okDistance = 0.0
             }
             EndgameOption.OnlyPawns -> {
-                pruner  = AllMovesOrNonePruner(3, 6, 3)
+                pruner  = DefaultPruner(3, 6, 3)
                 staticEval = MiddleGameEval
                 okDistance = 0.0
             }

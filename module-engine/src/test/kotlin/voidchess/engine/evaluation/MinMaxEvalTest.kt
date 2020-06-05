@@ -18,7 +18,7 @@ import voidchess.toManualConfig
 internal class MinMaxEvalTest {
     @DataProvider(name = "gameWithObviousEvalProvider")
     fun obviousEvalProvider(): Array<Array<Any>> {
-        val easyPruner = AllMovesOrNonePruner(1, 4, 3)
+        val easyPruner = SingleFullMovePruner( 4, 3)
         return arrayOf(
                 arrayOf(
                         EngineChessGameImpl("black 0 King-white-e3-4 King-black-g6-6 Pawn-white-a7-false".toManualConfig()),
@@ -54,7 +54,7 @@ internal class MinMaxEvalTest {
     fun testEvaluateMoveHasNoSideEffects() {
         val des = "black 0 King-white-h1-4 King-black-a6-6 Pawn-white-b6-false"
         val game = EngineChessGameImpl(des.toManualConfig())
-        val dynamicEvaluation = MinMaxEval()
+        val dynamicEvaluation = MinMaxEval(SingleFullMovePruner(3,2), MiddleGameEval)
 
         dynamicEvaluation.evaluateMove(game, Move.byCode("a6-b6"), null, BestResponseSet.unsynced())
         // invariance: evaluateMove must not change the game configuration
@@ -65,7 +65,7 @@ internal class MinMaxEvalTest {
     fun testMinMaxScheme() {
         val game = initChessGame(518, "d2-d3", "d7-d6", "c1-g5")
 
-        val dynamicEvaluation = MinMaxEval()
+        val dynamicEvaluation = MinMaxEval(SingleFullMovePruner(3,2), MiddleGameEval)
 
         val (_, value) = dynamicEvaluation.evaluateMove(game, Move.byCode("e7-e6"), null, BestResponseSet.unsynced()) // the queen can be taken via g5-d8
         require(value is NumericalEvaluation)

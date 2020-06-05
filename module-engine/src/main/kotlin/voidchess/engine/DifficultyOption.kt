@@ -1,16 +1,18 @@
 package voidchess.engine
 
 import voidchess.common.engine.Option
-import voidchess.engine.evaluation.AllMovesOrNonePruner
+import voidchess.engine.evaluation.*
+import voidchess.engine.evaluation.DefaultPruner
+import voidchess.engine.evaluation.PrunerWithPawnMoves
 import voidchess.engine.evaluation.SearchTreePruner
+import voidchess.engine.evaluation.SingleFullMovePrunerWithPawnMoves
 
 
 internal object DifficultyOption: Option {
     private val levelsAndPruner: List<Pair<String, SearchTreePruner>> = listOf(
-        "level 1" to AllMovesOrNonePruner(1, 5, 3),
-//        "level 2" to PrunerWithIrreversibleMoves(1, 2, 4, 3),
-        "level 2" to AllMovesOrNonePruner(2, 5, 3),
-        "level 3" to AllMovesOrNonePruner(3, 5, 3)
+        "level 1" to SingleFullMovePrunerWithPawnMoves(3, 5, 3),
+        "level 2" to PrunerWithPawnMoves(2, 3, 5, 3),
+        "level 3" to DefaultPruner(3, 5, 3)
     )
     override val name: String = "Difficulty"
     override val possibleValues: List<String> get() = levelsAndPruner.map { it.first }

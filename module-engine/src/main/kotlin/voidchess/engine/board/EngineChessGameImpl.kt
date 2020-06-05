@@ -1,6 +1,7 @@
 package voidchess.engine.board
 
 import voidchess.common.board.*
+import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResultType
 import voidchess.common.board.move.Position
@@ -9,7 +10,6 @@ import voidchess.common.figures.King
 import voidchess.engine.evaluation.SearchTreePruner
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.LinkedHashSet
 
 
 internal class EngineChessGameImpl private constructor(
@@ -18,8 +18,9 @@ internal class EngineChessGameImpl private constructor(
     private val mementoStack: ArrayDeque<Memento>,
     private val numberStack: NumberStack
 ): EngineChessGame, StaticChessBoard by board {
+    private val extendedMovesPlayed = LinkedList<ExtendedMove>()
     private var numberOfMovesWithoutHit: Int = 0
-    override var hasHitFigure: Boolean = false
+    override val latestExtendedMove: ExtendedMove get() = extendedMovesPlayed.last
 
     override val isWhiteTurn: Boolean get() = board.isWhiteTurn
     override val isCheck get() = board.getCachedAttackLines().isCheck
@@ -68,7 +69,6 @@ internal class EngineChessGameImpl private constructor(
         other.mementoStack.shallowCopy(),
         NumberStack(other.numberStack)
     ) {
-        hasHitFigure = other.hasHitFigure
         numberOfMovesWithoutHit = other.numberOfMovesWithoutHit
     }
 
@@ -85,7 +85,6 @@ internal class EngineChessGameImpl private constructor(
         for (i in 0 until numberOfMovesWithoutHit) numberStack.noFigureHit()
 
         memorizeGame()
-        hasHitFigure = numberOfMovesWithoutHit == 0
 
         for(move in movesSoFar) {
             move(move)
@@ -100,9 +99,10 @@ internal class EngineChessGameImpl private constructor(
     }
 
     private fun move(move: Move): MoveResultType {
-        hasHitFigure = board.move(move).hasHitFigure
+        val extendedMove = board.move(move)
+        extendedMovesPlayed.addLast(extendedMove)
 
-        if (hasHitFigure) {
+        if (extendedMove.hasHitFigure) {
             numberStack.figureHit()
             numberOfMovesWithoutHit = 0
         } else {
@@ -117,6 +117,7 @@ internal class EngineChessGameImpl private constructor(
 
     private fun undo() {
         numberOfMovesWithoutHit = numberStack.undo()
+        extendedMovesPlayed.removeLast()
         mementoStack.removeLast()
 
         board.undo()
@@ -165,27 +166,6 @@ internal class EngineChessGameImpl private constructor(
         }
         return possibleMoves
     }
-
-    override fun getCriticalMoves(): ArrayList<Move> {
-        val criticalMoves = LinkedHashSet<Move>()
-        board.forAllFiguresOfColor(isWhiteTurn) { figure ->
-            figure.forCriticalMoves(board, criticalMoves)
-        }
-        return ArrayList<Move>(criticalMoves.size).apply {
-            addAll(criticalMoves)
-        }
-    }
-
-    override fun getTakingMoves(): ArrayList<Move> {
-        val takingMoves = ArrayList<Move>(16)
-        board.forAllFiguresOfColor(isWhiteTurn) { figure ->
-            figure.forPossibleTakingMoves(board) {
-                takingMoves.add(it)
-            }
-        }
-        return takingMoves
-    }
-
 
     override fun countReachableMoves(): MoveCounter {
         var whiteCount = 0
