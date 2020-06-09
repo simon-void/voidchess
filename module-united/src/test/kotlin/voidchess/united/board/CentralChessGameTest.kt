@@ -69,17 +69,17 @@ class CentralChessGameTest {
         val des = "white 0 King-white-e1-0 Pawn-white-c2-false King-black-e8-0"
         val game = initChessGame(des)
         game.move(Move.byCode("c2-c4"))
-        val newDes = "black 1 King-white-e1-0 Pawn-white-c4-true King-black-e8-0"
+        val newDes = "black 0 King-white-e1-0 Pawn-white-c4-true King-black-e8-0"
         assertEquals(game.toString(), newDes)
     }
 
     @Test
     fun testHandleEnpassant() {
-        val des = "black 0 Pawn-white-c4-true Pawn-black-b4-false " + "King-white-e1-0 King-black-e8-0"
+        val des = "black 0 Pawn-white-c4-true Pawn-black-b4-false King-white-e1-0 King-black-e8-0"
         val game = initChessGame(des)
         val move = Move[Position.byCode("b4"), Position.byCode("c3")]
         game.move(move)
-        val newDes = "white 0 King-white-e1-0 Pawn-black-c3-false " + "King-black-e8-0"
+        val newDes = "white 0 King-white-e1-0 Pawn-black-c3-false King-black-e8-0"
         assertEquals(game.toString(), newDes)
     }
 
@@ -87,7 +87,7 @@ class CentralChessGameTest {
     fun testHandleCastling() {
         var des = "black 0 King-white-e1-0 Rook-black-a8-0 King-black-e8-0 "
         var game = initChessGame(des)
-        var move = Move[Position.byCode("e8"), Position.byCode("a8")]
+        var move = Move.byCode("e8-a8")
         game.move(move)
         var newDes = "white 1 King-white-e1-0 King-black-c8-1-true Rook-black-d8-1"
         assertEquals(game.toString(), newDes)
@@ -123,7 +123,7 @@ class CentralChessGameTest {
 
     @Test
     fun testIsMatt() {
-        val des = "black 0 King-white-e1-0 Queen-black-h2 " + "Pawn-black-f3-false King-black-e8-0"
+        val des = "black 0 King-white-e1-0 Queen-black-h2 Pawn-black-f3-false King-black-e8-0"
         val game = initChessGame(des)
         val endOption = game.move(Move.byCode("h2-e2"))
         assertEquals(MoveResultType.CHECKMATE, endOption)
@@ -131,7 +131,7 @@ class CentralChessGameTest {
 
     @Test
     fun testIsDrawBecauseOfNoMoves() {
-        val des = "black 0 King-white-e1-0 Queen-black-h2 " + "Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0"
+        val des = "black 0 King-white-e1-0 Queen-black-h2 Pawn-black-c2-false Pawn-white-e7-false King-black-e8-0"
         val game = initChessGame(des)
         val endOption = game.move(Move.byCode("h2-g2"))
         assertEquals(MoveResultType.STALEMATE, endOption)
@@ -139,7 +139,7 @@ class CentralChessGameTest {
 
     @Test
     fun testIsDrawBecauseOfLowMaterial() {
-        val des = "white 0 King-white-e1-0 Bishop-black-g2 " + "Knight-white-c2 Knight-white-e7 King-black-e8-0"
+        val des = "white 0 King-white-e1-0 Bishop-black-g2 Knight-white-c2 Knight-white-e7 King-black-e8-0"
         val game = initChessGame(des)
         val endOption = game.move(Move.byCode("e1-f2"))
         assertEquals(MoveResultType.DRAW, endOption)
@@ -169,20 +169,27 @@ class CentralChessGameTest {
     }
 
     @Test
-    fun testIsDrawBecauseOf50HitlessMoves() {
-        var des = "white 98 King-white-e1-0 Pawn-white-a2-false " + "Pawn-black-b4-false King-black-e8-0"
+    fun testIsDrawBecauseOf50MovesWithoutPawnOrCatchingMove() {
+        var des = "white 98 King-white-e1-0 Bishop-white-b2-false Pawn-black-b4-false King-black-e8-0"
         var game = initChessGame(des)
         var endOption: MoveResultType
-        endOption = game.move(Move.byCode("a2-a4"))
+        endOption = game.move(Move.byCode("b2-a3"))
         assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
         endOption = game.move(Move.byCode("b4-a3"))
         assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
 
-        des = "white 98 King-white-e1-0 Pawn-white-a2-false " + "Pawn-black-b4-false King-black-e8-0"
+        des = "white 98 King-white-e1-0 Bishop-white-b2-false Pawn-black-b4-false King-black-e8-0"
         game = initChessGame(des)
-        endOption = game.move(Move.byCode("a2-a4"))
+        endOption = game.move(Move.byCode("b2-a3"))
         assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
         endOption = game.move(Move.byCode("b4-b3"))
+        assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
+
+        des = "white 98 King-white-e1-0 Bishop-white-b2-false Pawn-black-b4-false King-black-e8-0"
+        game = initChessGame(des)
+        endOption = game.move(Move.byCode("b2-a3"))
+        assertNotEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
+        endOption = game.move(Move.byCode("e8-d8"))
         assertEquals(MoveResultType.FIFTY_MOVES_NO_HIT, endOption)
     }
 
@@ -196,7 +203,7 @@ class CentralChessGameTest {
     fun testHandlePawnPromotion(promotionType: Char, figureDes: String) {
         val des = "black 0 King-white-e1-0 Pawn-black-g2-false King-black-e8-0"
         val game = initChessGame(des, "g2${promotionType}g1")
-        assertEquals("white 1 King-white-e1-0 $figureDes King-black-e8-0", game.toString())
+        assertEquals("white 0 King-white-e1-0 $figureDes King-black-e8-0", game.toString())
     }
 
     @DataProvider
@@ -209,32 +216,32 @@ class CentralChessGameTest {
 
     @Test
     fun testIsSelectable() {
-        var des = "white 0 King-white-e1-0 Queen-black-g2 " + "Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0"
+        var des = "white 0 King-white-e1-0 Queen-black-g2 Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0"
         var game = initChessGame(des)
         assertFalse(game.isSelectable(Position.byCode("g2")))
         assertFalse(game.isSelectable(Position.byCode("e1")))
         assertTrue(game.isSelectable(Position.byCode("e6")))
 
-        des = "black 0 King-white-e1-0 Queen-white-e2 " + "Bishop-black-c8 King-black-e8-0"
+        des = "black 0 King-white-e1-0 Queen-white-e2 Bishop-black-c8 King-black-e8-0"
         game = initChessGame(des)
         assertTrue(game.isSelectable(Position.byCode("c8")))
         assertTrue(game.isSelectable(Position.byCode("e8")))
         assertFalse(game.isSelectable(Position.byCode("h8")))
 
-        des = "black 0 King-white-e1-0 Queen-white-e2 " + "Rook-black-a6-1 King-black-e8-0"
+        des = "black 0 King-white-e1-0 Queen-white-e2 Rook-black-a6-1 King-black-e8-0"
         game = initChessGame(des)
         assertTrue(game.isSelectable(Position.byCode("a6")))
     }
 
     @Test
     fun testIsMovable() {
-        var des = "white 0 King-white-e1-0 Queen-black-g2 " + "Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0"
+        var des = "white 0 King-white-e1-0 Queen-black-g2 Pawn-black-c2-false Pawn-white-e6-false King-black-e8-0"
         var game = initChessGame(des)
 
 
         assertTrue(game.isMovable(Position.byCode("e6"), Position.byCode("e7")))
 
-        des = "black 0 King-white-e1-0 Pawn-black-a5-false " + "King-black-g6-2 Rook-white-h6-1"
+        des = "black 0 King-white-e1-0 Pawn-black-a5-false King-black-g6-2 Rook-white-h6-1"
         game = initChessGame(des)
         assertFalse(game.isMovable(Position.byCode("a5"), Position.byCode("a4")))
 
@@ -253,7 +260,7 @@ class CentralChessGameTest {
 
     @Test
     fun testColorChangedBetweenMoves() {
-        val des = "white 0 King-white-e1-0 Pawn-black-g3-false " + "King-black-e8-0"
+        val des = "white 0 King-white-e1-0 Pawn-black-g3-false King-black-e8-0"
         val game = initChessGame(des)
         game.move(Move.byCode("e1-d1"))
         try {
@@ -266,7 +273,7 @@ class CentralChessGameTest {
 
     @Test
     fun testChecksForMoveMovesFigureNotNull() {
-        val des = "white 0 King-white-e1-0 Pawn-black-g3-false " + "King-black-e8-0"
+        val des = "white 0 King-white-e1-0 Pawn-black-g3-false King-black-e8-0"
         val game = initChessGame(des)
         try {
             game.move(Move.byCode("a1-b1"))

@@ -1,10 +1,7 @@
 package voidchess.united.board
 
 import voidchess.common.board.*
-import voidchess.common.board.move.ExtendedMove
-import voidchess.common.board.move.Move
-import voidchess.common.board.move.MoveResultType
-import voidchess.common.board.move.Position
+import voidchess.common.board.move.*
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.King
 import java.util.*
@@ -16,7 +13,7 @@ internal class CentralChessGameImpl private constructor(
     private val mementoStack: ArrayDeque<Memento>,
     private val numberStack: NumberStack
 ): CentralChessGame, StaticChessBoard by board {
-    private var numberOfMovesWithoutHit: Int = 0
+    private var numberOfMovesWithoutPawnOrCatchingMove: Int = 0
     private var latestExtendedMove: ExtendedMove? = null
 
     override val hasHitFigure: Boolean get() = latestExtendedMove?.hasHitFigure ?: startConfig.hasHitFigureInPreviousMove
@@ -38,7 +35,7 @@ internal class CentralChessGameImpl private constructor(
             if (isDrawBecauseOfThreeTimesSamePosition) {
                 return MoveResultType.THREE_TIMES_SAME_POSITION
             }
-            return if (numberOfMovesWithoutHit == 100) {
+            return if (numberOfMovesWithoutPawnOrCatchingMove == 100) {
                 MoveResultType.FIFTY_MOVES_NO_HIT
             } else MoveResultType.NO_END
         }
@@ -54,8 +51,8 @@ internal class CentralChessGameImpl private constructor(
         ArrayDeque<Memento>(64),
         NumberStack()
     ) {
-        numberOfMovesWithoutHit = startConfig.numberOfMovesWithoutHit
-        for (i in 0 until numberOfMovesWithoutHit) numberStack.noFigureHit()
+        numberOfMovesWithoutPawnOrCatchingMove = startConfig.numberOfMovesWithoutHit
+        for (i in 0 until numberOfMovesWithoutPawnOrCatchingMove) numberStack.didNotCatchFigureOrMovePawn()
 
         memorizeGame()
     }
@@ -71,16 +68,17 @@ internal class CentralChessGameImpl private constructor(
     }
 
     override fun move(move: Move): MoveResultType {
-        latestExtendedMove = board.move(move)
+        val extendedMove = board.move(move)
 
-        if (hasHitFigure) {
-            numberStack.figureHit()
-            numberOfMovesWithoutHit = 0
+        if (extendedMove.hasHitFigure || extendedMove.isPawnMove()) {
+            numberStack.didCatchFigureOrMovePawn()
+            numberOfMovesWithoutPawnOrCatchingMove = 0
         } else {
-            numberStack.noFigureHit()
-            numberOfMovesWithoutHit++
+            numberStack.didNotCatchFigureOrMovePawn()
+            numberOfMovesWithoutPawnOrCatchingMove++
         }
 
+        latestExtendedMove = extendedMove
         memorizeGame()
 
         return isEnd
@@ -92,12 +90,12 @@ internal class CentralChessGameImpl private constructor(
         return latestExtendedMove ?: throw IllegalStateException("no move was been executed yet")
     }
 
-    override fun toString() = "${if (isWhiteTurn) "white" else "black"} $numberOfMovesWithoutHit $board"
+    override fun toString() = "${if (isWhiteTurn) "white" else "black"} $numberOfMovesWithoutPawnOrCatchingMove $board"
 
     override fun getCompleteHistory() = board.historyToString(null)
 
     override fun initGame(newConfig: StartConfig) {
-        numberOfMovesWithoutHit = 0
+        numberOfMovesWithoutPawnOrCatchingMove = 0
         mementoStack.clear()
         numberStack.init()
         startConfig = newConfig
@@ -198,11 +196,11 @@ private class NumberStack internal constructor() {
         index = 0
     }
 
-    internal fun noFigureHit() {
+    internal fun didNotCatchFigureOrMovePawn() {
         numberStack[index]++
     }
 
-    internal fun figureHit() {
+    internal fun didCatchFigureOrMovePawn() {
         ensureCapacity()
         index++
     }

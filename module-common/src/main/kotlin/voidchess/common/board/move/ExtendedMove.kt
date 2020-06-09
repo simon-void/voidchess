@@ -15,3 +15,9 @@ sealed class ExtendedMove(
     class Enpassant(pawnMove: Move, val pawnTaken: Figure): ExtendedMove(pawnMove, true)
     class Promotion(pawnPromotionMove: Move, val pawnPromoted: Figure, val figureTaken: Figure?): ExtendedMove(pawnPromotionMove, figureTaken!=null)
 }
+
+fun ExtendedMove.isPawnMove(): Boolean = when(this) {
+    is ExtendedMove.Normal -> this.movingFigureType==FigureType.PAWN
+    is ExtendedMove.Castling -> false
+    else -> true
+}

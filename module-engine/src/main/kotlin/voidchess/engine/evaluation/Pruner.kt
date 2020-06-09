@@ -1,6 +1,7 @@
 package voidchess.engine.evaluation
 
 import voidchess.common.board.move.ExtendedMove
+import voidchess.common.board.move.isPawnMove
 import voidchess.common.figures.FigureType
 import voidchess.engine.evaluation.SearchTreePruner.Companion.MAX_SEARCH_DEPTH
 
@@ -171,10 +172,4 @@ internal class SingleFullMovePrunerWithPawnMoves(private val pawnMoveRadius: Int
         thisMove_extendedMove.isPawnMove() && depth < pawnMoveRadius -> true
         else -> false
     }
-}
-
-private fun ExtendedMove.isPawnMove(): Boolean = when(this) {
-    is ExtendedMove.Normal -> this.movingFigureType==FigureType.PAWN
-    is ExtendedMove.Castling -> false
-    else -> true
 }
