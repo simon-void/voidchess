@@ -81,7 +81,7 @@ private fun benchmark(benchmarkLevel: Int) {
     val movesSoFarHistory: String
 
     val closedPositionHistory = "e2-e4,e7-e5,g1-f3,b8-c6,f1-b5,f8-c5"
-    val openedPositionHistory = closedPositionHistory + "d2-d3,d7-d6,b1-c3,c8-g4"
+    val openedPositionHistory = "$closedPositionHistory,d2-d3,d7-d6,b1-c3,c8-g4"
 
     when(benchmarkLevel) {
         1 -> {

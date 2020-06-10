@@ -8,3 +8,4 @@ simple shuffle                        |                       15.3s      41.0s
 best responses first shuffle L1-depth |                       10.6s      10.4s      74.8s
 best responses first shuffle L0-depth |                        3.7s       8.5s      60.9s
 common best responses first           |                        3.4s       6.4s      53.0s
+predicate pruning                     |                        5.5s       6.6s      37.3s
