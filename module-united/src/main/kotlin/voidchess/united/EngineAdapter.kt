@@ -45,8 +45,8 @@ class EngineAdapter {
         ui.setBubbleText(null)
         ui.showThoughts(true)
 
-        // for ergonomic reasons lets set the minimum successful look-up time to 300ms
-        val chosenMove: EvaluatedMove = ensureMinimumDurationInMs(300) {
+        val ergonomicMinMoveDurationInMS = 300
+        val chosenMove: EvaluatedMove = ensureMinimumDurationInMs(ergonomicMinMoveDurationInMS) {
             nextMove()
         }
 

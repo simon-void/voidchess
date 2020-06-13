@@ -89,9 +89,17 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
                 okDistance = 0.0
             }
             EndgameOption.OnlyPawns -> {
-                pruner  = DefaultPruner(3, 6, 3)
+                val defaultAllMoveRadius = DifficultyOption.pruner.allMoveRadius
+                // PrunerWithPawnMoves makes still sense, because due to pawn promotion
+                pruner  = PrunerWithPawnMoves(defaultAllMoveRadius + 1, defaultAllMoveRadius + 3, defaultAllMoveRadius + 3, defaultAllMoveRadius + 3)
                 staticEval = MiddleGameEval
                 okDistance = 0.0
+            }
+            EndgameOption.PawnsAndMaxOneFigure -> {
+                val defaultAllMoveRadius = DifficultyOption.pruner.allMoveRadius
+                pruner  = PrunerWithPawnMoves(defaultAllMoveRadius + 1, defaultAllMoveRadius + 2, defaultAllMoveRadius + 3, defaultAllMoveRadius + 2)
+                staticEval = MiddleGameEval
+                okDistance = okDistanceToBest/2
             }
             else -> {
                 pruner  = DifficultyOption.pruner
@@ -179,6 +187,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 internal enum class EndgameOption {
     // TODO add more endgame options
     No,
+    PawnsAndMaxOneFigure,
     OnlyPawns,
     OneSidedWithQueen,
     OneSidedWithRook,

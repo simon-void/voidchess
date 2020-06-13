@@ -9,6 +9,7 @@ import voidchess.common.integration.ColdPromise
 import voidchess.common.integration.TableAdapter
 import voidchess.ui.swing.ChessboardComponent
 import voidchess.ui.swing.PosType
+import voidchess.ui.swing.showErrorDialog
 import java.util.concurrent.Executors
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
@@ -56,12 +57,16 @@ internal class SwingPlayerImpl(
         singleThreadExecutor.submit {
             computeMoveJob = computerMovePromise
             computerMovePromise.computeAndCallback { computerMoveResult ->
+                val computerMove: ComputerMoveResult = computerMoveResult.getOrElse { exception ->
+                    showErrorDialog(ui, exception)
+                    return@computeAndCallback
+                }
                 computeMoveJob = null
-                game.move(computerMoveResult.extendedComputerMove.move)
+                game.move(computerMove.extendedComputerMove.move)
                 SwingUtilities.invokeLater {
-                    ui.repaintAfterMove(computerMoveResult.extendedComputerMove)
+                    ui.repaintAfterMove(computerMove.extendedComputerMove)
 
-                    when (computerMoveResult) {
+                    when (computerMove) {
                         is ComputerMoveResult.GameEnds -> {
                             gameEnds()
                         }
@@ -131,7 +136,11 @@ internal class SwingPlayerImpl(
                 } else {
                     Move[lockedFrom, pos]
                 }
-                move(move)
+                runCatching {
+                    move(move)
+                }.onFailure { exception ->
+                    showErrorDialog(ui,exception)
+                }
             }
         }
     }
@@ -167,6 +176,9 @@ internal class SwingPlayerImpl(
 
     override fun startSelected(chess960Index: Int) {
         val startConfig = StartConfig.Chess960Config(chess960Index)
+//        val startConfig = StartConfig.ManualConfig(true, 5,
+//            "King-white-g1-4 King-black-c5-9 Pawn-white-a6-false".split(" ")
+//        )
         game.initGame(startConfig)
         ui.startNewGame()
         isMyTurn = isWhitePlayer

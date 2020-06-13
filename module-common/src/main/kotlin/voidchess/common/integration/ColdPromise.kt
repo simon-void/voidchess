@@ -6,7 +6,7 @@ import kotlinx.coroutines.runBlocking
 
 
 interface ColdPromise<out T> {
-    fun computeAndCallback(callback: (T) -> Unit)
+    fun computeAndCallback(callback: (Result<T>) -> Unit)
     fun cancel()
 }
 
@@ -17,15 +17,19 @@ class ColdPromiseImpl<out T>(
     private var hasNotBeenCalled = true
 
     override fun computeAndCallback(
-        callback: (T) -> Unit
+        callback: (Result<T>) -> Unit
     ) {
         check(hasNotBeenCalled) {"one-time function has already been called"}
         hasNotBeenCalled = false
 
         runBlocking {
             computeJob = launch {
-                val value = generateValue()
-                callback(value)
+                val result: Result<T> = try{
+                    Result.success(generateValue())
+                } catch (e: Throwable) {
+                    Result.failure(e)
+                }
+                callback(result)
                 computeJob = null
             }
         }

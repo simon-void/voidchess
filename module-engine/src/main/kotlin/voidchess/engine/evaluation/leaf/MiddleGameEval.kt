@@ -349,7 +349,7 @@ internal object MiddleGameEval : StaticEval() {
     private const val NEXT_TO_VALUE = 0.06                 // bonus, if a pawn has a neighbour
     private const val UNPROTECTED_BORDER_PAWN_VALUE = -0.2 // malus for an uncovered pawn on the sideline (a or h)
 
-    private const val NOT_YET_CASTLED_PUNISHMENT = -0.3
+    private const val NOT_YET_CASTLED_PUNISHMENT = -0.1
 
     private const val BIG_KING_DEFENSE_VALUE = 0.5
     private const val SMALL_KING_DEFENSE_VALUE = 0.2

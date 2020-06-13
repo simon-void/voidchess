@@ -2,10 +2,11 @@ package voidchess.engine.evaluation
 
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.isPawnMove
-import voidchess.common.figures.FigureType
 import voidchess.engine.evaluation.SearchTreePruner.Companion.MAX_SEARCH_DEPTH
 
 internal interface SearchTreePruner {
+
+    val allMoveRadius: Int
 
     fun continueMinDynamicEvaluationBy(
             depth: Int,
@@ -30,7 +31,7 @@ internal interface SearchTreePruner {
     }
 }
 
-internal class PrunerWithPawnMoves(private val allMoveRadius: Int = 2, private val pawnMoveRadius: Int = 3, private val takingMoveRadius: Int = 4, private val lookForCheckMateRadius: Int = 3) : SearchTreePruner {
+internal class PrunerWithPawnMoves(override val allMoveRadius: Int = 2, private val pawnMoveRadius: Int = 3, private val takingMoveRadius: Int = 4, private val lookForCheckMateRadius: Int = 3) : SearchTreePruner {
 
     init {
         require (allMoveRadius >= 2) {"allMoveRadius has to be at least 2 but is $allMoveRadius"}
@@ -68,7 +69,7 @@ internal class PrunerWithPawnMoves(private val allMoveRadius: Int = 2, private v
     }
 }
 
-internal class DefaultPruner(private val allMoveRadius: Int = 2, private val takingMoveRadius: Int = 4, private val lookForCheckMateRadius: Int = 3) : SearchTreePruner {
+internal class DefaultPruner(override val allMoveRadius: Int = 2, private val takingMoveRadius: Int = 4, private val lookForCheckMateRadius: Int = 3) : SearchTreePruner {
 
     init {
         require (allMoveRadius >= 2) {"allMoveRadius has to be at least 2 but is $allMoveRadius"}
@@ -110,6 +111,8 @@ internal class SingleFullMovePruner(private val takingMoveRadius: Int = 4, priva
         require (lookForCheckMateRadius in 1..MAX_SEARCH_DEPTH) {"lookForCheckMateRadius has to be in [$1, $MAX_SEARCH_DEPTH] but is $lookForCheckMateRadius"}
     }
 
+    override val allMoveRadius = 1
+
     override fun continueMinDynamicEvaluationBy(
             depth: Int,
             thisMove_isChess: Boolean,
@@ -144,6 +147,8 @@ internal class SingleFullMovePrunerWithPawnMoves(private val pawnMoveRadius: Int
         require (takingMoveRadius in pawnMoveRadius..MAX_SEARCH_DEPTH) {"takingMoveRadius has to be in [$pawnMoveRadius, $MAX_SEARCH_DEPTH] but is $takingMoveRadius"}
         require (lookForCheckMateRadius in pawnMoveRadius..MAX_SEARCH_DEPTH) {"lookForCheckMateRadius has to be in [$pawnMoveRadius, $MAX_SEARCH_DEPTH] but is $lookForCheckMateRadius"}
     }
+
+    override val allMoveRadius = 1
 
     override fun continueMinDynamicEvaluationBy(
             depth: Int,
