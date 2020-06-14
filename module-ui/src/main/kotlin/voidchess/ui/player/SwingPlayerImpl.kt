@@ -147,12 +147,14 @@ internal class SwingPlayerImpl(
 
     private fun askForPawnPromotionType(): PawnPromotion {
         val figs = arrayOf("Queen", "Knight", "Rook", "Bishop")
-        val out = JOptionPane.showInputDialog(null,
+        val out = JOptionPane.showInputDialog(
+            ui,
             "Promote pawn to what type?",
             "pawn promotion",
             JOptionPane.QUESTION_MESSAGE, null,
             figs,
-            "Queen") as String
+            "Queen"
+        ) as String
 
         return when (out) {
             "Queen" -> PawnPromotion.QUEEN
