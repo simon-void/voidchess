@@ -7,9 +7,10 @@ fun showErrorDialog(parent: Component?, exception: Throwable) {
     JOptionPane.showMessageDialog(
         parent,
         """
-        An exception occurred: $exception
-        Please consider logging an Issue here:
-        https://github.com/simon-void/voidchess/issues
+        An exception occurred:
+        ${if(exception is IllegalStateException) exception.message else exception}
+        Please consider logging an Issue here: https://github.com/simon-void/voidchess/issues
+        Adding a screenshot of the position which triggered the problem would be appreciated.
         """.trimIndent(),
         "VoidChess error",
         JOptionPane.ERROR_MESSAGE

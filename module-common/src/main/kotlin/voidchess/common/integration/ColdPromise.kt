@@ -3,11 +3,12 @@ package voidchess.common.integration
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.CancellationException
 
 
 interface ColdPromise<out T> {
     fun computeAndCallback(callback: (Result<T>) -> Unit)
-    fun cancel()
+    fun cancel(cancellationMsg: String? = null)
 }
 
 class ColdPromiseImpl<out T>(
@@ -35,8 +36,8 @@ class ColdPromiseImpl<out T>(
         }
     }
 
-    override fun cancel() {
-        computeJob?.cancel()
+    override fun cancel(cancellationMsg: String?) {
+        computeJob?.cancel(cancellationMsg?.let { CancellationException(cancellationMsg) })
         computeJob = null
     }
 }

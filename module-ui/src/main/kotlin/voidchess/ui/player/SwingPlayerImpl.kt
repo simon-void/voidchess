@@ -58,7 +58,12 @@ internal class SwingPlayerImpl(
             computeMoveJob = computerMovePromise
             computerMovePromise.computeAndCallback { computerMoveResult ->
                 val computerMove: ComputerMoveResult = computerMoveResult.getOrElse { exception ->
-                    showErrorDialog(ui, exception)
+                    val isPlayerResignedException = exception.message?.let {
+                        it.contains("CancellationException") && it.contains(resignMsg)
+                    } ?: false
+                    if(!isPlayerResignedException) {
+                        showErrorDialog(ui, exception)
+                    }
                     return@computeAndCallback
                 }
                 computeMoveJob = null
@@ -170,7 +175,7 @@ internal class SwingPlayerImpl(
     }
 
     override fun resignSelected() {
-        computeMoveJob?.cancel()
+        computeMoveJob?.cancel(resignMsg)
         computeMoveJob = null
         tableAdapter.resign()
         gameEnds()
@@ -195,3 +200,5 @@ internal class SwingPlayerImpl(
 
 typealias EnableUI = ()->Unit
 typealias EnableButton = (Boolean)->Unit
+
+private const val resignMsg = "player resigned"
