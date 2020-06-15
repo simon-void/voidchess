@@ -65,7 +65,7 @@ tasks {
                 destinationDir = "build/installer",
                 mainJar = "voidchess-$projectVersion-all.jar",
                 addModules = listOf("java.desktop"),
-                winIcoIconPath = "about/shortcut-icon.ico2",
+                winIcoIconPath = "about/shortcut-icon2.ico",
                 winShortcut = true,
                 winMenu = true,
                 linuxPngIconPath = "about/shortcut-icon2.png",
