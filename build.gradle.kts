@@ -53,8 +53,8 @@ tasks {
         dependsOn("build")
 
         doLast {
-            if (JavaVersion.current() < JavaVersion.VERSION_14) {
-                throw GradleException("Require Java 14+ to run 'jpackage' (currently ${JavaVersion.current()})")
+            if (JavaVersion.current() < JavaVersion.VERSION_15) {
+                throw GradleException("Require Java 15+ to run 'jpackage' (currently ${JavaVersion.current()})")
             }
             val projectVersion = project.version.toString()
             JPackage.buildInstaller(

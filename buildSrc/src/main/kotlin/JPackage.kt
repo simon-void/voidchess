@@ -52,13 +52,19 @@ object JPackage {
             args.toTypedArray()
         }
 
-        return execJpackageViaRuntime(arguments)
+        return execJpackageViaToolProvider(arguments)
     }
 
     /**
      * Unfortunately this approach doesn't work until jpackage leaves the incubator status
      * More background here: https://stackoverflow.com/a/61310708/4515050
-     * TODO use this method, when jpackage leaves incubator
+     * outdated: to do: use this method, when jpackage leaves incubator
+     *
+     * After adding the jpackage incubator module via gradle.properties (using org.gradle.jvmargs),
+     * the jpackage tool is found but it throws an exception in Ubuntu stating:
+     * java.io.IOException: Command [fakeroot, dpkg-deb, ... exited with 2 code
+     * I found a bug ticket that claimed this would be fixed in OpenJDK 15
+     * TODO wait for Java 15
      */
     private fun execJpackageViaToolProvider(arguments: Array<String>): Int {
         val jpackageTool: ToolProvider = ToolProvider.findFirst("jpackage").orElseThrow {
