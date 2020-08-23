@@ -9,13 +9,9 @@ import voidchess.common.helper.splitAndTrim
 import voidchess.common.engine.ProgressCallback
 import voidchess.common.engine.EvaluatedMove
 import voidchess.engine.concurrent.SingleThreadStrategy
-import voidchess.engine.evaluation.DefaultPruner
 import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.engine.evaluation.MinMaxEval
 import voidchess.engine.evaluation.SingleFullMovePruner
-
-import java.util.ArrayList
-
 
 internal class OpeningsLibrary(
     openingSequences: List<String>

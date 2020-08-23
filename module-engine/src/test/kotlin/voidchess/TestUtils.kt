@@ -6,7 +6,6 @@ import voidchess.common.board.other.StartConfig
 import voidchess.common.helper.splitAndTrim
 import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.board.EngineChessGame
-import java.util.*
 
 
 internal fun initChessGame(startConfig: StartConfig, vararg moveCodes: String): EngineChessGame =

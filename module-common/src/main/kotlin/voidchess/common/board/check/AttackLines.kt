@@ -7,7 +7,6 @@ import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
 import voidchess.common.figures.Knight
 import voidchess.common.figures.Pawn
-import java.util.*
 import kotlin.collections.HashMap
 
 
@@ -30,7 +29,7 @@ fun checkAttackLines(game: StaticChessBoard, isWhite: Boolean): AttackLines {
     val king = game.getKing(isWhite)
     val kingPos = king.position
 
-    val checkLines = LinkedList<CheckLine>()
+    val checkLines = ArrayList<CheckLine>()
     val boundLineByBoundFigurePos = HashMap<Position, BoundLine>(8)
 
     // check for check by bishop, rook or queen (the only figures that can also bind other figures)

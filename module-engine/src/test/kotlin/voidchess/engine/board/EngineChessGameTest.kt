@@ -313,21 +313,45 @@ internal class EngineChessGameTest {
         }
     }
 
-    @Test
-    fun testIsDrawBecauseOfThreeTimesSamePosition() {
+    @Test(dataProvider = "get3TimesSamePositionData")
+    fun testIsDrawBecauseOfThreeTimesSamePosition(des: String, listOfMoves: List<String>) {
+        val nextToLastIndex = listOfMoves.lastIndex - 1
+        val game = initChessGame(des, *listOfMoves.subList(0, nextToLastIndex).toTypedArray())
+
+        val nextToLastMove = Move.byCode(listOfMoves[nextToLastIndex])
+        val lastMove = Move.byCode(listOfMoves[listOfMoves.lastIndex])
+
+        game.withMove(nextToLastMove) { moveResult1 ->
+            assertEquals(MoveResultType.NO_END, moveResult1, "move played: $nextToLastMove")
+            game.withMove(lastMove) { moveResult2 ->
+                assertEquals(MoveResultType.THREE_TIMES_SAME_POSITION, moveResult2, "move played: $lastMove")
+            }
+        }
+    }
+
+    @DataProvider
+    fun get3TimesSamePositionData(): Array<Array<Any>> {
         val whiteMove = "c2-a1"
         val whiteReturn = "a1-c2"
         val blackMove = "g2-h3"
         val blackReturn = "h3-g2"
-        val des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 Knight-white-c2 Knight-white-e7 King-black-e8-0"
-        val game = initChessGame(des, whiteMove, blackMove, whiteReturn, blackReturn, whiteMove, blackMove)
-
-        game.withMove(Move.byCode(whiteReturn)) { moveResult1 ->
-            assertEquals(moveResult1, MoveResultType.NO_END)
-            game.withMove(Move.byCode(blackReturn)) { moveResult2 ->
-                assertEquals(moveResult2, MoveResultType.THREE_TIMES_SAME_POSITION)
-            }
-        }
+        return arrayOf(
+            arrayOf(
+                "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 Knight-white-c2 Knight-white-e7 King-black-e8-0",
+                listOf(
+                    whiteMove, blackMove, whiteReturn, blackReturn, whiteMove, blackMove, whiteReturn, blackReturn,
+                ),
+            ),
+            arrayOf(
+                "white 0 King-white-a2-4 King-black-a7-4 Queen-white-a1 Queen-black-a8 Knight-white-b8",
+                listOf(
+                    "a1-b1", "a8-b8", "b1-c1", "b8-c8",
+                    "c1-b1", "c8-b8", "b1-a1", "b8-a8",
+                    "a1-b1", "a8-b8", "b1-c1", "b8-c8",
+                    "c1-a1", "c8-a8", "a1-b1", "a8-b8",
+                ),
+            ),
+        )
     }
 
     @Test

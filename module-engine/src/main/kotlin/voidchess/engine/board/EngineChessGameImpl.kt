@@ -8,19 +8,18 @@ import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.King
 import voidchess.engine.evaluation.SearchTreePruner
-import java.util.*
 import kotlin.collections.ArrayList
 
 
 internal class EngineChessGameImpl private constructor(
     override val startConfig: StartConfig,
     private val board: ChessBoard,
-    private val mementoStack: ArrayDeque<Memento>,
+    private val mementoStack: ArrayList<Memento>,
     private val numberStack: NumberStack
 ): EngineChessGame, StaticChessBoard by board {
-    private val extendedMovesPlayed = LinkedList<ExtendedMove>()
+    private val extendedMovesPlayed = ArrayDeque<ExtendedMove>()
     private var numberOfMovesWithoutHit: Int = 0
-    override val latestExtendedMove: ExtendedMove get() = extendedMovesPlayed.last
+    override val latestExtendedMove: ExtendedMove get() = extendedMovesPlayed.last()
 
     override val isWhiteTurn: Boolean get() = board.isWhiteTurn
     override val isCheck get() = board.getCachedAttackLines().isCheck
@@ -46,7 +45,7 @@ internal class EngineChessGameImpl private constructor(
         }
 
     private val isDrawBecauseOfThreeTimesSamePosition: Boolean
-        get() = mementoStack.countOccurrencesOfLastMemento() >= 3
+        get() = mementoStack.doesLatestMementoOccurThreeTimes(numberOfMovesWithoutHit)
 
     /**
      * copy-constructor
@@ -66,7 +65,7 @@ internal class EngineChessGameImpl private constructor(
                 board.move(move)
             }
         },
-        ArrayDeque(other.mementoStack),
+        ArrayList(other.mementoStack),
         NumberStack(other.numberStack)
     ) {
         numberOfMovesWithoutHit = other.numberOfMovesWithoutHit
@@ -78,7 +77,7 @@ internal class EngineChessGameImpl private constructor(
     ) : this(
         startConfig,
         ArrayChessBoard(startConfig),
-        ArrayDeque<Memento>(64),
+        ArrayList<Memento>(64),
         NumberStack()
     ) {
         numberOfMovesWithoutHit = startConfig.numberOfMovesWithoutHit
@@ -218,7 +217,9 @@ internal class EngineChessGameImpl private constructor(
         return gameInstances
     }
 
-    private fun memorizeGame() = mementoStack.addLast(Memento(board, isWhiteTurn))
+    private fun memorizeGame() {
+        mementoStack.add(Memento(board))
+    }
 }
 
 private class NumberStack {
@@ -250,6 +251,8 @@ private class NumberStack {
         ensureCapacity()
         index++
     }
+
+    val noMovesWithoutFigureHit: Int get() = numberStack[index]
 
     fun undo(): Int {
         if (numberStack[index] == 0) {

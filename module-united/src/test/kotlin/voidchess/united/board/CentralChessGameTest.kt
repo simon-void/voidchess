@@ -10,6 +10,7 @@ import voidchess.common.board.move.Position
 import voidchess.common.figures.Bishop
 import voidchess.common.figures.King
 import voidchess.initChessGame
+import voidchess.toManualConfig
 import kotlin.test.*
 
 
@@ -145,27 +146,42 @@ class CentralChessGameTest {
         assertEquals(MoveResultType.DRAW, endOption)
     }
 
-    @Test
-    fun testIsDrawBecauseOfThreeTimesSamePosition() {
-        val des = "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 Knight-white-c2 Knight-white-e7 King-black-e8-0"
-        val game = initChessGame(des)
-        val whiteMove = Move.byCode("c2-a1")
-        val whiteReturn = Move.byCode("a1-c2")
-        val blackMove = Move.byCode("g2-h3")
-        val blackReturn = Move.byCode("h3-g2")
+    @Test(dataProvider = "get3TimesSamePositionData")
+    fun testIsDrawBecauseOfThreeTimesSamePosition(startConfig: StartConfig, listOfMoves: List<String>) {
+        val game = CentralChessGameImpl(startConfig)
 
-        assertEquals(game.move(whiteMove), MoveResultType.NO_END)
-        assertEquals(game.move(blackMove), MoveResultType.NO_END)
-        assertEquals(game.move(whiteReturn), MoveResultType.NO_END)
-        assertEquals(game.move(blackReturn), MoveResultType.NO_END)
+        listOfMoves.map { Move.byCode(it) }.forEachIndexed { index, move ->
+            val expectedMoveResultType =
+                if (index < listOfMoves.lastIndex) MoveResultType.NO_END
+                else MoveResultType.THREE_TIMES_SAME_POSITION
 
-        assertEquals(game.move(whiteMove), MoveResultType.NO_END)
-        assertEquals(game.move(blackMove), MoveResultType.NO_END)
-        assertEquals(game.move(whiteReturn), MoveResultType.NO_END)
-        //        assertEquals(game.move(blackReturn), MoveResult.NO_END);
-        assertEquals(game.move(blackReturn), MoveResultType.THREE_TIMES_SAME_POSITION)
+            assertEquals(game.move(move), expectedMoveResultType, "unexpected MoveResultType at index $index")
+        }
+    }
 
-        //        assertEquals(game.move(whiteMove), MoveResult.THREE_TIMES_SAME_POSITION);
+    @DataProvider
+    fun get3TimesSamePositionData(): Array<Array<Any>> {
+        val whiteMove = "c2-a1"
+        val whiteReturn = "a1-c2"
+        val blackMove = "g2-h3"
+        val blackReturn = "h3-g2"
+        return arrayOf(
+            arrayOf(
+                "white 0 King-white-e1-0 Bishop-black-g2 Bishop-white-b2 Knight-white-c2 Knight-white-e7 King-black-e8-0".toManualConfig(),
+                listOf(
+                    whiteMove, blackMove, whiteReturn, blackReturn, whiteMove, blackMove, whiteReturn, blackReturn,
+                ),
+            ),
+//            arrayOf(
+//                "white 0 King-white-a2-4 King-black-a7-4 Queen-white-a1 Queen-black-a8 Knight-white-b8".toManualConfig(),
+//                listOf(
+//                    "a1-b1", "a8-b8", "b1-c1", "b8-c8",
+//                    "c1-b1", "c8-b8", "b1-a1", "b8-a8",
+//                    "a1-b1", "a8-b8", "b1-c1", "b8-c8",
+//                    "c1-a1", "c8-a8", "a1-b1", "a8-b8",
+//                ),
+//            ),
+        )
     }
 
     @Test

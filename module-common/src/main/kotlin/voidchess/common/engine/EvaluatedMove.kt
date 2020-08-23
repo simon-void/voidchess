@@ -1,7 +1,6 @@
 package voidchess.common.engine
 
 import voidchess.common.board.move.Move
-import java.util.*
 
 data class EvaluatedMove(val move: Move, val value: Evaluation)
 

@@ -4,14 +4,12 @@ import voidchess.common.board.*
 import voidchess.common.board.move.*
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.King
-import java.util.*
 
 
 internal class CentralChessGameImpl private constructor(
     private val board: ChessBoard,
     override var startConfig: StartConfig,
-    private val mementoStack: ArrayDeque<Memento>,
-    private val numberStack: NumberStack
+    private val mementoStack: ArrayList<Memento>
 ): CentralChessGame, StaticChessBoard by board {
     private var numberOfMovesWithoutPawnOrCatchingMove: Int = 0
     private var latestExtendedMove: ExtendedMove? = null
@@ -41,19 +39,16 @@ internal class CentralChessGameImpl private constructor(
         }
 
     private val isDrawBecauseOfThreeTimesSamePosition: Boolean
-        get() = mementoStack.countOccurrencesOfLastMemento() >= 3
+        get() = mementoStack.doesLatestMementoOccurThreeTimes(numberOfMovesWithoutPawnOrCatchingMove)
 
     constructor(
         startConfig: StartConfig = StartConfig.ClassicConfig
     ) : this(
         ArrayChessBoard(startConfig),
         startConfig,
-        ArrayDeque<Memento>(64),
-        NumberStack()
+        ArrayList<Memento>(64)
     ) {
         numberOfMovesWithoutPawnOrCatchingMove = startConfig.numberOfMovesWithoutHit
-        for (i in 0 until numberOfMovesWithoutPawnOrCatchingMove) numberStack.didNotCatchFigureOrMovePawn()
-
         memorizeGame()
     }
 
@@ -71,10 +66,8 @@ internal class CentralChessGameImpl private constructor(
         val extendedMove = board.move(move)
 
         if (extendedMove.hasHitFigure || extendedMove.isPawnMove()) {
-            numberStack.didCatchFigureOrMovePawn()
             numberOfMovesWithoutPawnOrCatchingMove = 0
         } else {
-            numberStack.didNotCatchFigureOrMovePawn()
             numberOfMovesWithoutPawnOrCatchingMove++
         }
 
@@ -97,7 +90,6 @@ internal class CentralChessGameImpl private constructor(
     override fun initGame(newConfig: StartConfig) {
         numberOfMovesWithoutPawnOrCatchingMove = 0
         mementoStack.clear()
-        numberStack.init()
         startConfig = newConfig
         board.init(newConfig)
 
@@ -128,37 +120,7 @@ internal class CentralChessGameImpl private constructor(
         return !board.getKing(caseWhite).isSelectable(board)
     }
 
-    private fun memorizeGame() = mementoStack.addLast(Memento(board, isWhiteTurn))
-}
-
-private class NumberStack {
-    private var numberStack: IntArray
-    private var index: Int = 0
-
-    init {
-        numberStack = IntArray(50)
-        init()
-    }
-
-    fun init() {
-        for (i in numberStack.indices) numberStack[i] = 0
-        index = 0
-    }
-
-    fun didNotCatchFigureOrMovePawn() {
-        numberStack[index]++
-    }
-
-    fun didCatchFigureOrMovePawn() {
-        ensureCapacity()
-        index++
-    }
-
-    private fun ensureCapacity() {
-        if (index + 1 == numberStack.size) {
-            val newNumberStack = IntArray(numberStack.size * 2)
-            System.arraycopy(numberStack, 0, newNumberStack, 0, numberStack.size)
-            numberStack = newNumberStack
-        }
+    private fun memorizeGame() {
+        mementoStack.add(Memento(board))
     }
 }

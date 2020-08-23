@@ -1,21 +1,24 @@
 package voidchess.common.board
 
 import voidchess.common.board.move.Position
-import java.util.ArrayDeque
 
-class Memento constructor(game: StaticChessBoard, private val isWhite: Boolean) {
+class Memento (
+        game: StaticChessBoard,
+) {
     private val figureCount: Int
     private val compressedBoard: LongArray
 
     init {
-        var count = 0
         val board = IntArray(64)
-        for (index in 0..63) {
-            val figure = game.getFigureOrNull(Position.byIndex(index))
-            if (figure != null) {
-                board[index] = figure.typeInfo
-                count++
+        figureCount = run {
+            var count = 0
+            for (index in 0..63) {
+                game.getFigureOrNull(Position.byIndex(index))?.let { figure ->
+                    board[index] = figure.typeInfo
+                    count++
+                }
             }
+            count
         }
 
         // compress the board by exploiting that typeInfo is smaller than 16
@@ -26,16 +29,19 @@ class Memento constructor(game: StaticChessBoard, private val isWhite: Boolean) 
                 compressBoardSlicesToLong(board, 30, 45),
                 compressBoardSlicesToLong(board, 45, 60),
                 compressBoardSlicesToLong(board, 60, 64))
-        figureCount = count
     }
 
-    fun hasDifferentNumberOfFiguresAs(other: Memento): Boolean {
-        return figureCount != other.figureCount
-    }
+    fun hasSameNumberOfFiguresAs(other: Memento): Boolean = figureCount == other.figureCount
 
-    fun equalsOther(other: Memento): Boolean {
-        return isWhite == other.isWhite && compressedBoard.contentEquals(other.compressedBoard)
-    }
+    /**
+     * calling function has to make sure that only Mementos are compared that are guaranteed
+     * to have been created for Mementos of a "different color"
+     * (since the same configuration on the board doesn't count as same configuration, if
+     * it's the other player's turn)
+     */
+    fun equalsOtherWhileAssertingColorMatch(other: Memento): Boolean =
+        //isWhite == other.isWhite &&
+        compressedBoard.contentEquals(other.compressedBoard)
 
     private fun compressBoardSlicesToLong(board: IntArray, startIndex: Int, endIndex: Int): Long {
         assert(endIndex - startIndex < 16)
@@ -54,34 +60,31 @@ class Memento constructor(game: StaticChessBoard, private val isWhite: Boolean) 
     }
 }
 
-fun ArrayDeque<Memento>.countOccurrencesOfLastMemento(): Int {
-    val inverseIter: Iterator<Memento> = descendingIterator()
-    val lastMemento = inverseIter.next()
+fun ArrayList<Memento>.doesLatestMementoOccurThreeTimes(
+        numberOfMovesWithoutPawnMoveOrFigureTaken: Int
+): Boolean {
+    // the second condition happens only in test when the game is initialized from a description where figureTaken at startup > 0
+    if (numberOfMovesWithoutPawnMoveOrFigureTaken < 8 || numberOfMovesWithoutPawnMoveOrFigureTaken > size) return false
+    val lastIndex = this.lastIndex
+    val earliestIndex = (lastIndex-numberOfMovesWithoutPawnMoveOrFigureTaken)
+    val lastMemento = this[lastIndex]
     var count = 1
 
-    // check only every second memento
-    if(inverseIter.hasNext()) {
-        inverseIter.next()
-    }else{
-        return count
+    assert(lastMemento.hasSameNumberOfFiguresAs(this[earliestIndex])) {
+        """
+        since the number of figures between the earlies and last index to check doesn't match,
+        the value of the numberOfMovesWithoutPawnMoveOrFigureTaken parameter must have been off.
+        """.trimIndent()
     }
 
-    while(inverseIter.hasNext()) {
-        val memento = inverseIter.next()
-        if(memento.hasDifferentNumberOfFiguresAs(lastMemento)) {
-            break
-        }
-        if(memento.equalsOther(lastMemento)) {
+    for(i in (lastIndex-4) downTo earliestIndex step 2) {
+        val currentMemento = this[i]
+        if(lastMemento.equalsOtherWhileAssertingColorMatch(currentMemento)) {
             count++
-        }
-
-        // check only every second memento
-        if(inverseIter.hasNext()) {
-            inverseIter.next()
-        }else{
-            break
+            if(count==3) {
+                return true
+            }
         }
     }
-
-    return count
+    return false
 }
