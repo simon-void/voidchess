@@ -1,14 +1,10 @@
 package voidchess.common.helper
 
-import java.util.SortedMap
-import java.util.TreeMap
-
-
 class TreeNode<T, K : Comparable<K>> private constructor(
     private var data: T,
     private val getKey: (T)->K
 ) : Comparable<TreeNode<T, K>> {
-    private var childrenByData: SortedMap<K, TreeNode<T, K>> = TreeMap()
+    private var childrenByData: MutableMap<K, TreeNode<T, K>> = mutableMapOf()
 
     val depth: Int by lazy {
         childrenByData.values.maxByOrNull { treeNode -> treeNode.depth }?.let { treeNode -> treeNode.depth + 1 } ?: 0
