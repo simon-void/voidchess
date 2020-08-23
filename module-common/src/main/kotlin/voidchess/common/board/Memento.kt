@@ -5,7 +5,7 @@ import voidchess.common.board.move.Position
 class Memento (
         game: StaticChessBoard,
 ) {
-    private val figureCount: Int
+    private val figureCount: Byte
     private val compressedBoard: LongArray
 
     init {
@@ -18,17 +18,17 @@ class Memento (
                     count++
                 }
             }
-            count
+            count.toByte()
         }
 
         // compress the board by exploiting that typeInfo is smaller than 16
-        // and therefore only 4 bits are needed -> pack 15 typeInfos into 1 long
+        // and therefore only 4 bits are needed -> pack 16 typeInfos into 1 long
         compressedBoard = longArrayOf(
-                compressBoardSlicesToLong(board, 0, 15),
-                compressBoardSlicesToLong(board, 15, 30),
-                compressBoardSlicesToLong(board, 30, 45),
-                compressBoardSlicesToLong(board, 45, 60),
-                compressBoardSlicesToLong(board, 60, 64))
+                compressBoardSlicesToLong(board, 0, 16),
+                compressBoardSlicesToLong(board, 16, 32),
+                compressBoardSlicesToLong(board, 32, 48),
+                compressBoardSlicesToLong(board, 48, 64),
+        )
     }
 
     fun hasSameNumberOfFiguresAs(other: Memento): Boolean = figureCount == other.figureCount
@@ -44,7 +44,7 @@ class Memento (
         compressedBoard.contentEquals(other.compressedBoard)
 
     private fun compressBoardSlicesToLong(board: IntArray, startIndex: Int, endIndex: Int): Long {
-        assert(endIndex - startIndex < 16)
+        assert(endIndex - startIndex <= 16)
 
         val endIndexMinusOne = endIndex - 1
         var compressedValue: Long = 0
