@@ -30,7 +30,7 @@ class EngineAdapter {
 
     suspend fun play(): Move = coroutineScope {
         suspend fun <T: Any> ensureMinimumDurationInMs(minimumDuration: Int, f: suspend ()->T): T {
-            // TODO in Kotlin 1.4 because of contracts "lateinit var" should be replacable by "val"
+            // TODO when Kotlin contracts come out because "lateinit var" should be replaceable by "val"
             lateinit var result: T
             val lookUpDurationInMillies = measureTimeMillis {
                 result = f()

@@ -9,7 +9,6 @@ import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.other.boardInstanciator
 import voidchess.common.figures.*
-import java.util.*
 import kotlin.math.abs
 
 
@@ -18,7 +17,6 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
     override var isWhiteTurn: Boolean = true
 
     private val board: Array<Figure?> = arrayOfNulls(64)
-    // TODO use kotlin.ArrayDeque if that is no longer experimental (in Kotlin 1.4)
     private val extendedMoveStack = ArrayDeque<ExtendedMove>(16)
 
     // the alternative to creating dummy instances for white and black king is 'lateinit'

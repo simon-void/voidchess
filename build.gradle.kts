@@ -7,7 +7,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.0"
     application
     id("com.github.johnrengelman.shadow") version "5.0.0"
 }
@@ -17,8 +17,6 @@ application {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-
     implementation(project(":module-common"))
     implementation(project(":module-ui"))
     implementation(project(":module-united"))

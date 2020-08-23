@@ -11,7 +11,7 @@ class TreeNode<T, K : Comparable<K>> private constructor(
     private var childrenByData: SortedMap<K, TreeNode<T, K>> = TreeMap()
 
     val depth: Int by lazy {
-        childrenByData.values.maxBy { treeNode -> treeNode.depth }?.let { treeNode -> treeNode.depth + 1 } ?: 0
+        childrenByData.values.maxByOrNull { treeNode -> treeNode.depth }?.let { treeNode -> treeNode.depth + 1 } ?: 0
     }
 
     val childData: List<T>

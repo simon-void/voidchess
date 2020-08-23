@@ -4,8 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-
     Deps.coroutineDeps.forEach { implementation(it) }
     Deps.testDeps.forEach { testImplementation(it) }
 }

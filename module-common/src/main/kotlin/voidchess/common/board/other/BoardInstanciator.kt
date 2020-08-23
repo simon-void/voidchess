@@ -6,29 +6,23 @@ import voidchess.common.figures.Figure
 import voidchess.common.figures.FigureType.*
 import voidchess.common.figures.King
 
-// TODO make functional interface in Kotlin 1.4
-interface BoardInstanciator {
+fun interface BoardInstanciator {
     fun generateInitialSetup(): Iterable<Pair<Position, Figure?>>
 }
 
-fun StartConfig.boardInstanciator(): BoardInstanciator {
-    val startConfig = this
-    return object : BoardInstanciator {
-        override fun generateInitialSetup(): Iterable<Pair<Position, Figure?>> {
-            return when (startConfig) {
-                is StartConfig.ClassicConfig -> getClassicSetup()
-                is StartConfig.Chess960Config -> getChess960Setup(startConfig.chess960Index)
-                is StartConfig.ManualConfig -> {
-                    val board = arrayOfNulls<Figure>(64)
-                    for (figureDescription in startConfig.figureStates) {
-                        val figure = getFigureByString(figureDescription)
-                        val pos = figure.position
-                        board[pos.index] = figure
-                    }
-                    return board.mapIndexed { posIndex: Int, figure: Figure? ->
-                        Position.byIndex(posIndex) to figure
-                    }
-                }
+fun StartConfig.boardInstanciator() = BoardInstanciator {
+    when (val startConfig = this) {
+        is StartConfig.ClassicConfig -> getClassicSetup()
+        is StartConfig.Chess960Config -> getChess960Setup(startConfig.chess960Index)
+        is StartConfig.ManualConfig -> {
+            val board = arrayOfNulls<Figure>(64)
+            for (figureDescription in startConfig.figureStates) {
+                val figure = getFigureByString(figureDescription)
+                val pos = figure.position
+                board[pos.index] = figure
+            }
+            board.mapIndexed { posIndex: Int, figure: Figure? ->
+                Position.byIndex(posIndex) to figure
             }
         }
     }

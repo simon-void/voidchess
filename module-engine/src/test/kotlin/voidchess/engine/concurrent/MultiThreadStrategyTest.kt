@@ -83,12 +83,6 @@ internal class MultiThreadStrategyTest {
                 easyPruner,
                 -12.0..-8.0,
                 "pawn promotion"
-            ),
-            arrayOf(
-                EngineChessGameImpl("white 0 King-white-g1-4 King-black-c8-6 Knight-white-d5 Rook-black-g6-8 Pawn-black-g5-false".toManualConfig()),
-                easyPruner,
-                1.0..4.0,
-                "find knight fork with check"
             )
         )
     }

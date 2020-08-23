@@ -97,7 +97,10 @@ internal class OpeningsLibrary(
             val openingSequence = try {
                 getResourceStream(OpeningsLibrary::class.java, "module-engine", relativePathToOpeningsFile)
                     .bufferedReader().useLines { lines ->
-                        lines.map { it.trim() }.filter { !(it.isEmpty() || it.startsWith('#')) }.toList()
+                        lines.mapNotNull { line ->
+                            if (line.isBlank() || line.startsWith('#')) null
+                            else line.trim()
+                        }.toList()
                     }
             } catch (e: Exception) {
                 println("OpeningsLibrary couldn't load $relativePathToOpeningsFile: $e")
