@@ -9,11 +9,14 @@ buildscript {
 plugins {
     kotlin("jvm") version "1.4.10"
     application
-    id("com.github.johnrengelman.shadow") version "5.0.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 application {
     mainClassName = "voidchess.VoidchessAppKt"
+// this is the replacement for the deprecated mainClassName in Gradle 8.0
+// but currently ShadowJar still requires `mainClassName`
+//    mainClass.set("voidchess.VoidchessAppKt")
 }
 
 dependencies {
@@ -36,7 +39,10 @@ allprojects {
         withType<KotlinCompile> {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
-                jvmTarget = "12"
+                jvmTarget = "14"
+                kotlinOptions {
+                    languageVersion = "1.4"
+                }
             }
         }
 

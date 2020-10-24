@@ -8,7 +8,6 @@ import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.King
 import voidchess.engine.evaluation.SearchTreePruner
-import kotlin.collections.ArrayList
 
 
 internal class EngineChessGameImpl private constructor(
