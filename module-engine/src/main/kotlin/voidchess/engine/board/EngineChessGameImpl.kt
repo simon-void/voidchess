@@ -6,6 +6,7 @@ import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResultType
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
+import voidchess.common.figures.FigureType
 import voidchess.common.figures.King
 import voidchess.engine.evaluation.SearchTreePruner
 
@@ -170,11 +171,16 @@ internal class EngineChessGameImpl private constructor(
         var blackCount = 0
 
         board.forAllFigures { figure->
-            val count = figure.countReachableMoves(board)
-            if(figure.isWhite) {
-                whiteCount += count
-            }else{
-                blackCount += count
+            when( figure.type ) {
+                FigureType.KING, FigureType.PAWN -> {}
+                else -> {
+                    val count = figure.countReachableMoves(board)
+                    if(figure.isWhite) {
+                        whiteCount += count
+                    }else{
+                        blackCount += count
+                    }
+                }
             }
         }
 
