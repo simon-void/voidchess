@@ -7,7 +7,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.21-2"
     application
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
@@ -60,6 +60,13 @@ tasks {
             if (JavaVersion.current() < JavaVersion.VERSION_14) {
                 throw GradleException("Require Java 14+ to run 'jpackage' (currently ${JavaVersion.current()})")
             }
+            println("""
+                these packaging tools have to be installed because they are required by jpackage:
+                    - on Red Hat Linux: the rpm-build package
+                    - on Ubuntu Linux: the fakeroot package
+                    - on macOS: Xcode command line tools
+                    - on Windows: WiX 3.0 or later
+            """.trimIndent())
             val projectVersion = project.version.toString()
             JPackage.buildInstaller(
                 name = "VoidChess",
