@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${Deps.kotlinVersion}")
     implementation(Deps.batikTranscoder)
 
     Deps.testDeps.forEach { testImplementation(it) }

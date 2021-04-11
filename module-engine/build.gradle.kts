@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${Deps.kotlinVersion}")
     Deps.coroutineDeps.forEach { implementation(it) }
     Deps.testDeps.forEach { testImplementation(it) }
 

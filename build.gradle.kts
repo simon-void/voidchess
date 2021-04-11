@@ -7,7 +7,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.4.21-2"
+    kotlin("jvm") version Deps.kotlinVersion
     application
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
@@ -32,7 +32,6 @@ allprojects {
 
     repositories {
         mavenCentral()
-        jcenter()
     }
 
     tasks {
@@ -41,7 +40,7 @@ allprojects {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
                 jvmTarget = "14"
                 kotlinOptions {
-                    languageVersion = "1.4"
+                    languageVersion = "1.5"
                 }
             }
         }
