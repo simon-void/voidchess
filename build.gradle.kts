@@ -1,11 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
-
 plugins {
     kotlin("jvm") version Deps.kotlinVersion
     application
@@ -38,7 +32,7 @@ allprojects {
         withType<KotlinCompile> {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
-                jvmTarget = "14"
+                jvmTarget = "15"
                 kotlinOptions {
                     languageVersion = "1.5"
                 }
@@ -56,8 +50,8 @@ tasks {
         dependsOn("build")
 
         doLast {
-            if (JavaVersion.current() < JavaVersion.VERSION_14) {
-                throw GradleException("Require Java 14+ to run 'jpackage' (currently ${JavaVersion.current()})")
+            if (JavaVersion.current() < JavaVersion.VERSION_16) {
+                throw GradleException("Require JDK 16+ to run 'jpackage' (currently ${JavaVersion.current()})")
             }
             println("""
                 these packaging tools have to be installed because they are required by jpackage:

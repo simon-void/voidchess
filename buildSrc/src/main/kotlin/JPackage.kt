@@ -20,6 +20,11 @@ object JPackage {
         linuxPackageType: String = "deb", //or "rpm"
         macIcnsIconPath: String? = null
     ): Int {
+        fun MutableList<String>.add(paramName: String, paramValue: String) {
+            add(paramName)
+            add(paramValue)
+        }
+
         val currentOS: OS = getCurrentOS()
         val arguments: Array<String> = ArrayList<String>(16).let {args->
             args.add("--name", name)
@@ -56,14 +61,15 @@ object JPackage {
     }
 
     /**
-     * Unfortunately this approach doesn't work until jpackage leaves the incubator status
-     * More background here: https://stackoverflow.com/a/61310708/4515050
-     * TODO use this method, when jpackage leaves incubator
+     * switch to this method for invoking jpackage
+     * TODO fix bug when executing on Ubuntu
+     * executing: jpackage --name VoidChess --description a chess program --app-version 3.6 --input build/libs --dest build/installer --main-jar voidchess-3.6-all.jar --add-modules java.desktop --type deb --icon about/shortcut-icon2.png --linux-shortcut --linux-menu-group Games
+     * java.io.IOException: Command [fakeroot, dpkg-deb, -b, /tmp/jdk.jpackage961355904914198194/images, /home/stephan/.gradle/daemon/7.0/build/installer/voidchess_3.6-1_amd64.deb] exited with 2 code
      */
     private fun execJpackageViaToolProvider(arguments: Array<String>): Int {
         val jpackageTool: ToolProvider = ToolProvider.findFirst("jpackage").orElseThrow {
             val javaVersion: String = System.getProperty("java.version")
-            IllegalStateException("jpackage not found (expected JDK version: 14 or above, detected: $javaVersion)")
+            IllegalStateException("jpackage not found (expected JDK version: 16 or above, detected: $javaVersion)")
         }
         println("executing: jpackage " + arguments.joinToString(separator = " "))
         return jpackageTool.run(System.out, System.err, *arguments)
@@ -87,23 +93,20 @@ object JPackage {
             1
         }
     }
+
+    private fun getCurrentOS(): OS {
+        val osName: String = System.getProperty("os.name")
+        val normalizedOsName = osName.trim().replace(" ", "").toLowerCase()
+        return when {
+            normalizedOsName.contains("windows") -> OS.WIN
+            normalizedOsName.contains("linux") -> OS.LINUX
+            normalizedOsName.contains("mac") -> OS.MAC
+            else -> throw IllegalStateException("unknown OS: $osName")
+        }
+    }
 }
 
 enum class OS {
     WIN, MAC, LINUX;
 }
-private fun getCurrentOS(): OS {
-    val osName: String = System.getProperty("os.name")
-    val normalizedOsName = osName.trim().replace(" ", "").toLowerCase()
-    return when {
-        normalizedOsName.contains("windows") -> OS.WIN
-        normalizedOsName.contains("linux") -> OS.LINUX
-        normalizedOsName.contains("mac") -> OS.MAC
-        else -> throw IllegalStateException("unknown OS: $osName")
-    }
-}
 
-private fun ArrayList<String>.add(paramName: String, paramValue: String) {
-    add(paramName)
-    add(paramValue)
-}
