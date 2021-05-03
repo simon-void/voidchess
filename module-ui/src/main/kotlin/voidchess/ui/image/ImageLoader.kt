@@ -16,6 +16,7 @@ import java.awt.Image
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.InputStream
+import java.util.*
 import javax.imageio.ImageIO
 
 
@@ -71,7 +72,7 @@ internal object ImageLoader {
 
 
     private fun loadFigure(figureType: FigureType, isWhite: Boolean, svgInfo: SvgChessSetInfo): SvgImage {
-        val figureImgFile = "${if(isWhite) "w" else "b"}_${figureType.name.toLowerCase()}"
+        val figureImgFile = "${if(isWhite) "w" else "b"}_${figureType.name.lowercase()}"
         return loadSvgImage(svgInfo, figureImgFile)
     }
 }

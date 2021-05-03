@@ -145,8 +145,8 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
         fun byCode(code: String): Position {
             assert(code.length == 2) { "argument is supposed to be something like \"a8\"" }
 
-            val column = code[0].toInt() - 97
-            val row = code[1].toInt() - 49
+            val column = code[0].code - 97
+            val row = code[1].code - 49
 
             return get(row, column)
         }

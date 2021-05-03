@@ -46,10 +46,10 @@ class Move private constructor(
         fun byCode(code: String): Move {
             require(isValid(code)) {"moveCode $code isn't valid"}
 
-            val fromColumn = code[0].toInt() - 97
-            val fromRow = code[1].toInt() - 49
-            val toColumn = code[3].toInt() - 97
-            val toRow = code[4].toInt() - 49
+            val fromColumn = code[0].code - 97
+            val fromRow = code[1].code - 49
+            val toColumn = code[3].code - 97
+            val toRow = code[4].code - 49
             val pawnPromotion: PawnPromotion = when(val char = code[2]) {
                 '-' -> return get(Position[fromRow, fromColumn], Position[toRow, toColumn])
                 'Q' -> PawnPromotion.QUEEN
