@@ -1,6 +1,5 @@
 package voidchess.engine.evaluation.leaf
 
-import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.forAllFigures
 import voidchess.common.board.move.Position
 import voidchess.common.figures.*
@@ -9,21 +8,21 @@ import voidchess.engine.board.EngineChessGame
 
 internal abstract class StaticEval {
     abstract fun getNumericEvaluation(
-        game: EngineChessGame,
+        game: FixedBoard,
         forWhite: Boolean,
         isWhiteTurn: Boolean
     ): Ongoing
 
     open fun getSecondaryCheckmateEvaluation(
-        game: EngineChessGame,
-        forWhite: Boolean,
+        game: FixedBoard,
+        forColour: Colour,
         isWhiteTurn: Boolean
     ): Double =
-        evaluateFigures(game, forWhite, isWhiteTurn)
+        evaluateFigures(game, forColour, isWhiteTurn)
 
     protected fun evaluateFigures(
-        game: EngineChessGame,
-        forWhite: Boolean,
+        game: FixedBoard,
+        forColour: Colour,
         isWhiteTurn: Boolean
     ): Double {
         var whiteFigures = 0.0
@@ -32,18 +31,18 @@ internal abstract class StaticEval {
         var numberOfWhiteRooksKnightsOrBishops = 0
         var numberOfBlackRooksKnightsOrBishops = 0
 
-        game.forAllFigures { figure ->
-            if (figure !is King) {
-                if (figure.isWhite) {
-                    if (figure is Pawn) {
+        game.forAllFigures { figure, _ ->
+            if (!figure.isKing()) {
+                if (figure.colour.isWhite) {
+                    if (figure.isPawn()) {
                         whiteFigures += PAWN_VALUE
                     } else {
                         numberOfWhiteRooksKnightsOrBishops++
-                        when (figure) {
-                            is Rook -> whiteFigures += ROOK_VALUE
-                            is Knight -> whiteFigures += KNIGHT_VALUE
-                            is Bishop -> whiteFigures += BISHOP_VALUE
-                            is Queen -> {
+                        when {
+                            figure.isRook() -> whiteFigures += ROOK_VALUE
+                            figure.isKnight() -> whiteFigures += KNIGHT_VALUE
+                            figure.isBishop() -> whiteFigures += BISHOP_VALUE
+                            figure.isQueen() -> {
                                 whiteFigures += QUEEN_VALUE
                                 noQueensLeftOnBoard = false
                                 numberOfWhiteRooksKnightsOrBishops--
@@ -51,15 +50,15 @@ internal abstract class StaticEval {
                         }
                     }
                 } else {
-                    if (figure is Pawn) {
+                    if (figure.isPawn()) {
                         blackFigures += PAWN_VALUE
                     } else {
                         numberOfBlackRooksKnightsOrBishops++
-                        when (figure) {
-                            is Rook -> blackFigures += ROOK_VALUE
-                            is Knight -> blackFigures += KNIGHT_VALUE
-                            is Bishop -> blackFigures += BISHOP_VALUE
-                            is Queen -> {
+                        when {
+                            figure.isRook() -> blackFigures += ROOK_VALUE
+                            figure.isKnight() -> blackFigures += KNIGHT_VALUE
+                            figure.isBishop() -> blackFigures += BISHOP_VALUE
+                            figure.isQueen() -> {
                                 blackFigures += QUEEN_VALUE
                                 noQueensLeftOnBoard = false
                                 numberOfBlackRooksKnightsOrBishops--
@@ -76,16 +75,18 @@ internal abstract class StaticEval {
             var blackPassedPawnsBonus = 0.0
             val hasWhiteRookKnightOrBishopLeft = numberOfWhiteRooksKnightsOrBishops != 0
             val hasBlackRookKnightOrBishopLeft = numberOfBlackRooksKnightsOrBishops != 0
-            val whiteKingPos = game.whiteKing.position
-            val blackKingPos = game.blackKing.position
+            val whiteKingPos = game.whiteKingPos
+            val blackKingPos = game.blackKingPos
 
-            game.forAllFigures { figure ->
-                if(figure is Pawn) {
-                    if(game.isPassedPawn(figure.position, figure.isWhite)) {
+            game.forAllFigures { figure, posIndex ->
+                if(figure.isPawn()) {
+                    val pawnPos = Position.byIndex(posIndex)
+                    val pawnColour = figure.colour
+                    if(game.isPassedPawn(pawnPos, pawnColour)) {
                         val pawnKingPos: Position
                         val opposingKingPos: Position
                         val hasOpponentRookKnightOrBishopLeft: Boolean
-                        if(figure.isWhite) {
+                        if(pawnColour.isWhite) {
                             pawnKingPos = whiteKingPos
                             opposingKingPos = blackKingPos
                             hasOpponentRookKnightOrBishopLeft = hasBlackRookKnightOrBishopLeft
@@ -95,16 +96,17 @@ internal abstract class StaticEval {
                             hasOpponentRookKnightOrBishopLeft = hasWhiteRookKnightOrBishopLeft
                         }
                         val passedPawnBonus = if(hasOpponentRookKnightOrBishopLeft) {
-                            evaluatePassedPawnWithOpponentLightFigures(figure)
+                            evaluatePassedPawnWithOpponentLightFigures(pawnPos, pawnColour)
                         } else {
                             evaluatePassedPawnWithoutOpponentLightFigures(
-                                figure,
+                                pawnPos,
+                                pawnColour,
                                 pawnKingPos,
                                 opposingKingPos,
                                 isWhiteTurn
                             )
                         }
-                        if(figure.isWhite) {
+                        if(pawnColour.isWhite) {
                             whitePassedPawnsBonus += passedPawnBonus
                         }else{
                             blackPassedPawnsBonus += passedPawnBonus
@@ -116,7 +118,7 @@ internal abstract class StaticEval {
             blackFigures += if(hasWhiteRookKnightOrBishopLeft) blackPassedPawnsBonus/numberOfWhiteRooksKnightsOrBishops else blackPassedPawnsBonus
         }
 
-        return if (forWhite)
+        return if (forColour.isWhite)
             whiteFigures - blackFigures
         else
             blackFigures - whiteFigures
@@ -126,8 +128,8 @@ internal abstract class StaticEval {
 /**
  * it is assumed that only pawns (and kings) remain on the board.
  */
-private fun StaticChessBoard.isPassedPawn(pawnPos: Position, isPawnWhite: Boolean): Boolean {
-    val rowProgression: IntProgression = if(isPawnWhite) {
+private fun FixedBoard.isPassedPawn(pawnPos: Position, pawnColour: Colour): Boolean {
+    val rowProgression: IntProgression = if(pawnColour.isWhite) {
         6 downTo pawnPos.row + 1
     }else{
         1 until pawnPos.row
@@ -137,10 +139,9 @@ private fun StaticChessBoard.isPassedPawn(pawnPos: Position, isPawnWhite: Boolea
 
     for(row in rowProgression) {
         for (column in minColumn..maxColumn) {
-            this.getFigureOrNull(Position[row, column])?.let { figure ->
-                if(figure is Pawn && figure.isWhite!=isPawnWhite) {
-                    return false
-                }
+            val content = this.getContent(Position.getIndex(row, column))
+            if(content.isPawn() && content.hasOppositeColour(pawnColour)) {
+                return false
             }
         }
     }
@@ -148,11 +149,11 @@ private fun StaticChessBoard.isPassedPawn(pawnPos: Position, isPawnWhite: Boolea
 }
 
 private fun evaluatePassedPawnWithOpponentLightFigures(
-    pawn: Pawn
+    pawnPos: Position, pawnColour: Colour
 ): Double {
-    val pawnPosRow = pawn.position.row
+    val pawnPosRow = pawnPos.row
 
-    val pawnDistanceToPromotionPos: Int = if(pawn.isWhite) {
+    val pawnDistanceToPromotionPos: Int = if(pawnColour.isWhite) {
         (7-pawnPosRow).coerceAtMost(5) // because of double jump
     } else {
         (pawnPosRow).coerceAtMost(5) // because of double jump
@@ -162,13 +163,13 @@ private fun evaluatePassedPawnWithOpponentLightFigures(
 }
 
 private fun evaluatePassedPawnWithoutOpponentLightFigures(
-    pawn: Pawn,
+    pawnPos: Position,
+    pawnColour: Colour,
     pawnsKingPos: Position,
     opposingKingPos: Position,
     isWhiteTurn: Boolean
 ): Double {
-    val isWhitePawn = pawn.isWhite
-    val pawnPos = pawn.position
+    val isWhitePawn = pawnColour.isWhite
 
     val promotionPos: Position
     val pawnDistanceToPromotionPos: Int = if(isWhitePawn) {

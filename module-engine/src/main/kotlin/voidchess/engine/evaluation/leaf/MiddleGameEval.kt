@@ -1,16 +1,13 @@
 package voidchess.engine.evaluation.leaf
 
-import voidchess.common.board.forAllFigures
 import voidchess.common.board.move.Position
-import voidchess.common.figures.*
 import voidchess.common.engine.Ongoing
-import voidchess.engine.board.EngineChessGame
 
 
 internal object MiddleGameEval : StaticEval() {
 
     override fun getNumericEvaluation(
-        game: EngineChessGame,
+        game: FixedBoard,
         forWhite: Boolean,
         isWhiteTurn: Boolean // not used in this case
     ): Ongoing {
@@ -26,15 +23,15 @@ internal object MiddleGameEval : StaticEval() {
         )
     }
 
-    fun getPreliminaryEvaluation(game: EngineChessGame, forWhite: Boolean, isWhiteTurn: Boolean) =
-        evaluateFigures(game, forWhite, isWhiteTurn)
+    fun getPreliminaryEvaluation(game: FixedBoard, forWhite: Boolean, isWhiteTurn: Boolean) =
+        evaluateFigures(game, Colour(forWhite), isWhiteTurn)
 
-    fun getSecondaryEvaluation(game: EngineChessGame, forWhite: Boolean) = evaluateRuledArea(
+    fun getSecondaryEvaluation(game: FixedBoard, forWhite: Boolean) = evaluateRuledArea(
         game,
         forWhite
-    ) + evaluatePosition(game, forWhite)
+    ) + evaluatePosition(game, Colour(forWhite))
 
-    fun addSecondaryEvaluationTo(prelimEval: Double, game: EngineChessGame, forWhite: Boolean) =
+    fun addSecondaryEvaluationTo(prelimEval: Double, game: FixedBoard, forWhite: Boolean) =
             Ongoing(
                     prelimEval + getSecondaryEvaluation(
                             game,
@@ -43,63 +40,65 @@ internal object MiddleGameEval : StaticEval() {
             )
 
     override fun getSecondaryCheckmateEvaluation(
-        game: EngineChessGame,
-        forWhite: Boolean,
+        game: FixedBoard,
+        forColour: Colour,
         isWhiteTurn: Boolean
     ) = evaluateFigures(
         game,
-        forWhite,
+        forColour,
         isWhiteTurn
-    ) + evaluatePosition(game, forWhite)
+    ) + evaluatePosition(game, forColour)
 
-    private fun evaluateRuledArea(game: EngineChessGame, forWhite: Boolean): Double {
-        val (whiteMoves, blackMoves) = game.countReachableMoves()
-
-        return VALUE_OF_AREA * if (forWhite)
-            whiteMoves - blackMoves
-        else
-            blackMoves - whiteMoves
+    private fun evaluateRuledArea(game: FixedBoard, forWhite: Boolean): Double {
+//        val (whiteMoves, blackMoves) = game.countReachableMoves()
+//
+//        return VALUE_OF_AREA * if (forWhite)
+//            whiteMoves - blackMoves
+//        else
+//            blackMoves - whiteMoves
+        return 0.0
     }
 
-    private fun evaluatePosition(game: EngineChessGame, forWhite: Boolean): Double {
+    private fun evaluatePosition(game: FixedBoard, forColour: Colour): Double {
         var whiteEvaluation = 0.0
         var blackEvaluation = 0.0
         var foundWhiteQueen = false
         var foundBlackQueen = false
 
-        game.forAllFigures {figure->
-            val pos = figure.position
-            if (figure is Pawn) {
-                if (figure.isWhite) {
+        game.forAllFigures {figure, posIndex ->
+            val pos = Position.byIndex(posIndex)
+            val colour = figure.colour
+            if (figure.isPawn()) {
+                if (colour.isWhite) {
                     whiteEvaluation += evaluatePawn(
                         game,
                         pos,
-                        true
+                        Colour(true),
                     )
                 }else{
                     blackEvaluation += evaluatePawn(
                         game,
                         pos,
-                        false
+                        Colour(false),
                     )
                 }
-            } else if (figure is Knight) {
+            } else if (figure.isKnight()) {
                 val value = evaluateKnight(pos)
-                if (figure.isWhite) {
+                if (colour.isWhite) {
                     whiteEvaluation += value
                 }else{
                     blackEvaluation += value
                 }
-            } else if (figure is Bishop) {
+            } else if (figure.isBishop()) {
                 val value =
-                    evaluateBishop(game, figure)
-                if (figure.isWhite) {
+                    evaluateBishop(game, pos, colour)
+                if (colour.isWhite) {
                     whiteEvaluation += value
                 }else{
                     blackEvaluation += value
                 }
-            } else if (figure is Queen) {
-                if (figure.isWhite) {
+            } else if (figure.isQueen()) {
+                if (colour.isWhite) {
                     foundWhiteQueen = true
                 }else {
                     foundBlackQueen = true
@@ -109,40 +108,48 @@ internal object MiddleGameEval : StaticEval() {
 
         whiteEvaluation += evaluateKing(
             game,
-            game.whiteKing,
+            KingInfo(
+                pos = game.whiteKingPos,
+                colour = Colour(true),
+                didCastle = game.didWhiteKingCastle,
+            ),
             foundBlackQueen
         )
         blackEvaluation += evaluateKing(
             game,
-            game.blackKing,
+            KingInfo(
+                pos = game.blackKingPos,
+                colour = Colour(false),
+                didCastle = game.didBlackKingCastle,
+            ),
             foundWhiteQueen
         )
 
-        return if (forWhite)
+        return if (forColour.isWhite)
             whiteEvaluation - blackEvaluation
         else
             blackEvaluation - whiteEvaluation
     }
 
-    private fun evaluateBishop(game: EngineChessGame, bishop: Figure): Double {
-        val isWhite = bishop.isWhite
-        val startRow = if (isWhite) 0 else 7
-        val bishopRow = bishop.position.row
+    private fun evaluateBishop(game: FixedBoard, bishopPos: Position, bishopColour: Colour): Double {
+        //val isWhite = bishopColour.isWhite
+        val startRow = if (bishopColour.isWhite) 0 else 7
+        val bishopRow = bishopPos.row
 
         if (bishopRow == startRow) {
             return BISHOP_ON_START_POSITION_PUNISHMENT
         }
 
 
-        val blockingRow = if (isWhite) 2 else 5
-        val bishopColumn = bishop.position.column
+        val blockingRow = if (bishopColour.isWhite) 2 else 5
+        val bishopColumn = bishopPos.column
 
         if (bishopRow == blockingRow && (bishopColumn == 3 || bishopColumn == 4)) {
-            val possiblePawnPos = Position[if (isWhite) 1 else 6, bishopColumn]
+            val possiblePawnPos = Position[if (bishopColour.isWhite) 1 else 6, bishopColumn]
             if(containsPawnOfColor(
                     game,
                     possiblePawnPos,
-                    isWhite
+                    bishopColour
                 )
             ) {
                 return BISHOP_BLOCKS_MIDDLE_PAWN_PUNISHMENT
@@ -156,25 +163,25 @@ internal object MiddleGameEval : StaticEval() {
             if (pos.row == 0 || pos.row == 7 || pos.column == 0 || pos.column == 7) BORDER_KNIGHT_PUNISHMENT
             else 0.0
 
-    private fun evaluatePawn(game: EngineChessGame, pos: Position, isWhite: Boolean) =
+    private fun evaluatePawn(game: FixedBoard, pos: Position, colour: Colour) =
             evaluatePawnPosition(
                 pos,
-                isWhite
+                colour
             ) + evaluatePawnDefense(
                 game,
                 pos,
-                isWhite
+                colour
             )
 
-    private fun evaluatePawnPosition(pos: Position, isWhite: Boolean): Double {
+    private fun evaluatePawnPosition(pos: Position, colour: Colour): Double {
 
-        return MOVES_GONE_VALUE * if( isWhite) pos.row-1 else 6-pos.row
+        return MOVES_GONE_VALUE * if(colour.isWhite) pos.row-1 else 6-pos.row
     }
 
-    private fun evaluatePawnDefense(game: EngineChessGame, pos: Position, isWhite: Boolean): Double {
+    private fun evaluatePawnDefense(game: FixedBoard, pos: Position, colour: Colour): Double {
 
-        val forwardRow = if (isWhite) pos.row + 1 else pos.row - 1
-        val backwardRow = if (isWhite) pos.row - 1 else pos.row + 1
+        val forwardRow = if (colour.isWhite) pos.row + 1 else pos.row - 1
+        val backwardRow = if (colour.isWhite) pos.row - 1 else pos.row + 1
 
         if (pos.column != 0) {
             val leftForwardPosition = Position[forwardRow, pos.column - 1]
@@ -183,7 +190,7 @@ internal object MiddleGameEval : StaticEval() {
             if (containsPawnOfColor(
                     game,
                     leftForwardPosition,
-                    isWhite
+                    colour
                 )
             ) {
                 return DEFENSE_VALUE
@@ -191,7 +198,7 @@ internal object MiddleGameEval : StaticEval() {
             if (containsPawnOfColor(
                     game,
                     leftBackwardPosition,
-                    isWhite
+                    colour
                 )
             ) {
                 return DEFENSE_VALUE
@@ -199,7 +206,7 @@ internal object MiddleGameEval : StaticEval() {
             if (containsPawnOfColor(
                     game,
                     leftPosition,
-                    isWhite
+                    colour
                 )
             ) {
                 return NEXT_TO_VALUE
@@ -211,17 +218,17 @@ internal object MiddleGameEval : StaticEval() {
             if (!(containsPawnOfColor(
                     game,
                     rightPosition,
-                    isWhite
+                    colour
                 )
                             || containsPawnOfColor(
                     game,
                     rightForwardPosition,
-                    isWhite
+                    colour
                 )
                             || containsPawnOfColor(
                     game,
                     rightBackwardPosition,
-                    isWhite
+                    colour
                 ))) {
                 return UNPROTECTED_BORDER_PAWN_VALUE
             }
@@ -234,7 +241,7 @@ internal object MiddleGameEval : StaticEval() {
             if (containsPawnOfColor(
                     game,
                     rightForwardPosition,
-                    isWhite
+                    colour
                 )
             ) {
                 return DEFENSE_VALUE
@@ -242,7 +249,7 @@ internal object MiddleGameEval : StaticEval() {
             if (containsPawnOfColor(
                     game,
                     rightBackwardPosition,
-                    isWhite
+                    colour
                 )
             ) {
                 return DEFENSE_VALUE
@@ -250,7 +257,7 @@ internal object MiddleGameEval : StaticEval() {
             if (containsPawnOfColor(
                     game,
                     rightPosition,
-                    isWhite
+                    colour
                 )
             ) {
                 return NEXT_TO_VALUE
@@ -262,17 +269,17 @@ internal object MiddleGameEval : StaticEval() {
             if (!(containsPawnOfColor(
                     game,
                     leftPosition,
-                    isWhite
+                    colour
                 )
                             || containsPawnOfColor(
                     game,
                     leftForwardPosition,
-                    isWhite
+                    colour
                 )
                             || containsPawnOfColor(
                     game,
                     leftBackwardPosition,
-                    isWhite
+                    colour
                 ))) {
                 return UNPROTECTED_BORDER_PAWN_VALUE
             }
@@ -281,37 +288,36 @@ internal object MiddleGameEval : StaticEval() {
         return 0.0
     }
 
-    private fun containsPawnOfColor(game: EngineChessGame, pos: Position, white: Boolean): Boolean {
-        val figure = game.getFigureOrNull(pos)
-        return figure is Pawn && figure.isWhite == white
+    private fun containsPawnOfColor(game: FixedBoard, pos: Position, colour: Colour): Boolean = game.getContent(pos.index).let {
+        it.isPawn() && it.hasSameColour(colour)
     }
 
 
-    private fun evaluateKing(game: EngineChessGame, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
+    private fun evaluateKing(game: FixedBoard, kingInfo: KingInfo, queenOfOppositeColorStillOnBoard: Boolean): Double {
         var value = evaluateCastling(
-            king,
+            kingInfo.didCastle,
             queenOfOppositeColorStillOnBoard
         )
         value += evaluateKingDefense(
             game,
-            king,
+            kingInfo,
             queenOfOppositeColorStillOnBoard
         )
         return value
     }
 
-    private fun evaluateCastling(king: King, queenOfOppositeColorStillOnBoard: Boolean) =
-            if (queenOfOppositeColorStillOnBoard && !king.didCastling) NOT_YET_CASTLED_PUNISHMENT
+    private fun evaluateCastling(didKingCastle: Boolean, queenOfOppositeColorStillOnBoard: Boolean) =
+            if (queenOfOppositeColorStillOnBoard && !didKingCastle) NOT_YET_CASTLED_PUNISHMENT
             else 0.0
 
-    private fun evaluateKingDefense(game: EngineChessGame, king: King, queenOfOppositeColorStillOnBoard: Boolean): Double {
-        val isWhite = king.isWhite
-        val kingsRow = king.position.row
-        val groundRow = if (isWhite) 0 else 7
+    private fun evaluateKingDefense(game: FixedBoard, kingInfo: KingInfo, queenOfOppositeColorStillOnBoard: Boolean): Double {
+        val kingColour = kingInfo.colour
+        val kingsRow = kingInfo.pos.row
+        val groundRow = if (kingColour.isWhite) 0 else 7
 
-        if (king.didCastling && kingsRow == groundRow) {
-            val kingsColumn = king.position.column
-            val secondRow = if (isWhite) 1 else 6
+        if (kingInfo.didCastle && kingsRow == groundRow) {
+            val kingsColumn = kingInfo.pos.column
+            val secondRow = if (kingColour.isWhite) 1 else 6
             val defenseValue = if (queenOfOppositeColorStillOnBoard) {
                 BIG_KING_DEFENSE_VALUE
             } else {
@@ -324,7 +330,7 @@ internal object MiddleGameEval : StaticEval() {
                 if (containsPawnOfColor(
                         game,
                         Position[secondRow, column],
-                        isWhite
+                        kingColour
                     )
                 ) {
                     value += defenseValue
@@ -355,4 +361,8 @@ internal object MiddleGameEval : StaticEval() {
     private const val SMALL_KING_DEFENSE_VALUE = 0.2
 }
 
-
+private data class KingInfo(
+    val pos: Position,
+    val colour: Colour,
+    val didCastle: Boolean,
+)

@@ -4,7 +4,7 @@ import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 
 
-abstract class CastlingFigure(
+sealed class CastlingFigure(
     isWhite: Boolean,
     initialPosition: Position,
     protected var stepsTaken: Int,

@@ -2,26 +2,25 @@ package voidchess.engine.evaluation.leaf
 
 import voidchess.common.board.move.Position
 import voidchess.common.engine.Ongoing
-import voidchess.engine.board.EngineChessGame
 import kotlin.math.abs
 
 internal object KingToCornerEndgameEval : StaticEval() {
     override fun getNumericEvaluation(
-        game: EngineChessGame,
+        game: FixedBoard,
         forWhite: Boolean,
         isWhiteTurn: Boolean // not used in this case
     ): Ongoing {
-        val materialEvalForWhite = evaluateFigures(game, true, isWhiteTurn)
+        val materialEvalForWhite = evaluateFigures(game, Colour(true), isWhiteTurn)
         val whiteIsWinning = materialEvalForWhite > 0
 
         val winningKingPos: Position
         val loosingKingPos: Position
         if (whiteIsWinning) {
-            winningKingPos = game.whiteKing.position
-            loosingKingPos = game.blackKing.position
+            winningKingPos = game.whiteKingPos
+            loosingKingPos = game.blackKingPos
         } else {
-            winningKingPos = game.blackKing.position
-            loosingKingPos = game.whiteKing.position
+            winningKingPos = game.blackKingPos
+            loosingKingPos = game.whiteKingPos
         }
 
         val evalForWinningSide = abs(materialEvalForWhite) +

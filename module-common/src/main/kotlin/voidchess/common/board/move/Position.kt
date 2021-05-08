@@ -167,7 +167,7 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
 
         // optimized from: (row * 8) + column
         @JvmStatic
-        private fun getIndex(row: Int, column: Int) = (row shl 3) or column
+        fun getIndex(row: Int, column: Int) = (row shl 3) or column
 
         @JvmStatic
         fun inBounds(row: Int, column: Int): Boolean = row in 0..7 && column in 0..7

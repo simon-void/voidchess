@@ -7,6 +7,8 @@ import voidchess.common.board.move.MoveResultType
 import voidchess.common.engine.*
 import voidchess.common.figures.King
 import voidchess.engine.board.EngineChessGame
+import voidchess.engine.evaluation.leaf.Colour
+import voidchess.engine.evaluation.leaf.FixedBoard
 import voidchess.engine.evaluation.leaf.StaticEval
 
 
@@ -105,12 +107,12 @@ internal class MinMaxEval(
                             bestResponses.add(bestResponse)
                             eval
                         } else {
-                            strategy.getNumericEvaluation(game, forWhite, forWhite)
+                            strategy.getNumericEvaluation(FixedBoard.from(game), forWhite, forWhite)
                         }
                     }
                     MoveResultType.CHECKMATE -> {
                         stopLookingForBetterMove = true
-                        val secondaryMateEval = strategy.getSecondaryCheckmateEvaluation(game, forWhite, forWhite)
+                        val secondaryMateEval = strategy.getSecondaryCheckmateEvaluation(FixedBoard.from(game), Colour(forWhite), forWhite)
                         CheckmateSelf(
                                 newDepth,
                                 secondaryMateEval
@@ -197,7 +199,7 @@ internal class MinMaxEval(
                             bestResponses.add(bestResponse)
                             eval
                         } else {
-                            strategy.getNumericEvaluation(game, forWhite, !forWhite)
+                            strategy.getNumericEvaluation(FixedBoard.from(game), forWhite, !forWhite)
                         }
                     }
                     MoveResultType.CHECKMATE -> {

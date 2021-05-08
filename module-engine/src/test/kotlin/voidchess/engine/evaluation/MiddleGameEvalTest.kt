@@ -7,6 +7,7 @@ import org.testng.annotations.Test
 import voidchess.common.engine.Ongoing
 import voidchess.engine.board.EngineChessGameImpl
 import voidchess.copyGameWithInvertedColors
+import voidchess.engine.evaluation.leaf.FixedBoard
 import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.initChessGame
 import voidchess.toManualConfig
@@ -17,16 +18,16 @@ internal class MiddleGameEvalTest {
     @Test(dataProvider = "symmetricPositionProvider")
     fun testSymmetricPositionLeadsToEqualEvaluation(game: EngineChessGameImpl) {
         val staticEval = MiddleGameEval
-        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true, true)
-        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false, false)
+        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(FixedBoard.from(game), true, true)
+        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(FixedBoard.from(game), false, false)
         assertEquals(prelimEvalForWhite, prelimEvalForBlack)
         assertEquals(prelimEvalForWhite, 0.0)
 
         val evalForWhite = Ongoing(
-                prelimEvalForWhite + staticEval.getSecondaryEvaluation(game, true)
+                prelimEvalForWhite + staticEval.getSecondaryEvaluation(FixedBoard.from(game), true)
         )
         val evalForBlack = Ongoing(
-                prelimEvalForBlack + staticEval.getSecondaryEvaluation(game, false)
+                prelimEvalForBlack + staticEval.getSecondaryEvaluation(FixedBoard.from(game), false)
         )
         assertEquals(evalForWhite.numericValue, evalForBlack.numericValue, OK_DELTA)
         assertEquals(evalForWhite.numericValue, 0.0, OK_DELTA)
@@ -67,13 +68,13 @@ internal class MiddleGameEvalTest {
     @Test(dataProvider = "asymmetricPositionProvider")
     fun testAsymmetricPositionLeadsToInverseEvaluation(game: EngineChessGameImpl) {
         val staticEval = MiddleGameEval
-        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(game, true, true)
-        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(game, false, false)
+        val prelimEvalForWhite = staticEval.getPreliminaryEvaluation(FixedBoard.from(game), true, true)
+        val prelimEvalForBlack = staticEval.getPreliminaryEvaluation(FixedBoard.from(game), false, false)
         if (prelimEvalForWhite != 0.0 || prelimEvalForBlack != 0.0)
             assertEquals(prelimEvalForWhite, -prelimEvalForBlack)
 
-        val evalForWhite = staticEval.addSecondaryEvaluationTo(prelimEvalForWhite, game, true)
-        val evalForBlack = staticEval.addSecondaryEvaluationTo(prelimEvalForBlack, game, false)
+        val evalForWhite = staticEval.addSecondaryEvaluationTo(prelimEvalForWhite, FixedBoard.from(game), true)
+        val evalForBlack = staticEval.addSecondaryEvaluationTo(prelimEvalForBlack, FixedBoard.from(game), false)
         assertEquals(evalForWhite.numericValue, -evalForBlack.numericValue, OK_DELTA)
         // it's highly unlikely that an asymmetric position is considered equal
         assertNotEquals(evalForWhite.numericValue, 0.0, OK_DELTA)
@@ -83,13 +84,13 @@ internal class MiddleGameEvalTest {
     fun testInvertedAsymmetricPositionLeadsToSameEvaluation(game: EngineChessGameImpl) {
         val staticEval = MiddleGameEval
         val invertedGame = game.copyGameWithInvertedColors()
-        val prelimEvalNormal = staticEval.getPreliminaryEvaluation(game, game.isWhiteTurn, game.isWhiteTurn)
-        val prelimEvalInverted = staticEval.getPreliminaryEvaluation(invertedGame, invertedGame.isWhiteTurn, game.isWhiteTurn)
+        val prelimEvalNormal = staticEval.getPreliminaryEvaluation(FixedBoard.from(game), game.isWhiteTurn, game.isWhiteTurn)
+        val prelimEvalInverted = staticEval.getPreliminaryEvaluation(FixedBoard.from(invertedGame), invertedGame.isWhiteTurn, game.isWhiteTurn)
         if (prelimEvalNormal != 0.0 || prelimEvalInverted != 0.0)
             assertEquals(prelimEvalNormal, prelimEvalInverted)
 
-        val evalNormal = staticEval.addSecondaryEvaluationTo(prelimEvalNormal, game, game.isWhiteTurn)
-        val evalInverted = staticEval.addSecondaryEvaluationTo(prelimEvalInverted, invertedGame, invertedGame.isWhiteTurn)
+        val evalNormal = staticEval.addSecondaryEvaluationTo(prelimEvalNormal, FixedBoard.from(game), game.isWhiteTurn)
+        val evalInverted = staticEval.addSecondaryEvaluationTo(prelimEvalInverted, FixedBoard.from(invertedGame), invertedGame.isWhiteTurn)
         assertEquals(evalNormal.numericValue, evalInverted.numericValue, OK_DELTA)
     }
 
