@@ -127,19 +127,16 @@ internal abstract class StaticEval {
  * it is assumed that only pawns (and kings) remain on the board.
  */
 private fun StaticChessBoard.isPassedPawn(pawnPos: Position, isPawnWhite: Boolean): Boolean {
-    val nextPawnPosRow = if(isPawnWhite) {
-        pawnPos.row + 1
-    } else {
-        pawnPos.row - 1
+    val rowProgression: IntProgression = if(isPawnWhite) {
+        6 downTo pawnPos.row + 1
+    }else{
+        1 until pawnPos.row
     }
+    val minColumn = (pawnPos.column-1).coerceAtLeast(0)
+    val maxColumn = (pawnPos.column+1).coerceAtMost(7)
 
-    for (column in (pawnPos.column-1).coerceAtLeast(0)..(pawnPos.column+1).coerceAtMost(7)) {
-        val rowProgression: IntProgression = if(isPawnWhite) {
-            nextPawnPosRow..6
-        }else{
-            1..nextPawnPosRow
-        }
-        for(row in rowProgression) {
+    for(row in rowProgression) {
+        for (column in minColumn..maxColumn) {
             this.getFigureOrNull(Position[row, column])?.let { figure ->
                 if(figure is Pawn && figure.isWhite!=isPawnWhite) {
                     return false
