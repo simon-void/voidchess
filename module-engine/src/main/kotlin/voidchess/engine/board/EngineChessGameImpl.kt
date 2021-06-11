@@ -153,7 +153,7 @@ internal class EngineChessGameImpl private constructor(
                 return false
             }
         }
-        return !board.getKing(caseWhite).isSelectable(board)
+        return !board.getKingPos(caseWhite).isSelectable(board)
     }
 
     override fun getAllMoves(): ArrayList<Move> {

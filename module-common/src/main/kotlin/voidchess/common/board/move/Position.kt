@@ -10,6 +10,7 @@ class Position private constructor(@JvmField val row: Int, @JvmField val column:
 
     fun equalsPosition(pos: Position) = this === pos //index == pos.index
     fun notEqualsPosition(pos: Position) = this !== pos
+    fun equalsCoordinates(row: Int, column: Int) = row==this.row && column==this.column
     override fun equals(other: Any?) = this === other //other is Position && index == other.index
     override fun toString() = "${(column + 97).toChar()}${row + 1}"
     override fun hashCode() = index

@@ -4,15 +4,18 @@ import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
 import voidchess.common.board.check.BoundLine
 import voidchess.common.board.check.CheckLine
-import voidchess.common.board.getKing
+import voidchess.common.board.getKingPos
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import kotlin.math.abs
 
 
-class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startPosition, FigureType.KNIGHT, false, false) {
+class Knight(isWhite: Boolean) : Figure(
+    isWhite = isWhite,
+    type = FigureType.KNIGHT,
+) {
 
-    override fun isReachable(toPos: Position, game: StaticChessBoard): Boolean {
+    override fun isReachable(position: Position, toPos: Position, game: StaticChessBoard): Boolean {
         val horizontalDifference = abs(position.row - toPos.row)
         val verticalDifference = abs(position.column - toPos.column)
 
@@ -24,19 +27,19 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         return figure == null || hasDifferentColor(figure)
     }
 
-    override fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer) {
-        forEachReachablePos(game) {
+    override fun forReachableMoves(position: Position, game: StaticChessBoard, informOf: MoveInformer) {
+        forEachReachablePos(position, game) {
             informOf(Move[position, it])
         }
     }
 
-    override fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer) {
-        forEachReachableTakeableEndPos(game) {
+    override fun forReachableTakingMoves(position: Position, game: StaticChessBoard, informOf: MoveInformer) {
+        forEachReachableTakeableEndPos(position, game) {
             informOf(Move[position, it])
         }
     }
 
-    override fun forCriticalMoves(game: ChessBoard, result: MutableSet<Move>) {
+    override fun forCriticalMoves(position: Position, game: ChessBoard, result: MutableSet<Move>) {
         fun doesFork(game: ChessBoard, knightPos: Position): Boolean {
             var heavyFigureCounter = 0
             knightPos.forEachKnightPos { attackedPos ->
@@ -57,15 +60,20 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
             return (horizontalDifference == 2 && verticalDifference == 1) || (horizontalDifference == 1 && verticalDifference == 2)
         }
 
-        val opponentKingPos = game.getKing(!isWhite).position
-        forEachPossiblePos(game) {
-            if(containsFigureToTake(game, it) || doesFork(game, it) || couldJump(it, opponentKingPos)) {
-                result.add(Move[position, it])
+        val opponentKingPos = game.getKingPos(!isWhite)
+        forEachPossiblePos(position, game) { possiblePos ->
+            if(containsFigureToTake(game, possiblePos) || doesFork(game, possiblePos) || couldJump(possiblePos, opponentKingPos)) {
+                result.add(Move[position, possiblePos])
             }
         }
     }
 
-    override fun forPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer) {
+    override fun forPossibleMovesWhileUnboundAndCheck(
+        position: Position,
+        game: ChessBoard,
+        checkLine: CheckLine,
+        informOf: MoveInformer
+    ) {
         // the accessibility of the target field doesn't need to be checked because
         // all checkInterceptPositions are guaranteed to be either empty
         // or to contain the attacker (who has a different color)
@@ -78,19 +86,24 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         }
     }
 
-    override fun forPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer) {
+    override fun forPossibleMovesWhileBoundAndNoCheck(
+        position: Position,
+        game: ChessBoard,
+        boundLine: BoundLine,
+        informOf: MoveInformer
+    ) {
         // a bound move can't move at all!
     }
 
-    override fun forPossibleTakingMoves(game: ChessBoard, informOf: MoveInformer) {
+    override fun forPossibleTakingMoves(position: Position, game: ChessBoard, informOf: MoveInformer) {
         val attackLines = game.getCachedAttackLines()
         // a bound knight can't move at all, so only consider cases where he isn't
         if(attackLines.boundLineByBoundFigurePos[position]==null) {
             when {
-                attackLines.noCheck -> forReachableTakingMoves(game, informOf)
+                attackLines.noCheck -> forReachableTakingMoves(position, game, informOf)
                 attackLines.isSingleCheck -> {
                     val attackerPos = attackLines.checkLines.first().attackerPos
-                    if(isReachable(attackerPos, game)) {
+                    if(isReachable(position, attackerPos, game)) {
                         informOf(Move[position, attackerPos])
                     }
                 }
@@ -98,36 +111,36 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         }
     }
 
-    override fun isSelectable(game: ChessBoard): Boolean {
-        forEachReachablePos(game) {
-            if (!isBound(it, game)) return true
+    override fun isSelectable(position: Position, game: ChessBoard): Boolean {
+        forEachReachablePos(position, game) { reachablePos ->
+            if (!isBound(position, reachablePos, game)) return true
         }
         return false
     }
 
-    override fun countReachableMoves(game: StaticChessBoard): Int {
+    override fun countReachableMoves(position: Position, game: StaticChessBoard): Int {
         var reachableMovesCount = 0
-        forEachReachablePos(game) {
+        forEachReachablePos(position, game) {
             reachableMovesCount++
         }
         return reachableMovesCount
     }
 
-    private inline fun forEachReachablePos(game: StaticChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachablePos(position: Position, game: StaticChessBoard, informOf: (Position) -> Unit) {
         position.forEachKnightPos { pos ->
             if(isAccessible(game, pos)) informOf(pos)
         }
     }
 
-    private inline fun forEachPossiblePos(game: ChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachPossiblePos(position: Position, game: ChessBoard, informOf: (Position) -> Unit) {
         val attackLines = game.getCachedAttackLines()
         // a bound knight can't move at all
         if(attackLines.boundLineByBoundFigurePos[position]==null) {
             when {
-                attackLines.noCheck -> forEachReachablePos(game, informOf)
+                attackLines.noCheck -> forEachReachablePos(position, game, informOf)
                 attackLines.isSingleCheck -> {
                     attackLines.checkLines.first().posProgression.forEachReachablePos { checkLinePos ->
-                        if(isReachable(checkLinePos, game)) {
+                        if(isReachable(position, checkLinePos, game)) {
                             informOf(checkLinePos)
                         }
                     }
@@ -136,7 +149,7 @@ class Knight(isWhite: Boolean, startPosition: Position) : Figure(isWhite, startP
         }
     }
 
-    private inline fun forEachReachableTakeableEndPos(game: StaticChessBoard, informOf: (Position) -> Unit) {
+    private inline fun forEachReachableTakeableEndPos(position: Position, game: StaticChessBoard, informOf: (Position) -> Unit) {
         position.forEachKnightPos { pos ->
             game.getFigureOrNull(pos)?.let {figure->
                 if(figure.isWhite!=isWhite) informOf(pos)

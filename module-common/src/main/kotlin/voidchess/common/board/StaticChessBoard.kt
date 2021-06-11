@@ -6,25 +6,24 @@ import voidchess.common.figures.*
 
 
 interface StaticChessBoard {
-    val whiteKing: King
-    val blackKing: King
+    val whiteKingPos: Position
+    val blackKingPos: Position
+    val enpassantPos: Position?
+    val didWhiteCastle: Boolean
+    val didBlackCastle: Boolean
+
     fun isFreeArea(pos: Position): Boolean
     fun getFigureOrNull(pos: Position): Figure?
 }
 
-fun StaticChessBoard.getFirstFigureInDir(direction: Direction, startPos: Position): Figure? {
+fun StaticChessBoard.getFirstFigureInDir(direction: Direction, startPos: Position): Pair<Figure,Position>? {
     startPos.forEachPosInLine(direction) { pos->
-        val figure = getFigureOrNull(pos)
-        if(figure==null) {
-            return@forEachPosInLine false
-        }else{
-            return figure
-        }
+        getFigureOrNull(pos)?.let { figure -> return figure to pos } ?: return@forEachPosInLine false
     }
     return null
 }
 
-fun StaticChessBoard.getKing(isWhiteKing: Boolean): King = if (isWhiteKing) { whiteKing } else { blackKing }
+fun StaticChessBoard.getKingPos(isWhiteKing: Boolean): Position = if (isWhiteKing) { whiteKingPos } else { blackKingPos }
 
 fun StaticChessBoard.getFigure(pos: Position) = getFigureOrNull(pos) ?: throw AssertionError("no figure at $pos")
 
@@ -94,3 +93,6 @@ val StaticChessBoard.isDrawBecauseOfLowMaterial: Boolean
         }
         return numberOfBlackBishops == 0 || numberOfBlackKnights == 0
     }
+
+fun StaticChessBoard.canBeHitEnpassant(possibleFigurePos: Position): Boolean =
+    this.enpassantPos?.equalsPosition(possibleFigurePos) ?: false

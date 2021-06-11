@@ -38,7 +38,7 @@ class BasicChessGameImpl private constructor(
                     return false
                 }
             }
-            return !board.getKing(caseWhite).isSelectable(board)
+            return !board.getKingPos(caseWhite).isSelectable(board)
         }
 
         if (noMovesLeft(isWhiteTurn)) {

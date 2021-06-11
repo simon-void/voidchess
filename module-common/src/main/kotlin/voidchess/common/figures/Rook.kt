@@ -4,89 +4,88 @@ import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
 import voidchess.common.board.check.BoundLine
 import voidchess.common.board.check.CheckLine
-import voidchess.common.board.getKing
+import voidchess.common.board.getKingPos
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 
 
-class Rook : CastlingFigure {
+class Rook(isWhite: Boolean) : CastlingFigure(
+    isWhite = isWhite,
+    type = FigureType.ROOK,
+) {
 
-    constructor(isWhite: Boolean, startPosition: Position) : super(isWhite, startPosition, FigureType.ROOK)
-    constructor(isWhite: Boolean, startPosition: Position, stepsTaken: Int) : super(isWhite, startPosition, stepsTaken, FigureType.ROOK)
-
-    override fun isReachable(toPos: Position, game: StaticChessBoard): Boolean {
+    override fun isReachable(position: Position, toPos: Position, game: StaticChessBoard): Boolean {
         val direction = position.getDirectionTo(toPos)
 
         if (direction == null || direction.isDiagonal) {
             return false
         }
 
-        forEachReachablePos(game, direction) {
-            if (it.equalsPosition(toPos)) return true
+        forEachReachablePos(position, game, direction) { reachablePos ->
+            if (reachablePos.equalsPosition(toPos)) return true
         }
 
         return false
     }
 
-    private inline fun forEachReachablePos(game: StaticChessBoard, informOf: (Position) -> Unit) {
-        forEachReachablePos(game, Direction.UP, informOf)
-        forEachReachablePos(game, Direction.LEFT, informOf)
-        forEachReachablePos(game, Direction.DOWN, informOf)
-        forEachReachablePos(game, Direction.RIGHT, informOf)
+    private inline fun forEachReachablePos(position: Position, game: StaticChessBoard, informOf: (Position) -> Unit) {
+        forEachReachablePos(position, game, Direction.UP, informOf)
+        forEachReachablePos(position, game, Direction.LEFT, informOf)
+        forEachReachablePos(position, game, Direction.DOWN, informOf)
+        forEachReachablePos(position, game, Direction.RIGHT, informOf)
     }
 
-    private inline fun forEachReachableTakeableEndPos(game: StaticChessBoard, informOf: (Position) -> Unit) {
-        forReachableTakeableEndPos(game, Direction.UP, informOf)
-        forReachableTakeableEndPos(game, Direction.LEFT, informOf)
-        forReachableTakeableEndPos(game, Direction.DOWN, informOf)
-        forReachableTakeableEndPos(game, Direction.RIGHT, informOf)
+    private inline fun forEachReachableTakeableEndPos(position: Position, game: StaticChessBoard, informOf: (Position) -> Unit) {
+        forReachableTakeableEndPos(position, game, Direction.UP, informOf)
+        forReachableTakeableEndPos(position, game, Direction.LEFT, informOf)
+        forReachableTakeableEndPos(position, game, Direction.DOWN, informOf)
+        forReachableTakeableEndPos(position, game, Direction.RIGHT, informOf)
     }
 
-    override fun forReachableMoves(game: StaticChessBoard, informOf: MoveInformer) {
-        forEachReachablePos(game) {
+    override fun forReachableMoves(position: Position, game: StaticChessBoard, informOf: MoveInformer) {
+        forEachReachablePos(position, game) {
             informOf(Move[position, it])
         }
     }
 
-    override fun forReachableTakingMoves(game: StaticChessBoard, informOf: MoveInformer) {
-        forEachReachableTakeableEndPos(game) {
+    override fun forReachableTakingMoves(position: Position, game: StaticChessBoard, informOf: MoveInformer) {
+        forEachReachableTakeableEndPos(position, game) {
             informOf(Move[position, it])
         }
     }
 
-    override fun forReachableCheckingMoves(game: ChessBoard, informOf: MoveInformer) {
-        val opponentKingPos = game.getKing(!isWhite).position
-        val currentPos = position
-        val possiblePos1 = Position[currentPos.row, opponentKingPos.column]
-        val possiblePos2 = Position[opponentKingPos.row, currentPos.column]
+    override fun forReachableCheckingMoves(position: Position, game: ChessBoard, informOf: MoveInformer) {
+        val opponentKingPos = game.getKingPos(!isWhite)
+        val possiblePos1 = Position[position.row, opponentKingPos.column]
+        val possiblePos2 = Position[opponentKingPos.row, position.column]
         // check position 1
-        if (isReachable(possiblePos1, game)) {
+        if (isReachable(position, possiblePos1, game)) {
             if (game.simulateSimplifiedMove(this, possiblePos1) { boardAfterMove ->
-                    isReachable(opponentKingPos, boardAfterMove)}
+                    isReachable(position, opponentKingPos, boardAfterMove)}
             ) {
-                informOf(Move[currentPos, possiblePos1])
+                informOf(Move[position, possiblePos1])
             }
         }
         // check position 2
-        if (isReachable(possiblePos2, game)) {
+        if (isReachable(position, possiblePos2, game)) {
             if (game.simulateSimplifiedMove(this, possiblePos2) { boardAfterMove ->
-                    isReachable(opponentKingPos, boardAfterMove)}
+                    isReachable(position, opponentKingPos, boardAfterMove)}
             ) {
-                informOf(Move[currentPos, possiblePos2])
+                informOf(Move[position, possiblePos2])
             }
         }
     }
 
-    override fun forPossibleMovesWhileUnboundAndCheck(game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer) {
+    override fun forPossibleMovesWhileUnboundAndCheck(position: Position, game: ChessBoard, checkLine: CheckLine, informOf: MoveInformer) {
         when {
             checkLine.posProgression.hasSinglePos -> {
-                addMoveIfReachable(checkLine.attackerPos, game, informOf)
+                addMoveIfReachable(position, checkLine.attackerPos, game, informOf)
             }
             checkLine.isDiagonalCheck -> {
                 var hasAlreadyAddedAPosition = false
                 checkLine.posProgression.forEachReachablePos {diagonalPos->
-                    if(addMoveIfReachable(diagonalPos, game, informOf)) {
+                    if(addMoveIfReachable(position, diagonalPos, game, informOf)) {
                         // a rook can only intersect with a diagonal attacker at max two points
                         if(hasAlreadyAddedAPosition) return
                         else hasAlreadyAddedAPosition = true
@@ -95,7 +94,7 @@ class Rook : CastlingFigure {
             }
             else -> { // isStraightCheck!
                 checkLine.posProgression.forEachReachablePos {straightPos->
-                    if(addMoveIfReachable(straightPos, game, informOf)) {
+                    if(addMoveIfReachable(position, straightPos, game, informOf)) {
                         // a rook can only intersect with a straight attacker at one point
                         return
                     }
@@ -104,7 +103,7 @@ class Rook : CastlingFigure {
         }
     }
 
-    override fun forPossibleMovesWhileBoundAndNoCheck(game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer) {
+    override fun forPossibleMovesWhileBoundAndNoCheck(position: Position, game: ChessBoard, boundLine: BoundLine, informOf: MoveInformer) {
         if(boundLine.boundFigureToAttackerDirection.isStraight) {
             boundLine.possibleMovesToAttacker.forEachReachablePos {posBetweenThisAndAttacker->
                 informOf(Move[position, posBetweenThisAndAttacker])
@@ -115,16 +114,16 @@ class Rook : CastlingFigure {
         }
     }
 
-    override fun isSelectable(game: ChessBoard): Boolean {
-        forEachReachablePos(game) {
-            if (!isBound(it, game)) return true
+    override fun isSelectable(position: Position, game: ChessBoard): Boolean {
+        forEachReachablePos(position, game) { reachablePos ->
+            if (!isBound(position, reachablePos, game)) return true
         }
         return false
     }
 
-    override fun countReachableMoves(game: StaticChessBoard): Int {
+    override fun countReachableMoves(position: Position, game: StaticChessBoard): Int {
         var reachableMovesCount = 0
-        forEachReachablePos(game) {
+        forEachReachablePos(position, game) {
             reachableMovesCount++
         }
         return reachableMovesCount

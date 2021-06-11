@@ -2,7 +2,7 @@ package voidchess.common.board.check
 
 import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.getFirstFigureInDir
-import voidchess.common.board.getKing
+import voidchess.common.board.getKingPos
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Position
 import voidchess.common.figures.Knight
@@ -26,7 +26,7 @@ data class AttackLines(val checkLines: List<CheckLine>, val boundLineByBoundFigu
 }
 
 fun checkAttackLines(game: StaticChessBoard, isWhite: Boolean): AttackLines {
-    val king = game.getKing(isWhite)
+    val king = game.getKingPos(isWhite)
     val kingPos = king.position
 
     val checkLines = ArrayList<CheckLine>()
