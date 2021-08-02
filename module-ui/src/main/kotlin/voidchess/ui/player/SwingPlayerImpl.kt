@@ -24,8 +24,7 @@ internal class SwingPlayerImpl(
     private lateinit var gameUIDisable: EnableUI
     private lateinit var resignSetEnabled: EnableButton
     private var mouseHoverWhileInactivePos: Position? = null
-    private var from: Position? = null
-    private var isMyTurn: Boolean = false
+    private var waitingState: WaitingFor = WaitingFor.GameToStart
     private var isWhitePlayer: Boolean = true
     private val singleThreadExecutor = Executors.newSingleThreadExecutor()
     private var computeMoveJob: ColdPromise<*>? = null
@@ -51,7 +50,7 @@ internal class SwingPlayerImpl(
     }
 
     private fun waitForComputer(computerMovePromise: ColdPromise<ComputerMoveResult>) {
-        isMyTurn = false
+        waitingState = WaitingFor.MyTurn
         dropMarkedPositions()
 
         singleThreadExecutor.submit {
@@ -76,7 +75,7 @@ internal class SwingPlayerImpl(
                             gameEnds()
                         }
                         is ComputerMoveResult.Ongoing -> {
-                            isMyTurn = true
+                            waitingState = WaitingFor.FromPos
                             mouseMovedOver(mouseHoverWhileInactivePos)
                         }
                     }
@@ -86,67 +85,81 @@ internal class SwingPlayerImpl(
     }
 
     private fun gameEnds() {
-        isMyTurn = false
+        waitingState = WaitingFor.GameToStart
         dropMarkedPositions()
         gameUIDisable()
     }
 
     private fun dropMarkedPositions() {
-        from = null
+        waitingState = WaitingFor.FromPos
         ui.unmarkPosition(PosType.HOVER_FROM)
         ui.unmarkPosition(PosType.SELECT_FROM)
         ui.unmarkPosition(PosType.HOVER_TO)
     }
 
     override fun mouseMovedOver(pos: Position?) {
-        if (!isMyTurn) {
-            mouseHoverWhileInactivePos = pos
-            return
-        }
-
-        val lockedFrom = from
-        if( pos==null) {
-            ui.unmarkPosition(if(lockedFrom==null) PosType.HOVER_FROM else PosType.HOVER_TO)
-            return
-        }
-
-        if (lockedFrom == null) {
-            ui.unmarkPosition(PosType.HOVER_FROM)
-            if (game.isSelectable(pos)) {
-                ui.markPosition(pos, PosType.HOVER_FROM)
+        when(val currentState = waitingState) {
+            is WaitingFor.FromPos -> {
+                if( pos==null) {
+                    ui.unmarkPosition(PosType.HOVER_FROM)
+                } else {
+                    ui.unmarkPosition(PosType.HOVER_FROM)
+                    if (game.isSelectable(pos)) {
+                        ui.markPosition(pos, PosType.HOVER_FROM)
+                    }
+                }
             }
-        } else {
-            ui.unmarkPosition(PosType.HOVER_TO)
-            if (game.isMovable(lockedFrom, pos)) {
-                ui.markPosition(pos, PosType.HOVER_TO)
+            is WaitingFor.ToPos -> {
+                if( pos==null) {
+                    ui.unmarkPosition(PosType.HOVER_TO)
+                } else {
+                    ui.unmarkPosition(PosType.HOVER_TO)
+                    if (game.isMovable(currentState.from, pos)) {
+                        ui.markPosition(pos, PosType.HOVER_TO)
+                    }
+                }
+            }
+            else -> {
+                // not my move
+                mouseHoverWhileInactivePos = pos
             }
         }
     }
 
     override fun mouseClickedOn(pos: Position) {
-        if (!isMyTurn) return
-
-        val lockedFrom = from
-        if (lockedFrom == null) {
-            if (game.isSelectable(pos)) {
-                from = pos
-                ui.markPosition(pos, PosType.SELECT_FROM)
+        when(val currentState = waitingState) {
+            is WaitingFor.FromPos -> {
+                if (game.isSelectable(pos)) {
+                    waitingState = WaitingFor.ToPos(from = pos)
+                    ui.markPosition(pos, PosType.SELECT_FROM)
+                }
             }
-        } else {
-            if (game.isMovable(lockedFrom, pos)) {
-                // check if move is a pawn transformation
-                val move: Move = if (game.getFigure(lockedFrom) is Pawn && (pos.row == 0 || pos.row == 7)) {
-                    val pawnPromotionType = askForPawnPromotionType()
-                    Move[lockedFrom, pos, pawnPromotionType]
+            is WaitingFor.ToPos -> {
+                val currentFrom = currentState.from
+                if(game.isSelectable(pos)) {
+                    // TODO you shouldn't need to call three different functions on ui, rework it
+                    ui.unmarkPosition(PosType.HOVER_FROM)
+                    ui.unmarkPosition(PosType.SELECT_FROM)
+                    ui.markPosition(pos, PosType.SELECT_FROM)
+                    waitingState = WaitingFor.ToPos(from = pos)
                 } else {
-                    Move[lockedFrom, pos]
-                }
-                runCatching {
-                    move(move)
-                }.onFailure { exception ->
-                    showErrorDialog(ui,exception)
+                    if (game.isMovable(currentFrom, pos)) {
+                        // check if move is a pawn transformation
+                        val move: Move = if (game.getFigure(currentFrom) is Pawn && (pos.row == 0 || pos.row == 7)) {
+                            val pawnPromotionType = askForPawnPromotionType()
+                            Move[currentFrom, pos, pawnPromotionType]
+                        } else {
+                            Move[currentFrom, pos]
+                        }
+                        runCatching {
+                            move(move)
+                        }.onFailure { exception ->
+                            showErrorDialog(ui, exception)
+                        }
+                    }
                 }
             }
+            else -> {} // not my move nothing to do
         }
     }
 
@@ -188,10 +201,11 @@ internal class SwingPlayerImpl(
 //        )
         game.initGame(startConfig)
         ui.startNewGame()
-        isMyTurn = isWhitePlayer
-        if(isMyTurn) {
+        if(isWhitePlayer) {
+            waitingState = WaitingFor.FromPos
             tableAdapter.humanStartsGame(startConfig)
         } else {
+            waitingState = WaitingFor.MyTurn
             val computerMovePromise = tableAdapter.computerStartsGame(startConfig)
             waitForComputer(computerMovePromise)
         }
@@ -202,3 +216,10 @@ typealias EnableUI = ()->Unit
 typealias EnableButton = (Boolean)->Unit
 
 private const val resignMsg = "player resigned"
+
+private sealed class WaitingFor {
+    object GameToStart: WaitingFor()
+    object MyTurn: WaitingFor()
+    object FromPos: WaitingFor()
+    class ToPos(val from: Position): WaitingFor()
+}
