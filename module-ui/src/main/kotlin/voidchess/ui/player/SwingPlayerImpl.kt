@@ -133,25 +133,23 @@ internal class SwingPlayerImpl(
             }
             is WaitingFor.ToPos -> {
                 val currentFrom = currentState.from
-                if(game.isSelectable(pos)) {
+                if (game.isMovable(currentFrom, pos)) {
+                    // check if move is a pawn transformation
+                    val move: Move = if (game.getFigure(currentFrom) is Pawn && (pos.row == 0 || pos.row == 7)) {
+                        val pawnPromotionType = askForPawnPromotionType()
+                        Move[currentFrom, pos, pawnPromotionType]
+                    } else {
+                        Move[currentFrom, pos]
+                    }
+                    runCatching {
+                        mouseHoverWhileInactivePos = move.to
+                        move(move)
+                    }.onFailure { exception ->
+                        showErrorDialog(ui, exception)
+                    }
+                } else if(game.isSelectable(pos)) {
                     waitingState = WaitingFor.ToPos(from = pos)
                     ui.updateMarkedPositions(MarkedPositions.From(pos))
-                } else {
-                    if (game.isMovable(currentFrom, pos)) {
-                        // check if move is a pawn transformation
-                        val move: Move = if (game.getFigure(currentFrom) is Pawn && (pos.row == 0 || pos.row == 7)) {
-                            val pawnPromotionType = askForPawnPromotionType()
-                            Move[currentFrom, pos, pawnPromotionType]
-                        } else {
-                            Move[currentFrom, pos]
-                        }
-                        runCatching {
-                            mouseHoverWhileInactivePos = move.to
-                            move(move)
-                        }.onFailure { exception ->
-                            showErrorDialog(ui, exception)
-                        }
-                    }
                 }
             }
             else -> {} // not my move nothing to do
