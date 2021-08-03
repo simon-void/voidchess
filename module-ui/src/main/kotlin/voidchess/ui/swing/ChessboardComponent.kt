@@ -11,6 +11,8 @@ import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Point
 import java.awt.event.MouseEvent
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.event.MouseInputListener
@@ -38,10 +40,9 @@ internal class ChessboardComponent(
     private val oddFieldHoverColor = oddFieldColor.darken(minusRed = darkest, minusGreen = darkest, minusBlue = darkest)
     private val evenFieldHumanMoveColor = evenFieldColor.darken(minusRed = darker, minusGreen = lessDark, minusBlue = 10)
     private val oddFieldHumanMoveColor = oddFieldColor.darken(minusRed = darker, minusGreen = lessDark, minusBlue = 10)
+    private val lock: Lock = ReentrantLock()
     private var lastComputerMoveTo: Position? = null
-    private var hover: Position? = null
-    private var from: Position? = null
-    private var to: Position? = null
+    private var markedPositions: MarkedPositions = MarkedPositions.None
 
     init {
         preferredSize = Dimension(2 * borderSize + 8 * areaSize, 2 * borderSize + 8 * areaSize)
@@ -65,7 +66,7 @@ internal class ChessboardComponent(
     }
 
     fun repaintAfterMove(extendedMove: ExtendedMove) {
-        synchronized(this) {
+        synchronized(lock) {
             val move = if (extendedMove is ExtendedMove.Castling) extendedMove.kingMove else extendedMove.move
             run {
                 if (isComputerMove) {
@@ -112,7 +113,7 @@ internal class ChessboardComponent(
     }
 
     fun repaintAtOnce() {
-        synchronized(this) {
+        synchronized(lock) {
             lastComputerMoveTo = null
             val (width, height) = size!!
             paintImmediately(0, 0, width, height)
@@ -120,7 +121,7 @@ internal class ChessboardComponent(
     }
 
     override fun paintComponent(g: Graphics) {
-        synchronized(this) {
+        synchronized(lock) {
             paintBoard(g)
             paintActiveAreas(g)
             paintFigures(g)
@@ -164,63 +165,40 @@ internal class ChessboardComponent(
             paintArea(it, evenFieldComputerMoveColor, oddFieldComputerMoveColor)
         }
 
-        val lockedHoverPos = hover
-        if (lockedHoverPos != null) {
-            paintArea(lockedHoverPos, evenFieldHoverColor, oddFieldHoverColor)
+        markedPositions.possibleFrom?.let {
+            paintArea(it, evenFieldHoverColor, oddFieldHoverColor)
         }
-        val lockedFromPos = from
-        if (lockedFromPos != null) {
-            paintArea(lockedFromPos, evenFieldHumanMoveColor, oddFieldHumanMoveColor)
+        markedPositions.from?.let {
+            paintArea(it, evenFieldHumanMoveColor, oddFieldHumanMoveColor)
         }
-        val lockedToPos = to
-        if (lockedToPos != null) {
-            paintArea(lockedToPos, evenFieldHumanMoveColor, oddFieldHumanMoveColor)
+        markedPositions.possibleTo?.let {
+            paintArea(it, evenFieldHumanMoveColor, oddFieldHumanMoveColor)
         }
     }
 
     fun setViewPoint(fromWhite: Boolean) {
-        synchronized(this) {
+        synchronized(lock) {
             _isWhiteView = fromWhite
             repaint()
         }
     }
 
-    fun markPosition(pos: Position, posType: PosType) {
-        synchronized(this) {
-            when (posType) {
-                PosType.HOVER_FROM -> hover = pos
-                PosType.SELECT_FROM -> from = pos
-                PosType.HOVER_TO -> to = pos
-            }
-            repaintPositionAtOnce(pos)
-        }
-    }
-
-    fun unmarkPosition(posType: PosType) {
-        synchronized(this) {
-            when (posType) {
-                PosType.HOVER_FROM -> {
-                    val lockedHoverPos = hover
-                    hover = null
-                    lockedHoverPos?.let { repaintPositionAtOnce(it) }
-                }
-                PosType.SELECT_FROM -> {
-                    val lockedFromPos = from
-                    from = null
-                    lockedFromPos?.let { repaintPositionAtOnce(it) }
-                }
-                PosType.HOVER_TO -> {
-                    val lockedToPos = to
-                    to = null
-                    lockedToPos?.let { repaintPositionAtOnce(it) }
-                }
+    fun updateMarkedPositions(newMarkedPositions: MarkedPositions) {
+        fun repaintIfMarkingChanged(oldMarkedPos: Position?, newMarkedPos: Position?) {
+            if(oldMarkedPos!=newMarkedPos) {
+                oldMarkedPos?.let { repaintPositionAtOnce(it) }
+                newMarkedPos?.let { repaintPositionAtOnce(it) }
             }
         }
-    }
-}
+        synchronized(lock) {
+            val oldMarkedPositions = markedPositions
+            markedPositions = newMarkedPositions
 
-enum class PosType {
-    HOVER_FROM, SELECT_FROM, HOVER_TO
+            repaintIfMarkingChanged(oldMarkedPositions.possibleFrom, newMarkedPositions.possibleFrom)
+            repaintIfMarkingChanged(oldMarkedPositions.from, newMarkedPositions.from)
+            repaintIfMarkingChanged(oldMarkedPositions.possibleTo, newMarkedPositions.possibleTo)
+        }
+    }
 }
 
 private class ChessboardAdapter(
@@ -295,3 +273,15 @@ operator fun Point.component2() = y
 
 operator fun Dimension.component1() = width
 operator fun Dimension.component2() = height
+
+internal sealed class MarkedPositions(
+    val possibleFrom: Position? = null,
+    val from: Position? = null,
+    val possibleTo: Position? = null,
+) {
+    object None: MarkedPositions()
+    class PossibleFrom(possibleFrom: Position): MarkedPositions(possibleFrom = possibleFrom)
+    class From(from: Position): MarkedPositions(from = from)
+    class FromAndPossibleTo(from: Position, possibleTo: Position): MarkedPositions(from = from, possibleTo = possibleTo)
+    class FromAndPossibleFrom(from: Position, possibleFrom: Position): MarkedPositions(from = from, possibleFrom = possibleFrom)
+}

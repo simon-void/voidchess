@@ -8,7 +8,7 @@ import voidchess.common.figures.Pawn
 import voidchess.common.integration.ColdPromise
 import voidchess.common.integration.TableAdapter
 import voidchess.ui.swing.ChessboardComponent
-import voidchess.ui.swing.PosType
+import voidchess.ui.swing.MarkedPositions
 import voidchess.ui.swing.showErrorDialog
 import java.util.concurrent.Executors
 import javax.swing.JOptionPane
@@ -51,7 +51,7 @@ internal class SwingPlayerImpl(
 
     private fun waitForComputer(computerMovePromise: ColdPromise<ComputerMoveResult>) {
         waitingState = WaitingFor.MyTurn
-        dropMarkedPositions()
+        ui.updateMarkedPositions(MarkedPositions.None)
 
         singleThreadExecutor.submit {
             computeMoveJob = computerMovePromise
@@ -86,38 +86,35 @@ internal class SwingPlayerImpl(
 
     private fun gameEnds() {
         waitingState = WaitingFor.GameToStart
-        dropMarkedPositions()
+        ui.updateMarkedPositions(MarkedPositions.None)
         gameUIDisable()
-    }
-
-    private fun dropMarkedPositions() {
-        waitingState = WaitingFor.FromPos
-        ui.unmarkPosition(PosType.HOVER_FROM)
-        ui.unmarkPosition(PosType.SELECT_FROM)
-        ui.unmarkPosition(PosType.HOVER_TO)
     }
 
     override fun mouseMovedOver(pos: Position?) {
         when(val currentState = waitingState) {
             is WaitingFor.FromPos -> {
-                if( pos==null) {
-                    ui.unmarkPosition(PosType.HOVER_FROM)
+                val markedPositions = if(pos==null || !game.isSelectable(pos)) {
+                    MarkedPositions.None
                 } else {
-                    ui.unmarkPosition(PosType.HOVER_FROM)
-                    if (game.isSelectable(pos)) {
-                        ui.markPosition(pos, PosType.HOVER_FROM)
-                    }
+                    MarkedPositions.PossibleFrom(pos)
                 }
+                ui.updateMarkedPositions(markedPositions)
             }
             is WaitingFor.ToPos -> {
-                if( pos==null) {
-                    ui.unmarkPosition(PosType.HOVER_TO)
+                val markedPositions = if( pos==null) {
+                    MarkedPositions.From(currentState.from)
                 } else {
-                    ui.unmarkPosition(PosType.HOVER_TO)
-                    if (game.isMovable(currentState.from, pos)) {
-                        ui.markPosition(pos, PosType.HOVER_TO)
+                    when {
+                        game.isMovable(currentState.from, pos) -> {
+                            MarkedPositions.FromAndPossibleTo(currentState.from, pos)
+                        }
+                        game.isSelectable(pos) -> {
+                            MarkedPositions.FromAndPossibleFrom(currentState.from, pos)
+                        }
+                        else -> MarkedPositions.From(currentState.from)
                     }
                 }
+                ui.updateMarkedPositions(markedPositions)
             }
             else -> {
                 // not my move
@@ -131,17 +128,14 @@ internal class SwingPlayerImpl(
             is WaitingFor.FromPos -> {
                 if (game.isSelectable(pos)) {
                     waitingState = WaitingFor.ToPos(from = pos)
-                    ui.markPosition(pos, PosType.SELECT_FROM)
+                    ui.updateMarkedPositions(MarkedPositions.From(pos))
                 }
             }
             is WaitingFor.ToPos -> {
                 val currentFrom = currentState.from
                 if(game.isSelectable(pos)) {
-                    // TODO you shouldn't need to call three different functions on ui, rework it
-                    ui.unmarkPosition(PosType.HOVER_FROM)
-                    ui.unmarkPosition(PosType.SELECT_FROM)
-                    ui.markPosition(pos, PosType.SELECT_FROM)
                     waitingState = WaitingFor.ToPos(from = pos)
+                    ui.updateMarkedPositions(MarkedPositions.From(pos))
                 } else {
                     if (game.isMovable(currentFrom, pos)) {
                         // check if move is a pawn transformation
@@ -152,6 +146,7 @@ internal class SwingPlayerImpl(
                             Move[currentFrom, pos]
                         }
                         runCatching {
+                            mouseHoverWhileInactivePos = move.to
                             move(move)
                         }.onFailure { exception ->
                             showErrorDialog(ui, exception)
