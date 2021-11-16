@@ -163,6 +163,9 @@ private fun getFigureRows(chess960: Int): Iterator<Pair<Position, Figure?>>  {
                 PAWN -> {
                     throw IllegalStateException("Pawns should never be in figureTypeRow")
                 }
+                null -> {
+                    throw IllegalStateException("null should never be in figureTypeRow")
+                }
             }
         }
     }

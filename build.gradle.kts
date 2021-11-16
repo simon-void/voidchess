@@ -22,7 +22,7 @@ dependencies {
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = "3.5"
+    version = "3.6"
 
     repositories {
         mavenCentral()
@@ -32,10 +32,10 @@ allprojects {
         withType<KotlinCompile> {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
-                jvmTarget = "16"
+                jvmTarget = "17"
                 kotlinOptions {
-                    languageVersion = "1.5"
-                    apiVersion = "1.5"
+                    languageVersion = "1.6"
+                    apiVersion = "1.6"
                 }
             }
         }
