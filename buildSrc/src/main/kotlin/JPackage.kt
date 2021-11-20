@@ -22,7 +22,11 @@ object JPackage {
     ): Int {
         fun MutableList<String>.add(paramName: String, paramValue: String) {
             add(paramName)
-            add(paramValue)
+            if(paramValue.contains(' ')) {
+                add(""""$paramValue"""")
+            } else {
+                add(paramValue)
+            }
         }
 
         val currentOS: OS = getCurrentOS()
@@ -72,7 +76,7 @@ object JPackage {
             IllegalStateException("jpackage not found (expected JDK version: 16 or above, detected: $javaVersion)")
         }
         println("executing: jpackage " + arguments.joinToString(separator = " "))
-        return jpackageTool.run(System.out, System.err, *arguments)
+        return jpackageTool.run(System.out, System.out, *arguments)
     }
 
     private fun execJpackageViaRuntime(arguments: Array<String>): Int {
