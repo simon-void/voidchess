@@ -3,14 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version Deps.kotlinVersion
     application
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 application {
-    mainClassName = "voidchess.VoidchessAppKt"
-// this is the replacement for the deprecated mainClassName in Gradle 8.0
-// but currently ShadowJar still requires `mainClassName`
-//    mainClass.set("voidchess.VoidchessAppKt")
+    mainClass.set("voidchess.VoidchessAppKt")
 }
 
 dependencies {
