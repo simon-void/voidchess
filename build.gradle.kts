@@ -16,6 +16,11 @@ dependencies {
     implementation(project(":module-united"))
 }
 
+kotlin {
+    jvmToolchain {
+        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
 
 allprojects {
     group = "de.gmx.simonvoid"
@@ -29,7 +34,6 @@ allprojects {
         withType<KotlinCompile> {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
-                jvmTarget = "17"
                 kotlinOptions {
                     languageVersion = "1.6"
                     apiVersion = "1.6"
