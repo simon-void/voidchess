@@ -67,7 +67,7 @@ object JPackage {
     /**
      * switch to this method for invoking jpackage
      * TODO fix bug when executing on Ubuntu
-     * executing: jpackage --name VoidChess --description a chess program --app-version 3.6 --input build/libs --dest build/installer --main-jar voidchess-3.6-all.jar --add-modules java.desktop --type deb --icon about/shortcut-icon2.png --linux-shortcut --linux-menu-group Games
+     * executing: jpackage --name VoidChess --description "a chess program" --app-version 3.6 --input build/libs --dest build/installer --main-jar voidchess-3.6-all.jar --add-modules java.desktop --type deb --icon about/shortcut-icon2.png --linux-shortcut --linux-menu-group Games
      * java.io.IOException: Command [fakeroot, dpkg-deb, -b, /tmp/jdk.jpackage961355904914198194/images, /home/stephan/.gradle/daemon/7.0/build/installer/voidchess_3.6-1_amd64.deb] exited with 2 code
      */
     private fun execJpackageViaToolProvider(arguments: Array<String>): Int {
@@ -76,7 +76,7 @@ object JPackage {
             IllegalStateException("jpackage not found (expected JDK version: 16 or above, detected: $javaVersion)")
         }
         println("executing: jpackage " + arguments.joinToString(separator = " "))
-        return jpackageTool.run(System.out, System.out, *arguments)
+        return jpackageTool.run(System.out, System.err, *arguments)
     }
 
     private fun execJpackageViaRuntime(arguments: Array<String>): Int {
