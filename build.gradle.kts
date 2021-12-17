@@ -24,7 +24,7 @@ kotlin {
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = "3.6"
+    version = "4"
 
     repositories {
         mavenCentral()
