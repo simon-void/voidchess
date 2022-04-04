@@ -1,5 +1,5 @@
 object Deps {
-    const val kotlinVersion = "1.6.10"
+    const val kotlinVersion = "1.6.20"
     const val batikTranscoder = "org.apache.xmlgraphics:batik-transcoder:1.14"
     private const val coroutinesVersion = "1.6.0"
 
