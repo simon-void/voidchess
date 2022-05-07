@@ -17,6 +17,7 @@ dependencies {
 }
 
 kotlin {
+    // uses org.gradle.java.installations.auto-download=false in gradle.properties to disable auto provisioning of JDK
     jvmToolchain {
         (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17))
     }
@@ -35,8 +36,8 @@ allprojects {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
                 kotlinOptions {
-                    languageVersion = "1.6"
-                    apiVersion = "1.6"
+                    languageVersion = Deps.languageVersion
+                    apiVersion = Deps.languageVersion
                 }
             }
         }
