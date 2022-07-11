@@ -1,8 +1,8 @@
 object Deps {
     const val languageVersion = "1.7"
-    const val kotlinVersion = "1.7.0"
+    const val kotlinVersion = "1.7.10"
     const val batikTranscoder = "org.apache.xmlgraphics:batik-transcoder:1.14"
-    private const val coroutinesVersion = "1.6.2"
+    private const val coroutinesVersion = "1.6.3"
 
     val coroutineDeps = listOf(
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}",
