@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version Deps.kotlinVersion
     application
-    id("com.github.johnrengelman.shadow") version "7.1.1"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 application {
@@ -25,7 +25,7 @@ kotlin {
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = "4"
+    version = "5"
 
     repositories {
         mavenCentral()
