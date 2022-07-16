@@ -19,7 +19,7 @@ dependencies {
 kotlin {
     // uses org.gradle.java.installations.auto-download=false in gradle.properties to disable auto provisioning of JDK
     jvmToolchain {
-        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
