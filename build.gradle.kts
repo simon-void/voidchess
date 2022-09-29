@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version Deps.kotlinVersion
     application
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version Deps.shadowPluginVersion
 }
 
 application {
@@ -18,14 +18,12 @@ dependencies {
 
 kotlin {
     // uses org.gradle.java.installations.auto-download=false in gradle.properties to disable auto provisioning of JDK
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
+    jvmToolchain(Deps.jdkVerion)
 }
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = "5"
+    version = Deps.projectVersion
 
     repositories {
         mavenCentral()
@@ -36,8 +34,8 @@ allprojects {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
                 kotlinOptions {
-                    languageVersion = Deps.languageVersion
-                    apiVersion = Deps.languageVersion
+                    languageVersion = Deps.kotlinLangVersion
+                    apiVersion = Deps.kotlinLangVersion
                 }
             }
         }
