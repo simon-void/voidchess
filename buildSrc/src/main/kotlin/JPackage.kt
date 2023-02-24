@@ -100,7 +100,7 @@ object JPackage {
 
     private fun getCurrentOS(): OS {
         val osName: String = System.getProperty("os.name")
-        val normalizedOsName = osName.trim().replace(" ", "").toLowerCase()
+        val normalizedOsName = osName.trim().replace(" ", "").lowercase()
         return when {
             normalizedOsName.contains("windows") -> OS.WIN
             normalizedOsName.contains("linux") -> OS.LINUX
