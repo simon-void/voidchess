@@ -23,6 +23,12 @@ on Windows.
 
 The installer is generated into the `/build/compose/binaries/main/{os}/` folder. 
 
+**Before you can generate installers you have to install the following programs on your OS:**
+- on Red Hat Linux: the *rpm-build* package
+- on Ubuntu Linux: the *fakeroot* package
+- on macOS: *Xcode command line tools*
+- on Windows: *WiX 3.0* or later
+
 ## commandline actions
 
 - `./gradlew run` to run the application from source
