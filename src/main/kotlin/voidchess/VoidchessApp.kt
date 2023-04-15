@@ -27,10 +27,10 @@ fun main() = application {
         title = "VoidChess",
         state = rememberWindowState(
             width = (size.width + 20).dp,
-            height = (size.height + 35).dp,
+            height = (size.height + 40).dp,
             position = WindowPosition.Aligned(Alignment.Center)
         ),
-        resizable = false,
+//        resizable = false,
         icon = icon,
     ) {
         SwingPanel(
