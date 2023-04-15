@@ -16,22 +16,17 @@ import java.awt.Image
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.InputStream
-import java.util.*
-import javax.imageio.ImageIO
 
 
 internal object ImageLoader {
-    private val svgInfo = SvgChessSetInfo("merida", 110)
     private val whiteFigureImages = Array(FigureType.values().size) {
         val figureType = FigureType.values()[it]
-        return@Array loadFigure(figureType, true, svgInfo)
+        return@Array loadFigure(figureType, true)
     }
     private val blackFigureImages = Array(FigureType.values().size) {
         val figureType = FigureType.values()[it]
-        return@Array loadFigure(figureType, false, svgInfo)
+        return@Array loadFigure(figureType, false)
     }
-
-    val icon = loadImage("icon", "gif")
 
     fun getFigureImage(figureType: FigureType, isWhite: Boolean, widthHeight: Int): Image {
         return if (isWhite) {
@@ -42,23 +37,10 @@ internal object ImageLoader {
     }
 
     /**
-     * for gif, png, jpg images
-     */
-    private fun loadImage(fileName: String, fileType: String): Image {
-        val relativePath = "image/$fileName.$fileType"
-        try {
-            getResourceStream(javaClass, "module-ui", relativePath).use {
-                return ImageIO.read(it)
-            }
-        } catch (e: Exception) {
-            throw IllegalStateException("couldn't find image: $relativePath", e)
-        }
-    }
-
-    /**
      * for svg images
      */
-    private fun loadSvgImage(svgInfo: SvgChessSetInfo, fileName: String): SvgImage {
+    private fun loadSvgImage(fileName: String): SvgImage {
+        val svgInfo = SvgChessSetInfo("merida", 110)
         val relativePath = "image/${svgInfo.subfolder}/$fileName.svg"
         try {
             getResourceStream(javaClass, "module-ui", relativePath).use {
@@ -71,9 +53,9 @@ internal object ImageLoader {
 
 
 
-    private fun loadFigure(figureType: FigureType, isWhite: Boolean, svgInfo: SvgChessSetInfo): SvgImage {
+    private fun loadFigure(figureType: FigureType, isWhite: Boolean): SvgImage {
         val figureImgFile = "${if(isWhite) "w" else "b"}_${figureType.name.lowercase()}"
-        return loadSvgImage(svgInfo, figureImgFile)
+        return loadSvgImage(figureImgFile)
     }
 }
 

@@ -13,15 +13,17 @@ You can download the installer for Windows, Linux and macOS on [this project's m
 
 You can generate an installer by running
 ```
-./gradlew clean buildInstaller
+./gradlew clean packageDistributionForCurrentOs
 ```
 on Linux and MacOS and by running
 ```
-gradlew.bat clean buildInstaller
+gradlew.bat clean packageDistributionForCurrentOs
 ```
 on Windows.
- 
-You might need to install some the local packets which `jpackage` uses to build installer,
-but in this case the error message should be helpful.
 
-The installer is generated into the `build/installer` folder. 
+The installer is generated into the `/build/compose/binaries/main/{os}/` folder. 
+
+## commandline actions
+
+- `./gradlew run` to run the application from source
+- `./gradlew packageDistributionForCurrentOs` to store native distribution into build/compose/binaries

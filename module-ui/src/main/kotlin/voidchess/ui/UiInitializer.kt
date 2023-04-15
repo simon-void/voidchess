@@ -6,18 +6,17 @@ import voidchess.common.integration.ComputerPlayerUI
 import voidchess.common.integration.TableAdapter
 import voidchess.ui.player.SwingPlayerImpl
 import voidchess.ui.swing.Chess960Panel
-import voidchess.ui.swing.ChessFrame
 import voidchess.ui.swing.ChessPanel
 import voidchess.ui.swing.ChessboardComponent
 import voidchess.ui.swing.ComputerPlayerComponent
 import voidchess.ui.swing.CoresPanel
 import voidchess.ui.swing.DifficultyPanel
-import javax.swing.SwingUtilities
+import javax.swing.JComponent
 
 fun initializeUI(
     engineConfig: EngineConfig,
     tableAdapter: TableAdapter
-): ComputerPlayerUI {
+): Pair<JComponent, ComputerPlayerUI> {
 
     val game = BasicChessGameImpl()
     val chessboardComponent = ChessboardComponent(game)
@@ -39,9 +38,9 @@ fun initializeUI(
         humanPlayer.postConstruct(it::stop, it::enableResign)
     }
     //Swing UI updates have to come from the SwingHandler or something
-    SwingUtilities.invokeLater {
-        ChessFrame(chessPanel)
-    }
+//    SwingUtilities.invokeLater {
+//        ChessFrame(chessPanel)
+//    }
 
-    return computerPlayerUI
+    return chessPanel to computerPlayerUI
 }
