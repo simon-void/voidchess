@@ -21,7 +21,7 @@ on Linux and MacOS and by running
 ```
 on Windows.
 
-The installer is generated into the `/build/compose/binaries/main/{os}/` folder. 
+The installer is generated into the `/build/compose/binaries/main/{file_type}/` folder. 
 
 **Before you can generate installers you have to install the following programs on your OS:**
 - on Red Hat Linux: the *rpm-build* package
