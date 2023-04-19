@@ -18,7 +18,7 @@ import javax.swing.JComponent
 import javax.swing.event.MouseInputListener
 
 
-internal class ChessboardComponent(
+class ChessboardComponent(
     private val game: StaticChessBoard
 ) : JComponent() {
 
@@ -274,7 +274,7 @@ operator fun Point.component2() = y
 operator fun Dimension.component1() = width
 operator fun Dimension.component2() = height
 
-internal sealed class MarkedPositions(
+sealed class MarkedPositions(
     val possibleFrom: Position? = null,
     val from: Position? = null,
     val possibleTo: Position? = null,

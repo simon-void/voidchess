@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("org.jetbrains.compose") version Deps.composeVersion
 }
 
 kotlin {
@@ -8,6 +9,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(compose.desktop.currentOs)
     implementation(Deps.batikTranscoder)
 
     Deps.testDeps.forEach { testImplementation(it) }

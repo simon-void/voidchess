@@ -15,7 +15,7 @@ You can generate an installer by running
 ```
 ./gradlew clean packageDistributionForCurrentOs
 ```
-on Linux and MacOS and by running
+on Linux and macOS and by running
 ```
 ./gradlew.bat clean packageDistributionForCurrentOs
 ```

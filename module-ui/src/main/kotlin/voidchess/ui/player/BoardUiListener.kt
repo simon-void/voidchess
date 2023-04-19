@@ -3,7 +3,7 @@ package voidchess.ui.player
 import voidchess.common.board.move.Position
 
 
-internal interface BoardUiListener {
+interface BoardUiListener {
     fun mouseMovedOver(pos: Position?)
     fun mouseClickedOn(pos: Position)
 

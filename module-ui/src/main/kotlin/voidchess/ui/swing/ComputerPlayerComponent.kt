@@ -11,13 +11,12 @@ import javax.swing.JComponent
 import kotlin.math.ceil
 
 
-internal class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
+class ComputerPlayerComponent : JComponent(), ComputerPlayerUI {
 
     private var bubbleText: String? = "let's play"
     private var smileFactor = HappinessLevel.CONTENT
     private var thumbAction = Thumb.NO
-    private var value: Evaluation =
-            Draw
+    private var value: Evaluation = Draw
     private var showThoughts = false
     private var showValue = false
     private var index: Int = 0
