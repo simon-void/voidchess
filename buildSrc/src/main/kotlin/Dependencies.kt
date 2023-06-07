@@ -7,7 +7,7 @@ object Deps {
 
     const val batikTranscoder = "org.apache.xmlgraphics:batik-transcoder:1.16"
 
-    private const val coroutinesVersion = "1.6.4"
+    private const val coroutinesVersion = "1.7.1"
     val coroutineDeps = listOf(
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}",
         "org.jetbrains.kotlinx:kotlinx-coroutines-swing:${coroutinesVersion}",
@@ -16,7 +16,7 @@ object Deps {
 
     val testDeps = listOf(
         "org.jetbrains.kotlin:kotlin-test:$kotlinVersion",
-        "org.testng:testng:7.7.1",
+        "org.testng:testng:7.8.0",
         "io.mockk:mockk:1.13.5",
     )
 }
