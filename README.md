@@ -15,7 +15,7 @@ You can generate an installer by running
 ```
 ./gradlew clean buildInstaller
 ```
-on Linux and MacOS and by running
+on Linux and macOS, and by running
 ```
 gradlew.bat clean buildInstaller
 ```
