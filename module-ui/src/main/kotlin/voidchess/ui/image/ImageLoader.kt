@@ -16,18 +16,17 @@ import java.awt.Image
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.InputStream
-import java.util.*
 import javax.imageio.ImageIO
 
 
 internal object ImageLoader {
     private val svgInfo = SvgChessSetInfo("merida", 110)
-    private val whiteFigureImages = Array(FigureType.values().size) {
-        val figureType = FigureType.values()[it]
+    private val whiteFigureImages = Array(FigureType.entries.size) {
+        val figureType = FigureType.entries[it]
         return@Array loadFigure(figureType, true, svgInfo)
     }
-    private val blackFigureImages = Array(FigureType.values().size) {
-        val figureType = FigureType.values()[it]
+    private val blackFigureImages = Array(FigureType.entries.size) {
+        val figureType = FigureType.entries[it]
         return@Array loadFigure(figureType, false, svgInfo)
     }
 

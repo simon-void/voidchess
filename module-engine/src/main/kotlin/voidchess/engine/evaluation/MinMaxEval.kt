@@ -234,7 +234,7 @@ internal class MinMaxEval(
 private fun ArrayList<Move>.shuffle(movesToTryFirst: BestResponseSet): ArrayList<Move> {
     val maxIndex = this.size - 1
     if (maxIndex > 2) {
-        for (i in 0 until (maxIndex / 2) - 1 step 2) {
+        for (i in 0 ..< (maxIndex / 2) - 1 step 2) {
             val temp = this[i]
             val inverseI = maxIndex - i
             this[i] = this[inverseI]

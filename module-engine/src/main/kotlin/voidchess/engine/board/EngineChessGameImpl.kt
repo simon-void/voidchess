@@ -81,7 +81,7 @@ internal class EngineChessGameImpl private constructor(
         NumberStack()
     ) {
         numberOfMovesWithoutHit = startConfig.numberOfMovesWithoutHit
-        for (i in 0 until numberOfMovesWithoutHit) numberStack.noFigureHit()
+        for (i in 0 ..< numberOfMovesWithoutHit) numberStack.noFigureHit()
 
         memorizeGame()
 
@@ -214,7 +214,7 @@ internal class EngineChessGameImpl private constructor(
 
         if (numberOfInstances > 1) {
             val moves = board.movesPlayed()
-            for (i in 1 until numberOfInstances) {
+            for (i in 1 ..< numberOfInstances) {
                 val copy = EngineChessGameImpl(this, startConfig, moves)
                 gameInstances.add(copy)
             }
@@ -256,8 +256,6 @@ private class NumberStack {
         ensureCapacity()
         index++
     }
-
-    val noMovesWithoutFigureHit: Int get() = numberStack[index]
 
     fun undo(): Int {
         if (numberStack[index] == 0) {

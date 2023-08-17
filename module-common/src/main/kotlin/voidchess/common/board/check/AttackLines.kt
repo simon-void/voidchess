@@ -33,7 +33,7 @@ fun checkAttackLines(game: StaticChessBoard, isWhite: Boolean): AttackLines {
     val boundLineByBoundFigurePos = HashMap<Position, BoundLine>(8)
 
     // check for check by bishop, rook or queen (the only figures that can also bind other figures)
-    for(directionFromKingOutwards in Direction.values()) {
+    for(directionFromKingOutwards in Direction.entries) {
         val firstInLine = game.getFirstFigureInDir(directionFromKingOutwards, kingPos)
         if (firstInLine != null) {
             if (firstInLine.isWhite != isWhite) {

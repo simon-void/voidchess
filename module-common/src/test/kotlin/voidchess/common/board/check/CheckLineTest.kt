@@ -39,7 +39,7 @@ internal class CheckLineTest {
 
     @Test(dataProvider = "getTestDoesNotKeepKingInCheckIfHeMovesToData")
     fun testKeepsKingInCheckIfHeMovesTo(checkLine: CheckLine, inCheckDirections: List<Direction>) {
-        for(direction in Direction.values()) {
+        for(direction in Direction.entries) {
             val actualInCheck = checkLine.keepsKingInCheckIfHeMovesTo(direction)
             assertEquals(actualInCheck, inCheckDirections.contains(direction), "no check in direction $direction")
         }

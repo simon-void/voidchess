@@ -130,7 +130,7 @@ private fun StaticChessBoard.isPassedPawn(pawnPos: Position, isPawnWhite: Boolea
     val rowProgression: IntProgression = if(isPawnWhite) {
         6 downTo pawnPos.row + 1
     }else{
-        1 until pawnPos.row
+        1 ..< pawnPos.row
     }
     val minColumn = (pawnPos.column-1).coerceAtLeast(0)
     val maxColumn = (pawnPos.column+1).coerceAtMost(7)
@@ -236,8 +236,6 @@ internal data class GameInventory(
             numberOfBlackQueens == 0 && numberOfBlackRooks == 0 && numberOfBlackKnights == 0 && numberOfBlackBishops == 0
 
     val arePawnsLeft: Boolean = numberOfWhitePawns != 0 || numberOfBlackPawns != 0
-
-    val isOnlySinglePawnLeft: Boolean = (numberOfWhitePawns + numberOfBlackPawns) == 1
 
     val hasOneSideOnlyKingLeft: Boolean = (numberOfWhiteQueens == 0 && numberOfWhiteRooks == 0 &&
             numberOfWhiteKnights == 0 && numberOfWhiteBishops == 0 && numberOfWhitePawns == 0) ||

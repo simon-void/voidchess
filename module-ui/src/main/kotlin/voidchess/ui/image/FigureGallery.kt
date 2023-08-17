@@ -10,10 +10,10 @@ internal class FigureGallery(
     imageObserver: ImageObserver,
     imageWidthHeight: Int
 ) {
-    private val whitePaintables: Array<Paintable> = FigureType.values().map { figureType ->
+    private val whitePaintables: Array<Paintable> = FigureType.entries.map { figureType ->
         Paintable(imageObserver, ImageLoader.getFigureImage(figureType, true, imageWidthHeight))
     }.toTypedArray()
-    private val blackPaintables: Array<Paintable> = FigureType.values().map { figureType ->
+    private val blackPaintables: Array<Paintable> = FigureType.entries.map { figureType ->
         Paintable(imageObserver, ImageLoader.getFigureImage(figureType, false, imageWidthHeight))
     }.toTypedArray()
 
@@ -31,7 +31,7 @@ internal class Paintable(
     private val observer: ImageObserver,
     private val image: Image
 ) {
-    fun paintOn(g: Graphics, x_pos: Int, y_pos: Int, areaSize: Int) {
-        g.drawImage(image, x_pos, y_pos, areaSize, areaSize, observer)
+    fun paintOn(g: Graphics, xPos: Int, yPos: Int, areaSize: Int) {
+        g.drawImage(image, xPos, yPos, areaSize, areaSize, observer)
     }
 }

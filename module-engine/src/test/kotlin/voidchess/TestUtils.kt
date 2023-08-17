@@ -62,6 +62,6 @@ fun String.toManualConfig(): StartConfig.ManualConfig {
 
 fun Int.toChess960Config(): StartConfig.Chess960Config {
     val chess960Index = this
-    check(chess960Index in 0 until 960) { "expected value to be within 0-959 but was: $chess960Index" }
+    check(chess960Index in 0 ..< 960) { "expected value to be within 0-959 but was: $chess960Index" }
     return StartConfig.Chess960Config(chess960Index)
 }

@@ -48,7 +48,7 @@ class Memento (
 
         val endIndexMinusOne = endIndex - 1
         var compressedValue: Long = 0
-        for (i in startIndex until endIndexMinusOne) {
+        for (i in startIndex ..< endIndexMinusOne) {
             assert(board[i] in 0..15) // board[i] (=figure==null?0:figure.typeInfo) out of Bounds, it has to fit into 4 bits with 0->no figure!
             // optimized form of
 //            compressedValue += board[i].toLong()

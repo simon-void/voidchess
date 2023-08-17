@@ -76,7 +76,7 @@ internal class EngineChessGameTest {
             assertEquals(gameDes, copy.toString(), "copy and game")
         }
 
-        for(i in 0 until copies.size-1) {
+        for(i in 0 ..< copies.size-1) {
             assertNotSame(copies[i], copies[i+1], "all copies should be distinct objects but instance $i and ${i+1} are the same instance")
         }
     }
@@ -423,15 +423,11 @@ internal class EngineChessGameTest {
         }
     }
 
-    @Test
+    @Test(expectedExceptions = [IllegalStateException::class])
     fun testChecksForMoveMovesFigureNotNull() {
         val des = "white 0 King-white-e1-0 Pawn-black-g3-false King-black-e8-0"
         val game = EngineChessGameImpl(des.toManualConfig())
-        try {
-            game.withMove(Move.byCode("a1-b1")) {}
-            fail()
-        } catch (e: IllegalStateException) {
-        }
+        game.withMove(Move.byCode("a1-b1")) {}
     }
 
     @Test

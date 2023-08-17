@@ -5,7 +5,6 @@ import org.testng.annotations.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class DirectionTest {
     @Test
@@ -32,10 +31,10 @@ class DirectionTest {
 
     @DataProvider
     fun getReverseDataProvider() :Array<Array<Any>> = arrayOf(
-            arrayOf<Any>(Direction.UP, Direction.DOWN),
-            arrayOf<Any>(Direction.LEFT, Direction.RIGHT),
-            arrayOf<Any>(Direction.UP_LEFT, Direction.DOWN_RIGHT),
-            arrayOf<Any>(Direction.UP_RIGHT, Direction.DOWN_LEFT)
+            arrayOf(Direction.UP, Direction.DOWN),
+            arrayOf(Direction.LEFT, Direction.RIGHT),
+            arrayOf(Direction.UP_LEFT, Direction.DOWN_RIGHT),
+            arrayOf(Direction.UP_RIGHT, Direction.DOWN_LEFT)
     )
 
     @Test
@@ -54,24 +53,37 @@ class DirectionTest {
             Direction.DOWN, Direction.LEFT), "the diagonal of down and left")
     }
 
-    @Test
-    fun testGetDiagonalFails() {
-        for(notUpOrDown in listOf(Direction.UP_LEFT, Direction.UP_RIGHT, Direction.RIGHT, Direction.DOWN_RIGHT, Direction.DOWN_LEFT, Direction.LEFT)) {
-            for(anyDir in Direction.values()) {
-                try {
-                    Direction.getDiagonal(notUpOrDown, anyDir)
-                    fail("illegal parameters for getDiagonal didn't throw exception! upOrDown: $notUpOrDown, leftOrRight: $anyDir")
-                }catch (e: IllegalArgumentException) {}
-            }
-        }
+    @Test(expectedExceptions = [IllegalArgumentException::class], dataProvider = "getIllegalGetDiagonalParamsProvider")
+    fun testGetDiagonalFails(firstDirection: Direction, secondDirection: Direction) {
+        Direction.getDiagonal(firstDirection, secondDirection)
+    }
 
-        for(upOrDown in listOf(Direction.UP, Direction.DOWN)) {
-            for(notLeftOrRight in listOf(Direction.UP_LEFT, Direction.UP, Direction.UP_RIGHT, Direction.DOWN_RIGHT, Direction.DOWN, Direction.DOWN_LEFT)) {
-                try {
-                    Direction.getDiagonal(upOrDown, notLeftOrRight)
-                    fail("illegal parameters for getDiagonal didn't throw exception! upOrDown: $upOrDown, leftOrRight: $notLeftOrRight")
-                }catch (e: IllegalArgumentException) {}
-            }
-        }
+    @DataProvider
+    fun getIllegalGetDiagonalParamsProvider(): Array<Array<Any>> {
+        fun <A> List<A>.pairEachElementWithEachFrom(other: List<A>): List<List<A>> =
+            this.flatMap { e1 -> other.map { e2 -> listOf(e1, e2) } }
+        fun List<List<Any>>.toArrayArray(): Array<Array<Any>> = this.map { it.toTypedArray() }.toTypedArray()
+
+        val batch1 = listOf(
+            Direction.UP_LEFT,
+            Direction.UP_RIGHT,
+            Direction.RIGHT,
+            Direction.DOWN_RIGHT,
+            Direction.DOWN_LEFT,
+            Direction.LEFT
+        ).pairEachElementWithEachFrom(Direction.entries)
+
+        val batch2 = listOf(Direction.UP, Direction.DOWN).pairEachElementWithEachFrom(
+            listOf(
+                Direction.UP_LEFT,
+                Direction.UP,
+                Direction.UP_RIGHT,
+                Direction.DOWN_RIGHT,
+                Direction.DOWN,
+                Direction.DOWN_LEFT
+            )
+        )
+
+        return (batch1+batch2).toArrayArray()
     }
 }

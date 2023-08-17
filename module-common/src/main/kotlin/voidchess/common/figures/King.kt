@@ -152,7 +152,7 @@ class King : CastlingFigure {
         val columnRange =
                 if(updatedToColumn>kingPos.column)
                     (kingPos.column+1)..updatedToColumn
-                else updatedToColumn until kingPos.column
+                else updatedToColumn ..< kingPos.column
 
         for (column in columnRange) {
             if (isKingCheckAt(Position[kingPos.row, column], game)) return true
@@ -173,7 +173,7 @@ class King : CastlingFigure {
     override fun forPossibleMoves(game: ChessBoard, informOf: MoveInformer) {
         val attackLines = game.getCachedAttackLines()
         if(attackLines.noCheck) {
-            for(direction in Direction.values()) {
+            for(direction in Direction.entries) {
                 position.step(direction)?.let { possibleKingPos->
                     if(isAccessible(game, possibleKingPos) && !isKingCheckAt(possibleKingPos, game)) {
                         informOf(Move[position, possibleKingPos])
@@ -185,7 +185,7 @@ class King : CastlingFigure {
             }
         } else {
             // isSingleCheck || isDoubleCheck
-            Direction.values().forEach directionLoop@ { direction ->
+            Direction.entries.forEach directionLoop@ { direction ->
                 position.step(direction)?.let { possibleKingPos->
                     for(checkLine in attackLines.checkLines) {
                         if(checkLine.keepsKingInCheckIfHeMovesTo(direction)) {
@@ -229,7 +229,7 @@ class King : CastlingFigure {
     // the king ignores the 'OrCheck'-part (because he can't go setting the other king in check)
     override fun forPossibleTakingMoves(game: ChessBoard, informOf: MoveInformer) {
         val attackLines = game.getCachedAttackLines()
-        Direction.values().forEach directionLoop@ { direction ->
+        Direction.entries.forEach directionLoop@ { direction ->
             position.step(direction)?.let { possibleKingPos->
                 for(checkLine in attackLines.checkLines) {
                     if(checkLine.keepsKingInCheckIfHeMovesTo(direction)) {
@@ -264,7 +264,7 @@ class King : CastlingFigure {
 
     override fun isSelectable(game: ChessBoard): Boolean {
         val attackLines = game.getCachedAttackLines()
-        directionLoop@ for(direction in Direction.values()) {
+        directionLoop@ for(direction in Direction.entries) {
             val directKingNeighbourPos = position.step(direction) ?: continue@directionLoop
             for (checkLine in attackLines.checkLines) {
                 if(checkLine.keepsKingInCheckIfHeMovesTo(direction)) {
