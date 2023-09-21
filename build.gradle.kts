@@ -67,15 +67,17 @@ tasks {
                 description = "a chess program",
                 appVersion = projectVersion,
                 inputDir = "build/libs",
-                destinationDir = "build/installer",
+                destinationDir = File(projectDir, "build/installer").absolutePath,
                 mainJar = "voidchess-$projectVersion-all.jar",
                 addModules = listOf("java.desktop"),
                 winIcoIconPath = "about/shortcut-icon2.ico",
                 winShortcut = true,
                 winMenu = true,
+                winPackageType = WinPackageType.MSI,
                 linuxPngIconPath = "about/shortcut-icon2.png",
                 linuxShortcut = true,
                 linuxMenuGroup = "Games",
+                linuxPackageType = LinuxPackageType.DEB,
                 macIcnsIconPath = "about/shortcut-icon2.icns"
             )
         }
