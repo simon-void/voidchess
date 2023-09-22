@@ -44,24 +44,16 @@ private fun benchmark(benchmarkLevel: Int) {
 
     when(benchmarkLevel) {
         1 -> {
-            pruner = SingleFullMovePrunerWithPawnMoves( 2, 4, 2)
-            movesSoFarHistory = closedPositionHistory
+            pruner = DefaultPruner(3, 4, 4)
+            movesSoFarHistory = openedPositionHistory
         }
         2 -> {
-            pruner = SingleFullMovePrunerWithPawnMoves( 2, 4, 2)
+            pruner = DefaultPruner(3, 5, 5)
             movesSoFarHistory = openedPositionHistory
         }
         3 -> {
-            pruner = DefaultPruner(2, 5, 3)
+            pruner = DefaultPruner(4, 4, 4)
             movesSoFarHistory = openedPositionHistory
-        }
-        4 -> {
-            pruner = DefaultPruner(3, 3, 3)
-            movesSoFarHistory = "d2-d3,d7-d6"
-        }
-        5 -> {
-            pruner = DefaultPruner(3, 5, 3)
-            movesSoFarHistory = closedPositionHistory
         }
         else -> throw IllegalArgumentException("unknown benchmark level: $benchmarkLevel")
     }

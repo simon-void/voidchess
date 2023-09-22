@@ -13,7 +13,7 @@ import voidchess.common.board.move.Position
 typealias MoveInformer = (Move) -> Unit
 typealias PositionInformer = (Position) -> Unit
 
-abstract class Figure constructor(
+abstract class Figure(
         // a figure's color
     val isWhite: Boolean,
     var position: Position,

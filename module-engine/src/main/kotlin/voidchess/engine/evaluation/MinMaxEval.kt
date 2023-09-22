@@ -1,5 +1,6 @@
 package voidchess.engine.evaluation
 
+import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.move.Move
@@ -69,7 +70,7 @@ internal class MinMaxEval(
         val bestResponses = BestResponseSet.unsynced()
         val newDepth = depth + 1
 
-        for (move in minPossibleMovesBuffer.shuffle(movesToTryFirst)) {
+        for (move in minPossibleMovesBuffer.shuffle(movesToTryFirst, game)) {
 
             assert(game.isFreeArea(move.to) || game.getFigure(move.to) !is King) {
                 "getMin: ${game.getFigureOrNull(move.from)} hits King white Move $move"
@@ -161,7 +162,7 @@ internal class MinMaxEval(
         var currentBestMove: Move? = null
         val bestResponses = BestResponseSet.unsynced()
 
-        for (move in maxPossibleMovesBuffer.shuffle(movesToTryFirst)) {
+        for (move in maxPossibleMovesBuffer.shuffle(movesToTryFirst, game)) {
 
             assert(game.isFreeArea(move.to) || game.getFigure(move.to) !is King) {
                 "getMax: ${game.getFigureOrNull(move.from)} hits King white Move $move"
@@ -231,25 +232,43 @@ internal class MinMaxEval(
 }
 
 // this makes Alpha-Beta-Pruning 10-25% faster (due to increasing the chance of finding good moves earlier)
-private fun ArrayList<Move>.shuffle(movesToTryFirst: BestResponseSet): ArrayList<Move> {
-    val maxIndex = this.size - 1
-    if (maxIndex > 2) {
-        for (i in 0 ..< (maxIndex / 2) - 1 step 2) {
+private fun ArrayList<Move>.shuffle(movesToTryFirst: BestResponseSet, board: StaticChessBoard): ArrayList<Move> = this.apply{
+    val movesAndImportance = ArrayList<Pair<Move, Int>>(this.size)
+    var movesWithFigureHit = 0
+    this.forEach { move ->
+        // a move is more important
+        // - if it's in movesToTryFirst (ordered by how often that move occurs in movesToTryFirst) -> 6+occurrence
+        // - if a figure is being hit (ordered by which figure is hit: pawn:1...queen:5,king:6)
+        // - otherwise the importance is 0
+        val importance: Int = movesToTryFirst.getOccurrence(move)?.let { occurrence ->
+            6 + occurrence
+        } ?: board.getFigureOrNull(move.to)?.let { figure ->
+            movesWithFigureHit++
+            figure.type.index
+        } ?: 0
+        movesAndImportance.add(move to importance)
+    }
+    movesAndImportance.sortByDescending { it.second }
+
+    // scramble positions with figureType.index = null
+    (movesWithFigureHit + movesToTryFirst.size).let {movesWithImportance ->
+//        if (movesWithImportance < this.size / 8) {
+            this.scrambleFrom(movesWithImportance)
+//        }
+    }
+
+    this.clear()
+    movesAndImportance.mapTo(this) { it.first }
+}
+
+private inline fun <reified T> ArrayList<T>.scrambleFrom(startIndex: Int) {
+    val pivotIndex = startIndex+(this.lastIndex-startIndex)/2
+    if(pivotIndex-startIndex>3) {
+        for (i in startIndex ..< pivotIndex step 2) {
             val temp = this[i]
-            val inverseI = maxIndex - i
+            val inverseI = 2*pivotIndex-i
             this[i] = this[inverseI]
             this[inverseI] = temp
         }
     }
-    var indexToReplace = 0
-    movesToTryFirst.forEach { move ->
-        val indexOfMoveToTryFirst = this.indexOf(move)
-        if (indexOfMoveToTryFirst > indexToReplace) {
-            val temp = this[indexToReplace]
-            this[indexToReplace] = this[indexOfMoveToTryFirst]
-            this[indexOfMoveToTryFirst] = temp
-            indexToReplace++
-        }
-    }
-    return this
 }

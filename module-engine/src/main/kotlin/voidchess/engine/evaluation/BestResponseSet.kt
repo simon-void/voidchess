@@ -1,12 +1,14 @@
 package voidchess.engine.evaluation
 
 import voidchess.common.board.move.Move
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 
 internal interface BestResponseSet {
     fun add(move: Move)
     fun forEach(consume: (Move) -> Unit)
+    fun getOccurrence(move: Move): Int?
+    val size: Int
 
     companion object {
         fun unsynced(): BestResponseSet = UnsyncedBestResponseSet()
@@ -16,22 +18,27 @@ internal interface BestResponseSet {
 
 private class SyncedBestResponseSet : BestResponseSet {
     private val moveAndOccurrence = mutableMapOf<Move, Int>()
-    private val lock = ReentrantLock()
+    private val lock = ReentrantReadWriteLock()
 
     override fun add(move: Move) {
-        synchronized(lock) {
+        synchronized(lock.writeLock()) {
             val oldOccurrence = moveAndOccurrence.getOrDefault(move, 0)
             moveAndOccurrence[move] = oldOccurrence + 1
         }
     }
 
     override fun forEach(consume: (Move) -> Unit) {
-        val moveAndOccurrenceCopy = HashMap<Move, Int>(moveAndOccurrence.size, 1.1F)
-        synchronized(lock) {
-            moveAndOccurrenceCopy.putAll(moveAndOccurrence)
+        synchronized(lock.readLock()) {
+            moveAndOccurrence.forEachByDescendingOccurrence(consume)
         }
-        moveAndOccurrenceCopy.forEachByDescendingOccurrence(consume)
     }
+
+    override fun getOccurrence(move: Move): Int? = synchronized(lock.readLock()) {
+        moveAndOccurrence[move]
+    }
+
+    override val size: Int
+        get() = synchronized(lock.readLock()) {moveAndOccurrence.size}
 }
 
 private class UnsyncedBestResponseSet : BestResponseSet {
@@ -45,6 +52,10 @@ private class UnsyncedBestResponseSet : BestResponseSet {
     override fun forEach(consume: (Move) -> Unit) {
         moveAndOccurrence.forEachByDescendingOccurrence(consume)
     }
+
+    override fun getOccurrence(move: Move): Int? = moveAndOccurrence[move]
+    override val size: Int
+        get() = moveAndOccurrence.size
 }
 
 private fun Map<Move, Int>.forEachByDescendingOccurrence(consume: (Move) -> Unit) {

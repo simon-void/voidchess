@@ -1,14 +1,15 @@
 package voidchess.common.figures
 
 
-enum class FigureType constructor(
-        val index: Int,
-        val label: String
+enum class FigureType(
+    @JvmField
+    val index: Int,
+    val label: String,
 ) {
     PAWN(1, "Pawn"),
-    ROOK(2, "Rook"),
+    KNIGHT(2, "Knight"),
     BISHOP(3, "Bishop"),
-    KNIGHT(4, "Knight"),
+    ROOK(4, "Rook"),
     QUEEN(5, "Queen"),
     KING(6, "King");
 }
