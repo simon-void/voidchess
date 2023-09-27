@@ -28,7 +28,9 @@ internal object MultiThreadStrategy : ConcurrencyStrategy() {
         progressCallback: ProgressCallback = { _, _ -> }
     ): List<EvaluatedMove> {
         require(numericEvalOkRadius >= .0) { "numericEvalOkRadius must be positive, but was $numericEvalOkRadius" }
-        val possibleMoves = chessGame.getAllMoves()
+        val possibleMoves = chessGame.getAllMoves().apply {
+            shuffle()
+        }
         return evaluateMoves(
             chessGame,
             possibleMoves,
