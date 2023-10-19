@@ -14,25 +14,13 @@ import voidchess.engine.board.EngineChessGame
 import voidchess.engine.concurrent.SingleThreadStrategy
 import voidchess.engine.evaluation.leaf.MiddleGameEval
 import voidchess.engine.evaluation.leaf.StaticEval
-import kotlin.system.exitProcess
 import kotlin.system.measureTimeMillis
 
 
-internal class Benchmark {
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            if (args.size == 1) {
-                args[0].let { param1 ->
-                    if(param1.startsWith("benchmark")) {
-                        benchmark(param1.substring("benchmark".length).toInt())
-                    }
-                }
-            } else {
-                loadTest()
-            }
-        }
-    }
+fun main(args: Array<String>) {
+    val level = args.firstOrNull()?.substring("benchmark".length)?.toIntOrNull() ?: 1
+    println("benchmark: $level")
+    benchmark(level)
 }
 
 private fun benchmark(benchmarkLevel: Int) {
@@ -63,66 +51,6 @@ private fun benchmark(benchmarkLevel: Int) {
     val game = initChessGame(518, *movesSoFar)
     val staticEvaluation = MiddleGameEval
     loadTest(game, pruner, staticEvaluation, "Benchmark Level $benchmarkLevel")
-}
-
-private fun loadTest() {
-    // Loadtest
-    println("load test: start")
-
-    // Grundaufstellung ohne Bauern
-    val des = ("white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
-            + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
-            + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
-            + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0")
-    loadTest(des)
-
-    // Grundaufstellung mit Bauern vor König und ohne Läufer
-//            des = ("white 0 Rook-white-a1-0 Knight-white-b1 "
-//                    + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rook-white-h1-0 "
-//                    + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
-//                    + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false " + "Rook-black-a8-0 Knight-black-b8 "
-//                    + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rook-black-h8-0")
-    // loadTest( des );
-
-    // Grundaufstellung mit Bauern vor König und ohne Königsläufer
-//            des = ("white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
-//                    + "Queen-white-d1 King-white-e1-0 Knight-white-g1 Rook-white-h1-0 "
-//                    + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
-//                    + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
-//                    + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
-//                    + "Queen-black-d8 King-black-e8-0 Knight-black-g8 Rook-black-h8-0")
-    // loadTest( des );
-
-    // Grundaufstellung mit Bauern vor König
-//            des = ("white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
-//                    + "Queen-white-d1 King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
-//                    + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
-//                    + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
-//                    + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
-//                    + "Queen-black-d8 King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0")
-    // loadTest( des );
-
-    // Grundaufstellung mit Bauern vor König und ohne Damen
-//            des = ("white 0 Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
-//                    + "King-white-e1-0 Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
-//                    + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
-//                    + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
-//                    + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
-//                    + "King-black-e8-0 Bishop-black-f8 Knight-black-g8 Rook-black-h8-0")
-    // loadTest( des );
-
-    // Zeit von
-    // Grundaufstellung mit Bauern vor König und ohne Königsläufer
-    // ist in etwa so groß wie
-    // Grundaufstellung mit Bauern vor König und ohne Dame!!! Warum?
-    exitProcess(0)
-}
-
-private fun loadTest(des: String) {
-    val game = EngineChessGameImpl(des.toManualConfig())
-    val pruner = PrunerWithPawnMoves(2, 3, 4, 3)
-    val staticEvaluation = MiddleGameEval
-    loadTest(game, pruner, staticEvaluation, "load test")
 }
 
 private fun loadTest(game: EngineChessGame, pruner: SearchTreePruner, staticEvaluation: StaticEval, type: String) {
