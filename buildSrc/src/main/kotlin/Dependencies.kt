@@ -1,11 +1,11 @@
 object Deps {
     const val projectVersion = "10"
     const val jdkVersion = 17
-    const val kotlinLangVersion = "1.9"
-    const val kotlinVersion = "1.9.10"
+    const val kotlinLangVersion = "2.0"
+    const val kotlinVersion = "1.9.20-RC"
 
     const val shadowPluginVersion = "7.1.2"
-    const val batikTranscoder = "org.apache.xmlgraphics:batik-transcoder:1.16"
+    const val batikTranscoder = "org.apache.xmlgraphics:batik-transcoder:1.17"
 
     private const val coroutinesVersion = "1.7.3"
     val coroutineDeps = listOf(
@@ -17,7 +17,7 @@ object Deps {
     val testDeps = listOf(
         "org.jetbrains.kotlin:kotlin-test:$kotlinVersion",
         "org.testng:testng:7.8.0",
-        "io.mockk:mockk:1.13.7",
+        "io.mockk:mockk:1.13.8",
     )
 }
 
