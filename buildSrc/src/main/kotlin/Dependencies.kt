@@ -1,6 +1,6 @@
 object Deps {
     const val projectVersion = "10"
-    const val jdkVersion = 17
+    const val jdkVersion = 21
     const val kotlinLangVersion = "2.0"
     const val kotlinVersion = "1.9.20"
 
