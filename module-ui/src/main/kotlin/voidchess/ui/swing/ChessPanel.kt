@@ -13,6 +13,7 @@ internal class ChessPanel(
     private val panel960: Chess960Panel,
     private val difficultyPanel: DifficultyPanel,
     private val coresPanel: CoresPanel,
+    private val historyPanel: HistoryPanel,
     chessboardComponent: ChessboardComponent,
     computerPlayerUI: ComputerPlayerComponent
 ) : JPanel(), ActionListener {
@@ -67,7 +68,7 @@ internal class ChessPanel(
             return difficultyPanel
         }
 
-        return JPanel(GridLayout(2, 2)).apply {
+        return JPanel(GridLayout(3, 2)).apply {
             background = Color.WHITE
             border = LineBorder(Color.LIGHT_GRAY)
             background = Color.WHITE
@@ -75,6 +76,8 @@ internal class ChessPanel(
             add(difficultyPanel)
             add(coresPanel.label)
             add(coresPanel)
+            add(JPanel().apply { background = Color.WHITE })
+            add(historyPanel)
         }
     }
 

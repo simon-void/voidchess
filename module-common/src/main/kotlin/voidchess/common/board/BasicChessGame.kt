@@ -16,4 +16,5 @@ interface BasicChessGame : StaticChessBoard {
      */
     fun move(move: Move): Boolean
     fun getLatestExtendedMove(): ExtendedMove
+    fun movesPlayed(): List<Move>
 }
