@@ -4,6 +4,7 @@ import voidchess.common.board.*
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import voidchess.common.board.move.PositionProgression
+import voidchess.common.board.other.Chess960Index
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Figure
 import kotlin.test.assertEquals
@@ -18,7 +19,7 @@ fun initChessBoard(gameDes: String, vararg moveCodes: String): ChessBoard = Arra
 }
 
 fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessBoard = ArrayChessBoard(
-    StartConfig.Chess960Config(chess960)
+    StartConfig.Chess960Config(Chess960Index( chess960))
 ).apply {
     for (moveCode in moveCodes) {
         move(Move.byCode(moveCode))
@@ -70,12 +71,6 @@ fun String.toManualConfig(): StartConfig.ManualConfig {
     val numberOfMovesSinceHitFigure = gameDescParts[1].toInt()
     val figureStates = gameDescParts.filterIndexed { index, _ -> index > 1 }
     return StartConfig.ManualConfig(isWhiteTurn, numberOfMovesSinceHitFigure, figureStates)
-}
-
-fun Int.toChess960Config(): StartConfig.Chess960Config {
-    val chess960Index = this
-    check(chess960Index in 0 ..< 960) { "expected value to be within 0-959 but was: $chess960Index" }
-    return StartConfig.Chess960Config(chess960Index)
 }
 
 fun Figure.getPossibleMoves(game: ChessBoard): List<Move> {

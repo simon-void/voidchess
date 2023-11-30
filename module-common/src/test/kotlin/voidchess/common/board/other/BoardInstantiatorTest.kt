@@ -7,26 +7,26 @@ import voidchess.common.figures.*
 import kotlin.test.assertEquals
 
 
-class BoardInstanciatorTest {
+class BoardInstantiatorTest {
     private val sortedClassicSetupFigureStates = StartConfigTest.classicFigureStates.sorted()
 
     @Test
     fun testInstanciateByManual() {
-        val instanciator = StartConfig.ManualConfig(false, 12, sortedClassicSetupFigureStates).boardInstanciator()
+        val instanciator = StartConfig.ManualConfig(false, 12, sortedClassicSetupFigureStates).boardInstantiator()
         val posAndNullableFigures: List<Pair<Position, Figure?>> = instanciator.generateInitialSetup().toList()
         assertClassicalSetup(posAndNullableFigures)
     }
 
     @Test
     fun testInstanciateByClassic() {
-        val instanciator = StartConfig.ClassicConfig.boardInstanciator()
+        val instanciator = StartConfig.ClassicConfig.boardInstantiator()
         val posAndNullableFigures: List<Pair<Position, Figure?>> = instanciator.generateInitialSetup().toList()
         assertClassicalSetup(posAndNullableFigures)
     }
 
     @Test
     fun testInstanciateByChess960() {
-        val instanciator = StartConfig.Chess960Config(518).boardInstanciator()
+        val instanciator = StartConfig.Chess960Config(Chess960Index.classic).boardInstantiator()
         val posAndNullableFigures: List<Pair<Position, Figure?>> = instanciator.generateInitialSetup().toList()
         assertClassicalSetup(posAndNullableFigures)
     }

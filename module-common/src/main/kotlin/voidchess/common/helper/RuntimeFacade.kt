@@ -1,6 +1,6 @@
 package voidchess.common.helper
 
-object RuntimeFacade {
+data object RuntimeFacade {
     private val runtime = Runtime.getRuntime()
 
     fun collectGarbage() {

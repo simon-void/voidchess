@@ -8,8 +8,8 @@ import voidchess.common.board.move.Position
 import voidchess.common.figures.King
 import voidchess.common.figures.Queen
 import voidchess.common.figures.Rook
+import voidchess.common.helper.toChess960Config
 import voidchess.common.initChessBoard
-import voidchess.common.toChess960Config
 import voidchess.common.toManualConfig
 import kotlin.test.*
 
@@ -44,22 +44,6 @@ class ArrayChessBoardTest {
         val board = ArrayChessBoard()
         board.init(518.toChess960Config())
         assertEquals(initial, board.toString())
-
-        board.init(0.toChess960Config())
-        board.init(314.toChess960Config())
-        board.init(959.toChess960Config())
-        try {
-            board.init(960.toChess960Config())
-            fail("AssertionError should have been thrown:Argument bigger than 959")
-        } catch (e: IllegalStateException) {
-        }
-
-        try {
-            board.init((-1).toChess960Config())
-            fail("AssertionError should have been thrown:Argument smaller than 0")
-        } catch (e: IllegalStateException) {
-        }
-
     }
 
     @Test

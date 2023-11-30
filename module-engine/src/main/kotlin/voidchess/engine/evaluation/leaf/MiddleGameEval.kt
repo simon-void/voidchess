@@ -7,7 +7,7 @@ import voidchess.common.engine.Ongoing
 import voidchess.engine.board.EngineChessGame
 
 
-internal object MiddleGameEval : StaticEval() {
+internal data object MiddleGameEval : StaticEval() {
 
     override fun getNumericEvaluation(
         game: EngineChessGame,

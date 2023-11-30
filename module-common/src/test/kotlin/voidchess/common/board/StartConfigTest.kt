@@ -3,6 +3,7 @@ package voidchess.common.board
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.common.board.move.Position
+import voidchess.common.board.other.Chess960Index
 import voidchess.common.board.other.StartConfig
 import kotlin.test.*
 
@@ -13,19 +14,26 @@ class StartConfigTest {
     }
 
     @Test
-    fun testValidChess960Config() {
-        StartConfig.Chess960Config(0).assertValid()
-        StartConfig.Chess960Config(518).assertValid()
-        StartConfig.Chess960Config(959).assertValid()
+    fun testValidChess960Indexes() {
+        Chess960Index(0)
+        Chess960Index(518)
+        Chess960Index(959)
+        Chess960Index.min
+        Chess960Index.max
+        Chess960Index.random()
     }
 
     @Test
-    fun testInvalidChess960Config() {
+    fun testInvalidChess960Indexes() {
         for(illegalChess960Index in listOf(-1, 960)) {
-            try {
-                StartConfig.Chess960Config(illegalChess960Index)
-                fail("instanciation should have failed because of an out-of-bounds chess960 index: $illegalChess960Index")
-            } catch (e: IllegalArgumentException) {}
+            runCatching {
+                Chess960Index(illegalChess960Index)
+                fail("instantiation should have failed because of an out-of-bounds chess960 index: $illegalChess960Index")
+            }.onFailure { e ->
+                if(e !is IllegalArgumentException) {
+                    throw e
+                }
+            }
         }
     }
 

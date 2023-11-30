@@ -10,8 +10,8 @@ import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Bishop
 import voidchess.common.figures.King
+import voidchess.common.helper.toChess960Config
 import voidchess.initChessGame
-import voidchess.toChess960Config
 import voidchess.toManualConfig
 import kotlin.test.*
 
@@ -77,7 +77,7 @@ internal class EngineChessGameTest {
         }
 
         for(i in 0 ..< copies.size-1) {
-            assertNotSame(copies[i], copies[i+1], "all copies should be distinct objects but instance $i and ${i+1} are the same instance")
+            assertNotSame(copies[i], copies[i+1], "all copies should be distinct data objects but instance $i and ${i+1} are the same instance")
         }
     }
 

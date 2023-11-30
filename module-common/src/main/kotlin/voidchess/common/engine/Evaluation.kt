@@ -29,17 +29,17 @@ sealed class NumericalEvaluation : Evaluation() {
     override fun toString(): String = this::class.java.simpleName
 }
 
-object Draw : NumericalEvaluation() {
+data object Draw : NumericalEvaluation() {
     override val type = EvaluationType.FinalDraw
     override val msg = "draw"
 }
 
-object Stalemate : NumericalEvaluation() {
+data object Stalemate : NumericalEvaluation() {
     override val type = EvaluationType.FinalDraw
     override val msg = "stalemate"
 }
 
-object ThreeFoldRepetition : NumericalEvaluation() {
+data object ThreeFoldRepetition : NumericalEvaluation() {
     override val type = EvaluationType.FinalDraw
     override val msg = "3-fold repetition"
 }

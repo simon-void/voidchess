@@ -7,6 +7,7 @@ import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResultType
 import voidchess.common.board.move.Position
+import voidchess.common.board.other.Chess960Index
 import voidchess.common.figures.Bishop
 import voidchess.common.figures.King
 import voidchess.initChessGame
@@ -61,7 +62,7 @@ class CentralChessGameTest {
     @Test
     fun testEquals() {
         val game1 = CentralChessGameImpl(StartConfig.ClassicConfig)
-        val game2 = CentralChessGameImpl(StartConfig.Chess960Config(518))
+        val game2 = CentralChessGameImpl(StartConfig.Chess960Config(Chess960Index.classic))
         assertTrue(game1.equalsOther(game2))
     }
 

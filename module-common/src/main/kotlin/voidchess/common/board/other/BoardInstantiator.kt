@@ -6,13 +6,12 @@ import voidchess.common.figures.Figure
 import voidchess.common.figures.FigureType.*
 import voidchess.common.figures.King
 
-fun interface BoardInstanciator {
+fun interface BoardInstantiator {
     fun generateInitialSetup(): Iterable<Pair<Position, Figure?>>
 }
 
-fun StartConfig.boardInstanciator() = BoardInstanciator {
+fun StartConfig.boardInstantiator() = BoardInstantiator {
     when (val startConfig = this) {
-        is StartConfig.ClassicConfig -> getClassicSetup()
         is StartConfig.Chess960Config -> getChess960Setup(startConfig.chess960Index)
         is StartConfig.ManualConfig -> {
             val board = arrayOfNulls<Figure>(64)
@@ -28,14 +27,7 @@ fun StartConfig.boardInstanciator() = BoardInstanciator {
     }
 }
 
-private fun getClassicSetup(): List<Pair<Position, Figure?>> =
-    mutableListOf<Pair<Position, Figure?>>().apply {
-        for (posAndFigure in getEmptyRows2to5()) add(posAndFigure)
-        for (posAndFigure in getPawnRows()) add(posAndFigure)
-        for (posAndFigure in getClassicFigureRow()) add(posAndFigure)
-    }
-
-private fun getChess960Setup(chess960Index: Int): List<Pair<Position, Figure?>> =
+private fun getChess960Setup(chess960Index: Chess960Index): List<Pair<Position, Figure?>> =
     mutableListOf<Pair<Position, Figure?>>().apply {
         for (posAndFigure in getEmptyRows2to5()) add(posAndFigure)
         for (posAndFigure in getPawnRows()) add(posAndFigure)
@@ -57,28 +49,8 @@ private fun getPawnRows(): Iterator<Pair<Position, Figure?>> = iterator<Pair<Pos
     }
 }
 
-private fun getClassicFigureRow(): Iterator<Pair<Position, Figure?>> = iterator {
-    yield(Position[0,0].let { pos->pos to Rook(true, pos) })
-    yield(Position[7,0].let { pos->pos to Rook(false, pos) })
-    yield(Position[0,7].let { pos->pos to Rook(true, pos) })
-    yield(Position[7,7].let { pos->pos to Rook(false, pos) })
-    yield(Position[0,1].let { pos->pos to Knight(true, pos) })
-    yield(Position[7,1].let { pos->pos to Knight(false, pos) })
-    yield(Position[0,6].let { pos->pos to Knight(true, pos) })
-    yield(Position[7,6].let { pos->pos to Knight(false, pos) })
-    yield(Position[0,2].let { pos->pos to Bishop(true, pos) })
-    yield(Position[7,2].let { pos->pos to Bishop(false, pos) })
-    yield(Position[0,5].let { pos->pos to Bishop(true, pos) })
-    yield(Position[7,5].let { pos->pos to Bishop(false, pos) })
-    yield(Position[0,3].let { pos->pos to Queen(true, pos) })
-    yield(Position[7,3].let { pos->pos to Queen(false, pos) })
-    yield(Position[0,4].let { pos->pos to King(true, pos) })
-    yield(Position[7,4].let { pos->pos to King(false, pos) })
-}
-
-private fun getFigureRows(chess960: Int): Iterator<Pair<Position, Figure?>>  {
-    var code960Code = chess960
-    check(code960Code in 0..959) { "chess960 out of bounds. Should be 0-959, is $code960Code" }
+private fun getFigureRows(chess960: Chess960Index): Iterator<Pair<Position, Figure?>>  {
+    var code960Code = chess960.value
 
     val figureTypeIn = arrayOfNulls<FigureType>(8)
     fun getFreeColumn(index: Int): Int {

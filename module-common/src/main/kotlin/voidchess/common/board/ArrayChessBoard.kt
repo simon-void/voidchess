@@ -7,7 +7,7 @@ import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.other.StartConfig
-import voidchess.common.board.other.boardInstanciator
+import voidchess.common.board.other.boardInstantiator
 import voidchess.common.figures.*
 import kotlin.math.abs
 
@@ -38,7 +38,7 @@ class ArrayChessBoard(startConfig: StartConfig = StartConfig.ClassicConfig) : Ch
         var foundWhiteKing = false
         var foundBlackKing = false
         val pawnsThatDoubleJumped = mutableListOf<Pawn>()
-        startConfig.boardInstanciator().generateInitialSetup().forEach { (pos, figureOrNull)->
+        startConfig.boardInstantiator().generateInitialSetup().forEach { (pos, figureOrNull)->
             board[pos.index] = figureOrNull
 
             if(figureOrNull is Pawn && figureOrNull.canBeHitEnpassant) {

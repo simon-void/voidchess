@@ -1,6 +1,6 @@
 import java.util.spi.ToolProvider
 
-object JPackage {
+data object JPackage {
     fun buildInstaller(
         name: String,
         description: String,

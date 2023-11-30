@@ -12,6 +12,7 @@ import voidchess.ui.swing.ChessboardComponent
 import voidchess.ui.swing.ComputerPlayerComponent
 import voidchess.ui.swing.CoresPanel
 import voidchess.ui.swing.DifficultyPanel
+import voidchess.ui.swing.ShareGamePanel
 import javax.swing.SwingUtilities
 
 fun initializeUI(
@@ -22,6 +23,10 @@ fun initializeUI(
     val game = BasicChessGameImpl()
     val chessboardComponent = ChessboardComponent(game)
     val panel960 = Chess960Panel(game, chessboardComponent)
+    val shareGamePanel = ShareGamePanel(
+        getMovesPlayed = { game.movesPlayed() },
+        getCurrentChess960Index = { panel960.chess960Index },
+    )
     val humanPlayer = SwingPlayerImpl(chessboardComponent, game, tableAdapter).also {
         chessboardComponent.postConstruct(it)
     }
@@ -33,8 +38,9 @@ fun initializeUI(
         panel960,
         difficultyPanel,
         coresPanel,
+        shareGamePanel,
         chessboardComponent,
-        computerPlayerUI
+        computerPlayerUI,
     ).also {
         humanPlayer.postConstruct(it::stop, it::enableResign)
     }

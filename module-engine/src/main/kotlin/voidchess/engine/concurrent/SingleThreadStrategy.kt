@@ -14,7 +14,7 @@ import voidchess.engine.evaluation.MinMaxEval
 
 private val progressNothing: ProgressCallback = { _, _ -> }
 
-internal object SingleThreadStrategy: ConcurrencyStrategy() {
+internal data object SingleThreadStrategy: ConcurrencyStrategy() {
 
     suspend fun evaluateMove(
         startConfig: StartConfig,

@@ -6,7 +6,7 @@ import voidchess.engine.board.EngineChessGame
 import kotlin.math.abs
 import kotlin.math.max
 
-internal object KingToEdgeEndgameEval : StaticEval() {
+internal data object KingToEdgeEndgameEval : StaticEval() {
     override fun getNumericEvaluation(
         game: EngineChessGame,
         forWhite: Boolean,

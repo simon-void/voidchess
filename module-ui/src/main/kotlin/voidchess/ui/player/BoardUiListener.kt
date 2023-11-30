@@ -1,6 +1,7 @@
 package voidchess.ui.player
 
 import voidchess.common.board.move.Position
+import voidchess.common.board.other.Chess960Index
 
 
 internal interface BoardUiListener {
@@ -9,5 +10,5 @@ internal interface BoardUiListener {
 
     fun switchPlayerSelected()
     fun resignSelected()
-    fun startSelected(chess960Index: Int)
+    fun startSelected(chess960Index: Chess960Index)
 }

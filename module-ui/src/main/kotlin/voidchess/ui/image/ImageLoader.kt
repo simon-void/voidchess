@@ -19,7 +19,7 @@ import java.io.InputStream
 import javax.imageio.ImageIO
 
 
-internal object ImageLoader {
+internal data object ImageLoader {
     private val svgInfo = SvgChessSetInfo("merida", 110)
     private val whiteFigureImages = Array(FigureType.entries.size) {
         val figureType = FigureType.entries[it]
@@ -81,7 +81,7 @@ private data class SvgChessSetInfo(
     val svgPageSquareWidth: Int
 )
 
-private object SvgImageFactory {
+private data object SvgImageFactory {
     private val factory = SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName())
 
     private fun createRectImage(inputStream: InputStream, svgPageDimension: Dimension): SvgImage {

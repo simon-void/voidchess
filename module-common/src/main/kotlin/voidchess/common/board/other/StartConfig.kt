@@ -2,6 +2,28 @@ package voidchess.common.board.other
 
 import voidchess.common.board.move.Position
 import voidchess.common.figures.getFigureByString
+import kotlin.math.floor
+
+@JvmInline
+value class Chess960Index(val value: Int) {
+    init {
+        require(value in 0..959) { "chess960 index must lie in range 0<=i<960 but was: $value" }
+    }
+
+    val isClassic: Boolean get() = value == CLASSIC_INDEX
+    val isNotClassic: Boolean get() = value != CLASSIC_INDEX
+
+    fun toStartConfig() = StartConfig.Chess960Config(this)
+
+    companion object {
+        private const val CLASSIC_INDEX = 518
+
+        val classic: Chess960Index = Chess960Index(CLASSIC_INDEX)
+        val min: Chess960Index = Chess960Index(0)
+        val max: Chess960Index = Chess960Index(959)
+        fun random(): Chess960Index = Chess960Index(floor(Math.random() * 960).toInt())
+    }
+}
 
 sealed class StartConfig(
     val doesWhitePlayerStart: Boolean = true,
@@ -11,17 +33,11 @@ sealed class StartConfig(
 ) {
     val hasHitFigureInPreviousMove: Boolean get() = numberOfMovesWithoutHit == 0 && figureCount!=32
 
-    object ClassicConfig : StartConfig() {
-        const val chess960Index = 518
-        override fun toString() = "ClassicConfig"
-    }
-
-    class Chess960Config(val chess960Index: Int): StartConfig() {
-        init {
-            require(chess960Index in 0..959)
-        }
+    open class Chess960Config(val chess960Index: Chess960Index): StartConfig() {
         override fun toString() = "Chess960Config($chess960Index)"
     }
+
+    data object ClassicConfig : Chess960Config(Chess960Index.classic)
 
     class ManualConfig(
         doesWhitePlayerStart: Boolean,

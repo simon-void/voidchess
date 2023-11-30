@@ -72,5 +72,7 @@ class BasicChessGameImpl private constructor(
         return latestExtendedMove ?: throw IllegalStateException("no move was been executed yet")
     }
 
+    override fun movesPlayed(): List<Move> = board.movesPlayed()
+
     override fun toString() = "${if (isWhiteTurn) "white" else "black"} $board"
 }

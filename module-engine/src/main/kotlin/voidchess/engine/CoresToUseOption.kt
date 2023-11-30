@@ -3,7 +3,7 @@ package voidchess.engine
 import voidchess.common.engine.Option
 
 
-internal object CoresToUseOption : Option {
+internal data object CoresToUseOption : Option {
     override val name: String = "core#"
     override val possibleValues: List<String> = {
         Runtime.getRuntime().availableProcessors().let { maxCores ->

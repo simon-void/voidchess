@@ -1,7 +1,7 @@
 object Deps {
-    const val projectVersion = "12"
+    const val projectVersion = "13"
     const val jdkVersion = 21
-    const val kotlinVersion = "2.0.0"
+    const val kotlinVersion = "2.0.10"
 
     const val shadowPluginVersion = "8.1.1"
     const val batikTranscoder = "org.apache.xmlgraphics:batik-transcoder:1.17"

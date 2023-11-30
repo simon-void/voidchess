@@ -5,7 +5,7 @@ import voidchess.common.engine.Ongoing
 import voidchess.engine.board.EngineChessGame
 import kotlin.math.abs
 
-internal object KingToCornerEndgameEval : StaticEval() {
+internal data object KingToCornerEndgameEval : StaticEval() {
     override fun getNumericEvaluation(
         game: EngineChessGame,
         forWhite: Boolean,

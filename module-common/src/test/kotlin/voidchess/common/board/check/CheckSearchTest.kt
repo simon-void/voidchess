@@ -87,12 +87,12 @@ package voidchess.common.board.check
 //    }
 //
 //    @DataProvider
-//    public Object[][] getTestAnalyseCheckWithLastCheckData() {
-//        return new Object[][] {
-//                new Object[] {new ChessGame(518), Arrays.asList("e2-e4"), 0},
-//                new Object[] {new ChessGame(518), Arrays.asList("e2-e4", "d7-d5", "f1-b5", "c7-c6", "b5-c6"), 1},
-//                new Object[] {new ChessGame(518), Arrays.asList("e2-e4", "d7-d5", "f1-b5", "c7-c6", "c2-c3", "g8-h6", "d1-a4", "h6-g8", "b5-c6"), 1},
-//                new Object[] {new ChessGame(518), Arrays.asList("b1-a3", "d7-d5", "a3-b5", "g8-h6", "c2-c3", "h6-g8", "d1-a4", "g8-h6", "b5-c7"), 2},
+//    public data object[][] getTestAnalyseCheckWithLastCheckData() {
+//        return new data object[][] {
+//                new data object[] {new ChessGame(518), Arrays.asList("e2-e4"), 0},
+//                new data object[] {new ChessGame(518), Arrays.asList("e2-e4", "d7-d5", "f1-b5", "c7-c6", "b5-c6"), 1},
+//                new data object[] {new ChessGame(518), Arrays.asList("e2-e4", "d7-d5", "f1-b5", "c7-c6", "c2-c3", "g8-h6", "d1-a4", "h6-g8", "b5-c6"), 1},
+//                new data object[] {new ChessGame(518), Arrays.asList("b1-a3", "d7-d5", "a3-b5", "g8-h6", "c2-c3", "h6-g8", "d1-a4", "g8-h6", "b5-c7"), 2},
 //        };
 //    }
 //

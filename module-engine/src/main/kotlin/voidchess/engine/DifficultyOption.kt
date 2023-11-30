@@ -7,7 +7,7 @@ import voidchess.engine.evaluation.SearchTreePruner
 import voidchess.engine.evaluation.SingleFullMovePrunerWithPawnMoves
 
 
-internal object DifficultyOption: Option {
+internal data object DifficultyOption: Option {
     private val levelsAndPruner: List<Pair<String, SearchTreePruner>> = listOf(
         "level 1" to SingleFullMovePrunerWithPawnMoves(3, 5, 3),
         "level 2" to PrunerWithPawnMoves(2, 3, 5, 4),

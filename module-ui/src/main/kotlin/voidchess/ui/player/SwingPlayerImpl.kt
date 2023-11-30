@@ -3,6 +3,7 @@ package voidchess.ui.player
 import voidchess.common.board.BasicChessGame
 import voidchess.common.board.getFigure
 import voidchess.common.board.move.*
+import voidchess.common.board.other.Chess960Index
 import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Pawn
 import voidchess.common.integration.ColdPromise
@@ -187,7 +188,7 @@ internal class SwingPlayerImpl(
         gameEnds()
     }
 
-    override fun startSelected(chess960Index: Int) {
+    override fun startSelected(chess960Index: Chess960Index) {
         val startConfig = StartConfig.Chess960Config(chess960Index)
 //        val startConfig = StartConfig.ManualConfig(true, 5,
 //            "King-white-g1-4 King-black-c5-9 Pawn-white-a6-false".split(" ")
@@ -211,8 +212,8 @@ typealias EnableButton = (Boolean)->Unit
 private const val resignMsg = "player resigned"
 
 private sealed class WaitingFor {
-    object GameToStart: WaitingFor()
-    object MyTurn: WaitingFor()
-    object FromPos: WaitingFor()
+    data object GameToStart: WaitingFor()
+    data object MyTurn: WaitingFor()
+    data object FromPos: WaitingFor()
     class ToPos(val from: Position): WaitingFor()
 }

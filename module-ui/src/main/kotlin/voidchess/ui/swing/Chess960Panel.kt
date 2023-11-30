@@ -1,6 +1,7 @@
 package voidchess.ui.swing
 
 import voidchess.common.board.BasicChessGame
+import voidchess.common.board.other.Chess960Index
 import voidchess.common.board.other.StartConfig
 
 import javax.swing.*
@@ -14,18 +15,15 @@ internal class Chess960Panel(
     private val gameUI: ChessboardComponent
 ) : JPanel(), ActionListener {
 
-    var chess960Index: Int = 0
+    var chess960Index: Chess960Index = Chess960Index.classic
         private set
     private var classicButton: JButton = JButton("classic setup")
     private var random960Button: JButton = JButton("shuffle setup")
     private var positionIndexField: JTextField = JTextField(chess960Index.toString(), 3)
 
-    private val randomPosition: Int
-            get() = floor(Math.random() * 960).toInt()
-
     init {
         designLayout()
-        setPosition(CLASSIC_CHESS_POSITION)
+        setPosition(Chess960Index.classic)
     }
 
     private fun designLayout() {
@@ -43,50 +41,45 @@ internal class Chess960Panel(
     }
 
     override fun setEnabled(enabled: Boolean) {
-        classicButton.isEnabled = enabled && chess960Index != CLASSIC_CHESS_POSITION
+        classicButton.isEnabled = enabled && chess960Index.isNotClassic
         random960Button.isEnabled = enabled
         positionIndexField.isEditable = enabled
     }
 
     override fun actionPerformed(event: ActionEvent) {
         when (event.source) {
-            classicButton -> setPosition(CLASSIC_CHESS_POSITION)
-            random960Button -> setPosition(randomPosition)
+            classicButton -> setPosition(Chess960Index.classic)
+            random960Button -> setPosition(Chess960Index.random())
             positionIndexField -> setPosition(positionIndexField.text)
         }
     }
 
-    private fun setPosition(position: Int) {
+    private fun setPosition(position: String) {
+        try {
+            val positionIndex = position.toInt()
+            when {
+                positionIndex < 0 -> setPosition(Chess960Index.min)
+                positionIndex > 959 -> setPosition(Chess960Index.max)
+                else -> {
+                    chess960Index = Chess960Index(positionIndex)
+                    pullPosition(chess960Index)
+                }
+            }
+        } catch (e: NumberFormatException) {
+            setPosition(Chess960Index.classic)
+        }
+    }
+
+    private fun setPosition(position: Chess960Index) {
         chess960Index = position
-        positionIndexField.text = position.toString()
+        positionIndexField.text = position.value.toString()
         pullPosition(position)
     }
 
-    private fun setPosition(position: String) {
-        try {
-            chess960Index = position.toInt()
-            when {
-                chess960Index < 0 -> setPosition(0)
-                chess960Index > 959 -> setPosition(959)
-                else -> pullPosition(chess960Index)
-            }
-        } catch (e: NumberFormatException) {
-            setPosition(CLASSIC_CHESS_POSITION)
-        }
-
-    }
-
-    private fun pullPosition(position: Int) {
-        assert(position in 0..959)
-
-        classicButton.isEnabled = position != CLASSIC_CHESS_POSITION
+    private fun pullPosition(position: Chess960Index) {
+        classicButton.isEnabled = position.isNotClassic
 
         game.initGame(StartConfig.Chess960Config(position))
         gameUI.repaintAtOnce()
-    }
-
-    companion object {
-        // TODO should be move into an inline class Chess960StartConfig
-        private const val CLASSIC_CHESS_POSITION = 518
     }
 }

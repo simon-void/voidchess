@@ -14,7 +14,7 @@ import voidchess.engine.evaluation.MinMaxEval
 import java.util.concurrent.atomic.AtomicReference
 
 
-internal object MultiThreadStrategy : ConcurrencyStrategy() {
+internal data object MultiThreadStrategy : ConcurrencyStrategy() {
 
     /**
      * @return a sorted set of all possible moves sorted by a value of "how good it is for the computer voidchess.engine.player".

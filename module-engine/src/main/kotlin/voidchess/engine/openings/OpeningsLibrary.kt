@@ -2,6 +2,7 @@ package voidchess.engine.openings
 
 import voidchess.common.board.BasicChessGameImpl
 import voidchess.common.board.move.Move
+import voidchess.common.board.other.Chess960Index
 import voidchess.common.board.other.StartConfig
 import voidchess.common.helper.TreeNode
 import voidchess.common.helper.getResourceStream
@@ -30,8 +31,7 @@ internal class OpeningsLibrary(
         progressCallback: ProgressCallback
     ): EvaluatedMove? {
 
-        val chess960StartIndex: Int? = when (startConfig) {
-            is StartConfig.ClassicConfig -> startConfig.chess960Index
+        val chess960StartIndex: Chess960Index? = when (startConfig) {
             is StartConfig.Chess960Config -> startConfig.chess960Index
             is StartConfig.ManualConfig -> null
         }
@@ -56,11 +56,11 @@ internal class OpeningsLibrary(
     }
 
     private fun nextMove(
-        chess960StartIndex: Int,
+        chess960StartIndex: Chess960Index,
         moves: List<Move>
     ): Move? {
         // assume that the whole library is based on classic chess
-        if(chess960StartIndex!=518) return null
+        if(!chess960StartIndex.isClassic) return null
 
         var currentNode: TreeNode<KnownMove, String> = openingsRootNode
         for (move in moves) {

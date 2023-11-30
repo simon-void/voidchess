@@ -13,17 +13,15 @@ internal class ChessPanel(
     private val panel960: Chess960Panel,
     private val difficultyPanel: DifficultyPanel,
     private val coresPanel: CoresPanel,
+    private val shareGamePanel: ShareGamePanel,
     chessboardComponent: ChessboardComponent,
     computerPlayerUI: ComputerPlayerComponent
 ) : JPanel(), ActionListener {
 
-    private var startButton: JButton
-    private var switchButton: JButton
+    private var startButton: JButton = JButton(resignString)
+    private var switchButton: JButton = JButton(switchString)
 
     init {
-        startButton = JButton(resignString)
-        switchButton = JButton(switchString)
-
         designLayout(chessboardComponent, computerPlayerUI)
     }
 
@@ -67,7 +65,7 @@ internal class ChessPanel(
             return difficultyPanel
         }
 
-        return JPanel(GridLayout(2, 2)).apply {
+        return JPanel(GridLayout(3, 2)).apply {
             background = Color.WHITE
             border = LineBorder(Color.LIGHT_GRAY)
             background = Color.WHITE
@@ -75,6 +73,8 @@ internal class ChessPanel(
             add(difficultyPanel)
             add(coresPanel.label)
             add(coresPanel)
+            add(JPanel().apply { background = Color.WHITE })
+            add(shareGamePanel)
         }
     }
 
@@ -101,6 +101,7 @@ internal class ChessPanel(
         panel960.isEnabled = false
         difficultyPanel.isEnabled = false
         coresPanel.isEnabled = false
+        shareGamePanel.enableShareButtonAssumingThereAreMovesToShare = false
         boardUiListener.startSelected(panel960.chess960Index)
     }
 
@@ -111,6 +112,7 @@ internal class ChessPanel(
         panel960.isEnabled = true
         difficultyPanel.isEnabled = true
         coresPanel.isEnabled = true
+        shareGamePanel.enableShareButtonAssumingThereAreMovesToShare = true
     }
 
     fun enableResign(enable: Boolean) {

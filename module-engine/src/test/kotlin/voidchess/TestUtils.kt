@@ -2,8 +2,10 @@ package voidchess
 
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
+import voidchess.common.board.other.Chess960Index
 import voidchess.common.board.other.StartConfig
 import voidchess.common.helper.splitAndTrim
+import voidchess.common.helper.toChess960Config
 import voidchess.engine.board.EngineChessGameImpl
 import voidchess.engine.board.EngineChessGame
 
@@ -58,10 +60,4 @@ fun String.toManualConfig(): StartConfig.ManualConfig {
     val numberOfMovesSinceHitFigure = gameDescParts[1].toInt()
     val figureStates = gameDescParts.filterIndexed { index, _ -> index > 1 }
     return StartConfig.ManualConfig(isWhiteTurn, numberOfMovesSinceHitFigure, figureStates)
-}
-
-fun Int.toChess960Config(): StartConfig.Chess960Config {
-    val chess960Index = this
-    check(chess960Index in 0 ..< 960) { "expected value to be within 0-959 but was: $chess960Index" }
-    return StartConfig.Chess960Config(chess960Index)
 }

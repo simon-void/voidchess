@@ -279,7 +279,7 @@ internal sealed class MarkedPositions(
     val from: Position? = null,
     val possibleTo: Position? = null,
 ) {
-    object None: MarkedPositions()
+    data object None: MarkedPositions()
     class PossibleFrom(possibleFrom: Position): MarkedPositions(possibleFrom = possibleFrom)
     class From(from: Position): MarkedPositions(from = from)
     class FromAndPossibleTo(from: Position, possibleTo: Position): MarkedPositions(from = from, possibleTo = possibleTo)
