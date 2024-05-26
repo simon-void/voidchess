@@ -13,7 +13,7 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         kotlinOptions {
-            languageVersion = "1.9"
+            languageVersion = "2.0"
             apiVersion = languageVersion
         }
     }
