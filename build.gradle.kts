@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -31,11 +32,11 @@ allprojects {
 
     tasks {
         withType<KotlinCompile> {
-            kotlinOptions {
-                freeCompilerArgs = listOf("-Xjsr305=strict")
-                kotlinOptions {
-                    languageVersion = Deps.kotlinLangVersion
-                    apiVersion = Deps.kotlinLangVersion
+            compilerOptions {
+                freeCompilerArgs.add("-Xjsr305=strict")
+                KotlinVersion.KOTLIN_2_0.let { kotlinVersion ->
+                    languageVersion.set(kotlinVersion)
+                    apiVersion.set(kotlinVersion)
                 }
             }
         }
