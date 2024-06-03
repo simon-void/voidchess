@@ -1,7 +1,6 @@
 object Deps {
     const val projectVersion = "12"
     const val jdkVersion = 21
-    const val kotlinLangVersion = "2.0"
     const val kotlinVersion = "2.0.0"
 
     const val shadowPluginVersion = "8.1.1"
@@ -17,7 +16,7 @@ object Deps {
     val testDeps = listOf(
         "org.jetbrains.kotlin:kotlin-test:$kotlinVersion",
         "org.testng:testng:7.10.2",
-        "io.mockk:mockk:1.13.10",
+        "io.mockk:mockk:1.13.11",
     )
 }
 

@@ -34,7 +34,7 @@ allprojects {
         withType<KotlinCompile> {
             compilerOptions {
                 freeCompilerArgs.add("-Xjsr305=strict")
-                KotlinVersion.KOTLIN_2_0.let { kotlinVersion ->
+                KotlinVersion.DEFAULT.let { kotlinVersion ->
                     languageVersion.set(kotlinVersion)
                     apiVersion.set(kotlinVersion)
                 }
