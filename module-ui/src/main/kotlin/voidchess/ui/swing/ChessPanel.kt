@@ -65,16 +65,23 @@ internal class ChessPanel(
             return difficultyPanel
         }
 
-        return JPanel(GridLayout(3, 2)).apply {
-            background = Color.WHITE
+        fun JPanel.concat(secondPanel: JPanel): JPanel {
+            val firstPanel = this
+            return JPanel(GridLayout(1, 2)).apply {
+                background = Color.WHITE
+                add(firstPanel)
+                add(secondPanel)
+            }
+        }
+
+        return JPanel(GridLayout(3, 1)).apply {
             border = LineBorder(Color.LIGHT_GRAY)
-            background = Color.WHITE
-            add(difficultyPanel.label)
-            add(difficultyPanel)
-            add(coresPanel.label)
-            add(coresPanel)
-            add(JPanel().apply { background = Color.WHITE })
-            add(shareGamePanel)
+            add(difficultyPanel.label.concat(difficultyPanel))
+            add(coresPanel.label.concat(coresPanel))
+            add(JPanel(GridBagLayout()).apply {
+                background = Color.WHITE
+                add(shareGamePanel)
+            })
         }
     }
 

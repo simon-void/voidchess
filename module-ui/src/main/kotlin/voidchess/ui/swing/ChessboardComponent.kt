@@ -22,7 +22,7 @@ internal class ChessboardComponent(
     private val game: StaticChessBoard
 ) : JComponent() {
 
-    val areaSize: Int = 50
+    val areaSize: Int = 55
     val borderSize: Int = 25
     private var _isWhiteView = true
     val isWhiteView: Boolean get() = _isWhiteView
