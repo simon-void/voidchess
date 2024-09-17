@@ -7,14 +7,15 @@ plugins {
     id("com.github.johnrengelman.shadow") version Deps.shadowPluginVersion
 }
 
-application {
-    mainClass.set("voidchess.VoidchessAppKt")
+group = "de.gmx.simonvoid"
+version = Deps.projectVersion
+
+repositories {
+    mavenCentral()
 }
 
-dependencies {
-    implementation(project(":module-common"))
-    implementation(project(":module-ui"))
-    implementation(project(":module-united"))
+application {
+    mainClass.set("voidchess.VoidchessAppKt")
 }
 
 kotlin {
@@ -22,32 +23,28 @@ kotlin {
     jvmToolchain(Deps.jdkVersion)
 }
 
-allprojects {
-    group = "de.gmx.simonvoid"
-    version = Deps.projectVersion
+dependencies {
+    implementation(Deps.batikTranscoder)
 
-    repositories {
-        mavenCentral()
-    }
-
-    tasks {
-        withType<KotlinCompile> {
-            compilerOptions {
-                freeCompilerArgs.add("-Xjsr305=strict")
-                KotlinVersion.DEFAULT.let { kotlinVersion ->
-                    languageVersion.set(kotlinVersion)
-                    apiVersion.set(kotlinVersion)
-                }
-            }
-        }
-
-        withType<Test> {
-            useTestNG()
-        }
-    }
+    Deps.coroutineDeps.forEach { implementation(it) }
+    Deps.testDeps.forEach { testImplementation(it) }
 }
 
 tasks {
+    withType<KotlinCompile> {
+        compilerOptions {
+            freeCompilerArgs.add("-Xjsr305=strict")
+            KotlinVersion.DEFAULT.let { kotlinVersion ->
+                languageVersion.set(kotlinVersion)
+                apiVersion.set(kotlinVersion)
+            }
+        }
+    }
+
+    withType<Test> {
+        useTestNG()
+    }
+
     register("buildInstaller") {
         dependsOn("build")
 
