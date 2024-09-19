@@ -1,14 +1,13 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version Deps.kotlinVersion
+    kotlin("jvm") version "2.0.20"
     application
-    id("com.github.johnrengelman.shadow") version Deps.shadowPluginVersion
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "de.gmx.simonvoid"
-version = Deps.projectVersion
+version = "13"
 
 repositories {
     mavenCentral()
@@ -20,24 +19,26 @@ application {
 
 kotlin {
     // uses org.gradle.java.installations.auto-download=false in gradle.properties to disable auto provisioning of JDK
-    jvmToolchain(Deps.jdkVersion)
+    jvmToolchain(21)
 }
 
 dependencies {
-    implementation(Deps.batikTranscoder)
+    val coroutinesVersion = "1.9.0"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${coroutinesVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:${coroutinesVersion}")
 
-    Deps.coroutineDeps.forEach { implementation(it) }
-    Deps.testDeps.forEach { testImplementation(it) }
+    implementation("org.apache.xmlgraphics:batik-transcoder:1.17")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.testng:testng:7.10.2")
+    testImplementation("io.mockk:mockk:1.13.12")
 }
 
 tasks {
     withType<KotlinCompile> {
         compilerOptions {
             freeCompilerArgs.add("-Xjsr305=strict")
-            KotlinVersion.DEFAULT.let { kotlinVersion ->
-                languageVersion.set(kotlinVersion)
-                apiVersion.set(kotlinVersion)
-            }
         }
     }
 
