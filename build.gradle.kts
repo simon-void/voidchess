@@ -14,7 +14,7 @@ repositories {
 }
 
 application {
-    mainClass.set("voidchess.VoidchessAppKt")
+    mainClass.set("voidchess.app.VoidchessAppKt")
 }
 
 kotlin {
@@ -33,6 +33,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.testng:testng:7.10.2")
     testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("com.lemonappdev:konsist:0.16.1")
 }
 
 tasks {

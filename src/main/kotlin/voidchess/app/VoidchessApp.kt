@@ -1,7 +1,5 @@
-package voidchess
+package voidchess.app
 
-import voidchess.united.Table
-import voidchess.united.EngineAdapter
 import voidchess.common.integration.ComputerPlayerUI
 import voidchess.ui.initializeUI
 import javax.swing.JOptionPane

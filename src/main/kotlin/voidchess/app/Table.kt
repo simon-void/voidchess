@@ -1,8 +1,8 @@
-package voidchess.united
+package voidchess.app
 
+import voidchess.app.board.CentralChessGame
+import voidchess.app.board.CentralChessGameImpl
 import voidchess.common.board.move.*
-import voidchess.united.board.CentralChessGame
-import voidchess.united.board.CentralChessGameImpl
 import voidchess.common.board.other.StartConfig
 import voidchess.common.integration.ColdPromise
 import voidchess.common.helper.RuntimeFacade

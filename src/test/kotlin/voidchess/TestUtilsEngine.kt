@@ -1,5 +1,7 @@
 package voidchess
 
+import voidchess.app.board.CentralChessGame
+import voidchess.app.board.CentralChessGameImpl
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
@@ -17,6 +19,22 @@ internal fun initEngineChessGame(startConfig: StartConfig, vararg moveCodes: Str
 
 internal fun initEngineChessGame(chess960: Int, vararg moveCodes: String): EngineChessGame = initEngineChessGame(chess960.toChess960Config(), *moveCodes)
 internal fun initEngineChessGame(des: String, vararg moveCodes: String): EngineChessGame = initEngineChessGame(des.toManualConfig(), *moveCodes)
+
+internal fun initCentralChessGame(chess960: Int, vararg moveCodes: String): CentralChessGame = CentralChessGameImpl(
+    chess960.toChess960Config()
+).apply {
+    for(moveCode in moveCodes) {
+        move(Move.byCode(moveCode))
+    }
+}
+
+internal fun initCentralChessGame(des: String, vararg moveCodes: String): CentralChessGame = CentralChessGameImpl(
+    des.toManualConfig()
+).apply {
+    for(moveCode in moveCodes) {
+        move(Move.byCode(moveCode))
+    }
+}
 
 internal fun Position.mirrorRow() = Position[7 - row, column]
 

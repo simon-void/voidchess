@@ -1,8 +1,8 @@
-package voidchess.united
+package voidchess.app
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
-import voidchess.united.board.CentralChessGame
+import voidchess.app.board.CentralChessGame
 import voidchess.common.board.move.MoveResultType
 import voidchess.common.engine.Engine
 import voidchess.common.engine.EngineAnswer
