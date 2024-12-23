@@ -3,9 +3,8 @@ package voidchess.engine.concurrent
 import kotlinx.coroutines.runBlocking
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import voidchess.engine.board.EngineChessGameImpl
+import voidchess.engine.inner.board.EngineChessGameImpl
 import voidchess.common.board.move.Move
-import voidchess.engine.evaluation.*
 
 import java.text.NumberFormat
 
@@ -13,9 +12,14 @@ import org.testng.Assert.assertEquals
 import voidchess.common.board.other.StartConfig
 import voidchess.completeMoveHistory
 import voidchess.engine.KaiEngine
-import voidchess.engine.board.EngineChessGame
-import voidchess.engine.evaluation.leaf.MiddleGameEval
-import voidchess.engine.evaluation.leaf.StaticEval
+import voidchess.engine.inner.board.EngineChessGame
+import voidchess.engine.inner.evaluation.leaf.MiddleGameEval
+import voidchess.engine.inner.evaluation.leaf.StaticEval
+import voidchess.engine.inner.concurrent.MultiThreadStrategy
+import voidchess.engine.inner.evaluation.MinMaxEval
+import voidchess.engine.inner.evaluation.PrunerWithPawnMoves
+import voidchess.engine.inner.evaluation.SearchTreePruner
+import voidchess.engine.inner.evaluation.SingleFullMovePrunerWithPawnMoves
 import voidchess.initEngineChessGame
 
 
@@ -62,10 +66,10 @@ internal class TerminationTest {
 }
 
 private fun testTermination(
-        startConfig: StartConfig,
-        movesSoFar: List<Move>,
-        pruner: SearchTreePruner,
-        staticEvaluation: StaticEval = MiddleGameEval
+    startConfig: StartConfig,
+    movesSoFar: List<Move>,
+    pruner: SearchTreePruner,
+    staticEvaluation: StaticEval = MiddleGameEval
 ) = runBlocking {
     val numberFormat = NumberFormat.getPercentInstance()
     val dynamicEvaluation = MinMaxEval(pruner, staticEvaluation)
@@ -81,7 +85,7 @@ private fun testTermination(
     MultiThreadStrategy.evaluateMovesBestMoveFirst(
         chessGame = EngineChessGameImpl(startConfig, movesSoFar),
         minMaxEval = dynamicEvaluation,
-        numericEvalOkRadius = KaiEngine.okDistanceToBest,
+        numericEvalOkRadius = KaiEngine.OK_DISTANCE_TO_BEST,
         progressCallback = { movesComputed: Int, totalMoves: Int ->
             println(numberFormat.format(movesComputed.toDouble() / totalMoves.toDouble()))
         },

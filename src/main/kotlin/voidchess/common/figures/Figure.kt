@@ -2,9 +2,9 @@ package voidchess.common.figures
 
 import voidchess.common.board.StaticChessBoard
 import voidchess.common.board.ChessBoard
-import voidchess.common.board.check.AttackLines
-import voidchess.common.board.check.BoundLine
-import voidchess.common.board.check.CheckLine
+import voidchess.common.inner.board.check.AttackLines
+import voidchess.common.inner.board.check.BoundLine
+import voidchess.common.inner.board.check.CheckLine
 import voidchess.common.board.getFirstFigureInDir
 import voidchess.common.board.move.Direction
 import voidchess.common.board.move.Move
@@ -19,7 +19,7 @@ abstract class Figure(
     var position: Position,
     val type: FigureType,
     val attacksDiagonalLine: Boolean,
-    val attacksStraightLine: Boolean
+    val attacksStraightLine: Boolean,
 ) {
 
     // encodes type of class + color

@@ -8,7 +8,7 @@ abstract class CastlingFigure(
     isWhite: Boolean,
     initialPosition: Position,
     protected var stepsTaken: Int,
-    type: FigureType
+    type: FigureType,
 ) : Figure(
         isWhite,
         initialPosition,

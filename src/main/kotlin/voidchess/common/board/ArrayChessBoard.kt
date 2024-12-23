@@ -1,13 +1,13 @@
 package voidchess.common.board
 
-import voidchess.common.board.check.AttackLines
-import voidchess.common.board.check.checkAttackLines
+import voidchess.common.inner.board.check.AttackLines
+import voidchess.common.inner.board.check.checkAttackLines
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.PawnPromotion
 import voidchess.common.board.move.Position
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.board.other.StartConfig
-import voidchess.common.board.other.boardInstantiator
+import voidchess.common.inner.board.other.boardInstantiator
 import voidchess.common.figures.*
 import kotlin.math.abs
 

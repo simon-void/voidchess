@@ -19,7 +19,7 @@ fun initChessBoard(gameDes: String, vararg moveCodes: String): ChessBoard = Arra
 }
 
 fun initChessBoard(chess960: Int, vararg moveCodes: String): ChessBoard = ArrayChessBoard(
-    StartConfig.Chess960Config(Chess960Index( chess960))
+    StartConfig.Chess960Config(Chess960Index(chess960))
 ).apply {
     for (moveCode in moveCodes) {
         move(Move.byCode(moveCode))

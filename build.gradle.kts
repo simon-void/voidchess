@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm") version "2.1.0"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
@@ -20,29 +20,28 @@ application {
 kotlin {
     // uses org.gradle.java.installations.auto-download=false in gradle.properties to disable auto provisioning of JDK
     jvmToolchain(21)
+    compilerOptions {
+        freeCompilerArgs.add("-Xjsr305=strict")
+        extraWarnings.set(true)
+        freeCompilerArgs.add("-Xsuppress-warning=UNUSED_ANONYMOUS_PARAMETER")
+    }
 }
 
 dependencies {
-    val coroutinesVersion = "1.9.0"
+    val coroutinesVersion = "1.10.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${coroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:${coroutinesVersion}")
 
-    implementation("org.apache.xmlgraphics:batik-transcoder:1.17")
+    implementation("org.apache.xmlgraphics:batik-transcoder:1.18")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation(kotlin("test"))
     testImplementation("org.testng:testng:7.10.2")
-    testImplementation("io.mockk:mockk:1.13.12")
-    testImplementation("com.lemonappdev:konsist:0.16.1")
+    testImplementation("io.mockk:mockk:1.13.14")
+    testImplementation("com.lemonappdev:konsist:0.17.3")
 }
 
 tasks {
-    withType<KotlinCompile> {
-        compilerOptions {
-            freeCompilerArgs.add("-Xjsr305=strict")
-        }
-    }
-
     withType<Test> {
         useTestNG()
     }

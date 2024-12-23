@@ -2,11 +2,11 @@ package voidchess.engine.openings
 
 import kotlinx.coroutines.runBlocking
 import org.testng.Assert.assertEquals
-import org.testng.Assert.assertTrue
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.common.board.move.Move
 import voidchess.common.board.other.StartConfig
+import voidchess.engine.inner.openings.OpeningsLibrary
 import kotlin.test.assertNull
 
 
@@ -54,14 +54,14 @@ internal class OpeningsLibraryTest {
     fun testLookUpNextMove() = runBlocking {
         val openingsLibrary = OpeningsLibrary(listOf("e2-e4, e7-e5, (d2-d4), e5-d4"))
 
-        var nextMove = openingsLibrary.lookUpNextMove(StartConfig.ClassicConfig, listOf(Move.byCode("e2-e4"))) { _, _->}
+        var nextMove = openingsLibrary.lookUpNextMove(StartConfig.ClassicConfig, listOf(Move.byCode("e2-e4")))
         checkNotNull(nextMove)
         assertEquals(nextMove.move, Move.byCode("e7-e5"))
 
-        nextMove = openingsLibrary.lookUpNextMove(StartConfig.ClassicConfig, listOf("e2-e4", "e7-e5").map{Move.byCode(it)}) { _, _->}
+        nextMove = openingsLibrary.lookUpNextMove(StartConfig.ClassicConfig, listOf("e2-e4", "e7-e5").map{Move.byCode(it)})
         assertNull(nextMove)
 
-        nextMove = openingsLibrary.lookUpNextMove(StartConfig.ClassicConfig, listOf("e2-e4", "e7-e5", "d2-d4").map{Move.byCode(it)}) { _, _->}
+        nextMove = openingsLibrary.lookUpNextMove(StartConfig.ClassicConfig, listOf("e2-e4", "e7-e5", "d2-d4").map{Move.byCode(it)})
         checkNotNull(nextMove)
         assertEquals(nextMove.move, Move.byCode("e5-d4"))
     }

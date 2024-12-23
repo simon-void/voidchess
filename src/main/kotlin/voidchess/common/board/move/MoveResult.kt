@@ -3,7 +3,7 @@ package voidchess.common.board.move
 import voidchess.common.integration.ColdPromise
 
 sealed class HumanMoveResult(
-    val extendedHumanMove: ExtendedMove
+    val extendedHumanMove: ExtendedMove,
 ) {
     class GameEnds(extendedHumanMove: ExtendedMove): HumanMoveResult(extendedHumanMove)
     class Ongoing(
@@ -13,7 +13,7 @@ sealed class HumanMoveResult(
 }
 
 sealed class ComputerMoveResult(
-    val extendedComputerMove: ExtendedMove
+    val extendedComputerMove: ExtendedMove,
 ) {
     class GameEnds(extendedComputerMove: ExtendedMove): ComputerMoveResult(extendedComputerMove)
     class Ongoing(extendedComputerMove: ExtendedMove) : ComputerMoveResult(extendedComputerMove)

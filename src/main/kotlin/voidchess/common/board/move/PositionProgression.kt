@@ -4,7 +4,7 @@ package voidchess.common.board.move
 data class PositionProgression(
     val inclusiveStartPos: Position,
     val size: Int,
-    val direction: Direction
+    val direction: Direction,
 ) {
     init {
         assert(size in 0..7)

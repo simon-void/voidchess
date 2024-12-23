@@ -35,7 +35,8 @@ fun List<Move>.toUrlSafeEncoding(chess960Index: Chess960Index): String {
     fun ChessBoard.encodeOnlyToPos(move: Move): Boolean =
         !this.isCastlingMove(move) && this.onlySingleFigureCanReach(move.to)
 
-    val board: ChessBoard = ArrayChessBoard(chess960Index.toStartConfig())
+    val board: ChessBoard =
+        ArrayChessBoard(chess960Index.toStartConfig())
 
     return this.joinToString(separator = "") { move ->
         val encodedMove = if (board.encodeOnlyToPos(move)) {

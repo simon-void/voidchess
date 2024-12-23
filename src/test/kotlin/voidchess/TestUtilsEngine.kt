@@ -1,14 +1,14 @@
 package voidchess
 
-import voidchess.app.board.CentralChessGame
-import voidchess.app.board.CentralChessGameImpl
+import voidchess.app.inner.board.CentralChessGame
+import voidchess.app.inner.board.CentralChessGameImpl
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.Position
 import voidchess.common.board.other.StartConfig
 import voidchess.common.helper.splitAndTrim
 import voidchess.common.helper.toChess960Config
-import voidchess.engine.board.EngineChessGameImpl
-import voidchess.engine.board.EngineChessGame
+import voidchess.engine.inner.board.EngineChessGameImpl
+import voidchess.engine.inner.board.EngineChessGame
 
 
 internal fun initEngineChessGame(startConfig: StartConfig, vararg moveCodes: String): EngineChessGame =

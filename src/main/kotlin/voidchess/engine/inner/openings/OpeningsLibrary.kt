@@ -1,0 +1,151 @@
+package voidchess.engine.inner.openings
+
+import voidchess.common.board.BasicChessGameImpl
+import voidchess.common.board.move.Move
+import voidchess.common.board.other.Chess960Index
+import voidchess.common.board.other.StartConfig
+import voidchess.common.helper.TreeNode
+import voidchess.common.helper.getResourceStream
+import voidchess.common.helper.splitAndTrim
+import voidchess.common.engine.EvaluatedMove
+import voidchess.engine.inner.concurrent.SingleThreadStrategy
+import voidchess.engine.inner.evaluation.leaf.MiddleGameEval
+import voidchess.engine.inner.evaluation.MinMaxEval
+import voidchess.engine.inner.evaluation.SingleFullMovePruner
+
+internal class OpeningsLibrary(
+    openingSequences: List<String>
+) {
+    private val openingsRootNode: TreeNode<KnownMove, String> = parseOpenings(openingSequences)
+    private val quickMinMaxEval: MinMaxEval = MinMaxEval(
+        SingleFullMovePruner(6, 1),
+        MiddleGameEval
+    )
+
+    private val maxDepth: Int get() = openingsRootNode.depth
+
+    suspend fun lookUpNextMove(
+        startConfig: StartConfig,
+        movesSoFar: List<Move>,
+    ): EvaluatedMove? {
+
+        val chess960StartIndex: Chess960Index? = when (startConfig) {
+            is StartConfig.Chess960Config -> startConfig.chess960Index
+            is StartConfig.ManualConfig -> null
+        }
+
+        if (chess960StartIndex == null || movesSoFar.size >= maxDepth) {
+            return null
+        }
+
+        return nextMove(chess960StartIndex, movesSoFar)?.let { libraryMove ->
+            SingleThreadStrategy.evaluateMove(
+                StartConfig.Chess960Config(chess960StartIndex),
+                movesSoFar,
+                libraryMove,
+                quickMinMaxEval
+            )
+        }
+    }
+
+    private fun nextMove(
+        chess960StartIndex: Chess960Index,
+        moves: List<Move>
+    ): Move? {
+        // assume that the whole library is based on classic chess
+        if(!chess960StartIndex.isClassic) return null
+
+        var currentNode: TreeNode<KnownMove, String> = openingsRootNode
+        for (move in moves) {
+            currentNode = currentNode.getChild(move.toString()) ?: return null
+        }
+
+        val movesFound: List<Move> = currentNode.childData.filter { it.isRecommended }.map { knownMove -> Move.byCode(knownMove.move)}
+        return movesFound.shuffled().firstOrNull()
+    }
+
+    private fun parseOpenings(openingSequences: List<String>): TreeNode<KnownMove, String> {
+        val root = TreeNode.getRoot(KnownMove("root", false)) { knownMove ->
+            knownMove.move
+        }
+
+        for (openingSequence in openingSequences) {
+            var currentNode = root
+            val knownMoves = splitAndCheckOpeningSequence(openingSequence)
+            for (knownMove in knownMoves) {
+                currentNode = currentNode.addChild(knownMove)
+            }
+        }
+
+        return root
+    }
+
+    companion object {
+
+        fun loadFromFile(relativePathToOpeningsFile: String): OpeningsLibrary {
+            val openingSequence = try {
+                getResourceStream(OpeningsLibrary::class.java, "module-engine", relativePathToOpeningsFile)
+                    .bufferedReader().useLines { lines ->
+                        lines.mapNotNull { line ->
+                            if (line.isBlank() || line.startsWith('#')) null
+                            else line.trim()
+                        }.toList()
+                    }
+            } catch (e: Exception) {
+                println("OpeningsLibrary couldn't load $relativePathToOpeningsFile: $e")
+                emptyList()
+            }
+            return OpeningsLibrary(openingSequence)
+        }
+
+        internal fun splitAndCheckOpeningSequence(openingSequence: String): List<KnownMove> {
+            if (openingSequence.isBlank()) {
+                return emptyList()
+            }
+
+            val separator = ','
+            require(!openingSequence.startsWith(separator)) { "opening sequence starts with separator: $openingSequence" }
+            require(!openingSequence.endsWith(separator)) { "opening sequence ends with separator: $openingSequence" }
+
+            val textMoves = openingSequence.splitAndTrim(separator)
+            val checkedMoves = ArrayList<KnownMove>(textMoves.size)
+
+            val game = BasicChessGameImpl(StartConfig.ClassicConfig)
+
+            for (textMove in textMoves) {
+                val knownMove = KnownMove.from(textMove)
+                val move = Move.byCode(knownMove.move)
+                val isMoveExecutable = game.isMovable(move.from, move.to)
+                require(isMoveExecutable) { "illegal move '$textMove' in opening sequence: $openingSequence" }
+                game.move(move)
+
+                checkedMoves.add(knownMove)
+            }
+            return checkedMoves
+        }
+    }
+}
+
+internal data class KnownMove(
+    val move: String,
+    val isRecommended: Boolean
+): Comparable<KnownMove> {
+    companion object {
+        private val moveFromBookRegex = """^([a-h][1-8]-[a-h][1-8])|(\([a-h][1-8]-[a-h][1-8]\))$""".toRegex()
+        fun from(text: String): KnownMove {
+            require(moveFromBookRegex matches text) {"text: $text doesn't match the expected pattern of either 'e1-d2' or '(e1-d2)'"}
+            val isRecommended: Boolean
+            val move: String
+            if(text.startsWith('(')) {
+                isRecommended = false
+                move = text.substring(1, 6) // remove the outer brackets
+            }else{
+                isRecommended = true
+                move = text
+            }
+            return KnownMove(move, isRecommended)
+        }
+    }
+
+    override fun compareTo(other: KnownMove) = move.compareTo(other.move)
+}

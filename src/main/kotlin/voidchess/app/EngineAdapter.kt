@@ -1,8 +1,10 @@
 package voidchess.app
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import voidchess.app.board.CentralChessGame
+import voidchess.app.inner.board.CentralChessGame
 import voidchess.common.board.move.MoveResultType
 import voidchess.common.engine.Engine
 import voidchess.common.engine.EngineAnswer
@@ -30,32 +32,33 @@ class EngineAdapter {
 
     suspend fun play(): Move = coroutineScope {
         suspend fun <T: Any> ensureMinimumDurationInMs(minimumDuration: Int, f: suspend ()->T): T {
-            // TODO when Kotlin contracts come out because "lateinit var" should be replaceable by "val"
-            lateinit var result: T
-            val lookUpDurationInMillies = measureTimeMillis {
-                result = f()
+            val result: T
+            val lookUpDurationInMillis = measureTimeMillis {
+                result = async {
+                    f()
+                }.await()
             }
-            val milliSecondsToWait = minimumDuration - lookUpDurationInMillies
+            val milliSecondsToWait = minimumDuration - lookUpDurationInMillis
             if (milliSecondsToWait > 0) {
-                runCatching { Thread.sleep(milliSecondsToWait) }
+                delay(milliSecondsToWait)
             }
             return result
         }
 
         ui.setBubbleText(null)
         ui.showThoughts(true)
+        ui.setProgress(0, 1)
 
         val ergonomicMinMoveDurationInMS = 300
         val chosenMove: EvaluatedMove = ensureMinimumDurationInMs(ergonomicMinMoveDurationInMS) {
             nextMove()
         }
-
         ui.setValue(chosenMove.value)
 
         chosenMove.move
     }
 
-    //lets see if the library contains a next move, else we compute the next move
+    //let's see if the library contains a next move, else we compute the next move
     private suspend fun nextMove(): EvaluatedMove {
         val movesSoFar: List<String> = game.getCompleteHistory().split(',').let {
             if (it.size == 1 && it.first() == "") {

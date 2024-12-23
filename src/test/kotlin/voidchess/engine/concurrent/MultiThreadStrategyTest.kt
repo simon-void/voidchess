@@ -8,14 +8,20 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.*
-import voidchess.engine.board.EngineChessGameImpl
-import voidchess.engine.board.EngineChessGame
+import voidchess.engine.inner.board.EngineChessGameImpl
+import voidchess.engine.inner.board.EngineChessGame
 import voidchess.common.board.move.Move
 import voidchess.common.board.other.StartConfig
 import voidchess.common.engine.*
 import voidchess.copyGameWithInvertedColors
-import voidchess.engine.evaluation.*
-import voidchess.engine.evaluation.leaf.MiddleGameEval
+import voidchess.engine.inner.evaluation.leaf.MiddleGameEval
+import voidchess.engine.inner.concurrent.MultiThreadStrategy
+import voidchess.engine.inner.evaluation.*
+import voidchess.engine.inner.evaluation.DefaultPruner
+import voidchess.engine.inner.evaluation.PrunerWithPawnMoves
+import voidchess.engine.inner.evaluation.SearchTreePruner
+import voidchess.engine.inner.evaluation.SingleFullMovePruner
+import voidchess.engine.inner.evaluation.SingleFullMovePrunerWithPawnMoves
 import voidchess.initEngineChessGame
 import voidchess.mirrorRow
 
@@ -162,10 +168,10 @@ internal class MultiThreadStrategyTest {
 
     @Test(dataProvider = "gameWithEvalPredicateProvider")//, dependsOnMethods = ["testMinMaxIsInvokedForEachPossibleMove"])
     fun testMinMaxToEvalPredicate(
-            game: EngineChessGameImpl,
-            pruner: SearchTreePruner,
-            evalTest: (Evaluation) -> Boolean,
-            msg: String
+        game: EngineChessGameImpl,
+        pruner: SearchTreePruner,
+        evalTest: (Evaluation) -> Boolean,
+        msg: String
     ) {
         val bestPossibleEval = evaluate(pruner, game).bestPossibleEval()
         assertTrue(evalTest(bestPossibleEval), "evalTest returned false on eval $bestPossibleEval. msg: $msg")

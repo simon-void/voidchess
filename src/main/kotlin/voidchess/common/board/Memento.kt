@@ -3,7 +3,7 @@ package voidchess.common.board
 import voidchess.common.board.move.Position
 
 class Memento (
-        game: StaticChessBoard,
+    game: StaticChessBoard,
 ) {
     private val figureCount: Byte
     private val compressedBoard: LongArray
@@ -61,7 +61,7 @@ class Memento (
 }
 
 fun ArrayList<Memento>.doesLatestMementoOccurThreeTimes(
-        numberOfMovesWithoutPawnMoveOrFigureTaken: Int
+        numberOfMovesWithoutPawnMoveOrFigureTaken: Int,
 ): Boolean {
     // the second condition happens only in test when the game is initialized from a description where figureTaken at startup > 0
     if (numberOfMovesWithoutPawnMoveOrFigureTaken < 8 || numberOfMovesWithoutPawnMoveOrFigureTaken > size) return false

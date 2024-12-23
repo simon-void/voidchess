@@ -1,7 +1,7 @@
 package voidchess.engine.evaluation
 
 import org.testng.annotations.Test
-import voidchess.engine.board.EngineChessGameImpl
+import voidchess.engine.inner.board.EngineChessGameImpl
 import voidchess.common.board.move.Move
 
 import org.testng.Assert.assertEquals
@@ -9,7 +9,11 @@ import org.testng.Assert.assertTrue
 import org.testng.annotations.DataProvider
 import voidchess.common.engine.NumericalEvaluation
 import voidchess.copyGameWithInvertedColors
-import voidchess.engine.evaluation.leaf.MiddleGameEval
+import voidchess.engine.inner.evaluation.leaf.MiddleGameEval
+import voidchess.engine.inner.evaluation.BestResponseSet
+import voidchess.engine.inner.evaluation.MinMaxEval
+import voidchess.engine.inner.evaluation.SearchTreePruner
+import voidchess.engine.inner.evaluation.SingleFullMovePruner
 import voidchess.initEngineChessGame
 import voidchess.mirrorRow
 import voidchess.toManualConfig

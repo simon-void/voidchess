@@ -12,7 +12,7 @@ data class EngineSpec(
         val name: String,
         val coresToUseOption: Option,
         val difficultyOption: Option,
-        val supportsChess960: Boolean
+        val supportsChess960: Boolean,
 )
 
 interface EngineConfig {

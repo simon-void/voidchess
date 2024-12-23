@@ -5,16 +5,21 @@ import voidchess.common.board.BasicChessGameImpl
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.engine.*
-import voidchess.engine.board.EngineChessGame
-import voidchess.engine.board.EngineChessGameImpl
-import voidchess.engine.concurrent.MultiThreadStrategy
-import voidchess.engine.evaluation.*
-import voidchess.engine.evaluation.leaf.KingToCornerEndgameEval
-import voidchess.engine.evaluation.leaf.KingToEdgeEndgameEval
-import voidchess.engine.evaluation.leaf.MiddleGameEval
-import voidchess.engine.evaluation.leaf.StaticEval
-import voidchess.engine.evaluation.leaf.getInventory
-import voidchess.engine.openings.OpeningsLibrary
+import voidchess.engine.inner.CoresToUseOption
+import voidchess.engine.inner.DifficultyOption
+import voidchess.engine.inner.board.EngineChessGame
+import voidchess.engine.inner.board.EngineChessGameImpl
+import voidchess.engine.inner.concurrent.MultiThreadStrategy
+import voidchess.engine.inner.evaluation.leaf.KingToCornerEndgameEval
+import voidchess.engine.inner.evaluation.leaf.KingToEdgeEndgameEval
+import voidchess.engine.inner.evaluation.leaf.MiddleGameEval
+import voidchess.engine.inner.evaluation.leaf.StaticEval
+import voidchess.engine.inner.evaluation.leaf.getInventory
+import voidchess.engine.inner.evaluation.DefaultPruner
+import voidchess.engine.inner.evaluation.MinMaxEval
+import voidchess.engine.inner.evaluation.PrunerWithPawnMoves
+import voidchess.engine.inner.evaluation.SearchTreePruner
+import voidchess.engine.inner.openings.OpeningsLibrary
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -57,7 +62,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             return EngineAnswer.Error(validatorErrorMsg)
         }
 
-        val evaluatedMove = openingsLibrary.lookUpNextMove(startConfig, moves, progressCallback)
+        val evaluatedMove = openingsLibrary.lookUpNextMove(startConfig, moves)
             ?: computeNextMove(startConfig, moves)
 
         EngineAnswer.Success(evaluatedMove)
@@ -99,12 +104,12 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
                 val defaultAllMoveRadius = DifficultyOption.pruner.allMoveRadius
                 pruner  = PrunerWithPawnMoves(defaultAllMoveRadius + 1, defaultAllMoveRadius + 2, defaultAllMoveRadius + 3, defaultAllMoveRadius + 2)
                 staticEval = MiddleGameEval
-                okDistance = okDistanceToBest/2
+                okDistance = OK_DISTANCE_TO_BEST/2
             }
             else -> {
                 pruner  = DifficultyOption.pruner
                 staticEval = MiddleGameEval
-                okDistance = okDistanceToBest
+                okDistance = OK_DISTANCE_TO_BEST
             }
         }
 
@@ -124,7 +129,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             if (bestEvaluatedMove.value !is NumericalEvaluation) {
                 return bestEvaluatedMove
             }
-            bestEvaluatedMove.value as NumericalEvaluation
+            bestEvaluatedMove.value
         }
 
 
@@ -139,8 +144,8 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
             for((move, evaluation) in sortedEvaluatedMoves) {
                 if(evaluation !is NumericalEvaluation) break
                 val distanceToBest = bestFullEvaluation-evaluation.numericValue
-                if(distanceToBest>= okDistanceToBest) break
-                add(move to (okDistanceToBest -distanceToBest)/ okDistanceToBest)
+                if(distanceToBest>= OK_DISTANCE_TO_BEST) break
+                add(move to (OK_DISTANCE_TO_BEST -distanceToBest)/ OK_DISTANCE_TO_BEST)
             }
         }
 
@@ -151,7 +156,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
 
         // make it more than linear probable to pick a better move (the bigger the factor, the more preferable better solutions are)
         val moveAndWeight = moveAndLinearWeight.map { Pair(it.first, it.second.pow(1.8)) }
-        val weightSum = moveAndWeight.map { it.second }.sum()
+        val weightSum = moveAndWeight.sumOf { it.second }
         // the sum of all percentages will be 1.0 (or close to it because of rounding errors)
         val moveAndPercentage = moveAndWeight.map { Pair(it.first, it.second/weightSum) }
 
@@ -180,7 +185,7 @@ class KaiEngine(private val progressCallback: ProgressCallback): Engine {
     }
 
     companion object {
-        const val okDistanceToBest = .2
+        const val OK_DISTANCE_TO_BEST = .2
     }
 }
 

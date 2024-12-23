@@ -3,7 +3,7 @@ package voidchess.app.board
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import voidchess.app.board.CentralChessGameImpl
+import voidchess.app.inner.board.CentralChessGameImpl
 import voidchess.common.board.other.StartConfig
 import voidchess.common.board.move.Move
 import voidchess.common.board.move.MoveResultType

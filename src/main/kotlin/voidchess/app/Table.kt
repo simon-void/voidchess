@@ -1,7 +1,7 @@
 package voidchess.app
 
-import voidchess.app.board.CentralChessGame
-import voidchess.app.board.CentralChessGameImpl
+import voidchess.app.inner.board.CentralChessGame
+import voidchess.app.inner.board.CentralChessGameImpl
 import voidchess.common.board.move.*
 import voidchess.common.board.other.StartConfig
 import voidchess.common.integration.ColdPromise
@@ -11,8 +11,8 @@ import voidchess.common.integration.ComputerPlayerUI
 import voidchess.common.integration.TableAdapter
 
 
-class Table constructor(
-    private val engineAdapter: EngineAdapter
+class Table (
+    private val engineAdapter: EngineAdapter,
 ) : TableAdapter {
 
     private val game: CentralChessGame = CentralChessGameImpl()

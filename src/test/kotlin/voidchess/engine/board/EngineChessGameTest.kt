@@ -11,6 +11,7 @@ import voidchess.common.board.other.StartConfig
 import voidchess.common.figures.Bishop
 import voidchess.common.figures.King
 import voidchess.common.helper.toChess960Config
+import voidchess.engine.inner.board.EngineChessGameImpl
 import voidchess.initEngineChessGame
 import voidchess.toManualConfig
 import kotlin.test.*

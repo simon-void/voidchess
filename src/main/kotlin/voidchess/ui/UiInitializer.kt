@@ -4,15 +4,15 @@ import voidchess.common.board.BasicChessGameImpl
 import voidchess.common.engine.EngineConfig
 import voidchess.common.integration.ComputerPlayerUI
 import voidchess.common.integration.TableAdapter
-import voidchess.ui.player.SwingPlayerImpl
-import voidchess.ui.swing.Chess960Panel
-import voidchess.ui.swing.ChessFrame
-import voidchess.ui.swing.ChessPanel
-import voidchess.ui.swing.ChessboardComponent
-import voidchess.ui.swing.ComputerPlayerComponent
-import voidchess.ui.swing.CoresPanel
-import voidchess.ui.swing.DifficultyPanel
-import voidchess.ui.swing.ShareGamePanel
+import voidchess.ui.inner.player.SwingPlayerImpl
+import voidchess.ui.inner.swing.Chess960Panel
+import voidchess.ui.inner.swing.ChessFrame
+import voidchess.ui.inner.swing.ChessPanel
+import voidchess.ui.inner.swing.ChessboardComponent
+import voidchess.ui.inner.swing.ComputerPlayerComponent
+import voidchess.ui.inner.swing.CoresPanel
+import voidchess.ui.inner.swing.DifficultyPanel
+import voidchess.ui.inner.swing.ShareGamePanel
 import javax.swing.SwingUtilities
 
 fun initializeUI(

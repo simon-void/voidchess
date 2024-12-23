@@ -5,9 +5,9 @@ import org.testng.Assert.assertNotEquals
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import voidchess.common.engine.Ongoing
-import voidchess.engine.board.EngineChessGameImpl
+import voidchess.engine.inner.board.EngineChessGameImpl
 import voidchess.copyGameWithInvertedColors
-import voidchess.engine.evaluation.leaf.MiddleGameEval
+import voidchess.engine.inner.evaluation.leaf.MiddleGameEval
 import voidchess.initEngineChessGame
 import voidchess.toManualConfig
 
@@ -43,7 +43,8 @@ internal class MiddleGameEvalTest {
             arrayOf<Any>(EngineChessGameImpl("black 0 Pawn-white-a2-false King-white-e1-0 Pawn-black-a7-false King-black-e8-0".toManualConfig())),
             arrayOf<Any>(EngineChessGameImpl("black 0 Pawn-white-e2-false King-white-e1-0 Pawn-black-e7-false King-black-e8-0".toManualConfig())),
             arrayOf<Any>(EngineChessGameImpl("black 0 Pawn-white-e2-false Pawn-white-f3-false King-white-e1-0 Pawn-black-e7-false Pawn-black-f6-false King-black-e8-0".toManualConfig())),
-            arrayOf<Any>(EngineChessGameImpl(("white 0 "
+            arrayOf<Any>(
+                EngineChessGameImpl(("white 0 "
                 + "King-white-e1-0 "
                 + "Pawn-white-a2-false Pawn-white-b2-false Pawn-white-c2-false "
                 + "Pawn-white-d2-false Pawn-white-e2-false Pawn-white-f2-false "
@@ -51,14 +52,17 @@ internal class MiddleGameEvalTest {
                 + "Pawn-black-a7-false Pawn-black-b7-false Pawn-black-c7-false "
                 + "Pawn-black-d7-false Pawn-black-e7-false Pawn-black-f7-false "
                 + "Pawn-black-g7-false Pawn-black-h7-false "
-                + "King-black-e8-0").toManualConfig())),
-            arrayOf<Any>(EngineChessGameImpl(("white 0 "
+                + "King-black-e8-0").toManualConfig())
+            ),
+            arrayOf<Any>(
+                EngineChessGameImpl(("white 0 "
                 + "Rook-white-a1-0 Knight-white-b1 Bishop-white-c1 "
                 + "Queen-white-d1 King-white-e1-0 "
                 + "Bishop-white-f1 Knight-white-g1 Rook-white-h1-0 "
                 + "Rook-black-a8-0 Knight-black-b8 Bishop-black-c8 "
                 + "Queen-black-d8 King-black-e8-0 "
-                + "Bishop-black-f8 Knight-black-g8 Rook-black-h8-0").toManualConfig())),
+                + "Bishop-black-f8 Knight-black-g8 Rook-black-h8-0").toManualConfig())
+            ),
             arrayOf<Any>(initEngineChessGame(518)),
             arrayOf<Any>(initEngineChessGame(333)),
             arrayOf<Any>(initEngineChessGame(518, "g2-g3", "g7-g6", "g1-f3", "g8-f6", "f1-g2", "f8-g7", "e1-h1", "e8-h8", "c2-c3", "c7-c6")))

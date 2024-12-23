@@ -1,7 +1,7 @@
 package voidchess.common.board
 
 import voidchess.common.board.move.Move
-import voidchess.common.board.check.AttackLines
+import voidchess.common.inner.board.check.AttackLines
 import voidchess.common.board.move.ExtendedMove
 import voidchess.common.figures.Figure
 import voidchess.common.board.move.Position

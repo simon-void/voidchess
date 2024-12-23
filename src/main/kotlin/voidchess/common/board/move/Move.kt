@@ -4,7 +4,7 @@ package voidchess.common.board.move
 class Move private constructor(
     val from: Position,
     val to: Position,
-    val pawnPromotionType: PawnPromotion?
+    val pawnPromotionType: PawnPromotion?,
 ) {
     private val index = getMoveIndex(from.index, to.index)
 
