@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version Deps.kotlinVersion
@@ -8,7 +6,7 @@ plugins {
 }
 
 application {
-    mainClass.set("voidchess.VoidchessAppKt")
+    mainClass = "voidchess.VoidchessAppKt"
 }
 
 dependencies {
@@ -31,16 +29,6 @@ allprojects {
     }
 
     tasks {
-        withType<KotlinCompile> {
-            compilerOptions {
-                freeCompilerArgs.add("-Xjsr305=strict")
-                KotlinVersion.DEFAULT.let { kotlinVersion ->
-                    languageVersion.set(kotlinVersion)
-                    apiVersion.set(kotlinVersion)
-                }
-            }
-        }
-
         withType<Test> {
             useTestNG()
         }

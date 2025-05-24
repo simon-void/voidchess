@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.`kotlin-dsl`
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -10,11 +11,7 @@ repositories {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        kotlinOptions {
-            languageVersion = "2.0"
-            apiVersion = languageVersion
-        }
+    compilerOptions {
+        languageVersion = KotlinVersion.KOTLIN_2_0
     }
 }
