@@ -1,17 +1,16 @@
 plugins {
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
 }
 
 kotlin {
     // uses org.gradle.java.installations.auto-download=false in gradle.properties to disable auto provisioning of JDK
-    jvmToolchain(Deps.jdkVersion)
+    jvmToolchain(JDK.version)
 }
 
 dependencies {
-    implementation(Deps.batikTranscoder)
-
-    Deps.testDeps.forEach { testImplementation(it) }
+    implementation(libs.batik.transcoder)
+    testImplementation(libs.bundles.test.testng.mockk)
 
     implementation(project(":module-common"))
 }

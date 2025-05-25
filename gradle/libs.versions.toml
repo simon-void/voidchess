@@ -1,0 +1,35 @@
+[versions]
+kotlin = "2.2.0-RC"
+shadow = "8.1.1"
+
+batik-transcoder = "1.19"
+coroutines = "1.10.2"
+testng = "7.11.0"
+mockk = "1.14.2"
+
+[libraries]
+batik-transcoder = { module = "org.apache.xmlgraphics:batik-transcoder", version.ref = "batik-transcoder" }
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
+coroutines-debug = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-debug", version.ref = "coroutines" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+testng = { module = "org.testng:testng", version.ref = "testng" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+
+
+[bundles]
+
+test-testng-mockk = [
+    "kotlin-test",
+    "testng",
+    "mockk"
+]
+
+coroutines = [
+    "coroutines-core",
+    "coroutines-swing",
+    "coroutines-debug"
+]
+
+[plugins]
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

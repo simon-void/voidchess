@@ -1,16 +1,16 @@
 plugins {
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
 }
 
 kotlin {
     // uses org.gradle.java.installations.auto-download=false in gradle.properties to disable auto provisioning of JDK
-    jvmToolchain(Deps.jdkVersion)
+    jvmToolchain(JDK.version)
 }
 
 dependencies {
-    Deps.coroutineDeps.forEach { implementation(it) }
-    Deps.testDeps.forEach { testImplementation(it) }
+    implementation(libs.bundles.coroutines)
+    testImplementation(libs.bundles.test.testng.mockk)
 
     implementation(project(":module-common"))
 }

@@ -1,8 +1,8 @@
 
 plugins {
-    kotlin("jvm") version Deps.kotlinVersion
+    kotlin("jvm") version libs.versions.kotlin
     application
-    id("com.github.johnrengelman.shadow") version Deps.shadowPluginVersion
+    alias(libs.plugins.shadow)
 }
 
 application {
@@ -17,12 +17,12 @@ dependencies {
 
 kotlin {
     // uses org.gradle.java.installations.auto-download=false in gradle.properties to disable auto provisioning of JDK
-    jvmToolchain(Deps.jdkVersion)
+    jvmToolchain(JDK.version)
 }
 
 allprojects {
     group = "de.gmx.simonvoid"
-    version = Deps.projectVersion
+    version = "14"
 
     repositories {
         mavenCentral()
